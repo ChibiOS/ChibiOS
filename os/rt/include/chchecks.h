@@ -268,8 +268,7 @@
 #endif
 
 #if !defined(CH_CFG_SAFETY_CHECK_HOOK)
-//#error "CH_CFG_SAFETY_CHECK_HOOK not defined in chconf.h"
-#define CH_CFG_SAFETY_CHECK_HOOK(l, f) chSysHalt(f);
+#error "CH_CFG_SAFETY_CHECK_HOOK not defined in chconf.h"
 #endif
 
 /*===========================================================================*/

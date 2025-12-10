@@ -1,6 +1,6 @@
 [#ftl]
 [#--
-    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -85,6 +85,8 @@
 /**
  * @brief   System time counter resolution.
  * @note    Allowed values are 16, 32 or 64 bits.
+ * @note    In tick-less mode this value must match the physical system tick
+ *          timer counter width.
  */
 #if !defined(CH_CFG_ST_RESOLUTION)
 #define CH_CFG_ST_RESOLUTION                ${doc.CH_CFG_ST_RESOLUTION!"32"}
@@ -94,6 +96,8 @@
  * @brief   System tick frequency.
  * @details Frequency of the system timer that drives the system ticks. This
  *          setting also defines the system tick time unit.
+ * @note    This must be a frequency that is obtainable from the system tick
+ *          timer frequency.
  */
 #if !defined(CH_CFG_ST_FREQUENCY)
 #define CH_CFG_ST_FREQUENCY                 ${doc.CH_CFG_ST_FREQUENCY!"10000"}
@@ -838,6 +842,16 @@
  */
 #define CH_CFG_RUNTIME_FAULTS_HOOK(mask) {                                  \
   /* Faults handling code here.*/                                           \
+}
+
+/**
+ * @brief   Safety checks hook.
+ * @details This hook is invoked when there is a safety violation and the
+ *          system is going to stop.
+ */
+#define CH_CFG_SAFETY_CHECK_HOOK(l, f) {                                    \
+  /* Safety handling code here.*/                                           \
+  chSysHalt(f);                                                             \
 }
 
 /** @} */
