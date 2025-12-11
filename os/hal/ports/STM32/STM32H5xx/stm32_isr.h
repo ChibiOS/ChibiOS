@@ -158,6 +158,19 @@
 #define STM32_EXTI15_NUMBER                 26
 
 /*
+ * FDCAN units.
+ */
+#define STM32_FDCAN1_IT0_HANDLER            VectorDC
+#define STM32_FDCAN1_IT1_HANDLER            VectorE0
+#define STM32_FDCAN2_IT0_HANDLER            Vector1F4
+#define STM32_FDCAN2_IT1_HANDLER            Vector1F8
+
+#define STM32_FDCAN1_IT0_NUMBER             39
+#define STM32_FDCAN1_IT1_NUMBER             40
+#define STM32_FDCAN2_IT0_NUMBER             109
+#define STM32_FDCAN2_IT1_NUMBER             110
+
+/*
  * ETH units.
  */
 #define STM32_ETH_HANDLER                   Vector1E8
