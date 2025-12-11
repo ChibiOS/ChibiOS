@@ -16,9 +16,11 @@
 
 ENTRY(Reset_Handler)
 
+__vectors_align__ = DEFINED(__vectors_align__) ? __vectors_align__ : 1024;
+
 SECTIONS
 {
-    .vectors : ALIGN(1024)
+    .vectors : ALIGN(__vectors_align__)
     {
         __textvectors_base__ = LOADADDR(.vectors);
         __vectors_base__ = .;
