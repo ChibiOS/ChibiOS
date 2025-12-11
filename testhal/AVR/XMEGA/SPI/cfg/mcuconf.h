@@ -144,6 +144,7 @@
  * SPI driver system settings.
  */
 #define AVR_SPI_USE_SPI1                   TRUE
+#define AVR_SPI_USE_SPI2                   FALSE
 #define AVR_SPI_USE_16BIT_POLLED_EXCHANGE  TRUE
 
 /*
