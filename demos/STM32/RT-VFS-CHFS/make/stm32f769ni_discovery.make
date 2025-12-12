@@ -115,10 +115,10 @@ include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
 # VFS files (optional).
 include $(CHIBIOS)/os/vfs/vfs.mk
-include $(CHIBIOS)/os/vfs/vfs_syscalls.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
+include $(CHIBIOS)/os/various/newlib_bindings/newlib.mk
 #include $(CHIBIOS)/os/test/test.mk
 #include $(CHIBIOS)/test/rt/rt_test.mk
 #include $(CHIBIOS)/test/oslib/oslib_test.mk
@@ -165,7 +165,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DFATFS_HAL_DEVICE=SDCD2 -DXSHELL_CMD_TEST_ENABLED=FALSE -DXSHELL_CMD_FILES_ENABLED=TRUE
+UDEFS = -DFATFS_HAL_DEVICE=SDCD2 -DXSHELL_CMD_TEST_ENABLED=FALSE -DXSHELL_CMD_FILES_ENABLED=TRUE -DSYSCALL_USE_VFS
 
 # Define ASM defines here
 UADEFS =

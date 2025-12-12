@@ -20,6 +20,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include "ch.h"
+
 #if defined(SYSCALL_USE_VFS)
 #include "vfs.h"
 
