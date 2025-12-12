@@ -143,6 +143,9 @@ void irqInit(void) {
   exti14_irq_init();
   exti15_irq_init();
 
+  fdcan1_irq_init();
+  fdcan2_irq_init();
+
   i2c1_irq_init();
   i2c2_irq_init();
   i2c3_irq_init();
@@ -212,6 +215,9 @@ void irqDeinit(void) {
   exti13_irq_deinit();
   exti14_irq_deinit();
   exti15_irq_deinit();
+
+  fdcan1_irq_deinit();
+  fdcan2_irq_deinit();
 
   i2c1_irq_deinit();
   i2c2_irq_deinit();
