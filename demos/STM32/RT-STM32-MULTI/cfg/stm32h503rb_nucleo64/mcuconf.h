@@ -146,6 +146,8 @@
 #define STM32_IRQ_EXTI17_PRIORITY           6
 #define STM32_IRQ_EXTI19_PRIORITY           6
 
+#define STM32_IRQ_FDCAN1_PRIORITY           10
+
 #define STM32_IRQ_I2C1_PRIORITY             5
 #define STM32_IRQ_I2C2_PRIORITY             5
 
