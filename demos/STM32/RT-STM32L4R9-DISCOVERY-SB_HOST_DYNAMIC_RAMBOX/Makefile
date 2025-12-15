@@ -118,10 +118,10 @@ include $(CHIBIOS)/os/sb/host/compilers/GCC/sbhost.mk
 #include $(CHIBIOS)/os/sb/vio/sbvio.mk
 # VFS files (optional).
 include $(CHIBIOS)/os/vfs/vfs.mk
-include $(CHIBIOS)/os/vfs/vfs_syscalls.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
+include $(CHIBIOS)/os/various/newlib_bindings/newlib.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
 
