@@ -1460,16 +1460,27 @@
   #error "invalid STM32_MSIRC1_MODE value specified"
 #endif
 
+/* Base frequencies for MSIRC0.*/
 #if (STM32_MSIPLL0EN == 0) || defined(__DOXYGEN__)
-  /**
-   * @brief   MSIPLL1N field initializer.
-   */
-  #define STM32_MSIPLL1N                    0U
-
   /**
    * @brief   MSIRC0 base frequency.
    */
   #define RCC_MSIRC0CLK                     96000000U
+
+#else /* PLL mode enabled.*/
+  #if STM32_MSIPLL0SEL == RCC_ICSCR1_MSIPLL0SEL_LSE
+    #define RCC_MSIRC0CLK                   96010000U
+  #else
+    #define RCC_MSIRC0CLK                   96000000U
+  #endif
+#endif
+
+/* Base frequencies for MSIRC1.*/
+#if (STM32_MSIPLL1EN == 0) || defined(__DOXYGEN__)
+  /**
+   * @brief   MSIPLL1N field initializer.
+   */
+  #define STM32_MSIPLL1N                    0U
 
   /**
    * @brief   MSIRC1 base frequency.
@@ -1479,31 +1490,25 @@
 #else /* PLL mode enabled.*/
   #if STM32_MSIPLL1N_VALUE == 0
     #define STM32_MSIPLL1N                  0U
-    #if STM32_MSIPLL1SEL == 0
-      #define RCC_MSIRC0CLK                 96010000U
+    #if STM32_MSIPLL1SEL == RCC_ICSCR1_MSIPLL1SEL_LSE
       #define RCC_MSIRC1CLK                 23986000U
     #else
-      #define RCC_MSIRC0CLK                 96000000U
       #define RCC_MSIRC1CLK                 24016000U
     #endif
 
   #elif STM32_MSIPLL1N_VALUE == 2
     #define STM32_MSIPLL1N                  (RCC_ICSCR1_MSIPLL1N_1)
-    #if STM32_MSIPLL1SEL == 0
-      #define RCC_MSIRC0CLK                 96010000U
+    #if STM32_MSIPLL1SEL == RCC_ICSCR1_MSIPLL1SEL_LSE
       #define RCC_MSIRC1CLK                 22577000U
     #else
-      #define RCC_MSIRC0CLK                 96000000U
       #define RCC_MSIRC1CLK                 22581000U
     #endif
 
   #elif STM32_MSIPLL1N_VALUE == 3
     #define STM32_MSIPLL1N                  (RCC_ICSCR1_MSIPLL1N_1 | RCC_ICSCR1_MSIPLL1N_0)
-    #if STM32_MSIPLL1SEL == 0
-      #define RCC_MSIRC0CLK                 96010000U
+    #if STM32_MSIPLL1SEL == RCC_ICSCR1_MSIPLL1SEL_LSE
       #define RCC_MSIRC1CLK                 24576000U
     #else
-      #define RCC_MSIRC0CLK                 96000000U
       #define RCC_MSIRC1CLK                 24577000U
     #endif
 
