@@ -64,8 +64,8 @@ int _open_r(struct _reent *r, const char *p, int oflag, int mode) {
 #else
   (void)r;
   (void)p;
-  (void)a;
-  (void)b;
+  (void)oflag;
+  (void)mode;
   __errno_r(r) = EINVAL;
   return -1;
 #endif
