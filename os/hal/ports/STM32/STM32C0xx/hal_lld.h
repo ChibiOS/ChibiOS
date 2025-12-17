@@ -785,7 +785,7 @@
     #error "HSE not enabled, required by STM32_RTCSEL"
   #endif
 
-  #if STM32_HAS_USB
+  #if STM32_HAS_USB1
     #if STM32_USBSEL == RCC_CCIPR2_USBSEL_HSE
       #error "HSE not enabled, required by STM32_USBSEL"
     #endif
@@ -1216,7 +1216,7 @@
  * @brief   USB clock frequency.
  */
 #if (STM32_USBSEL == RCC_CCIPR2_USBSEL_HSIUSB48) || defined(__DOXYGEN__)
-  #define STM32_USBCLK                      hal_lld_get_clock_point(CLK_HSIUSB48CLK)
+  #define STM32_USBCLK                      hal_lld_get_clock_point(CLK_HSIUSB48)
 
 #elif STM32_USBSEL == RCC_CCIPR2_USBSEL_HSE
   #define STM32_USBCLK                      STM32_HSECLK

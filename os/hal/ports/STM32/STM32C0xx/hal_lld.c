@@ -205,7 +205,7 @@ static void hal_lld_set_static_clocks(void) {
                  STM32_ADCSEL | STM32_I2S1SEL | STM32_I2C1SEL | STM32_FDCAN1SEL | STM32_USART1SEL,
                  true);
 
-#if STM32_HAS_USB
+#if STM32_HAS_USB1
   /* CCIPR2 register initialization.*/
   halRegWrite32X(&RCC->CCIPR2, STM32_USBSEL, true);
 #endif

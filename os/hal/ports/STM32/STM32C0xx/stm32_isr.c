@@ -68,6 +68,8 @@
 #include "stm32_tim16.inc"
 #include "stm32_tim17.inc"
 
+#include "stm32_usb1.inc"
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -93,6 +95,8 @@ void irqInit(void) {
 
   usart1_irq_init();
   usart2_irq_init();
+
+  usb1_irq_init();
 }
 
 /**
@@ -116,6 +120,8 @@ void irqDeinit(void) {
 
   usart1_irq_deinit();
   usart2_irq_deinit();
+
+  usb1_irq_deinit();
 }
 
 /** @} */

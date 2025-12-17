@@ -174,9 +174,7 @@
 #define STM32_HAS_I2C4                      FALSE
 
 /* OTG/USB attributes.*/
-#define STM32_HAS_OTG1                      FALSE
-#define STM32_HAS_OTG2                      FALSE
-#define STM32_HAS_USB                       FALSE
+#define STM32_HAS_USB1                       FALSE
 
 /* RCC attributes.*/
 #define STM32_RCC_HAS_HSIUSB48              FALSE
@@ -325,9 +323,10 @@
 #define STM32_HAS_I2C4                      FALSE
 
 /* OTG/USB attributes.*/
-#define STM32_HAS_OTG1                      FALSE
-#define STM32_HAS_OTG2                      FALSE
-#define STM32_HAS_USB                       FALSE
+//#define STM32_HAS_OTG1                      FALSE
+//#define STM32_HAS_OTG2                      FALSE
+//#define STM32_HAS_USB                       FALSE
+#define STM32_HAS_USB1                       FALSE
 
 /* RCC attributes.*/
 #define STM32_RCC_HAS_HSIUSB48              FALSE
@@ -481,10 +480,11 @@
 #define STM32_HAS_I2C4                      FALSE
 
 /* OTG/USB attributes.*/
-#define STM32_HAS_OTG1                      FALSE
-#define STM32_HAS_OTG2                      FALSE
+//#define STM32_HAS_OTG1                      FALSE
+//#define STM32_HAS_OTG2                      FALSE
 
-#define STM32_HAS_USB                       TRUE
+#define STM32_HAS_USB1                      TRUE
+//#define STM32_HAS_USB                       TRUE
 #define STM32_USB_ACCESS_SCHEME_2x16        TRUE
 #define STM32_USB_PMA_SIZE                  2048
 #define STM32_USB_HAS_BCDR                  TRUE
@@ -645,9 +645,10 @@
 #define STM32_HAS_I2C4                      FALSE
 
 /* OTG/USB attributes.*/
-#define STM32_HAS_OTG1                      FALSE
-#define STM32_HAS_OTG2                      FALSE
-#define STM32_HAS_USB                       FALSE
+//#define STM32_HAS_OTG1                      FALSE
+//#define STM32_HAS_OTG2                      FALSE
+//#define STM32_HAS_USB                       FALSE
+#define STM32_HAS_USB1                       FALSE
 
 /* RCC attributes.*/
 #define STM32_RCC_HAS_HSIUSB48              FALSE
