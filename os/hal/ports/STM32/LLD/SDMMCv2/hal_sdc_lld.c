@@ -442,12 +442,16 @@ void sdc_lld_stop(SDCDriver *sdcp) {
     /* Clock deactivation.*/
 #if STM32_SDC_USE_SDMMC1
     if (&SDCD1 == sdcp) {
+      /* Reset un-wedges DPSM without using CPSM to send CMDSTOP.*/
+      rccResetSDMMC1();
       rccDisableSDMMC1();
     }
 #endif
 
 #if STM32_SDC_USE_SDMMC2
     if (&SDCD2 == sdcp) {
+      /* Reset un-wedges DPSM without using CPSM to send CMDSTOP.*/
+      rccResetSDMMC2();
       rccDisableSDMMC2();
     }
 #endif
