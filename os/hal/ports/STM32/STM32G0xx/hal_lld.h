@@ -185,7 +185,7 @@
 #define STM32_SW_LSI            (3U << 0U)  /**< SYSCLK source is LSI.      */
 #define STM32_SW_LSE            (4U << 0U)  /**< SYSCLK source is LSE.      */
 
-#if defined(STM32G0B1xx) || defined(STM32G0B0xx) || defined(STM32G0C1xx)
+#if STM32_RCC_HAS_MCOSEL_EXT == TRUE
 #define STM32_MCOSEL_MASK       (15U << 24U)/**< MCOSEL field mask.         */
 #define STM32_MCOSEL_PLLPCLK    (8U << 24U) /**< PLLP clock on MCO pin.     */
 #define STM32_MCOSEL_PLLQCLK    (9U << 24U) /**< PLLQ clock on MCO pin.     */
@@ -196,14 +196,14 @@
 #endif
 #define STM32_MCOSEL_NOCLOCK    (0U << 24U) /**< No clock on MCO pin.       */
 #define STM32_MCOSEL_SYSCLK     (1U << 24U) /**< SYSCLK on MCO pin.         */
-#define STM32_MCOSEL_HSI48      (3U << 24U) /**< HSI48 clock on MCO pin.    */
+#define STM32_MCOSEL_HSI48      (2U << 24U) /**< HSI48 clock on MCO pin.    */
 #define STM32_MCOSEL_HSI16      (3U << 24U) /**< HSI16 clock on MCO pin.    */
 #define STM32_MCOSEL_HSE        (4U << 24U) /**< HSE clock on MCO pin.      */
 #define STM32_MCOSEL_PLLRCLK    (5U << 24U) /**< PLLR clock on MCO pin.     */
 #define STM32_MCOSEL_LSI        (6U << 24U) /**< LSI clock on MCO pin.      */
 #define STM32_MCOSEL_LSE        (7U << 24U) /**< LSE clock on MCO pin.      */
 
-#if defined(STM32G0B1xx) || defined(STM32G0B0xx) || defined(STM32G0C1xx)
+#if STM32_RCC_HAS_MCOPRE_EXT == TRUE
 #define STM32_MCOPRE_MASK       (15U << 28U)/**< MCOPRE field mask.         */
 #define STM32_MCOPRE_DIV256     STM32_MCOPRE_FIELD(8U)
 #define STM32_MCOPRE_DIV512     STM32_MCOPRE_FIELD(9U)
@@ -225,7 +225,7 @@
 #define STM32_MCO2SEL_MASK      (15U << 16U)/**< MCO2SEL field mask.        */
 #define STM32_MCO2SEL_NOCLOCK   (0U << 16U) /**< No clock on MCO2 pin.      */
 #define STM32_MCO2SEL_SYSCLK    (1U << 16U) /**< SYSCLK on MCO2 pin.        */
-#define STM32_MCO2SEL_HSI48     (3U << 16U) /**< HSI48 clock on MCO2 pin.   */
+#define STM32_MCO2SEL_HSI48     (2U << 16U) /**< HSI48 clock on MCO2 pin.   */
 #define STM32_MCO2SEL_HSI16     (3U << 16U) /**< HSI16 clock on MCO2 pin.   */
 #define STM32_MCO2SEL_HSE       (4U << 16U) /**< HSE clock on MCO2 pin.     */
 #define STM32_MCO2SEL_PLLRCLK   (5U << 16U) /**< PLLR clock on MCO2 pin.    */
@@ -1115,14 +1115,26 @@
   #if (STM32_MCOSEL == STM32_MCOSEL_HSI16) ||                               \
       (STM32_I2S1SEL == STM32_I2S1SEL_HSI16) ||                             \
       (STM32_I2S2SEL == STM32_I2S2SEL_HSI16) ||                             \
-      ((STM32_MCOSEL == STM32_MCOSEL_PLL) &&                                \
+      ((STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) &&                            \
+       (STM32_PLLSRC == STM32_PLLSRC_HSI16)) ||                             \
+      ((STM32_RCC_HAS_MCOSEL_PLLP == TRUE) &&                               \
+       (STM32_MCOSEL == STM32_MCOSEL_PLLPCLK) &&                            \
+       (STM32_PLLSRC == STM32_PLLSRC_HSI16)) ||                             \
+      ((STM32_RCC_HAS_MCOSEL_PLLQ == TRUE) &&                               \
+       (STM32_MCOSEL == STM32_MCOSEL_PLLQCLK) &&                            \
        (STM32_PLLSRC == STM32_PLLSRC_HSI16))
     #error "HSI16 not enabled, required by STM32_MCOSEL/I2S1SEL/I2S2SEL"
   #endif
 
   #if STM32_RCC_HAS_MCO2 == TRUE
     #if (STM32_MCO2SEL == STM32_MCO2SEL_HSI16) ||                           \
-        ((STM32_MCO2SEL == STM32_MCO2SEL_PLL) &&                            \
+        ((STM32_MCO2SEL == STM32_MCO2SEL_PLLRCLK) &&                        \
+         (STM32_PLLSRC == STM32_PLLSRC_HSI16)) ||                           \
+        ((STM32_RCC_HAS_MCOSEL_PLLP == TRUE) &&                             \
+         (STM32_MCO2SEL == STM32_MCO2SEL_PLLPCLK) &&                        \
+         (STM32_PLLSRC == STM32_PLLSRC_HSI16)) ||                           \
+        ((STM32_RCC_HAS_MCOSEL_PLLQ == TRUE) &&                             \
+         (STM32_MCO2SEL == STM32_MCO2SEL_PLLQCLK) &&                        \
          (STM32_PLLSRC == STM32_PLLSRC_HSI16))
       #error "HSI16 not enabled, required by STM32_MCO2SEL"
     #endif
@@ -1178,11 +1190,21 @@
     #error "HSI48 not enabled, required by STM32_MCOSEL"
   #endif
 
+  #if STM32_RCC_HAS_MCO2 == TRUE
+    #if STM32_MCO2SEL == STM32_MCO2SEL_HSI48
+      #error "HSI48 not enabled, required by STM32_MCO2SEL"
+    #endif
+  #endif
+
   #if (STM32_USBSEL == STM32_USBSEL_HSI48) && (HAL_USE_USB == TRUE)
     #error "HSI48 not enabled, required by STM32_USBSEL"
   #endif
 
 #endif /* !STM32_HSI48_ENABLED */
+#elif STM32_MCOSEL == STM32_MCOSEL_HSI48
+    #error "HSI48 not available for STM32_MCOSEL"
+#elif (STM32_RCC_HAS_MCO2 == TRUE) && (STM32_MCO2SEL == STM32_MCO2SEL_HSI48)
+    #error "HSI48 not available for STM32_MCO2SEL"
 #elif (STM32_USBSEL == STM32_USBSEL_HSI48) && (HAL_USE_USB == TRUE)
     #error "HSI48 not available for STM32_USBSEL"
 #endif /* STM32_RCC_HAS_HSI48 */
@@ -1203,13 +1225,25 @@
 
   #if (STM32_MCOSEL == STM32_MCOSEL_HSE) ||                                 \
       ((STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) &&                            \
+       (STM32_PLLSRC == STM32_PLLSRC_HSE)) ||                               \
+      ((STM32_RCC_HAS_MCOSEL_PLLP == TRUE) &&                               \
+       (STM32_MCOSEL == STM32_MCOSEL_PLLPCLK) &&                            \
+       (STM32_PLLSRC == STM32_PLLSRC_HSE)) ||                               \
+      ((STM32_RCC_HAS_MCOSEL_PLLQ == TRUE) &&                               \
+       (STM32_MCOSEL == STM32_MCOSEL_PLLQCLK) &&                            \
        (STM32_PLLSRC == STM32_PLLSRC_HSE))
     #error "HSE not enabled, required by STM32_MCOSEL"
   #endif
 
   #if STM32_RCC_HAS_MCO2 == TRUE
-    #if (STM32_MCO2SEL == STM32_MCO2SEL_HSE) ||                               \
-        ((STM32_MCO2SEL == STM32_MCO2SEL_PLLRCLK) &&                          \
+    #if (STM32_MCO2SEL == STM32_MCO2SEL_HSE) ||                             \
+        ((STM32_MCO2SEL == STM32_MCO2SEL_PLLRCLK) &&                        \
+         (STM32_PLLSRC == STM32_PLLSRC_HSE)) ||                             \
+        ((STM32_RCC_HAS_MCOSEL_PLLP == TRUE) &&                             \
+         (STM32_MCO2SEL == STM32_MCO2SEL_PLLPCLK) &&                        \
+         (STM32_PLLSRC == STM32_PLLSRC_HSE)) ||                             \
+        ((STM32_RCC_HAS_MCOSEL_PLLQ == TRUE) &&                             \
+         (STM32_MCO2SEL == STM32_MCO2SEL_PLLQCLK) &&                        \
          (STM32_PLLSRC == STM32_PLLSRC_HSE))
       #error "HSE not enabled, required by STM32_MCO2SEL"
     #endif
@@ -1339,6 +1373,12 @@
   #if (STM32_SW == STM32_SW_PLLRCLK) ||                                     \
       (STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) ||                             \
       (STM32_MCO2SEL == STM32_MCO2SEL_PLLRCLK) ||                           \
+      ((STM32_RCC_HAS_MCOSEL_PLLP == TRUE) &&                               \
+       ((STM32_MCOSEL == STM32_MCOSEL_PLLPCLK) ||                           \
+        (STM32_MCO2SEL == STM32_MCO2SEL_PLLPCLK))) ||                       \
+      ((STM32_RCC_HAS_MCOSEL_PLLQ == TRUE) &&                               \
+       ((STM32_MCOSEL == STM32_MCOSEL_PLLQCLK) ||                           \
+        (STM32_MCO2SEL == STM32_MCO2SEL_PLLQCLK))) ||                       \
       (STM32_TIM1SEL == STM32_TIM1SEL_PLLQCLK) ||                           \
       (STM32_TIM15SEL == STM32_TIM15SEL_PLLQCLK) ||                         \
       (STM32_RNGSEL == STM32_RNGSEL_PLLQCLK) ||                             \
@@ -1372,6 +1412,10 @@
 #else /* STM32_RCC_HAS_MCO2 != TRUE */
   #if (STM32_SW == STM32_SW_PLLRCLK) ||                                     \
       (STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) ||                             \
+      ((STM32_RCC_HAS_MCOSEL_PLLP == TRUE) &&                               \
+       (STM32_MCOSEL == STM32_MCOSEL_PLLPCLK)) ||                           \
+      ((STM32_RCC_HAS_MCOSEL_PLLQ == TRUE) &&                               \
+       (STM32_MCOSEL == STM32_MCOSEL_PLLQCLK)) ||                           \
       (STM32_TIM1SEL == STM32_TIM1SEL_PLLQCLK) ||                           \
       (STM32_TIM15SEL == STM32_TIM15SEL_PLLQCLK) ||                         \
       (STM32_RNGSEL == STM32_RNGSEL_PLLQCLK) ||                             \
@@ -1411,6 +1455,9 @@
     (STM32_RNGSEL == STM32_RNGSEL_PLLQCLK) ||                               \
     (STM32_FDCANSEL == STM32_FDCANSEL_PLLQCLK) ||                           \
     (STM32_USBSEL == STM32_USBSEL_PLLQCLK) ||                               \
+    ((STM32_RCC_HAS_MCOSEL_PLLQ == TRUE) &&                                 \
+     ((STM32_MCOSEL == STM32_MCOSEL_PLLQCLK) ||                             \
+      (STM32_MCO2SEL == STM32_MCO2SEL_PLLQCLK))) ||                         \
     defined(__DOXYGEN__)
 #define STM32_PLLQEN                (1 << 24)
 #else
@@ -1423,6 +1470,9 @@
 #if (STM32_ADCSEL == STM32_ADCSEL_PLLPCLK) ||                               \
     (STM32_I2S1SEL == STM32_I2S1SEL_PLLPCLK) ||                             \
     (STM32_I2S2SEL == STM32_I2S2SEL_PLLPCLK) ||                             \
+    ((STM32_RCC_HAS_MCOSEL_PLLP == TRUE) &&                                 \
+     ((STM32_MCOSEL == STM32_MCOSEL_PLLPCLK) ||                             \
+      (STM32_MCO2SEL == STM32_MCO2SEL_PLLPCLK))) ||                         \
     defined(__DOXYGEN__)
 #define STM32_PLLPEN                (1 << 16)
 #else
@@ -1472,8 +1522,7 @@
 /**
  * @brief   MCO divider clock source.
  */
-#if defined(STM32G0B1xx) || defined(STM32G0B0xx) || defined(STM32G0C1xx) || \
-    defined(__DOXYGEN__)
+#if (STM32_RCC_HAS_MCOSEL_EXT == TRUE) || defined(__DOXYGEN__)
   #if (STM32_MCOSEL == STM32_MCOSEL_NOCLOCK) || defined(__DOXYGEN__)
     #define STM32_MCODIVCLK         0
 
@@ -1482,6 +1531,9 @@
 
   #elif STM32_MCOSEL == STM32_MCOSEL_HSI16
     #define STM32_MCODIVCLK         STM32_HSI16CLK
+
+  #elif STM32_MCOSEL == STM32_MCOSEL_HSI48
+    #define STM32_MCODIVCLK         STM32_HSI48CLK
 
   #elif STM32_MCOSEL == STM32_MCOSEL_HSE
     #define STM32_MCODIVCLK         STM32_HSECLK
@@ -1520,6 +1572,9 @@
 
   #elif STM32_MCOSEL == STM32_MCOSEL_HSI16
     #define STM32_MCODIVCLK         STM32_HSI16CLK
+
+  #elif STM32_MCOSEL == STM32_MCOSEL_HSI48
+    #define STM32_MCODIVCLK         STM32_HSI48CLK
 
   #elif STM32_MCOSEL == STM32_MCOSEL_HSE
     #define STM32_MCODIVCLK         STM32_HSECLK
@@ -1590,6 +1645,9 @@
 
   #elif STM32_MCO2SEL == STM32_MCO2SEL_HSI16
     #define STM32_MCO2DIVCLK         STM32_HSI16CLK
+
+  #elif STM32_MCO2SEL == STM32_MCO2SEL_HSI48
+    #define STM32_MCO2DIVCLK         STM32_HSI48CLK
 
   #elif STM32_MCO2SEL == STM32_MCO2SEL_HSE
     #define STM32_MCO2DIVCLK         STM32_HSECLK

@@ -202,6 +202,12 @@
 #define STM32_RCC_PLL_HAS_Q                 FALSE
 #define STM32_RCC_HAS_CCIPR2                FALSE
 #define STM32_RCC_HAS_MCO2                  FALSE
+#define STM32_RCC_HAS_MCOSEL_EXT            FALSE
+#define STM32_RCC_HAS_MCOPRE_EXT            FALSE
+#define STM32_RCC_HAS_MCOSEL_PLLP           FALSE
+#define STM32_RCC_HAS_MCOSEL_PLLQ           FALSE
+#define STM32_RCC_HAS_MCOSEL_RTCCLK         FALSE
+#define STM32_RCC_HAS_MCOSEL_RTCWKP         FALSE
 
 /* SDMMC attributes.*/
 #define STM32_HAS_SDMMC1                    FALSE
@@ -405,6 +411,12 @@
 #define STM32_RCC_PLL_HAS_Q                 TRUE
 #define STM32_RCC_HAS_CCIPR2                FALSE
 #define STM32_RCC_HAS_MCO2                  FALSE
+#define STM32_RCC_HAS_MCOSEL_EXT            FALSE
+#define STM32_RCC_HAS_MCOPRE_EXT            FALSE
+#define STM32_RCC_HAS_MCOSEL_PLLP           FALSE
+#define STM32_RCC_HAS_MCOSEL_PLLQ           FALSE
+#define STM32_RCC_HAS_MCOSEL_RTCCLK         FALSE
+#define STM32_RCC_HAS_MCOSEL_RTCWKP         FALSE
 
 /* SDMMC attributes.*/
 #define STM32_HAS_SDMMC1                    FALSE
@@ -602,6 +614,12 @@
 #define STM32_RCC_PLL_HAS_Q                 TRUE
 #define STM32_RCC_HAS_CCIPR2                FALSE
 #define STM32_RCC_HAS_MCO2                  FALSE
+#define STM32_RCC_HAS_MCOSEL_EXT            FALSE
+#define STM32_RCC_HAS_MCOPRE_EXT            FALSE
+#define STM32_RCC_HAS_MCOSEL_PLLP           FALSE
+#define STM32_RCC_HAS_MCOSEL_PLLQ           FALSE
+#define STM32_RCC_HAS_MCOSEL_RTCCLK         FALSE
+#define STM32_RCC_HAS_MCOSEL_RTCWKP         FALSE
 
 /* SDMMC attributes.*/
 #define STM32_HAS_SDMMC1                    FALSE
@@ -820,6 +838,12 @@
 #define STM32_RCC_PLL_HAS_Q                 TRUE
 #define STM32_RCC_HAS_CCIPR2                TRUE
 #define STM32_RCC_HAS_MCO2                  TRUE
+#define STM32_RCC_HAS_MCOSEL_EXT            TRUE
+#define STM32_RCC_HAS_MCOPRE_EXT            TRUE
+#define STM32_RCC_HAS_MCOSEL_PLLP           TRUE
+#define STM32_RCC_HAS_MCOSEL_PLLQ           TRUE
+#define STM32_RCC_HAS_MCOSEL_RTCCLK         TRUE
+#define STM32_RCC_HAS_MCOSEL_RTCWKP         TRUE
 
 /* SDMMC attributes.*/
 #define STM32_HAS_SDMMC1                    FALSE
@@ -1045,6 +1069,12 @@
 #define STM32_RCC_PLL_HAS_Q                 TRUE
 #define STM32_RCC_HAS_CCIPR2                TRUE
 #define STM32_RCC_HAS_MCO2                  TRUE
+#define STM32_RCC_HAS_MCOSEL_EXT            TRUE
+#define STM32_RCC_HAS_MCOPRE_EXT            TRUE
+#define STM32_RCC_HAS_MCOSEL_PLLP           TRUE
+#define STM32_RCC_HAS_MCOSEL_PLLQ           TRUE
+#define STM32_RCC_HAS_MCOSEL_RTCCLK         TRUE
+#define STM32_RCC_HAS_MCOSEL_RTCWKP         TRUE
 
 /* SDMMC attributes.*/
 #define STM32_HAS_SDMMC1                    FALSE

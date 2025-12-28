@@ -481,6 +481,11 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   case STM32_MCOSEL_HSI16:
     mcoclk = hsi16clk;
     break;
+#if STM32_RCC_HAS_HSI48
+  case STM32_MCOSEL_HSI48:
+    mcoclk = STM32_HSI48CLK;
+    break;
+#endif
   case STM32_MCOSEL_HSE:
     mcoclk = hseclk;
     break;
@@ -493,7 +498,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   case STM32_MCOSEL_LSE:
     mcoclk = STM32_LSECLK;
     break;
-#if defined(STM32G0B1xx) || defined(STM32G0B0xx) || defined(STM32G0C1xx)
+#if STM32_RCC_HAS_MCOSEL_EXT == TRUE
   case STM32_MCOSEL_PLLPCLK:
     mcoclk = pllpclk;
     break;
@@ -508,7 +513,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     mcoclk = 0U;
   }
   mcodiv = 1U << ((ccp->rcc_cfgr & RCC_CFGR_MCOPRE_Msk) >> RCC_CFGR_MCOPRE_Pos);
-#if defined(STM32G0B1xx) || defined(STM32G0B0xx) || defined(STM32G0C1xx)
+#if STM32_RCC_HAS_MCOPRE_EXT == TRUE
   if (mcodiv > 1024U) {
 #else
   if (mcodiv > 128U) {
@@ -529,6 +534,11 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   case STM32_MCO2SEL_HSI16:
     mco2clk = hsi16clk;
     break;
+#if STM32_RCC_HAS_HSI48
+  case STM32_MCO2SEL_HSI48:
+    mco2clk = STM32_HSI48CLK;
+    break;
+#endif
   case STM32_MCO2SEL_HSE:
     mco2clk = hseclk;
     break;
@@ -554,7 +564,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     mco2clk = 0U;
   }
   mcodiv = 1U << ((ccp->rcc_cfgr & RCC_CFGR_MCO2PRE_Msk) >> RCC_CFGR_MCO2PRE_Pos);
-#if defined(STM32G0B1xx) || defined(STM32G0B0xx) || defined(STM32G0C1xx)
+#if STM32_RCC_HAS_MCOPRE_EXT == TRUE
   if (mcodiv > 1024U) {
 #else
   if (mcodiv > 128U) {
