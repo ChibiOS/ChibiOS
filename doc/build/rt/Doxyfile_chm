@@ -308,13 +308,15 @@ ALIASES                = "iclass=@par Function Class:^^This is an \
                           function is for internal use only." \
                          "isr=@par Function Class:^^Interrupt handler, \
                           this function should not be directly invoked." \
-                         "init=@par Function Class:^^Object or module \
-                          nitializer function." \
+                         "init=@par Function Class:^^Module initializer \
+                          function." \
                          "special=@par Function Class:^^Special function, \
                           this function has special requirements see the \
                           notes." \
                          "objinit=@par Function Class:^^Object instance \
-                         constructor."
+                          constructor." \
+                         "dispose=@par Function Class:^^Object instance \
+                          finalizer."
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources
 # only. Doxygen will then generate output that is more tailored for C. For
