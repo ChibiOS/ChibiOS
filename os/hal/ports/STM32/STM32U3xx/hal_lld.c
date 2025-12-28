@@ -596,7 +596,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* PPRE3 frequency.*/
-  n = pprediv[(ccp->rcc_cfgr2 & STM32_PPRE3_MASK) >> STM32_PPRE3_POS];
+  n = pprediv[(ccp->rcc_cfgr3 & STM32_PPRE3_MASK) >> STM32_PPRE3_POS];
   pclk3 = hclk / n;
 
   /* MCO1 clock.*/
