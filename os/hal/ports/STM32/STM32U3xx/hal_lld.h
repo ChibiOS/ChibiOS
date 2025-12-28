@@ -1113,6 +1113,9 @@
 #if (STM32_SW           == RCC_CFGR1_SW_MSIS)       ||                      \
     (STM32_MCO1SEL      == RCC_CFGR1_MCO1SEL_MSIS)      ||                  \
     (STM32_MCO2SEL      == RCC_CFGR1_MCO2SEL_MSIS)      ||                  \
+    (STM32_TIMICSEL     == RCC_CCIPR1_TIMICSEL_HSI256_MSIS1024_MSIS4) ||    \
+    (STM32_TIMICSEL     == RCC_CCIPR1_TIMICSEL_HSI256_MSIS1024_MSIK4) ||    \
+    (STM32_TIMICSEL     == RCC_CCIPR1_TIMICSEL_HSI256_MSIK1024_MSIS4) ||    \
     defined(__DOXYGEN__)
   /**
    * @brief   MSIS activation flag.
@@ -1145,6 +1148,9 @@
     (STM32_OCTOSPISEL   == RCC_CCIPR2_OCTOSPISEL_MSIK)  ||                  \
     (STM32_RNGSEL       == RCC_CCIPR2_RNGSEL_MSIK)      ||                  \
     (STM32_SAI1SEL      == RCC_CCIPR2_SAI1SEL_MSIK)     ||                  \
+    (STM32_TIMICSEL     == RCC_CCIPR1_TIMICSEL_HSI256_MSIS1024_MSIK4) ||    \
+    (STM32_TIMICSEL     == RCC_CCIPR1_TIMICSEL_HSI256_MSIK1024_MSIS4) ||    \
+    (STM32_TIMICSEL     == RCC_CCIPR1_TIMICSEL_HSI256_MSIK1024_MSIK4) ||    \
     defined(__DOXYGEN__)
   /**
    * @brief   MSIK activation flag.
