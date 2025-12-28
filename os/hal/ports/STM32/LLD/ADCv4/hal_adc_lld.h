@@ -125,15 +125,9 @@
 #define ADC_CFGR_RES_MASK               (7U << 2U)
 #define ADC_CFGR_RES_16BITS             (0U << 2U)
 #define ADC_CFGR_RES_10BITS             (3U << 2U)
-#if !defined(STM32_ENFORCE_H7_REV_XY)
 #define ADC_CFGR_RES_14BITS             (5U << 2U)
 #define ADC_CFGR_RES_12BITS             (6U << 2U)
 #define ADC_CFGR_RES_8BITS              (7U << 2U)
-#else
-#define ADC_CFGR_RES_14BITS             (1U << 2U)
-#define ADC_CFGR_RES_12BITS             (2U << 2U)
-#define ADC_CFGR_RES_8BITS              (4U << 2U)
-#endif
 
 #define ADC_CFGR_EXTSEL_MASK            (15U << 5U)
 #define ADC_CFGR_EXTSEL_SRC(n)          ((n) << 5U)
@@ -406,67 +400,34 @@
 #error "STM32_ADC_SAMPLES_SIZE != 32 not compatible with STM32_ADC_DUAL_MODE"
 #endif
 
-#if !defined(STM32_ENFORCE_H7_REV_XY)
 /* ADC clock source checks.*/
-#if (STM32_D1HPRE == STM32_D1HPRE_DIV1)
 #define STM32_ADC_SCLK                  STM32_HCLK
-#else
-#define STM32_ADC_SCLK                  (STM32_HCLK / 2)
-#endif
 
 #if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
 /* CHTODO: also check ADC_CCR_PRESC.*/
-#define STM32_ADC12_CLOCK               (STM32_ADCCLK / 2)
-#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC12_CLOCK               (STM32_ADC_SCLK / 1 / 2)
-#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
-#define STM32_ADC12_CLOCK               (STM32_ADC_SCLK / 2 / 2)
-#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
-#define STM32_ADC12_CLOCK               (STM32_ADC_SCLK / 4 / 2)
-#else
-#error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
-#endif
-
-#if STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
-/* CHTODO: also check ADC_CCR_PRESC.*/
-#define STM32_ADC3_CLOCK               (STM32_ADCCLK / 2)
-#elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC3_CLOCK               (STM32_ADC_SCLK / 1 / 2)
-#elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
-#define STM32_ADC3_CLOCK               (STM32_ADC_SCLK / 2 / 2)
-#elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
-#define STM32_ADC3_CLOCK               (STM32_ADC_SCLK / 4 / 2)
-#else
-#error "invalid clock mode selected for STM32_ADC_ADC3_CLOCK_MODE"
-#endif
-
-#else /* defined(STM32_ENFORCE_H7_REV_XY) */
-
-#if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
 #define STM32_ADC12_CLOCK               STM32_ADCCLK
 #elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC12_CLOCK               (STM32_HCLK / 1)
+#define STM32_ADC12_CLOCK               (STM32_ADC_SCLK / 1)
 #elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
-#define STM32_ADC12_CLOCK               (STM32_HCLK / 2)
+#define STM32_ADC12_CLOCK               (STM32_ADC_SCLK / 2)
 #elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
-#define STM32_ADC12_CLOCK               (STM32_HCLK / 4)
+#define STM32_ADC12_CLOCK               (STM32_ADC_SCLK / 4)
 #else
 #error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
 #endif
 
 #if STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
+/* CHTODO: also check ADC_CCR_PRESC.*/
 #define STM32_ADC3_CLOCK                STM32_ADCCLK
 #elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC3_CLOCK                (STM32_HCLK / 1)
+#define STM32_ADC3_CLOCK                (STM32_ADC_SCLK / 1)
 #elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
-#define STM32_ADC3_CLOCK                (STM32_HCLK / 2)
+#define STM32_ADC3_CLOCK                (STM32_ADC_SCLK / 2)
 #elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
-#define STM32_ADC3_CLOCK                (STM32_HCLK / 4)
+#define STM32_ADC3_CLOCK                (STM32_ADC_SCLK / 4)
 #else
 #error "invalid clock mode selected for STM32_ADC_ADC3_CLOCK_MODE"
 #endif
-
-#endif /* defined(STM32_ENFORCE_H7_REV_XY) */
 
 #if STM32_ADC12_CLOCK > STM32_ADCCLK_MAX
 #error "STM32_ADC12_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
@@ -476,7 +437,6 @@
 #error "STM32_ADC3_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
 
-#if !defined(STM32_ENFORCE_H7_REV_XY)
 /* ADC boost checks.*/
 #if   STM32_ADC12_CLOCK >  6250000
 #define STM32_ADC12_BOOST               (1U << 8U)
@@ -497,22 +457,6 @@
 #else
 #define STM32_ADC3_BOOST                (0U << 8U)
 #endif
-
-#else /* defined(STM32_ENFORCE_H7_REV_XY) */
-
-#if STM32_ADC12_CLOCK > 20000000
-#define STM32_ADC12_BOOST               (1U << 8U)
-#else
-#define STM32_ADC12_BOOST               (0U << 8U)
-#endif
-
-#if STM32_ADC3_CLOCK > 20000000
-#define STM32_ADC3_BOOST                (1U << 8U)
-#else
-#define STM32_ADC3_BOOST                (0U << 8U)
-#endif
-
-#endif /* defined(STM32_ENFORCE_H7_REV_XY) */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED

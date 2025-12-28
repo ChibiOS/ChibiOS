@@ -117,9 +117,7 @@ static inline void init_pwr(void) {
   PWR->D3CR  = STM32_VOS;
 #endif
 #if defined(HAL_LLD_TYPE1_H)
-#if !defined(STM32_ENFORCE_H7_REV_XY)
   SYSCFG->PWRCR = STM32_ODEN;
-#endif
 #endif
 #if defined(HAL_LLD_TYPE3_H)
   while ((PWR->SRDCR & PWR_SRDCR_VOSRDY) == 0)
@@ -233,13 +231,6 @@ void stm32_clock_init(void) {
   (void)rcc;
 #endif
 
-#if defined(STM32_ENFORCE_H7_REV_XY)
-  /* Fix for errata 2.2.15: Reading from AXI SRAM might lead to data
-     read corruption.
-     AXI->TARG7_FN_MOD.*/
-  *((volatile uint32_t *)(0x51000000 + 0x1108 + 0x7000)) = 0x00000001U;
-#endif
-
   /* SYSCFG clock enabled here because it is a multi-functional unit shared
      among multiple drivers.*/
   rccEnableAPB4(RCC_APB4ENR_SYSCFGEN, true);
@@ -266,9 +257,7 @@ void stm32_clock_init(void) {
   /* Registers cleared to reset values.*/
   RCC->CR      = RCC_CR_HSION;             /* CR Reset value.              */
   RCC->HSICFGR = 0x40000000U;              /* HSICFGR Reset value.         */
-#if !defined(STM32_ENFORCE_H7_REV_XY)
   RCC->CSICFGR = 0x20000000U;              /* CSICFGR Reset value.         */
-#endif
   RCC->CSR     = 0x00000000U;              /* CSR reset value.             */
   RCC->PLLCFGR = 0x01FF0000U;              /* PLLCFGR reset value.         */
 
