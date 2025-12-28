@@ -515,7 +515,7 @@ thread_t *chThdCreate(const thread_descriptor_t *tdp) {
  *          returning from its main function.
  *
  * @param[out] wbase    working area base address
- * @param[in] size      working area size
+ * @param[in] wsize     working area size
  * @param[in] prio      priority level for the new thread
  * @param[in] func      thread function
  * @param[in] arg       an argument passed to the thread function. It can be

@@ -81,7 +81,7 @@ static inline bool is_counter_within(halcnt_t start, halcnt_t end) {
  * @brief   This function does not return, any recovery strategy, at this
  *          level, is meant to be destructive.
  *
- * @param[in] result    the error status, @p true if an error occurred
+ * @param[in] message   fault reason string
  *
  * @api
  */
