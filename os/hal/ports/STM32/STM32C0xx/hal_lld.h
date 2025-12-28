@@ -968,6 +968,9 @@
 #elif (STM32_SW == RCC_CFGR_SW_HSE)
   #define STM32_SYSCLK                      (STM32_HSECLK / STM32_SYSDIV_VALUE)
 
+#elif defined(RCC_CR_HSIUSB48ON) && (STM32_SW == RCC_CFGR_SW_HSIUSB48)
+  #define STM32_SYSCLK                      (STM32_HSIUSB48CLK / STM32_SYSDIV_VALUE)
+
 #elif (STM32_SW == RCC_CFGR_SW_LSI)
   #define STM32_SYSCLK                      (STM32_LSICLK / STM32_SYSDIV_VALUE)
 
@@ -1129,7 +1132,7 @@
   #define STM32_USART1CLK                   hal_lld_get_clock_point(CLK_SYSCLK)
 
 #elif STM32_USART1SEL == RCC_CCIPR_USART1SEL_HSIKER
-  #define STM32_USART1CLK                   hal_lld_get_clock_point(CLK_HSIKERCLK)
+  #define STM32_USART1CLK                   hal_lld_get_clock_point(CLK_HSIKER)
 
 #elif STM32_USART1SEL == RCC_CCIPR_USART1SEL_LSE
   #define STM32_USART1CLK                   STM32_LSECLK
@@ -1149,10 +1152,10 @@
 #if (STM32_FDCAN1SEL == RCC_CCIPR_FDCAN1SEL_PCLK) || defined(__DOXYGEN__)
   #define STM32_FDCAN1CLK                   hal_lld_get_clock_point(CLK_PCLK)
 
-#elif STM32_FDCAN1SEL == STM32_FDCAN1SELL_HSIKER
-  #define STM32_FDCAN1CLK                   hal_lld_get_clock_point(CLK_HSIKERCLK)
+#elif STM32_FDCAN1SEL == RCC_CCIPR_FDCAN1SEL_HSIKER
+  #define STM32_FDCAN1CLK                   hal_lld_get_clock_point(CLK_HSIKER)
 
-#elif STM32_FDCAN1SEL == STM32_FDCAN1SELL_HSE
+#elif STM32_FDCAN1SEL == RCC_CCIPR_FDCAN1SEL_HSE
   #define STM32_FDCAN1CLK                   hal_lld_get_clock_point(CLK_HSE)
 
 #else
@@ -1169,7 +1172,7 @@
   #define STM32_I2C1CLK                     hal_lld_get_clock_point(CLK_SYSCLK)
 
 #elif STM32_I2C1SEL == RCC_CCIPR_I2C1SEL_HSIKER
-  #define STM32_I2C1CLK                     hal_lld_get_clock_point(CLK_HSIKERCLK)
+  #define STM32_I2C1CLK                     hal_lld_get_clock_point(CLK_HSIKER)
 
 #else
   #error "invalid source selected for I2C1 clock"
@@ -1186,11 +1189,8 @@
 #if (STM32_I2S1SEL == RCC_CCIPR_I2S1SEL_SYSCLK) || defined(__DOXYGEN__)
   #define STM32_I2S1CLK                     hal_lld_get_clock_point(CLK_SYSCLK)
 
-#elif STM32_I2S1SEL == RCC_CCIPR_I2S1SEL_PLLPCLK
-  #define STM32_I2S1CLK                     hal_lld_get_clock_point(CLK_PLLPCLK)
-
 #elif STM32_I2S1SEL == RCC_CCIPR_I2S1SEL_HSIKER
-  #define STM32_I2S1CLK                     hal_lld_get_clock_point(CLK_HSIKERCLK)
+  #define STM32_I2S1CLK                     hal_lld_get_clock_point(CLK_HSIKER)
 
 #elif STM32_I2S1SEL == RCC_CCIPR_I2S1SEL_CKIN
   #define STM32_I2S1CLK                     0 /* Unknown, would require a board value */
@@ -1206,7 +1206,7 @@
   #define STM32_ADCCLK                      hal_lld_get_clock_point(CLK_SYSCLK)
 
 #elif STM32_ADCSEL == RCC_CCIPR_ADCSEL_HSIKER
-  #define STM32_ADCCLK                      hal_lld_get_clock_point(CLK_HSIKERCLK)
+  #define STM32_ADCCLK                      hal_lld_get_clock_point(CLK_HSIKER)
 
 #else
   #error "invalid source selected for ADC clock"
