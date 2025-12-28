@@ -71,7 +71,6 @@
 #include "stm32_exti15.inc"
 
 #include "stm32_fdcan1.inc"
-#include "stm32_fdcan2.inc"
 
 #include "stm32_i2c1.inc"
 #include "stm32_i2c2.inc"
@@ -130,7 +129,6 @@ void irqInit(void) {
   exti15_irq_init();
 
   fdcan1_irq_init();
-  fdcan2_irq_init();
 
   i2c1_irq_init();
   i2c2_irq_init();
@@ -186,7 +184,6 @@ void irqDeinit(void) {
   exti15_irq_deinit();
 
   fdcan1_irq_deinit();
-  fdcan2_irq_deinit();
 
   i2c1_irq_deinit();
   i2c2_irq_deinit();
