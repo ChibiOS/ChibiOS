@@ -213,8 +213,8 @@ static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
   [CLK_PCLK2]           = STM32_PCLK2,
   [CLK_PCLK2TIM]        = STM32_TIMP2CLK,
   [CLK_PCLK3]           = STM32_PCLK3,
-  [CLK_MCO1]            = STM32_MCO2CLK,
-  [CLK_MCO2]            = STM32_MCO1CLK
+  [CLK_MCO1]            = STM32_MCO1CLK,
+  [CLK_MCO2]            = STM32_MCO2CLK
 };
 
 /**
