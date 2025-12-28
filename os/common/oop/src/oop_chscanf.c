@@ -776,16 +776,17 @@ int chsnscanf(char *str, size_t size, const char *fmt, ...)
 int chvsnscanf(char *str, size_t size, const char *fmt, va_list ap)
 {
   memory_stream_c ms;
-  size_t          size_wo_nul;
+  size_t          eos;
 
-  if (size > 0)
-    size_wo_nul = size - 1;
-  else
-    size_wo_nul = 0;
+  eos = 0;
+  if (size > 0) {
+    while ((eos < size) && (str[eos] != '\0')) {
+      eos++;
+    }
+  }
 
-  /* Memory stream object to be used as a string writer, reserving one
-     byte for the final zero.*/
-  memstmObjectInit(&ms, (uint8_t*)str, size_wo_nul, 0U);
+  /* Memory stream object to be used as a string reader. */
+  memstmObjectInit(&ms, (uint8_t *)str, size, eos);
 
   /* Performing the scan operation using the common code and
      return number of receiving arguments successfully assigned.*/
