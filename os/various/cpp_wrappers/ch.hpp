@@ -2827,6 +2827,16 @@ namespace chibios_rt {
     MemoryPool(MemoryPool &&) = default;
     MemoryPool &operator=(MemoryPool &&) = default;
 
+  protected:
+    /**
+     * @brief   Returns the low level pointer to the memory pool.
+     */
+    memory_pool_t *getInner(void) {
+
+      return &pool;
+    }
+
+  public:
     /**
      * @brief   Loads a memory pool with an array of static objects.
      * @pre     The memory pool must be already been initialized.
@@ -2970,7 +2980,7 @@ namespace chibios_rt {
     ThreadReference start(tprio_t prio) override {
       void _thd_start(void *arg);
 
-      return ThreadReference(chThdCreateFromMemoryPool(&threads_pool.pool,
+      return ThreadReference(chThdCreateFromMemoryPool(threads_pool.getInner(),
                                                        C,
                                                        prio,
                                                        _thd_start,
