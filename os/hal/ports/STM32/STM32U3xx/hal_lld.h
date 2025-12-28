@@ -1383,7 +1383,9 @@
  * @brief   PLL input divider selection based on HSE frequency.
  */
 #if (STM32_MSIRC0_MODE == RCC_MSIRC0_PLL_HSE) ||                          \
-    (STM32_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || defined(__DOXYGEN__)
+    (STM32_MSIRC0_MODE == RCC_MSIRC0_PLL_HSE_FAST) ||                     \
+    (STM32_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) ||                          \
+    (STM32_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST) || defined(__DOXYGEN__)
   #if STM32_HSECLK == 32000000 || defined(__DOXYGEN__)
     #define STM32_MSIHSINDIV                RCC_ICSCR1_MSIHSINDIV_HSE32
   #elif STM32_HSECLK == 16000000
