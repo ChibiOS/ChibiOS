@@ -1293,7 +1293,7 @@
   #define STM32_RTCCLK                      STM32_LSICLK
 
 #elif STM32_RTCSEL == RCC_BDCR_RTCSEL_HSEDIV
-  #define STM32_RTCCLK                      (hal_lld_get_clock_point(CLK_HSECLK) / 32)
+  #define STM32_RTCCLK                      (hal_lld_get_clock_point(CLK_HSE) / 32)
 
 #else
   #error "invalid STM32_RTCSEL value specified"
@@ -1493,10 +1493,10 @@
   #define STM32_CLK48CLK                    hal_lld_get_clock_point(CLK_MSI)
 
 #elif STM32_CLK48SEL == RCC_CCIPR_CLK48SEL_PLLQCLK
-  #define STM32_CLK48CLK                    hal_lld_get_clock_point(CLK_PLLQCLK)
+  #define STM32_CLK48CLK                    hal_lld_get_clock_point(CLK_PLLQ)
 
 #elif STM32_CLK48SEL == RCC_CCIPR_CLK48SEL_HSI48
-  #define STM32_CLK48CLK                    hal_lld_get_clock_point(CLK_HSI48CLK)
+  #define STM32_CLK48CLK                    hal_lld_get_clock_point(CLK_HSI48)
 
 #else
 #error "invalid source selected for CLK48 clock"
@@ -1509,7 +1509,7 @@
   #define STM32_ADCCLK                      hal_lld_get_clock_point(CLK_SYSCLK)
 
 #elif STM32_ADCSEL == RCC_CCIPR_ADCSEL_PLLPCLK
-  #define STM32_ADCCLK                      hal_lld_get_clock_point(CLK_PLLPCLK)
+  #define STM32_ADCCLK                      hal_lld_get_clock_point(CLK_PLLP)
 
 #elif STM32_ADCSEL == RCC_CCIPR_ADCSEL_HSI16
   #define STM32_ADCCLK                      hal_lld_get_clock_point(CLK_HSI16)
@@ -1535,7 +1535,7 @@
   #define STM32_TIM1CLK                     hal_lld_get_clock_point(CLK_PCLKTIM)
 
 #elif STM32_TIM1SEL == RCC_CCIPR_TIM1SEL_PLLQCLK
-  #define STM32_TIM1CLK                     hal_lld_get_clock_point(CLK_PLLQCLK)
+  #define STM32_TIM1CLK                     hal_lld_get_clock_point(CLK_PLLQ)
 
 #else
   #error "invalid source selected for TIM1 clock"
@@ -1548,7 +1548,7 @@
   #define STM32_TIM15CLK                    hal_lld_get_clock_point(CLK_PCLKTIM)
 
 #elif STM32_TIM15SEL == RCC_CCIPR_TIM15SEL_PLLQCLK
-  #define STM32_TIM15CLK                    hal_lld_get_clock_point(CLK_PLLQCLK)
+  #define STM32_TIM15CLK                    hal_lld_get_clock_point(CLK_PLLQ)
 
 #else
 #error "invalid source selected for TIM15 clock"
@@ -1567,7 +1567,7 @@
 /**
  * @brief   USB clock point.
  */
-#define STM32_USBCLK                        hal_lld_get_clock_point(CLK_HSI48CLK)
+#define STM32_USBCLK                        hal_lld_get_clock_point(CLK_HSI48)
 
 /**
  * @brief   Flash settings.

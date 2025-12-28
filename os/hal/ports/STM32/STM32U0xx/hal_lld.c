@@ -734,11 +734,17 @@ void hal_lld_init(void) {
  * @special
  */
 void stm32_clock_init(void) {
+  int32_t div;
 
   /* Enabling TIM7 for timeout handling.*/
   rccResetTIM7();
   rccEnableTIM7(false);
-  halRegWrite32X(&TIM7->PSC, (STM32_TIMPCLK / 1000000U) - 1U, true);
+  /* Clamp divider to avoid underflow on low TIMPCLK values. */
+  div = ((int32_t)STM32_TIMPCLK / 1000000) - 1;
+  if (div < 0) {
+    div = 0;
+  }
+  halRegWrite32X(&TIM7->PSC, (uint32_t)div, true);
 //  halRegWrite32X(&TIM7->ARR, 0xFFFFU, true);
   halRegWrite32X(&TIM7->EGR, TIM_EGR_UG, false);
   halRegWrite32X(&TIM7->CR1, TIM_CR1_CEN, true);

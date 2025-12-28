@@ -685,7 +685,7 @@
 #define STM32_LSECLK_MIN                    32768
 #define STM32_LSECLK_BYP_MIN                32768
 #define STM32_PCLK_MAX                      48000000
-#define STM32_ADCCLK_MAX                    350000000
+#define STM32_ADCCLK_MAX                    35000000
 
 #define STM32_0WS_THRESHOLD                 24000000
 #define STM32_1WS_THRESHOLD                 48000000
