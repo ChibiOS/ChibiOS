@@ -137,6 +137,19 @@
 #define STM32_EXTI15_NUMBER                 26
 
 /*
+ * FDCAN units.
+ */
+#define STM32_FDCAN1_IT0_HANDLER            VectorDC
+#define STM32_FDCAN1_IT1_HANDLER            VectorE0
+#define STM32_FDCAN2_IT0_HANDLER            Vector1F4
+#define STM32_FDCAN2_IT1_HANDLER            Vector1F8
+
+#define STM32_FDCAN1_IT0_NUMBER             39
+#define STM32_FDCAN1_IT1_NUMBER             40
+#define STM32_FDCAN2_IT0_NUMBER             109
+#define STM32_FDCAN2_IT1_NUMBER             110
+
+/*
  * I2C units.
  */
 #define STM32_I2C1_EV_HANDLER               Vector11C
@@ -192,7 +205,7 @@
 #define STM32_TIM7_HANDLER                  Vector108
 
 #define STM32_TIM1_BRK_TERR_IERR_NUMBER     41
-#define STM32_TIM1_UP_TIM16_NUMBER          42
+#define STM32_TIM1_UP_NUMBER                42
 #define STM32_TIM1_TRGCO_DIR_IDX_NUMBER     43
 #define STM32_TIM1_CC_NUMBER                44
 #define STM32_TIM2_NUMBER                   45
