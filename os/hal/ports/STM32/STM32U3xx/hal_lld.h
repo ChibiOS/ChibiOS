@@ -130,7 +130,7 @@
 #define RCC_ICSCR1_MSIS_IRC0_DIV4           2       /* 24MHz */
 #define RCC_ICSCR1_MSIS_IRC0_DIV8           3       /* 12MHz */
 #define RCC_ICSCR1_MSIS_IRC1_DIV1           4       /* ~24MHz */
-#define RCC_ICSCR1_MSIS_IRC1_DIV3           5       /* ~12MHz */
+#define RCC_ICSCR1_MSIS_IRC1_DIV2           5       /* ~12MHz */
 #define RCC_ICSCR1_MSIS_IRC1_DIV4           6       /* ~6MHz */
 #define RCC_ICSCR1_MSIS_IRC1_DIV8           7       /* ~4MHz */
 /** @} */
@@ -144,7 +144,7 @@
 #define RCC_ICSCR1_MSIK_IRC0_DIV4           2       /* 24MHz */
 #define RCC_ICSCR1_MSIK_IRC0_DIV8           3       /* 12MHz */
 #define RCC_ICSCR1_MSIK_IRC1_DIV1           4       /* ~24MHz */
-#define RCC_ICSCR1_MSIK_IRC1_DIV3           5       /* ~12MHz */
+#define RCC_ICSCR1_MSIK_IRC1_DIV2           5       /* ~12MHz */
 #define RCC_ICSCR1_MSIK_IRC1_DIV4           6       /* ~6MHz */
 #define RCC_ICSCR1_MSIK_IRC1_DIV8           7       /* ~4MHz */
 /** @} */
