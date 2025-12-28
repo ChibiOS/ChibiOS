@@ -1545,8 +1545,8 @@
 #if (STM32_I2S23SEL == STM32_I2S23SEL_SYSCLK) || defined(__DOXYGEN__)
   #define STM32_I2S23CLK            hal_lld_get_clock_point(CLK_SYSCLK)
 
-#elif STM32_I2S23SEL == STM32_I2S23SEL_PLLPCLK
-  #define STM32_I2S23CLK            hal_lld_get_clock_point(CLK_PLLPCLK)
+#elif STM32_I2S23SEL == STM32_I2S23SEL_PLLQCLK
+  #define STM32_I2S23CLK            hal_lld_get_clock_point(CLK_PLLQCLK)
 
 #elif STM32_I2S23SEL == STM32_I2S23SEL_HSI16
   #define STM32_I2S23CLK            STM32_HSI16CLK
@@ -1555,7 +1555,7 @@
   #define STM32_I2S23CLK            0 /* Unknown, would require a board value */
 
 #else
-  #error "invalid source selected for SAI1 clock"
+  #error "invalid source selected for I2S23 clock"
 #endif
 
 /**
