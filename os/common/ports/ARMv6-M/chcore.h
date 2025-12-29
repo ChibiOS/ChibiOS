@@ -199,6 +199,17 @@
   #endif
 #endif
 
+/* Inclusion of SMP support, if enabled.*/
+#if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
+#include "chcoresmp.h"
+
+#if !defined(PORT_SMP_CORES_NUM)
+#error "PORT_SMP_CORES_NUM not defined in chcoresmp.h"
+#endif
+
+#else /* CH_CFG_SMP_MODE != TRUE */
+#endif /* CH_CFG_SMP_MODE != TRUE */
+
 /**
  * @name    Architecture
  * @{
@@ -236,10 +247,18 @@
 /**
  * @brief   Port-specific information string.
  */
-#if (CORTEX_ALTERNATE_SWITCH == FALSE) || defined(__DOXYGEN__)
-  #define PORT_INFO                     "Preemption through NMI"
+#if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
+  #if (CORTEX_ALTERNATE_SWITCH == FALSE) || defined(__DOXYGEN__)
+    #define PORT_INFO                   "Preemption through NMI (SMP)"
+  #else
+    #define PORT_INFO                   "Preemption through PendSV (SMP)"
+  #endif
 #else
-  #define PORT_INFO                     "Preemption through PendSV"
+  #if (CORTEX_ALTERNATE_SWITCH == FALSE) || defined(__DOXYGEN__)
+    #define PORT_INFO                   "Preemption through NMI"
+  #else
+    #define PORT_INFO                   "Preemption through PendSV"
+  #endif
 #endif
 /** @} */
 
@@ -494,6 +513,9 @@ static inline bool port_is_isr_context(void) {
 static inline void port_lock(void) {
 
   __disable_irq();
+#if CH_CFG_SMP_MODE == TRUE
+  port_spinlock_take();
+#endif
 }
 
 /**
@@ -502,6 +524,9 @@ static inline void port_lock(void) {
  */
 static inline void port_unlock(void) {
 
+#if CH_CFG_SMP_MODE == TRUE
+  port_spinlock_release();
+#endif
   __enable_irq();
 }
 

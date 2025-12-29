@@ -105,6 +105,9 @@ __port_thread_start:
 #if CH_DBG_STATISTICS
                 bl      __stats_stop_measure_crit_thd
 #endif
+#if CH_CFG_SMP_MODE == TRUE
+                bl      __port_spinlock_release
+#endif
                 cpsie   i
                 mov     r0, r5
                 blx     r4
