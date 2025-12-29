@@ -692,7 +692,7 @@ __STATIC_INLINE void port_wait_for_interrupt(void) {
  */
 __STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
 
-  return TIMER->TIMERAWL;
+  return TIMER0->TIMERAWL;
 }
 
 /**

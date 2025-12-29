@@ -33,10 +33,10 @@
  * @name    ISR names and numbers
  * @{
  */
-#define RP_TIMER_IRQ0_HANDLER               Vector40
-#define RP_TIMER_IRQ1_HANDLER               Vector44
-#define RP_TIMER_IRQ2_HANDLER               Vector48
-#define RP_TIMER_IRQ3_HANDLER               Vector4C
+#define RP_TIMER0_IRQ0_HANDLER              Vector40
+#define RP_TIMER0_IRQ1_HANDLER              Vector44
+#define RP_TIMER0_IRQ2_HANDLER              Vector48
+#define RP_TIMER0_IRQ3_HANDLER              Vector4C
 #define RP_PWM_IRQ_WRAP_HANDLER             Vector50
 #define RP_USBCTRL_IRQ_HANDLER              Vector54
 #define RP_XIP_IRQ_HANDLER                  Vector58
@@ -60,10 +60,10 @@
 #define RP_I2C1_IRQ_HANDLER                 VectorA0
 #define RP_RTC_IRQ_HANDLER                  VectorA4
 
-#define RP_TIMER_IRQ0_NUMBER                0
-#define RP_TIMER_IRQ1_NUMBER                1
-#define RP_TIMER_IRQ2_NUMBER                2
-#define RP_TIMER_IRQ3_NUMBER                3
+#define RP_TIMER0_IRQ0_NUMBER               0
+#define RP_TIMER0_IRQ1_NUMBER               1
+#define RP_TIMER0_IRQ2_NUMBER               2
+#define RP_TIMER0_IRQ3_NUMBER               3
 #define RP_PWM_IRQ_WRAP_NUMBER              4
 #define RP_USBCTRL_IRQ_NUMBER               5
 #define RP_XIP_IRQ_NUMBER                   6

@@ -1,3 +1,6 @@
+# RP2040 platform identifier for pico-sdk.mk
+PICO_DEVICE := rp2040
+
 # Required platform files.
 PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
                $(CHIBIOS)/os/hal/ports/RP/RP2040/rp_isr.c \

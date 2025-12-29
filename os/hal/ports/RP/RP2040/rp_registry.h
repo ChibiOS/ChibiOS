@@ -42,12 +42,21 @@
 /* RP2040.                                                                   */
 /*===========================================================================*/
 
+/* GPIO attributes.*/
+#define RP_GPIO_NUM_LINES                   30
+
 /* UART attributes.*/
 #define RP_HAS_UART0                        TRUE
 #define RP_HAS_UART1                        TRUE
 
+/* PIO attributes.*/
+#define RP_HAS_PIO0                         TRUE
+#define RP_HAS_PIO1                         TRUE
+#define RP_HAS_PIO2                         FALSE
+
 /* TIMER attributes.*/
-#define RP_HAS_TIMER                        TRUE
+#define RP_HAS_TIMER0                       TRUE
+#define RP_ST_NUM_ALARMS                    4
 
 /* RTC attributes.*/
 #define RP_HAS_RTC                          TRUE
@@ -55,6 +64,14 @@
 /* SPI attributes.*/
 #define RP_HAS_SPI0                         TRUE
 #define RP_HAS_SPI1                         TRUE
+
+/* I2C attributes.*/
+#define RP_HAS_I2C0                         TRUE
+#define RP_HAS_I2C1                         TRUE
+
+/* DMA attributes.*/
+#define RP_HAS_DMA                          TRUE
+#define RP_DMA_NUM_CHANNELS                 12
 
 /* WDG attributes.*/
 #define RP_HAS_WDG                          TRUE

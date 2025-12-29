@@ -100,7 +100,7 @@ static void start_core1(void) {
 void hal_lld_init(void) {
 
 #if RP_NO_INIT == FALSE
-  clocks_init();
+  runtime_init_clocks();
 
   SystemCoreClock = RP_CORE_CLK;
 

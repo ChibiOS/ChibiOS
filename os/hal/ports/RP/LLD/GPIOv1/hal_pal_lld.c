@@ -38,7 +38,7 @@
 /**
  * @brief   Event records for the 30 GPIO lines.
  */
-palevent_t _pal_events[30];
+palevent_t _pal_events[RP_GPIO_NUM_LINES];
 #endif
 
 /*===========================================================================*/
@@ -99,7 +99,7 @@ void __pal_lld_init(void) {
   #if PAL_USE_CALLBACKS || PAL_USE_WAIT || defined(__DOXYGEN__)
   unsigned i;
 
-  for (i = 0; i < 30; i++) {
+  for (i = 0U; i < RP_GPIO_NUM_LINES; i++) {
     _pal_init_event(i);
   }
 

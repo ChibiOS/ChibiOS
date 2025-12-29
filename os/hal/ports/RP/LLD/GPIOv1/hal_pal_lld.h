@@ -426,7 +426,7 @@ __STATIC_INLINE void __pal_lld_pad_set_mode(ioportid_t port,
 #endif
 
 #if !defined(__DOXYGEN__)
-extern palevent_t _pal_events[30];
+extern palevent_t _pal_events[RP_GPIO_NUM_LINES];
 #endif
 
 /**

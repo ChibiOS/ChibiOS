@@ -32,6 +32,7 @@
 
 /* From Pico-SDK */
 #include "hardware/clocks.h"
+#include "pico/runtime_init.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */

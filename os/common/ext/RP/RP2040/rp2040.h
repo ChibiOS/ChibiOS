@@ -40,7 +40,7 @@
 typedef enum {
   NonMaskableInt_IRQn                   = -14,
   HardFault_IRQn                        = -13,
-  SVC_IRQn                              = -5,
+  SVCall_IRQn                           = -5,
   PendSV_IRQn                           = -2,
   SysTick_IRQn                          = -1,
   Vector_0n                             = 0,
@@ -77,6 +77,8 @@ typedef enum {
   Vector_31n                            = 31
 } IRQn_Type;
 
+#define SVC_IRQn                          SVCall_IRQn
+
 #include "core_cm0plus.h"
 #include "system_rp2040.h"
 
@@ -101,22 +103,22 @@ typedef struct {
   __IO uint32_t         AL3_WRITE_ADDR;
   __IO uint32_t         AL3_TRANSFER_COUNT;
   __IO uint32_t         AL3_READ_ADDR_TRIG;
-} DMA_Channel_Typedef;
+} DMA_Channel_TypeDef;
 
 typedef struct {
   __I  uint32_t         CTDREQ;
   __I  uint32_t         TCR;
   __I  uint32_t         resvd8[14];
-} DMA_Debug_Typedef;
+} DMA_Debug_TypeDef;
 
 typedef struct {
-  DMA_Channel_Typedef   CH[12];
+  DMA_Channel_TypeDef   CH[12];
   __I  uint32_t         resvd300[64];
   __IO uint32_t         INTR;
   __IO uint32_t         INTE0;
   __IO uint32_t         INTF0;
   __IO uint32_t         INTS0;
-  __I  uint32_t         resvd410;
+  __IO uint32_t         INTR1;
   __IO uint32_t         INTE1;
   __IO uint32_t         INTF1;
   __IO uint32_t         INTS1;
@@ -129,16 +131,16 @@ typedef struct {
   __IO uint32_t         CHAN_ABORT;
   __I  uint32_t         N_CHANNELS;
   __I  uint32_t         resvd44C[237];
-  DMA_Debug_Typedef     CH_DBG[12];
+  DMA_Debug_TypeDef     CH_DBG[12];
   __I  uint32_t         resvdB00[320];
   struct {
-    DMA_Channel_Typedef CH[12];
+    DMA_Channel_TypeDef CH[12];
     __I  uint32_t       resvd300[64];
     __IO uint32_t       INTR;
     __IO uint32_t       INTE0;
     __IO uint32_t       INTF0;
     __IO uint32_t       INTS0;
-    __I  uint32_t       resvd410;
+    __IO uint32_t       INTR1;
     __IO uint32_t       INTE1;
     __IO uint32_t       INTF1;
     __IO uint32_t       INTS1;
@@ -151,17 +153,17 @@ typedef struct {
     __IO uint32_t       CHAN_ABORT;
     __I  uint32_t       N_CHANNELS;
     __I  uint32_t       resvd44C[237];
-    DMA_Debug_Typedef   CH_DBG[12];
+    DMA_Debug_TypeDef   CH_DBG[12];
     __I  uint32_t       resvdB00[320];
   } XOR;
   struct {
-    DMA_Channel_Typedef CH[12];
+    DMA_Channel_TypeDef CH[12];
     __I  uint32_t       resvd300[64];
     __IO uint32_t       INTR;
     __IO uint32_t       INTE0;
     __IO uint32_t       INTF0;
     __IO uint32_t       INTS0;
-    __I  uint32_t       resvd410;
+    __IO uint32_t       INTR1;
     __IO uint32_t       INTE1;
     __IO uint32_t       INTF1;
     __IO uint32_t       INTS1;
@@ -174,17 +176,17 @@ typedef struct {
     __IO uint32_t       CHAN_ABORT;
     __I  uint32_t       N_CHANNELS;
     __I  uint32_t       resvd44C[237];
-    DMA_Debug_Typedef   CH_DBG[12];
+    DMA_Debug_TypeDef   CH_DBG[12];
     __I  uint32_t       resvdB00[320];
   } SET;
   struct {
-    DMA_Channel_Typedef CH[12];
+    DMA_Channel_TypeDef CH[12];
     __I  uint32_t       resvd300[64];
     __IO uint32_t       INTR;
     __IO uint32_t       INTE0;
     __IO uint32_t       INTF0;
     __IO uint32_t       INTS0;
-    __I  uint32_t       resvd410;
+    __IO uint32_t       INTR1;
     __IO uint32_t       INTE1;
     __IO uint32_t       INTF1;
     __IO uint32_t       INTS1;
@@ -197,7 +199,7 @@ typedef struct {
     __IO uint32_t       CHAN_ABORT;
     __I  uint32_t       N_CHANNELS;
     __I  uint32_t       resvd44C[237];
-    DMA_Debug_Typedef   CH_DBG[12];
+    DMA_Debug_TypeDef   CH_DBG[12];
     __I  uint32_t       resvdB00[320];
   } CLR;
 } DMA_TypeDef;
@@ -482,7 +484,7 @@ typedef struct {
     __I  uint32_t         INTS;
     __I  uint32_t         resvd44[1007];
   } CLR;
-} TIMER_TypeDef;
+} TIMER0_TypeDef;
 
 typedef struct {
   __IO uint32_t         UARTDR;
@@ -1243,7 +1245,7 @@ typedef struct {
 #define __PADSUSER0_BASE                  (__APBPERIPH_BASE + 0x0001C000U)
 #define __PADSQSPI_BASE                   (__APBPERIPH_BASE + 0x00020000U)
 #define __PSM_BASE                        (__APBPERIPH_BASE + 0x00010000U)
-#define __TIMER_BASE                      (__APBPERIPH_BASE + 0x00054000U)
+#define __TIMER0_BASE                     (__APBPERIPH_BASE + 0x00054000U)
 #define __UART0_BASE                      (__APBPERIPH_BASE + 0x00034000U)
 #define __UART1_BASE                      (__APBPERIPH_BASE + 0x00038000U)
 #define __SPI0_BASE                       (__APBPERIPH_BASE + 0x0003C000U)
@@ -1275,7 +1277,7 @@ typedef struct {
 #define PSM                               ((PSM_TypeDef *)    __PSM_BASE)
 #define RESETS                            ((RESETS_TypeDef *) __RESETS_BASE)
 #define SIO                               ((SIO_TypeDef *)    __SIO_BASE)
-#define TIMER                             ((TIMER_TypeDef *)  __TIMER_BASE)
+#define TIMER0                            ((TIMER0_TypeDef *) __TIMER0_BASE)
 #define UART0                             ((UART_TypeDef *)   __UART0_BASE)
 #define UART1                             ((UART_TypeDef *)   __UART1_BASE)
 #define RTC                               ((RTC_TypeDef *)    __RTC_BASE)

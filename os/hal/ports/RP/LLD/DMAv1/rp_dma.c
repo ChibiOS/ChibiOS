@@ -43,7 +43,7 @@
 /**
  * @brief   DMA channel descriptors.
  */
-const rp_dma_channel_t __rp_dma_channels[RP_DMA_CHANNELS] = {
+const rp_dma_channel_t __rp_dma_channels[RP_DMA_NUM_CHANNELS] = {
   {DMA, &DMA->CH[0],  0U,  1U << 0},
   {DMA, &DMA->CH[1],  1U,  1U << 1},
   {DMA, &DMA->CH[2],  2U,  1U << 2},
@@ -86,7 +86,7 @@ static struct {
      * @brief   DMA callback parameter.
      */
     void            *param;
-  } channels[RP_DMA_CHANNELS];
+  } channels[RP_DMA_NUM_CHANNELS];
 } dma;
 
 /*===========================================================================*/
@@ -184,7 +184,7 @@ void dmaInit(void) {
 
   dma.c0_allocated_mask = 0U;
   dma.c1_allocated_mask = 0U;
-  for (i = 0U; i < RP_DMA_CHANNELS; i++) {
+  for (i = 0U; i < RP_DMA_NUM_CHANNELS; i++) {
     dma.channels[i].func = NULL;
   }
 }
