@@ -695,9 +695,9 @@
  * @details User initialization code added to the @p chSysInit() function
  *          just before interrupts are enabled globally.
  */
-#define CH_CFG_SYSTEM_INIT_HOOK() {                                         \
+#define CH_CFG_SYSTEM_INIT_HOOK() do {                                      \
   /* Add system initialization code here.*/                                 \
-}
+} while (false)
 
 /**
  * @brief   OS instance structure extension.
@@ -711,9 +711,9 @@
  *
  * @param[in] oip       pointer to the @p os_instance_t structure
  */
-#define CH_CFG_OS_INSTANCE_INIT_HOOK(oip) {                                 \
+#define CH_CFG_OS_INSTANCE_INIT_HOOK(oip) do {                              \
   /* Add OS instance initialization code here.*/                            \
-}
+} while (false)
 
 /**
  * @brief   Threads descriptor structure extension.
@@ -731,9 +731,9 @@
  *
  * @param[in] tp        pointer to the @p thread_t structure
  */
-#define CH_CFG_THREAD_INIT_HOOK(tp) {                                       \
+#define CH_CFG_THREAD_INIT_HOOK(tp) do {                                    \
   /* Add threads initialization code here.*/                                \
-}
+} while (false)
 
 /**
  * @brief   Threads finalization hook.
@@ -741,9 +741,9 @@
  *
  * @param[in] tp        pointer to the @p thread_t structure
  */
-#define CH_CFG_THREAD_EXIT_HOOK(tp) {                                       \
+#define CH_CFG_THREAD_EXIT_HOOK(tp) do {                                    \
   /* Add threads finalization code here.*/                                  \
-}
+} while (false)
 
 /**
  * @brief   Context switch hook.
@@ -752,23 +752,23 @@
  * @param[in] ntp       thread being switched in
  * @param[in] otp       thread being switched out
  */
-#define CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
+#define CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp) do {                           \
   /* Context switch code here.*/                                            \
-}
+} while (false)
 
 /**
  * @brief   ISR enter hook.
  */
-#define CH_CFG_IRQ_PROLOGUE_HOOK() {                                        \
+#define CH_CFG_IRQ_PROLOGUE_HOOK() do {                                     \
   /* IRQ prologue code here.*/                                              \
-}
+} while (false)
 
 /**
  * @brief   ISR exit hook.
  */
-#define CH_CFG_IRQ_EPILOGUE_HOOK() {                                        \
+#define CH_CFG_IRQ_EPILOGUE_HOOK() do {                                     \
   /* IRQ epilogue code here.*/                                              \
-}
+} while (false)
 
 /**
  * @brief   Idle thread enter hook.
@@ -776,9 +776,9 @@
  *          should be invoked from here.
  * @note    This macro can be used to activate a power saving mode.
  */
-#define CH_CFG_IDLE_ENTER_HOOK() {                                          \
+#define CH_CFG_IDLE_ENTER_HOOK() do {                                       \
   /* Idle-enter code here.*/                                                \
-}
+} while (false)
 
 /**
  * @brief   Idle thread leave hook.
@@ -786,71 +786,68 @@
  *          should be invoked from here.
  * @note    This macro can be used to deactivate a power saving mode.
  */
-#define CH_CFG_IDLE_LEAVE_HOOK() {                                          \
+#define CH_CFG_IDLE_LEAVE_HOOK() do {                                       \
   /* Idle-leave code here.*/                                                \
-}
+} while (false)
 
 /**
  * @brief   Idle Loop hook.
  * @details This hook is continuously invoked by the idle thread loop.
  */
-#define CH_CFG_IDLE_LOOP_HOOK() {                                           \
+#define CH_CFG_IDLE_LOOP_HOOK() do {                                        \
   /* Idle loop code here.*/                                                 \
-}
+} while (false)
 
 /**
  * @brief   System tick event hook.
  * @details This hook is invoked in the system tick handler immediately
  *          after processing the virtual timers queue.
  */
-#define CH_CFG_SYSTEM_TICK_HOOK() {                                         \
+#define CH_CFG_SYSTEM_TICK_HOOK() do {                                      \
   /* System tick event code here.*/                                         \
-}
+} while (false)
 
 /**
  * @brief   System halt hook.
  * @details This hook is invoked in case to a system halting error before
  *          the system is halted.
  */
-#define CH_CFG_SYSTEM_HALT_HOOK(reason) {                                   \
+#define CH_CFG_SYSTEM_HALT_HOOK(reason) do {                                \
   /* System halt code here.*/                                               \
-}
+} while (false)
 
 /**
  * @brief   Trace hook.
  * @details This hook is invoked each time a new record is written in the
  *          trace buffer.
  */
-#define CH_CFG_TRACE_HOOK(tep) {                                            \
+#define CH_CFG_TRACE_HOOK(tep) do {                                         \
   /* Trace code here.*/                                                     \
-}
+} while (false)
 
 /**
  * @brief   Runtime Faults Collection Unit hook.
  * @details This hook is invoked each time new faults are collected and stored.
  */
-#define CH_CFG_RUNTIME_FAULTS_HOOK(mask) {                                  \
+#define CH_CFG_RUNTIME_FAULTS_HOOK(mask) do {                               \
   /* Faults handling code here.*/                                           \
-}
+} while (false)
 
 /**
  * @brief   Safety checks hook.
  * @details This hook is invoked when there is a safety violation and the
  *          system is going to stop.
  */
-#define CH_CFG_SAFETY_CHECK_HOOK(l, f) {                                    \
+#define CH_CFG_SAFETY_CHECK_HOOK(l, f) do {                                 \
   /* Safety handling code here.*/                                           \
   chSysHalt(f);                                                             \
-}
+} while (false)
 
 /** @} */
 
 /*===========================================================================*/
 /* Port-specific settings (override port settings defaulted in chcore.h).    */
 /*===========================================================================*/
-
-#define PORT_USE_SYSCALL                    TRUE
-#define PORT_SWITCHED_REGIONS_NUMBER        2
 
 #endif  /* CHCONF_H */
 
