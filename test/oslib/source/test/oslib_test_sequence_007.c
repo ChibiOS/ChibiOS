@@ -50,11 +50,11 @@
 
 #define MEMORY_POOL_SIZE 4
 
-static uint32_t objects[MEMORY_POOL_SIZE];
-static MEMORYPOOL_DECL(mp1, sizeof (uint32_t), PORT_NATURAL_ALIGN, NULL);
+static uintptr_t objects[MEMORY_POOL_SIZE];
+static MEMORYPOOL_DECL(mp1, sizeof (uintptr_t), PORT_NATURAL_ALIGN, NULL);
 
 #if CH_CFG_USE_SEMAPHORES
-static GUARDEDMEMORYPOOL_DECL(gmp1, sizeof (uint32_t), PORT_NATURAL_ALIGN);
+static GUARDEDMEMORYPOOL_DECL(gmp1, sizeof (uintptr_t), PORT_NATURAL_ALIGN);
 #endif
 
 static void *null_provider(size_t size, unsigned align) {
@@ -89,7 +89,7 @@ static void *null_provider(size_t size, unsigned align) {
  */
 
 static void oslib_test_007_001_setup(void) {
-  chPoolObjectInit(&mp1, sizeof (uint32_t), NULL);
+  chPoolObjectInit(&mp1, sizeof (uintptr_t), NULL);
 }
 
 static void oslib_test_007_001_execute(void) {
@@ -144,7 +144,7 @@ static void oslib_test_007_001_execute(void) {
      more memory.*/
   test_set_step(7);
   {
-    chPoolObjectInit(&mp1, sizeof (uint32_t), null_provider);
+    chPoolObjectInit(&mp1, sizeof (uintptr_t), null_provider);
     test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");
   }
   test_end_step(7);
@@ -183,7 +183,7 @@ static const testcase_t oslib_test_007_001 = {
  */
 
 static void oslib_test_007_002_setup(void) {
-  chGuardedPoolObjectInit(&gmp1, sizeof (uint32_t));
+  chGuardedPoolObjectInit(&gmp1, sizeof (uintptr_t));
 }
 
 static void oslib_test_007_002_execute(void) {
@@ -266,7 +266,7 @@ static const testcase_t oslib_test_007_002 = {
  */
 
 static void oslib_test_007_003_setup(void) {
-  chGuardedPoolObjectInit(&gmp1, sizeof (uint32_t));
+  chGuardedPoolObjectInit(&gmp1, sizeof (uintptr_t));
 }
 
 static void oslib_test_007_003_execute(void) {

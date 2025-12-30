@@ -1658,11 +1658,11 @@ test_assert_sequence("", "unexpected tokens");
       <shared_code>
         <value><![CDATA[#define MEMORY_POOL_SIZE 4
 
-static uint32_t objects[MEMORY_POOL_SIZE];
-static MEMORYPOOL_DECL(mp1, sizeof (uint32_t), PORT_NATURAL_ALIGN, NULL);
+static uintptr_t objects[MEMORY_POOL_SIZE];
+static MEMORYPOOL_DECL(mp1, sizeof (uintptr_t), PORT_NATURAL_ALIGN, NULL);
 
 #if CH_CFG_USE_SEMAPHORES
-static GUARDEDMEMORYPOOL_DECL(gmp1, sizeof (uint32_t), PORT_NATURAL_ALIGN);
+static GUARDEDMEMORYPOOL_DECL(gmp1, sizeof (uintptr_t), PORT_NATURAL_ALIGN);
 #endif
 
 static void *null_provider(size_t size, unsigned align) {
@@ -1687,7 +1687,7 @@ static void *null_provider(size_t size, unsigned align) {
           </condition>
           <various_code>
             <setup_code>
-              <value><![CDATA[chPoolObjectInit(&mp1, sizeof (uint32_t), NULL);]]></value>
+              <value><![CDATA[chPoolObjectInit(&mp1, sizeof (uintptr_t), NULL);]]></value>
             </setup_code>
             <teardown_code>
               <value />
@@ -1778,7 +1778,7 @@ static void *null_provider(size_t size, unsigned align) {
                 <value />
               </tags>
               <code>
-                <value><![CDATA[chPoolObjectInit(&mp1, sizeof (uint32_t), null_provider);
+                <value><![CDATA[chPoolObjectInit(&mp1, sizeof (uintptr_t), null_provider);
 test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");]]></value>
               </code>
             </step>
@@ -1797,7 +1797,7 @@ test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");]]></value>
           </condition>
           <various_code>
             <setup_code>
-              <value><![CDATA[chGuardedPoolObjectInit(&gmp1, sizeof (uint32_t));]]></value>
+              <value><![CDATA[chGuardedPoolObjectInit(&gmp1, sizeof (uintptr_t));]]></value>
             </setup_code>
             <teardown_code>
               <value />
@@ -1895,7 +1895,7 @@ test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");]]></value>
           </condition>
           <various_code>
             <setup_code>
-              <value><![CDATA[chGuardedPoolObjectInit(&gmp1, sizeof (uint32_t));]]></value>
+              <value><![CDATA[chGuardedPoolObjectInit(&gmp1, sizeof (uintptr_t));]]></value>
             </setup_code>
             <teardown_code>
               <value />
