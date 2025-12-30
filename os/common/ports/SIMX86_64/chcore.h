@@ -110,7 +110,7 @@
  *          area size.
  */
 #if !defined(PORT_INT_REQUIRED_STACK) || defined(__DOXYGEN__)
-#define PORT_INT_REQUIRED_STACK         131072
+#define PORT_INT_REQUIRED_STACK         16384
 #endif
 
 /*===========================================================================*/
