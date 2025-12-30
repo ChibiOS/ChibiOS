@@ -22,6 +22,7 @@
  * @{
  */
 
+#include <inttypes.h>
 #include <string.h>
 
 #include "ch.h"
@@ -184,15 +185,17 @@ static void cmd_threads(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
     core_id = 0U;
 #endif
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
-    uint32_t stklimit = (uint32_t)tp->wabase;
+    uintptr_t stklimit = (uintptr_t)tp->wabase;
 #else
-    uint32_t stklimit = 0U;
+    uintptr_t stklimit = (uintptr_t)0;
 #endif
-    chprintf(xshp->stream, "%4lu %08lx %08lx %08lx %4lu %4lu %9s %12s" XSHELL_NEWLINE_STR,
-             core_id,
+    chprintf(xshp->stream,
+             "%4lu %08" PRIxPTR " %08" PRIxPTR " %08" PRIxPTR
+             " %4lu %4lu %9s %12s" XSHELL_NEWLINE_STR,
+             (unsigned long)core_id,
              stklimit,
-             (uint32_t)tp->ctx.sp,
-             (uint32_t)tp,
+             (uintptr_t)tp->ctx.sp,
+             (uintptr_t)tp,
              (uint32_t)tp->refs - 1,
              (uint32_t)tp->hdr.pqueue.prio,
              states[tp->state],

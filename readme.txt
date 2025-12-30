@@ -77,6 +77,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added EFL driver for simulator and a simulator MFS test application.
+- NEW: Added simulator support for x84-64 on Posix/Linux.
 - NEW: Added CHN_TRANSMISSION_END event to hal_serial_usb.
 - NEW: Added XSHELL_EXIT_HOOK to xshell.
 - NEW: Added STM32U0xx support.
