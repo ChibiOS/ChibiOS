@@ -16,7 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "shell.h"
+#include "xshell.h"
 #include "chprintf.h"
 
 #define SHELL_WA_SIZE       THD_WORKING_AREA_SIZE(4096)
@@ -26,21 +26,21 @@
 #define cputs(msg) chMsgSend(cdtp, (msg_t)msg)
 
 static thread_t *cdtp;
-static thread_t *shelltp1;
-static thread_t *shelltp2;
+static xshell_t *xshp1;
+static xshell_t *xshp2;
+static xshell_manager_t sm1;
 
-static const ShellCommand commands[] = {
-  {NULL, NULL}
-};
-
-static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SD1,
-  commands
-};
-
-static const ShellConfig shell_cfg2 = {
-  (BaseSequentialStream *)&SD2,
-  commands
+static const xshell_manager_config_t xshell_cfg = {
+  .thread_name = "shell",
+  .banner      = XSHELL_DEFAULT_BANNER_STR,
+  .prompt      = XSHELL_DEFAULT_PROMPT_STR,
+  .commands    = NULL,
+#if (CH_CFG_USE_HEAP == TRUE)
+  .use_heap    = true,
+  .stack.size  = SHELL_WA_SIZE
+#else
+  .stack.pool  = NULL
+#endif
 };
 
 /*
@@ -67,21 +67,21 @@ static THD_FUNCTION(console_thread, arg) {
 static void termination_handler(eventid_t id) {
 
   (void)id;
-  if (shelltp1 && chThdTerminatedX(shelltp1)) {
-    chThdWait(shelltp1);
-    shelltp1 = NULL;
+  if ((xshp1 != NULL) && chThdTerminatedX(&xshp1->thread)) {
+    (void)chThdWait(&xshp1->thread);
+    xshp1 = NULL;
     chThdSleepMilliseconds(10);
-    cputs("Init: shell on SD1 terminated");
+    cputs("Init: xshell on SD1 terminated");
     chSysLock();
     oqResetI(&SD1.oqueue);
     chSchRescheduleS();
     chSysUnlock();
   }
-  if (shelltp2 && chThdTerminatedX(shelltp2)) {
-    chThdWait(shelltp2);
-    shelltp2 = NULL;
+  if ((xshp2 != NULL) && chThdTerminatedX(&xshp2->thread)) {
+    (void)chThdWait(&xshp2->thread);
+    xshp2 = NULL;
     chThdSleepMilliseconds(10);
-    cputs("Init: shell on SD2 terminated");
+    cputs("Init: xshell on SD2 terminated");
     chSysLock();
     oqResetI(&SD2.oqueue);
     chSchRescheduleS();
@@ -101,11 +101,10 @@ static void sd1_handler(eventid_t id) {
 
   (void)id;
   flags = chEvtGetAndClearFlags(&sd1fel);
-  if ((flags & CHN_CONNECTED) && (shelltp1 == NULL)) {
+  if ((flags & CHN_CONNECTED) && (xshp1 == NULL)) {
     cputs("Init: connection on SD1");
-    shelltp1 = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                   "shell1", NORMALPRIO + 10,
-                                   shellThread, (void *)&shell_cfg1);
+    xshp1 = xshellSpawn(&sm1, (BaseSequentialStream *)&SD1,
+                        NORMALPRIO + 10, NULL);
   }
   if (flags & CHN_DISCONNECTED) {
     cputs("Init: disconnection on SD1");
@@ -126,11 +125,10 @@ static void sd2_handler(eventid_t id) {
 
   (void)id;
   flags = chEvtGetAndClearFlags(&sd2fel);
-  if ((flags & CHN_CONNECTED) && (shelltp2 == NULL)) {
+  if ((flags & CHN_CONNECTED) && (xshp2 == NULL)) {
     cputs("Init: connection on SD2");
-    shelltp2 = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                   "shell2", NORMALPRIO + 10,
-                                   shellThread, (void *)&shell_cfg2);
+    xshp2 = xshellSpawn(&sm1, (BaseSequentialStream *)&SD2,
+                        NORMALPRIO + 10, NULL);
   }
   if (flags & CHN_DISCONNECTED) {
     cputs("Init: disconnection on SD2");
@@ -172,8 +170,8 @@ int main(void) {
   /*
    * Shell manager initialization.
    */
-  shellInit();
-  chEvtRegister(&shell_terminated, &tel, 0);
+  xshellObjectInit(&sm1, &xshell_cfg);
+  chEvtRegister(&sm1.events, &tel, 0);
 
   /*
    * Console thread started.
@@ -184,7 +182,7 @@ int main(void) {
   /*
    * Initializing connection/disconnection events.
    */
-  cputs("Shell service started on SD1, SD2");
+  cputs("XShell service started on SD1, SD2");
   cputs("  - Listening for connections on SD1");
   chEvtRegister(chnGetEventSource(&SD1), &sd1fel, 1);
   cputs("  - Listening for connections on SD2");
