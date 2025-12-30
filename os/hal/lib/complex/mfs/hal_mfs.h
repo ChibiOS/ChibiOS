@@ -60,6 +60,13 @@
 #endif
 
 /**
+ * @brief   Maximum record size in the managed storage.
+ */
+#if !defined(MFS_CFG_MAX_RECORD_SIZE) || defined(__DOXYGEN__)
+#define MFS_CFG_MAX_RECORD_SIZE             16384
+#endif
+
+/**
  * @brief   Maximum number of repair attempts on partition mount.
  */
 #if !defined(MFS_CFG_MAX_REPAIR_ATTEMPTS) || defined(__DOXYGEN__)

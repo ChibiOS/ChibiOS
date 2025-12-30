@@ -1070,7 +1070,8 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, mfs_id_t id,
 
   osalDbgCheck((mfsp != NULL) &&
                (id >= 1U) && (id <= (mfs_id_t)MFS_CFG_MAX_RECORDS) &&
-               (n > 0U) && (buffer != NULL));
+               (n > (size_t)0) && (n <= (size_t)MFS_CFG_MAX_RECORD_SIZE) &&
+               (buffer != NULL));
 
   /* Aligned record size.*/
   asize = ALIGNED_REC_SIZE(n);
