@@ -58,9 +58,9 @@ NOINLINE static void trace_next(os_instance_t *oip) {
 
   oip->trace_buffer.ptr->time    = chVTGetSystemTimeX();
 #if PORT_SUPPORTS_RT == TRUE
-  oip->trace_buffer.ptr->rtstamp = chSysGetRealtimeCounterX();
+  oip->trace_buffer.ptr->rtstamp = (uint32_t)chSysGetRealtimeCounterX();
 #else
-  oip->trace_buffer.ptr->rtstamp = (rtcnt_t)0;
+  oip->trace_buffer.ptr->rtstamp = (uint32_t)0;
 #endif
 
   /* Trace hook, useful in order to interface debug tools.*/
