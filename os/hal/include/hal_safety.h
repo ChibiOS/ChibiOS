@@ -169,29 +169,29 @@ extern "C" {
   bool halRegWaitMatch32X(volatile uint32_t *p, uint32_t mask,
                           uint32_t match, uint32_t tmo, uint32_t *valp);
   bool halRegWaitAllSet8X(volatile uint8_t *p, uint8_t mask,
-                          rtcnt_t tmo, uint8_t *valp);
+                          uint32_t tmo, uint8_t *valp);
   bool halRegWaitAllSet16X(volatile uint16_t *p, uint16_t mask,
-                           rtcnt_t tmo, uint16_t *valp);
+                           uint32_t tmo, uint16_t *valp);
   bool halRegWaitAllSet32X(volatile uint32_t *p, uint32_t mask,
-                           rtcnt_t tmo, uint32_t *valp);
+                           uint32_t tmo, uint32_t *valp);
   bool halRegWaitAnySet8X(volatile uint8_t *p, uint8_t mask,
-                          rtcnt_t tmo, uint8_t *valp);
+                          uint32_t tmo, uint8_t *valp);
   bool halRegWaitAnySet16X(volatile uint16_t *p, uint16_t mask,
-                           rtcnt_t tmo, uint16_t *valp);
+                           uint32_t tmo, uint16_t *valp);
   bool halRegWaitAnySet32X(volatile uint32_t *p, uint32_t mask,
-                           rtcnt_t tmo, uint32_t *valp);
+                           uint32_t tmo, uint32_t *valp);
   bool halRegWaitAllClear8X(volatile uint8_t *p, uint8_t mask,
-                            rtcnt_t tmo, uint8_t *valp);
+                            uint32_t tmo, uint8_t *valp);
   bool halRegWaitAllClear16X(volatile uint16_t *p, uint16_t mask,
-                             rtcnt_t tmo, uint16_t *valp);
+                             uint32_t tmo, uint16_t *valp);
   bool halRegWaitAllClear32X(volatile uint32_t *p, uint32_t mask,
-                             rtcnt_t tmo, uint32_t *valp);
+                             uint32_t tmo, uint32_t *valp);
   bool halRegWaitAnyClear8X(volatile uint8_t *p, uint8_t mask,
-                            rtcnt_t tmo, uint8_t *valp);
+                            uint32_t tmo, uint8_t *valp);
   bool halRegWaitAnyClear16X(volatile uint16_t *p, uint16_t mask,
-                             rtcnt_t tmo, uint16_t *valp);
+                             uint32_t tmo, uint16_t *valp);
   bool halRegWaitAnyClear32X(volatile uint32_t *p, uint32_t mask,
-                             rtcnt_t tmo, uint32_t *valp);
+                             uint32_t tmo, uint32_t *valp);
 #ifdef __cplusplus
 }
 #endif
