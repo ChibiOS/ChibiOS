@@ -149,7 +149,7 @@ extern "C" {
  * @param[in] l         check level in range 0..3
  * @param[in] p         pointer to be checked
  */
-static inline void chSftValidateDataPointerX(unsigned l, const void *p) {
+static inline void chSftValidateDataPointerX(int l, const void *p) {
 
   chSftAssert(l, SFT_IS_VALID_DATA_POINTER(p), "invalid pointer");
 }
