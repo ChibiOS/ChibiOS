@@ -65,7 +65,7 @@
 #define SFT_IS_VALID_DATA_POINTER(p)        PORT_IS_VALID_DATA_POINTER()
 #else
 #define SFT_IS_VALID_DATA_POINTER(p)                                        \
-  (((p) != NULL) && (((unsigned)(p) & (PORT_NATURAL_ALIGN - 1U)) == 0U))
+  (((p) != NULL) && (((uintptr_t)(p) & (PORT_NATURAL_ALIGN - 1U)) == 0U))
 #endif
 
 /*===========================================================================*/
