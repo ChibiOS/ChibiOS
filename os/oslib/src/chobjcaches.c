@@ -62,7 +62,7 @@
 /* Default hash function.*/
 #if !defined(OC_HASH_FUNCTION) || defined(__DOXYGEN__)
 #define OC_HASH_FUNCTION(ocp, owner, key)                                   \
-  (((unsigned)(owner) + (unsigned)(key)) & ((unsigned)(ocp)->hashn - 1U))
+  (((uintptr_t)(owner) + (uintptr_t)(key)) & ((uintptr_t)(ocp)->hashn - 1U))
 #endif
 
 /* Insertion into an hash slot list.*/
