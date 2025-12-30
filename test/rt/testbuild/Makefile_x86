@@ -3,18 +3,9 @@
 # NOTE: Can be overridden externally.
 #
 
-# Simulator word size selection.
-# Set SIM_BITS=32 for SIMIA32; default is 64 (SIMX86_64).
-SIM_BITS ?= 64
-ifeq ($(SIM_BITS),32)
-  SIM_PORT = SIMIA32
-else
-  SIM_PORT = SIMX86_64
-endif
-
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -ggdb -m$(SIM_BITS)
+  USE_OPT = $(XOPT) -m32
 endif
 
 # C specific options here (added to USE_OPT).
@@ -50,7 +41,7 @@ endif
 # If enabled, this option makes the build process faster by not compiling
 # modules not used in the current configuration.
 ifeq ($(USE_SMART_BUILD),)
-  USE_SMART_BUILD = yes
+  USE_SMART_BUILD = no
 endif
 
 #
@@ -88,13 +79,13 @@ include $(CHIBIOS)/os/hal/ports/simulator/posix/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/common/ports/$(SIM_PORT)/compilers/GCC/port.mk
+include $(CHIBIOS)/os/common/ports/SIMIA32/compilers/GCC/port.mk
 # Other files (optional).
 include $(CHIBIOS)/os/test/test.mk
 include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
-include $(CHIBIOS)/os/hal/lib/streams/streams.mk
-include $(CHIBIOS)/os/various/shell/shell.mk
+#include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+#include $(CHIBIOS)/os/various/shell/shell.mk
 
 # C sources here.
 CSRC = $(ALLCSRC) \
@@ -110,6 +101,9 @@ ASMXSRC = $(ALLXASMSRC)
 
 INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC)
 
+# GCOV files.
+GCOVSRC = $(KERNSRC)
+
 #
 # Project, sources and paths
 ##############################################################################
@@ -119,7 +113,7 @@ INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC)
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DSIMULATOR -DTEST_CFG_SIZE_REPORT=0
+UDEFS = -DSIMULATOR -DTEST_CFG_SIZE_REPORT=0 $(XDEFS)
 
 # Define ASM defines here
 UADEFS =
@@ -159,7 +153,7 @@ BIN  = $(CP) -O binary
 COV  = gcov
 
 # Define C warning options here
-CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
+CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes -Wcast-align=strict
 
 # Define C++ warning options here
 CPPWARN = -Wall -Wextra -Wundef
@@ -168,5 +162,19 @@ CPPWARN = -Wall -Wextra -Wundef
 # Compiler settings
 ##############################################################################
 
-RULESPATH = $(CHIBIOS)/os/common/startup/$(SIM_PORT)/compilers/GCC
+RULESPATH = $(CHIBIOS)/os/common/startup/SIMIA32/compilers/GCC
 include $(RULESPATH)/rules.mk
+
+##############################################################################
+# Custom rules
+#
+
+misra:
+	@wine lint-nt -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(KERNSRC) $(LIBSRC) > misra.txt
+
+winmisra:
+	@lint-nt -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(KERNSRC) $(LIBSRC) > misra.txt
+
+#
+# Custom rules
+##############################################################################

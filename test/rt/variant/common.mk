@@ -3,9 +3,18 @@
 # NOTE: Can be overridden externally.
 #
 
+# Simulator word size selection.
+# Set SIM_BITS=32 for SIMIA32; default is 64 (SIMX86_64).
+SIM_BITS ?= 64
+ifeq ($(SIM_BITS),32)
+  SIM_PORT = SIMIA32
+else
+  SIM_PORT = SIMX86_64
+endif
+
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = $(XOPT) -m32
+  USE_OPT = $(XOPT) -m$(SIM_BITS)
 endif
 
 # C specific options here (added to USE_OPT).
@@ -81,7 +90,7 @@ include $(CHIBIOS)/os/hal/ports/simulator/posix/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/common/ports/SIMIA32/compilers/GCC/port.mk
+include $(CHIBIOS)/os/common/ports/$(SIM_PORT)/compilers/GCC/port.mk
 # Other files (optional).
 include $(CHIBIOS)/os/test/test.mk
 include $(CHIBIOS)/test/rt/rt_test.mk
@@ -168,7 +177,7 @@ CPPWARN = -Wall -Wextra -Wundef
 # Rules
 #
 
-RULESPATH = $(CHIBIOS)/os/common/startup/SIMIA32/compilers/GCC
+RULESPATH = $(CHIBIOS)/os/common/startup/$(SIM_PORT)/compilers/GCC
 include $(RULESPATH)/rules.mk
 
 .PHONY: test
