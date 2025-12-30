@@ -128,7 +128,7 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if MFS_CFG_MAX_RECORDS < 0
+#if (MFS_CFG_MAX_RECORDS < 0) || (MFS_CFG_MAX_RECORDS > 65535)
 #error "invalid MFS_CFG_MAX_RECORDS value"
 #endif
 

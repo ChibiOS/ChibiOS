@@ -506,6 +506,8 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
   while (hdr_offset < end_offset - ALIGNED_DHDR_SIZE) {
     mfs_data_header_t dhdr;
     uint16_t crc;
+    flash_offset_t data_offset;
+    flash_offset_t data_available;
 
     /* Reading the current record header.*/
     RET_ON_ERROR(mfs_flash_read(mfsp, hdr_offset,
@@ -519,12 +521,19 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
       break;
     }
 
+    data_offset = hdr_offset + (flash_offset_t)sizeof (mfs_data_header_t);
+    if (data_offset > end_offset) {
+      *wflagp = true;
+      break;
+    }
+    data_available = end_offset - data_offset;
+
     /* It is not erased so checking for integrity.*/
     if ((mfsp->ncbuf->dhdr.fields.magic1 != MFS_HEADER_MAGIC_1) ||
         (mfsp->ncbuf->dhdr.fields.magic2 != MFS_HEADER_MAGIC_2) ||
         (mfsp->ncbuf->dhdr.fields.id < 1U) ||
         (mfsp->ncbuf->dhdr.fields.id > (uint32_t)MFS_CFG_MAX_RECORDS) ||
-        (mfsp->ncbuf->dhdr.fields.size > end_offset - hdr_offset)) {
+        (mfsp->ncbuf->dhdr.fields.size > data_available)) {
       *wflagp = true;
       break;
     }
@@ -536,7 +545,6 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
        we have a limited buffer.*/
     crc = 0xFFFFU;
     if (dhdr.fields.size > 0U) {
-      flash_offset_t data = hdr_offset + sizeof (mfs_data_header_t);
       uint32_t total = dhdr.fields.size;
 
       while (total > 0U) {
@@ -544,13 +552,14 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
                                                        total;
 
         /* Reading the data chunk.*/
-        RET_ON_ERROR(mfs_flash_read(mfsp, data, chunk, mfsp->ncbuf->data8));
+        RET_ON_ERROR(mfs_flash_read(mfsp, data_offset, chunk,
+                                    mfsp->ncbuf->data8));
 
         /* CRC on the read data chunk.*/
         crc = crc16(crc, &mfsp->ncbuf->data8[0], chunk);
 
         /* Next chunk.*/
-        data  += chunk;
+        data_offset += chunk;
         total -= chunk;
       }
     }
