@@ -59,8 +59,8 @@
 #if CH_DBG_FILL_THREADS == TRUE
 #define thd_clear(tdp)   memset((void *)(tdp)->wbase,                       \
                                 CH_DBG_STACK_FILL_VALUE,                    \
-                                (uint8_t *)(void *)(tdp)->wend -            \
-                                (uint8_t *)(void *)(tdp)->wbase);
+                                (size_t)((size_t)(tdp)->wend -              \
+                                         (size_t)(tdp)->wbase));
 #else
 #define thd_clear(tdp)
 #endif
