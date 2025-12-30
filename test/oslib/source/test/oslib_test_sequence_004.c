@@ -54,7 +54,7 @@ static msg_t msg_queue[JOBS_QUEUE_SIZE];
 
 static void job_slow(void *arg) {
 
-  test_emit_token((int)arg);
+  test_emit_token((char)(uintptr_t)arg);
   chThdSleepMilliseconds(10);
 }
 
@@ -132,7 +132,7 @@ static void oslib_test_004_001_execute(void) {
     for (i = 0; i < 8; i++) {
       jdp = chJobGet(&jq);
       jdp->jobfunc = job_slow;
-      jdp->jobarg  = (void *)('a' + i);
+      jdp->jobarg  = (void *)(uintptr_t)('a' + i);
       chJobPost(&jq, jdp);
     }
   }

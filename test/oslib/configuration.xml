@@ -1074,7 +1074,7 @@ static msg_t msg_queue[JOBS_QUEUE_SIZE];
 
 static void job_slow(void *arg) {
 
-  test_emit_token((int)arg);
+  test_emit_token((char)(uintptr_t)arg);
   chThdSleepMilliseconds(10);
 }
 
@@ -1177,7 +1177,7 @@ job_descriptor_t *jdp;
 for (i = 0; i < 8; i++) {
   jdp = chJobGet(&jq);
   jdp->jobfunc = job_slow;
-  jdp->jobarg  = (void *)('a' + i);
+  jdp->jobarg  = (void *)(uintptr_t)('a' + i);
   chJobPost(&jq, jdp);
 }
 ]]></value>
@@ -1231,7 +1231,7 @@ test_assert_sequence("abcdefgh", "unexpected tokens");
         <value><![CDATA[
 static bool exit_flag;
 
-static int dis_func0(void) {
+static msg_t dis_func0(void) {
 
   test_emit_token('0');
 
@@ -1272,7 +1272,7 @@ static msg_t dis_func4(msg_t a, msg_t b, msg_t c, msg_t d) {
   return (msg_t)a;
 }
 
-static int dis_func_end(void) {
+static msg_t dis_func_end(void) {
 
   test_emit_token('Z');
   exit_flag = true;
@@ -1353,24 +1353,24 @@ tp = chThdCreate(&td);
               </tags>
               <code>
                 <value><![CDATA[
-int retval;
+msg_t retval;
 
-retval = chDelegateCallDirect0(tp, (delegate_fn0_t)dis_func0);
+retval = chDelegateCallDirect0(tp, dis_func0);
 test_assert(retval == 0x55AA, "invalid return value");
 
-retval = chDelegateCallDirect1(tp, (delegate_fn1_t)dis_func1, 'A');
+retval = chDelegateCallDirect1(tp, dis_func1, 'A');
 test_assert(retval == (int)'A', "invalid return value");
 
-retval = chDelegateCallDirect2(tp, (delegate_fn2_t)dis_func2, 'B', 'C');
+retval = chDelegateCallDirect2(tp, dis_func2, 'B', 'C');
 test_assert(retval == (int)'B', "invalid return value");
 
-retval = chDelegateCallDirect3(tp, (delegate_fn3_t)dis_func3, 'D', 'E', 'F');
+retval = chDelegateCallDirect3(tp, dis_func3, 'D', 'E', 'F');
 test_assert(retval == (int)'D', "invalid return value");
 
-retval = chDelegateCallDirect4(tp, (delegate_fn4_t)dis_func4, 'G', 'H', 'I', 'J');
+retval = chDelegateCallDirect4(tp, dis_func4, 'G', 'H', 'I', 'J');
 test_assert(retval == (int)'G', "invalid return value");
 
-retval = chDelegateCallDirect0(tp, (delegate_fn0_t)dis_func_end);
+retval = chDelegateCallDirect0(tp, dis_func_end);
 test_assert(retval == 0xAA55, "invalid return value");
 
 test_assert_sequence("0ABCDEFGHIJZ", "unexpected tokens");

@@ -48,7 +48,7 @@
 
 static bool exit_flag;
 
-static int dis_func0(void) {
+static msg_t dis_func0(void) {
 
   test_emit_token('0');
 
@@ -89,7 +89,7 @@ static msg_t dis_func4(msg_t a, msg_t b, msg_t c, msg_t d) {
   return (msg_t)a;
 }
 
-static int dis_func_end(void) {
+static msg_t dis_func_end(void) {
 
   test_emit_token('Z');
   exit_flag = true;
@@ -150,24 +150,24 @@ static void oslib_test_005_001_execute(void) {
      emitted tokens.*/
   test_set_step(2);
   {
-    int retval;
+    msg_t retval;
 
-    retval = chDelegateCallDirect0(tp, (delegate_fn0_t)dis_func0);
+    retval = chDelegateCallDirect0(tp, dis_func0);
     test_assert(retval == 0x55AA, "invalid return value");
 
-    retval = chDelegateCallDirect1(tp, (delegate_fn1_t)dis_func1, 'A');
+    retval = chDelegateCallDirect1(tp, dis_func1, 'A');
     test_assert(retval == (int)'A', "invalid return value");
 
-    retval = chDelegateCallDirect2(tp, (delegate_fn2_t)dis_func2, 'B', 'C');
+    retval = chDelegateCallDirect2(tp, dis_func2, 'B', 'C');
     test_assert(retval == (int)'B', "invalid return value");
 
-    retval = chDelegateCallDirect3(tp, (delegate_fn3_t)dis_func3, 'D', 'E', 'F');
+    retval = chDelegateCallDirect3(tp, dis_func3, 'D', 'E', 'F');
     test_assert(retval == (int)'D', "invalid return value");
 
-    retval = chDelegateCallDirect4(tp, (delegate_fn4_t)dis_func4, 'G', 'H', 'I', 'J');
+    retval = chDelegateCallDirect4(tp, dis_func4, 'G', 'H', 'I', 'J');
     test_assert(retval == (int)'G', "invalid return value");
 
-    retval = chDelegateCallDirect0(tp, (delegate_fn0_t)dis_func_end);
+    retval = chDelegateCallDirect0(tp, dis_func_end);
     test_assert(retval == 0xAA55, "invalid return value");
 
     test_assert_sequence("0ABCDEFGHIJZ", "unexpected tokens");
