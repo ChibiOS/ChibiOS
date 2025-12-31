@@ -500,6 +500,58 @@ xshell_t *xshellSpawn(xshell_manager_t *smp,
 }
 
 /**
+ * @brief   Shells garbage collection.
+ * @details This function scans the registry to locate all terminated shells
+ *          associated to the specified shell manager, for each terminated
+ *          shell a reference is released causing, if the reference counter
+ *          drops to zero, the memory to be released.
+ * @note    This function assumes that the shell thread has at least one
+ *          reference because @p xshellSpawn() does not release it, the
+ *          first reference logically belongs to the shell manager itself.
+ *          releases.
+ *
+ * @param[in] smp               pointer to the @p xshell_manager_t object
+ * @oaram[in] cb                shell release callback or @p NULL
+ * @return                      The number of cleared terminated shells.
+ *
+ * @api
+ */
+ucnt_t xshellGarbageCollect(xshell_manager_t *smp, xshell_callback_t cb) {
+  thread_t *tp;
+  ucnt_t n = (ucnt_t)0;
+
+  tp = chRegFirstThread();
+  do {
+    if (chThdGetObjectX(tp) == (void *)smp) {
+
+      /* Shell threads need to have at least 2 references, one kept by
+         the shell manager and the other added by the registry scan
+         functions.*/
+      chDbgAssert(tp->refs >= (trefs_t)2, "unreferenced shell");
+
+      /* Only releasing terminated shells.*/
+      if (chThdTerminatedX(tp)) {
+
+        /* Found terminated shells.*/
+        n++;
+
+        /* The found shell is reported before freeing memory.*/
+        if (cb != NULL) {
+          cb((xshell_t *)__CH_OWNEROF(tp, xshell_t, thread));
+        }
+
+        /* Releasing the shell manager reference, this will cause the shell
+           memory to be freed on the next call to chRegNextThread().*/
+        chThdRelease(tp);
+      }
+    }
+    tp = chRegNextThread(tp);
+  } while (tp != NULL);
+
+  return n;
+}
+
+/**
  * @brief   Reads a whole line from the input channel.
  * @note    Input chars are echoed on the same stream object with the
  *          following exceptions:

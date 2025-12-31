@@ -147,6 +147,11 @@ typedef struct xshell_manager xshell_manager_t;
 typedef struct xshell xshell_t;
 
 /**
+ * @brief   Type of a shell release callback.
+ */
+typedef void (*xshell_callback_t)(xshell_t *xshp);
+
+/**
  * @brief   Type of a command handler function.
  */
 typedef void (*xshellcmd_t)(xshell_t *xshp, int argc, char *argv[], char *envp[]);
@@ -339,6 +344,7 @@ extern "C" {
                         tprio_t prio,
                         char *envp[]);
   bool xshellGetLine(xshell_t *xshp, char *line, size_t size);
+  ucnt_t xshellGarbageCollect(xshell_manager_t *smp, xshell_callback_t cb);
 #ifdef __cplusplus
 }
 #endif

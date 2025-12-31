@@ -125,7 +125,6 @@ typedef struct {
 extern "C" {
 #endif
   extern ROMCONST chdebug_t ch_debug;
-  ucnt_t chRegGarbageCollect(void *object);
   thread_t *chRegFirstThread(void);
   thread_t *chRegNextThread(thread_t *tp);
   thread_t *chRegFindThreadByName(const char *name);
