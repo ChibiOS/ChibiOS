@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2026 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -552,6 +552,263 @@ typedef struct {
   volatile uint32_t     CNT;
   volatile uint32_t     OR;
 } stm32_lptim_t;
+
+/**
+ * @brief   STM32 TIM properties query object.
+ */
+typedef struct {
+  uint32_t    clock;
+  bool        is32bit;
+} stm32_tim_props_t;
+
+/*===========================================================================*/
+/* Driver inline functions.                                                  */
+/*===========================================================================*/
+
+/**
+ * @brief   Get properties of a timer.
+ *
+ * @param[in] timp      pointer to a @p stm32_tim_t object
+ * @param[in] timpropp  pointer to a @p stm32_tim_props_t object
+ *
+ * @return true on valid timer else false
+ *
+ * @api
+ */
+static inline bool hal_tim_get_properties(stm32_tim_t *timp,
+                                                stm32_tim_props_t *timpropp) {
+
+  osalDbgCheck(timp != NULL && timpropp != NULL);
+
+  if (false) {
+  }
+
+#if STM32_HAS_TIM1
+  else if (timp == STM32_TIM1) {
+#if defined(STM32_TIM1CLK)
+    timpropp->clock = STM32_TIM1CLK;
+#else
+    timpropp->clock = STM32_TIMCLK2;
+#endif
+    timpropp->is32bit = STM32_TIM1_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM2
+  else if (timp == STM32_TIM2) {
+#if defined(STM32_TIM2CLK)
+    timpropp->clock = STM32_TIM2CLK;
+#else
+    timpropp->clock = STM32_TIMCLK1;
+#endif
+    timpropp->is32bit = STM32_TIM2_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM3
+  else if (timp == STM32_TIM3) {
+#if defined(STM32_TIM3CLK)
+    timpropp->clock = STM32_TIM3CLK;
+#else
+    timpropp->clock = STM32_TIMCLK1;
+#endif
+    timpropp->is32bit = STM32_TIM3_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM4
+  else if (timp == STM32_TIM4) {
+#if defined(STM32_TIM4CLK)
+    timpropp->clock = STM32_TIM4CLK;
+#else
+    timpropp->clock = STM32_TIMCLK1;
+#endif
+    timpropp->is32bit = STM32_TIM4_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM5
+  else if (timp == STM32_TIM5) {
+#if defined(STM32_TIM5CLK)
+    timpropp->clock = STM32_TIM5CLK;
+#else
+    timpropp->clock = STM32_TIMCLK1;
+#endif
+    timpropp->is32bit = STM32_TIM5_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM6
+  else if (timp == STM32_TIM6) {
+#if defined(STM32_TIM6CLK)
+    timpropp->clock = STM32_TIM6CLK;
+#else
+    timpropp->clock = STM32_TIMCLK1;
+#endif
+    timpropp->is32bit = STM32_TIM6_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM7
+  else if (timp == STM32_TIM7) {
+#if defined(STM32_TIM7CLK)
+    timpropp->clock = STM32_TIM7CLK;
+#else
+    timpropp->clock = STM32_TIMCLK1;
+#endif
+    timpropp->is32bit = STM32_TIM7_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM8
+  else if (timp == STM32_TIM8) {
+#if defined(STM32_TIM8CLK)
+    timpropp->clock = STM32_TIM8CLK;
+#else
+    timpropp->clock = STM32_TIMCLK2;
+#endif
+    timpropp->is32bit = STM32_TIM8_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM9
+  else if (timp == STM32_TIM9) {
+#if defined(STM32_TIM9CLK)
+    timpropp->clock = STM32_TIM9CLK;
+#else
+    timpropp->clock = STM32_TIMCLK2;
+#endif
+    timpropp->is32bit = STM32_TIM9_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM10
+  else if (timp == STM32_TIM10) {
+#if defined(STM32_TIM10CLK)
+    timpropp->clock = STM32_TIM10CLK;
+#else
+    timpropp->clock = STM32_TIMCLK2;
+#endif
+    timpropp->is32bit = STM32_TIM10_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM11
+  else if (timp == STM32_TIM11) {
+#if defined(STM32_TIM11CLK)
+    timpropp->clock = STM32_TIM11CLK;
+#else
+    timpropp->clock = STM32_TIMCLK2;
+#endif
+    timpropp->is32bit = STM32_TIM11_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM12
+  else if (timp == STM32_TIM12) {
+#if defined(STM32_TIM12CLK)
+    timpropp->clock = STM32_TIM12CLK;
+#else
+    timpropp->clock = STM32_TIMCLK1;
+#endif
+    timpropp->is32bit = STM32_TIM12_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM13
+  else if (timp == STM32_TIM13) {
+#if defined(STM32_TIM13CLK)
+    timpropp->clock = STM32_TIM13CLK;
+#else
+    timpropp->clock = STM32_TIMCLK1;
+#endif
+    timpropp->is32bit = STM32_TIM13_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM14
+  else if (timp == STM32_TIM14) {
+#if defined(STM32_TIM14CLK)
+    timpropp->clock = STM32_TIM14CLK;
+#else
+    timpropp->clock = STM32_TIMCLK1;
+#endif
+    timpropp->is32bit = STM32_TIM14_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM15
+  else if (timp == STM32_TIM15) {
+#if defined(STM32_TIM15CLK)
+    timpropp->clock = STM32_TIM15CLK;
+#else
+    timpropp->clock = STM32_TIMCLK2;
+#endif
+    timpropp->is32bit = STM32_TIM15_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM16
+  else if (timp == STM32_TIM16) {
+#if defined(STM32_TIM16CLK)
+    timpropp->clock = STM32_TIM16CLK;
+#else
+    timpropp->clock = STM32_TIMCLK2;
+#endif
+    timpropp->is32bit = STM32_TIM16_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM17
+  else if (timp == STM32_TIM17) {
+#if defined(STM32_TIM17CLK)
+    timpropp->clock = STM32_TIM17CLK;
+#else
+    timpropp->clock = STM32_TIMCLK2;
+#endif
+    timpropp->is32bit = STM32_TIM17_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM20
+  else if (timp == STM32_TIM20) {
+#if defined(STM32_TIM20CLK)
+    timpropp->clock = STM32_TIM20CLK;
+#else
+    timpropp->clock = STM32_TIMCLK2;
+#endif
+    timpropp->is32bit = STM32_TIM20_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM21
+  else if (timp == STM32_TIM21) {
+#if defined(STM32_TIM21CLK)
+    timpropp->clock = STM32_TIM21CLK;
+#else
+    timpropp->clock = STM32_TIMCLK1;
+#endif
+    timpropp->is32bit = STM32_TIM21_IS_32BITS;
+  }
+#endif
+
+#if STM32_HAS_TIM22
+  else if (timp == STM32_TIM22) {
+#if defined(STM32_TIM22CLK)
+    timpropp->clock = STM32_TIM22CLK;
+#else
+    timpropp->clock = STM32_TIMCLK1;
+#endif
+    timpropp->is32bit = STM32_TIM22_IS_32BITS;
+  }
+#endif
+
+  else {
+    osalDbgAssert(false, "invalid TIM instance");
+    return false;
+  }
+  return true;
+}
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

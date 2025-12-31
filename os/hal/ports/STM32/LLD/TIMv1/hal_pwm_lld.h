@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2026 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -914,6 +914,16 @@ struct PWMDriver {
  */
 #define pwm_lld_change_period(pwmp, period)                                 \
   ((pwmp)->tim->ARR = ((period) - 1))
+
+/**
+ * @brief   Returns the TIM associated with a PWM.
+ *
+ * @param[in] pwmp      pointer to the @p PWMDriver object
+ * @return              The TIM reference.
+ *
+ * @notapi
+ */
+#define pwm_lld_get_timer(pwmp) ((pwmp)->tim)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

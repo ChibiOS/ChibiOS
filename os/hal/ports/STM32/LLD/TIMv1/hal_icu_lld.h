@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2026 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -801,6 +801,16 @@ struct ICUDriver {
  */
 #define icu_lld_are_notifications_enabled(icup)                             \
   (bool)(((icup)->tim->DIER & STM32_TIM_DIER_IRQ_MASK) != 0)
+
+/**
+ * @brief   Returns the TIM associated with an ICU.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ * @return              The TIM reference.
+ *
+ * @notapi
+ */
+#define icu_lld_get_timer(icup) ((icup)->tim)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

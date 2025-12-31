@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2026 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -148,7 +148,7 @@ GPTDriver GPTD14;
 
 /**
  * @brief   GPTD15 driver identifier.
- * @note    The driver GPTD14 allocates the timer TIM14 when enabled.
+ * @note    The driver GPTD15 allocates the timer TIM15 when enabled.
  */
 #if STM32_GPT_USE_TIM15 || defined(__DOXYGEN__)
 GPTDriver GPTD15;
@@ -156,7 +156,7 @@ GPTDriver GPTD15;
 
 /**
  * @brief   GPTD16 driver identifier.
- * @note    The driver GPTD14 allocates the timer TIM14 when enabled.
+ * @note    The driver GPTD16 allocates the timer TIM16 when enabled.
  */
 #if STM32_GPT_USE_TIM16 || defined(__DOXYGEN__)
 GPTDriver GPTD16;
@@ -164,10 +164,18 @@ GPTDriver GPTD16;
 
 /**
  * @brief   GPTD17 driver identifier.
- * @note    The driver GPTD14 allocates the timer TIM14 when enabled.
+ * @note    The driver GPTD17 allocates the timer TIM17 when enabled.
  */
 #if STM32_GPT_USE_TIM17 || defined(__DOXYGEN__)
 GPTDriver GPTD17;
+#endif
+
+/**
+ * @brief   GPTD20 driver identifier.
+ * @note    The driver GPTD20 allocates the timer TIM20 when enabled.
+ */
+#if STM32_GPT_USE_TIM20 || defined(__DOXYGEN__)
+GPTDriver GPTD20;
 #endif
 
 /**
@@ -420,6 +428,27 @@ OSAL_IRQ_HANDLER(STM32_TIM8_UP_HANDLER) {
 #endif /* !defined(STM32_TIM17_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM17 */
 
+#if STM32_GPT_USE_TIM20 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM20_SUPPRESS_ISR)
+#if !defined(STM32_TIM20_UP_HANDLER)
+#error "STM32_TIM20_UP_HANDLER not defined"
+#endif /* !defined(STM32_TIM20_SUPPRESS_ISR) */
+/**
+ * @brief   TIM20 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_TIM20_UP_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpt_lld_serve_interrupt(&GPTD20);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+#endif /* STM32_GPT_USE_TIM20 */
+
 #if STM32_GPT_USE_TIM21 || defined(__DOXYGEN__)
 #if !defined(STM32_TIM21_SUPPRESS_ISR)
 #if !defined(STM32_TIM21_HANDLER)
@@ -573,6 +602,12 @@ void gpt_lld_init(void) {
   /* Driver initialization.*/
   GPTD17.tim = STM32_TIM17;
   gptObjectInit(&GPTD17);
+#endif
+
+#if STM32_GPT_USE_TIM20
+  /* Driver initialization.*/
+  GPTD20.tim = STM32_TIM20;
+  gptObjectInit(&GPTD20);
 #endif
 
 #if STM32_GPT_USE_TIM21
@@ -838,8 +873,18 @@ void gpt_lld_start(GPTDriver *gptp) {
     if (&GPTD17 == gptp) {
       rccEnableTIM17(true);
       rccResetTIM17();
-#if defined(STM32_TIM17CLK)
-      gptp->clock = STM32_TIM17CLK;
+    }
+#endif
+
+#if STM32_GPT_USE_TIM20
+    if (&GPTD20 == gptp) {
+      rccEnableTIM20(true);
+      rccResetTIM20();
+#if !defined(STM32_TIM20_SUPPRESS_ISR)
+      nvicEnableVector(STM32_TIM20_UP_NUMBER, STM32_GPT_TIM20_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM20CLK)
+      gptp->clock = STM32_TIM20CLK;
 #else
       gptp->clock = STM32_TIMCLK2;
 #endif
@@ -1046,6 +1091,15 @@ void gpt_lld_stop(GPTDriver *gptp) {
 #if STM32_GPT_USE_TIM17
     if (&GPTD17 == gptp) {
       rccDisableTIM17();
+    }
+#endif
+
+#if STM32_GPT_USE_TIM20
+    if (&GPTD20 == gptp) {
+#if !defined(STM32_TIM20_SUPPRESS_ISR)
+      nvicDisableVector(STM32_TIM20_NUMBER);
+#endif
+      rccDisableTIM20();
     }
 #endif
 

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2026 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -342,7 +342,7 @@ OSAL_IRQ_HANDLER(STM32_TIM5_HANDLER) {
 #error "STM32_TIM8_UP_HANDLER not defined"
 #endif
 /**
- * @brief   TIM8 compare interrupt handler.
+ * @brief   TIM8 update interrupt handler.
  *
  * @isr
  */
@@ -418,7 +418,39 @@ OSAL_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
 
 #if STM32_ICU_USE_TIM20 || defined(__DOXYGEN__)
 #if !defined(STM32_TIM20_SUPPRESS_ISR)
-#error "TIM20 ISR not defined by platform"
+#if !defined(STM32_TIM20_UP_HANDLER)
+#error "STM32_TIM20_UP_HANDLER not defined"
+#endif
+/**
+ * @brief   TIM20 update interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_TIM20_UP_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  icu_lld_serve_interrupt(&ICUD20);
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+#if !defined(STM32_TIM20_CC_HANDLER)
+#error "STM32_TIM20_CC_HANDLER not defined"
+#endif
+/**
+ * @brief   TIM20 compare interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_TIM20_CC_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  icu_lld_serve_interrupt(&ICUD20);
+
+  OSAL_IRQ_EPILOGUE();
+}
 #endif /* !defined(STM32_TIM20_SUPPRESS_ISR) */
 #endif /* STM32_ICU_USE_TIM20 */
 
