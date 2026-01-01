@@ -285,6 +285,9 @@ SVC_Handler:
 .Lctxswitch:
                 /* SVC called from privilege mode for context switch.*/
 #else
+#if PORT_SAVE_CONTROL
+                mrs     r12, CONTROL
+#endif
                 mrs     r2, PSP             /* Position of the exc.frame.*/
 #endif
                 /* Retrieving pointers to old and new context from the
