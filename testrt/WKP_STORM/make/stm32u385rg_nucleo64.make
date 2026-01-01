@@ -89,7 +89,7 @@ PROJECT = ch
 MCU  = cortex-m33
 
 # Imported source files and paths.
-CHIBIOS  := ../../
+CHIBIOS  := ../..
 CONFDIR  := ./cfg/stm32u385rg_nucleo64
 BUILDDIR := ./build/stm32u385rg_nucleo64
 DEPDIR   := ./.dep/stm32u385rg_nucleo64
@@ -105,7 +105,7 @@ include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_U385RG_Q/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/common/ports/ARMv8-M-ML-ALT/compilers/GCC/mk/port.mk
+include $(CHIBIOS)/os/common/ports/ARMv8-M-ML/compilers/GCC/mk/port.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
@@ -113,9 +113,8 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 #include $(CHIBIOS)/test/rt/rt_test.mk
 #include $(CHIBIOS)/test/oslib/oslib_test.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
-#include $(CHIBIOS)/os/various/shell/shell.mk
 
-# Define linker script file here.
+# Define linker script file here
 LDSCRIPT= $(STARTUPLD)/STM32U385xG.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
@@ -139,7 +138,7 @@ ASMXSRC = $(ALLXASMSRC)
 INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC)
 
 # Define C warning options here.
-CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes -Wcast-align=strict
+CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
 
 # Define C++ warning options here.
 CPPWARN = -Wall -Wextra -Wundef
