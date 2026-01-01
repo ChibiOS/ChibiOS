@@ -239,9 +239,8 @@ SVC_Handler:
 #endif
                 /* Retrieving pointers to old and new context from the
                    saved stack frame.*/
-                ldr     r1, [r2, #4]        /* R1 on SVC context (otp) */
+                ldmia   r2, {r0, r1}        /* R0/R1 on SVC context (ntp/otp) */
                 adds    r1, #CONTEXT_OFFSET
-                ldr     r0, [r2, #0]        /* R0 on SVC context (ntp) */
                 adds    r0, #CONTEXT_OFFSET
 
                 /* Context store for old thread through R1.*/
