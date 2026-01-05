@@ -484,7 +484,7 @@ typedef struct {
     __I  uint32_t         INTS;
     __I  uint32_t         resvd44[1007];
   } CLR;
-} TIMER0_TypeDef;
+} TIMER_TypeDef;
 
 typedef struct {
   __IO uint32_t         UARTDR;
@@ -1277,7 +1277,7 @@ typedef struct {
 #define PSM                               ((PSM_TypeDef *)    __PSM_BASE)
 #define RESETS                            ((RESETS_TypeDef *) __RESETS_BASE)
 #define SIO                               ((SIO_TypeDef *)    __SIO_BASE)
-#define TIMER0                            ((TIMER0_TypeDef *) __TIMER0_BASE)
+#define TIMER0                            ((TIMER_TypeDef *)  __TIMER0_BASE)
 #define UART0                             ((UART_TypeDef *)   __UART0_BASE)
 #define UART1                             ((UART_TypeDef *)   __UART1_BASE)
 #define RTC                               ((RTC_TypeDef *)    __RTC_BASE)
@@ -1402,7 +1402,7 @@ typedef struct {
 #define RESETS_ALLREG_USBCTRL             (1U << 24)
 #define RESETS_ALLREG_UART1               (1U << 23)
 #define RESETS_ALLREG_UART0               (1U << 22)
-#define RESETS_ALLREG_TIMER               (1U << 21)
+#define RESETS_ALLREG_TIMER0              (1U << 21)
 #define RESETS_ALLREG_TBMAN               (1U << 20)
 #define RESETS_ALLREG_SYSINFO             (1U << 19)
 #define RESETS_ALLREG_SYSCFG              (1U << 18)
