@@ -849,6 +849,9 @@
 /* Port-specific settings (override port settings defaulted in chcore.h).    */
 /*===========================================================================*/
 
+#define PORT_USE_SYSCALL                    TRUE
+#define PORT_SWITCHED_REGIONS_NUMBER        1
+
 #endif  /* CHCONF_H */
 
 /** @} */
