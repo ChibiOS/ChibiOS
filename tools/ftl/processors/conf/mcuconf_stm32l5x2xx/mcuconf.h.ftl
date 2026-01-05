@@ -59,7 +59,7 @@
 /*
  * ICache settings.
  */
-#define STM32_ICACHE_CR                     ${doc.STM32_ICACHE_CR!"(ICACHE_CR_EN)"}
+#define STM32_ICACHE_CR                     ${doc.STM32_ICACHE_CR!"(ICACHE_CR_WAYSEL | ICACHE_CR_EN)"}
 #define STM32_ICACHE_CRR0                   ${doc.STM32_ICACHE_CRR0!"0"}
 #define STM32_ICACHE_CRR1                   ${doc.STM32_ICACHE_CRR1!"0"}
 #define STM32_ICACHE_CRR2                   ${doc.STM32_ICACHE_CRR2!"0"}
