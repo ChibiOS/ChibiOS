@@ -116,14 +116,15 @@ CC_WEAK void __port_do_syscall_return(void) {
 
 /**
  * @brief   Tail ISR context switch code.
+ *
+ * @return              The threads pointers encoded in a single 64 bits value.
  */
-void PendSV_Handler(void) {
+uint64_t __port_schedule_next(void) {
 
   /* Note, not an error, we are outside the ISR already.*/
   chSysLock();
 
   if (likely(chSchIsPreemptionRequired())) {
-    extern void port_pendsv_tail(thread_t *ntp, thread_t *otp);
     thread_t *otp, *ntp;
 
     otp = chThdGetSelfX();
@@ -133,11 +134,12 @@ void PendSV_Handler(void) {
     __stats_ctxswc(ntp, otp);
     CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp);
 
-    port_pendsv_tail(ntp, otp);
-    return;
+    return ((uint64_t)(uint32_t)otp << 32) | ((uint64_t)(uint32_t)ntp << 0);
   }
 
   chSysUnlock();
+
+  return (uint64_t)0;
 }
 
 /**
@@ -165,11 +167,11 @@ void port_init(os_instance_t *oip) {
 #if PORT_USE_FPU_FAST_SWITCHING == 0
     /* No lazy context saving, always long exception context.*/
     control = CONTROL_FPCA_Msk | CONTROL_SPSEL_Msk;
-    FPU->FPCCR = 0U;
+    FPU->FPCCR = FPU_FPCCR_ASPEN_Msk;
 #elif PORT_USE_FPU_FAST_SWITCHING == 1
     /* Lazy context saving enabled, always long exception context.*/
     control = CONTROL_FPCA_Msk | CONTROL_SPSEL_Msk;
-    FPU->FPCCR = FPU_FPCCR_LSPEN_Msk;
+    FPU->FPCCR = FPU_FPCCR_ASPEN_Msk | FPU_FPCCR_LSPEN_Msk;
 #else /*PORT_USE_FPU_FAST_SWITCHING >= 2 */
     /* Lazy context saving enabled, automatic FPCA control.*/
     control = CONTROL_SPSEL_Msk;
