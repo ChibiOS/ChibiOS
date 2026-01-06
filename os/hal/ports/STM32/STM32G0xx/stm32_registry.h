@@ -314,7 +314,7 @@
 #define STM32_HAS_FSMC                      FALSE
 
 /* CRC attributes.*/
-#define STM32_HAS_CRC                       FALSE
+#define STM32_HAS_CRC                       TRUE
 
 /* DCMI attributes.*/
 #define STM32_HAS_DCMI                      FALSE
@@ -514,7 +514,7 @@
 #define STM32_HAS_FSMC                      FALSE
 
 /* CRC attributes.*/
-#define STM32_HAS_CRC                       FALSE
+#define STM32_HAS_CRC                       TRUE
 
 /* DCMI attributes.*/
 #define STM32_HAS_DCMI                      FALSE
@@ -729,7 +729,7 @@
 #define STM32_HAS_FSMC                      FALSE
 
 /* CRC attributes.*/
-#define STM32_HAS_CRC                       FALSE
+#define STM32_HAS_CRC                       TRUE
 
 /* DCMI attributes.*/
 #define STM32_HAS_DCMI                      FALSE
@@ -964,7 +964,7 @@
 #define STM32_HAS_FSMC                      FALSE
 
 /* CRC attributes.*/
-#define STM32_HAS_CRC                       FALSE
+#define STM32_HAS_CRC                       TRUE
 
 /* DCMI attributes.*/
 #define STM32_HAS_DCMI                      FALSE
@@ -1191,7 +1191,7 @@
 #define STM32_HAS_FSMC                      FALSE
 
 /* CRC attributes.*/
-#define STM32_HAS_CRC                       FALSE
+#define STM32_HAS_CRC                       TRUE
 
 /* DCMI attributes.*/
 #define STM32_HAS_DCMI                      FALSE
