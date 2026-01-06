@@ -263,7 +263,7 @@ static THD_FUNCTION(xshell_thread, p) {
 
   /* Shell exit hook.*/
 #if defined(XSHELL_EXIT_HOOK)
-  XSHELL_EXIT_HOOK(smp);
+  XSHELL_EXIT_HOOK(xshp);
 #endif
 
   /* Atomically broadcasting the event source and terminating the thread,
@@ -292,14 +292,14 @@ static void xshell_free(thread_t *tp) {
 
 #if (XSHELL_HISTORY_DEPTH > 0) || defined(__DOXYGEN__)
 static void xshell_save_history(xshell_t *xshp, char *line) {
-  char *history_base = &xshp->history_buffer[0][0];
+  char *history_base = &xshp->history.history_buffer[0][0];
   char *history_end = history_base +
                       (XSHELL_HISTORY_DEPTH * XSHELL_LINE_LENGTH);
 
-  strcpy(xshp->history_head, line);
-  xshp->history_head += XSHELL_LINE_LENGTH;
-  if (xshp->history_head >= history_end) {
-    xshp->history_head = history_base;
+  strcpy(xshp->history.history_head, line);
+  xshp->history.history_head += XSHELL_LINE_LENGTH;
+  if (xshp->history.history_head >= history_end) {
+    xshp->history.history_head = history_base;
   }
 }
 
@@ -307,14 +307,14 @@ static size_t xshell_get_history_prev(xshell_t *xshp, char *line) {
   size_t len;
   char *p;
 
-  p = xshp->history_current - XSHELL_LINE_LENGTH;
-    if (p < xshp->history_buffer[0]) {
-      p = xshp->history_buffer[XSHELL_HISTORY_DEPTH - 1];
+  p = xshp->history.history_current - XSHELL_LINE_LENGTH;
+    if (p < xshp->history.history_buffer[0]) {
+      p = xshp->history.history_buffer[XSHELL_HISTORY_DEPTH - 1];
   }
   if ((len = strlen(p)) > (size_t)0) {
-    xshp->history_current = p;
+    xshp->history.history_current = p;
   }
-  strcpy(line, p);
+  strcpy(line, xshp->history.history_current);
 
   return len;
 }
@@ -323,16 +323,23 @@ static size_t xshell_get_history_next(xshell_t *xshp, char *line) {
   size_t len;
   char *p;
 
-  p = xshp->history_current + XSHELL_LINE_LENGTH;
-    if (p > xshp->history_buffer[XSHELL_HISTORY_DEPTH - 1]) {
-      p = xshp->history_buffer[0];
+  p = xshp->history.history_current + XSHELL_LINE_LENGTH;
+    if (p > xshp->history.history_buffer[XSHELL_HISTORY_DEPTH - 1]) {
+      p = xshp->history.history_buffer[0];
   }
   if ((len = strlen(p)) > (size_t)0) {
-    xshp->history_current = p;
+    xshp->history.history_current = p;
   }
-  strcpy(line, p);
+  strcpy(line, xshp->history.history_current);
 
   return len;
+}
+
+static void xshell_reset_history(xshell_t *xshp) {
+
+  xshp->history.history_head = xshp->history.history_buffer[0];
+  xshp->history.history_current = xshp->history.history_head;
+  memset(xshp->history.history_buffer, 0, sizeof xshp->history.history_buffer);
 }
 
 static bool xshell_is_line_empty(const char *str) {
@@ -424,8 +431,9 @@ void xshellObjectInit(xshell_manager_t *smp,
  * @brief   Spawns a new shell using the specified stream for I/O.
  *
  * @param[in,out] smp           pointer to the @p xshell_manager_t object
- * @param[in] stp               pointer to a stream interface
- * @param[in] prio              shell priority
+ * @param[in]     stream        pointer to a stream interface
+ * @param[in]     prio          shell priority
+ * @param[in]     envp          pointer to shell environment (or NULL)
  *
  * @api
  */
@@ -446,11 +454,7 @@ xshell_t *xshellSpawn(xshell_manager_t *smp,
     xshp->stream = stream;
     xshp->envp = envp;
 #if XSHELL_HISTORY_DEPTH > 0
-    xshp->history_head = xshp->history_buffer[0];
-#endif
-#if defined(XSHELL_INIT)
-  /* Extra fields defined in xshellconf.h.*/
-    XSHELL_INIT(xshp);
+    xshell_reset_history(xshp);
 #endif
 
     /* Getting a stack area from this manager.*/
@@ -487,6 +491,12 @@ xshell_t *xshellSpawn(xshell_manager_t *smp,
                                                NULL);
       tp = chThdSpawnSuspended(&xshp->thread, &td);
       chThdSetCallbackX(tp, xshell_free, (void *)smp);
+
+#if defined(XSHELL_INIT_HOOK)
+      /* Instance initialisation hook.*/
+      XSHELL_INIT_HOOK(xshp);
+#endif
+
       tp = chThdStart(tp);
 
     }
@@ -581,7 +591,7 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
   bool vt      = false;
 #endif
 #if XSHELL_HISTORY_DEPTH > 0
-  xshp->history_current = xshp->history_head;
+  xshp->history.history_current = xshp->history.history_head;
 #endif
 #endif
 
@@ -730,7 +740,7 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
     }
     vt = false;
     if (c == CTRL('U')) {
-      xshp->history_current = xshp->history_head;
+      xshp->history.history_current = xshp->history.history_head;
       p = line;
       xshell_reset_line(xshp);
       continue;
@@ -788,7 +798,7 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
       }
     }
     if (c == CTRL('U')) {
-      xshp->history_current = xshp->history_head;
+      xshp->history.history_current = xshp->history.history_head;
       p = line;
       xshell_reset_line(xshp);
       continue;
@@ -865,5 +875,19 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
 #endif
   }
 }
+
+#if XSHELL_HISTORY_DEPTH > 0
+/**
+ * @brief   Clears the history of a shell.
+ *
+ * @param[in] xshp    pointer to a @p xshell_t object
+ *
+ * @api
+ */
+void xshellClearHistory(xshell_t *xshp) {
+
+  xshell_reset_history(xshp);
+}
+#endif
 
 /** @} */

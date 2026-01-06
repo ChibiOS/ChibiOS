@@ -258,6 +258,26 @@ typedef struct xshell_manager {
 #endif
 } xshell_manager_t;
 
+#if (XSHELL_HISTORY_DEPTH > 0) || defined(__DOXYGEN__)
+/**
+ * @brief   Type of a shell history.
+ */
+typedef struct xshell_history {
+  /**
+   * @brief   Head of history circular buffer.
+   */
+  char                          *history_head;
+  /**
+   * @brief   Current position in history circular buffer.
+   */
+  char                          *history_current;
+  /**
+   * @brief   History buffer.
+   */
+  char                          history_buffer[XSHELL_HISTORY_DEPTH][XSHELL_LINE_LENGTH];
+} xshell_history_t;
+#endif
+
 /**
  * @brief   Type of a shell instance.
  */
@@ -279,18 +299,7 @@ typedef struct xshell {
    */
   char                          line[XSHELL_LINE_LENGTH];
 #if (XSHELL_HISTORY_DEPTH > 0) || defined(__DOXYGEN__)
-  /**
-   * @brief   Head of history circular buffer.
-   */
-  char                          *history_head;
-  /**
-   * @brief   Current position in history circular buffer.
-   */
-  char                          *history_current;
-  /**
-   * @brief   History buffer.
-   */
-  char                          history_buffer[XSHELL_HISTORY_DEPTH][XSHELL_LINE_LENGTH];
+  xshell_history_t              history;
 #endif
   /**
    * @brief   Command argument pointers array.
@@ -345,6 +354,9 @@ extern "C" {
                         char *envp[]);
   bool xshellGetLine(xshell_t *xshp, char *line, size_t size);
   ucnt_t xshellGarbageCollect(xshell_manager_t *smp, xshell_callback_t cb);
+#if XSHELL_HISTORY_DEPTH > 0
+  void xshellClearHistory(xshell_t *xshp);
+#endif
 #ifdef __cplusplus
 }
 #endif
@@ -378,6 +390,21 @@ static inline xshell_manager_t *xshellGetManager(xshell_t *xshp) {
 
   return xshp->thread.object;
 }
+
+#if (XSHELL_HISTORY_DEPTH > 0) || defined(__DOXYGEN__)
+/**
+ * @brief   Returns the history object of a shell.
+ *
+ * @param[in] xshp              pointer to a @p xshell_t object
+ * @return                      Pointer to a @p xshell_history_t object.
+ *
+ * @api
+ */
+static inline xshell_history_t *xshellGetHistory(xshell_t *xshp) {
+
+  return &xshp->history;
+}
+#endif
 
 /**
  * @brief   Waits for a shell to terminate.
