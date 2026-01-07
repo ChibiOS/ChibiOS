@@ -91,10 +91,10 @@ static void vrq_pushctx_other(sb_class_t *sbp, sb_vrqnum_t nvrq) {
   struct port_extctx *ectxp;
 
   /* Current stack frame position.*/
-  ectxp = (struct port_extctx *)sbp->u_psp;
+//  ectxp = (struct port_extctx *)sbp->u_psp;
 
   /* Position of the new stack frame, it depends on FPU settings and state.*/
-  ectxp = (struct port_extctx *)(sbp->u_psp - sizeof (struct port_extctx));
+  ectxp = (struct port_extctx *)((uintptr_t)sbp->thread.ctx.sp - sizeof (struct port_extctx));
 
   /* Checking if the new frame is within the sandbox else failure.*/
   if (!sb_is_valid_write_range(sbp, (void *)ectxp, sizeof (struct port_extctx))) {
@@ -107,7 +107,8 @@ static void vrq_pushctx_other(sb_class_t *sbp, sb_vrqnum_t nvrq) {
     vrq_initctx(sbp, ectxp, nvrq);
   }
 
-  sbp->u_psp = (uint32_t)ectxp;
+//  sbp->u_psp = (uint32_t)ectxp;
+  sbp->thread.ctx.sp = ectxp;
 }
 
 /* Encouraging a tail call on this function.*/
