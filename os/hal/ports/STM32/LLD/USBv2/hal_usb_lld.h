@@ -440,7 +440,7 @@ struct USBDriver {
  *
  * @notapi
  */
-#define usb_lld_get_frame_number(usbp) (STM32_USB->FNR & FNR_FN_MASK)
+#define usb_lld_get_frame_number(usbp) (STM32_USB->FNR & USB_FNR_FN_Msk)
 
 /**
  * @brief   Returns the exact size of a receive transaction.

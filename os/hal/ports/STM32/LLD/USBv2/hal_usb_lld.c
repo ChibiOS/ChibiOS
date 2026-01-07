@@ -46,7 +46,7 @@
 /**
  * @brief   Gets the address of a TX buffer.
  */
-#define USB_GET_TX_BUFFER(ep)      (uint32_t *)(USB_DRD_PMAADDR +       \
+#define USB_GET_TX_BUFFER(udp)     (uint32_t *)(USB_DRD_PMAADDR +       \
                                                ((udp)->TXBD0 & 0x0000FFFFU))
 
 /**
