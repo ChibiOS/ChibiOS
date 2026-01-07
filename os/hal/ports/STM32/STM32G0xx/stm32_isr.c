@@ -108,7 +108,7 @@
 #error "unknown USARTs combination"
 #endif
 
-#include "stm32_usb1.inc"
+#include "stm32_usb1_ucpd1_2.inc"
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -163,7 +163,7 @@ void irqInit(void) {
   lpuart1_irq_init();
 #endif
 
-  usb1_irq_init();
+  usb1_ucpd1_2_irq_init();
 }
 
 /**
@@ -213,7 +213,7 @@ void irqDeinit(void) {
   lpuart1_irq_deinit();
 #endif
 
-  usb1_irq_deinit();
+  usb1_ucpd1_2_irq_deinit();
 }
 
 /** @} */

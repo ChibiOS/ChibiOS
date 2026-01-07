@@ -55,18 +55,6 @@
 #endif
 
 /* Checks for mcuconf.h correctness.*/
-#if STM32_HAS_USB1 && !defined(STM32_USB_USE_USB1)
-#error "STM32_USB_USE_USB1 not defined in mcuconf.h"
-#endif
-
-#if STM32_HAS_UCPD1 && !defined(STM32_USB_USE_UCPD1)
-#error "STM32_USB_USE_UCPD1 not defined in mcuconf.h"
-#endif
-
-#if STM32_HAS_UCPD2 && !defined(STM32_USB_USE_UCPD2)
-#error "STM32_USB_USE_UCPD2 not defined in mcuconf.h"
-#endif
-
 #if !defined(STM32_IRQ_USB1_UCPD1_2_PRIORITY)
 #error "STM32_IRQ_USB1_UCPD1_2_PRIORITY not defined in mcuconf.h"
 #endif
@@ -90,14 +78,14 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void usb1_irq_init(void) {
+static inline void usb1_ucpd1_2_irq_init(void) {
 
 #if defined(STM32_USB1_IS_USED) || defined(STM32_UCPD1_IS_USED) || defined(STM32_UCPD2_IS_USED)
   nvicEnableVector(STM32_USB1_UCPD1_2_NUMBER, STM32_IRQ_USB1_UCPD1_2_PRIORITY);
 #endif
 }
 
-static inline void usb1_irq_deinit(void) {
+static inline void usb1_ucpd1_2_irq_deinit(void) {
 
 #if defined(STM32_USB1_IS_USED) || defined(STM32_UCPD1_IS_USED) || defined(STM32_UCPD2_IS_USED)
   nvicDisableVector(STM32_USB1_UCPD1_2_NUMBER);

@@ -127,7 +127,7 @@
 #define STM32_IRQ_USART2_LP2_PRIORITY       2
 #define STM32_IRQ_USART3_4_5_6_LP1_PRIORITY 2
 
-#define STM32_IRQ_USB1_PRIORITY             3
+#define STM32_IRQ_USB1_UCPD1_2_PRIORITY     3
 
 /*
  * ADC driver system settings.
