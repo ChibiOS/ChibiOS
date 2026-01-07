@@ -73,7 +73,11 @@ static inline uint32_t get_alignment(uint32_t v) {
 
 static inline uint32_t get_next_po2(uint32_t v) {
 
-  return 0x80000000U >> (__CLZ(v) - 1);
+  if (v <= 1U) {
+    return 1U;
+  }
+
+  return 1U << (32U - __CLZ(v - 1U));
 }
 
 static size_t get_mpu_alignment(memory_area_t *map) {
