@@ -191,6 +191,11 @@
 #error "invalid SB_CFG_ALARM_VRQ value"
 #endif
 
+#if (PORT_SWITCHED_REGIONS_NUMBER > 0) &&                                  \
+    (SB_CFG_NUM_REGIONS < PORT_SWITCHED_REGIONS_NUMBER)
+#error "SB_CFG_NUM_REGIONS must be >= PORT_SWITCHED_REGIONS_NUMBER"
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
