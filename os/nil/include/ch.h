@@ -182,6 +182,15 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Unavailable options
+ * @{
+ */
+#define CH_CFG_USE_MUTEXES          FALSE
+#define CH_CFG_SMP_MODE             FALSE
+#define CH_DBG_STATISTICS           FALSE
+/** @} */
+
 #include "chconf.h"
 #include "chlicense.h"
 
@@ -224,14 +233,6 @@
 
 #if !defined(CH_CFG_USE_EVENTS)
 #error "CH_CFG_USE_EVENTS not defined in chconf.h"
-#endif
-
-#if !defined(CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
-#error "CH_CFG_USE_MUTEXES not defined in chconf.h"
-#endif
-
-#if !defined(CH_DBG_STATISTICS) || defined(__DOXYGEN__)
-#error "CH_DBG_STATISTICS not defined in chconf.h"
 #endif
 
 #if !defined(CH_DBG_SYSTEM_STATE_CHECK) || defined(__DOXYGEN__)
@@ -349,14 +350,6 @@
        "be zero or greater than one"
 #endif
 
-#if CH_CFG_USE_MUTEXES == TRUE
-#error "mutexes not yet supported"
-#endif
-
-#if CH_DBG_STATISTICS == TRUE
-#error "statistics not yet supported"
-#endif
-
 #if (CH_DBG_SYSTEM_STATE_CHECK == TRUE) ||                                  \
     (CH_DBG_ENABLE_CHECKS == TRUE)      ||                                  \
     (CH_DBG_ENABLE_ASSERTS == TRUE)     ||                                  \
@@ -393,14 +386,14 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
-#if defined(PORT_DOES_NOT_PROVIDE_TYPES) || defined(__DOXYGEN__)
 /**
  * @name    Kernel types
  * @{
  */
+#if defined(PORT_DOES_NOT_PROVIDE_TYPES) || defined(__DOXYGEN__)
 typedef port_rtcnt_t    rtcnt_t;            /**< Realtime counter.          */
 typedef port_syssts_t   syssts_t;           /**< System status word.        */
-typedef port_stkline_t stkline_t;         /**< Stack alignment type.      */
+typedef port_stkline_t  stkline_t;          /**< Stack alignment type.      */
 
 #if (PORT_ARCH_REGISTERS_WIDTH == 32) || defined(__DOXYGEN__)
 typedef uint8_t         tstate_t;           /**< Thread state.              */
@@ -516,8 +509,8 @@ struct nil_threads_queue {
  */
 struct nil_thread_descriptor {
   const char        *name;      /**< @brief Thread name, for debugging.     */
-  stkline_t        *wbase;     /**< @brief Thread working area base.       */
-  stkline_t        *wend;      /**< @brief Thread working area end.        */
+  stkline_t         *wbase;     /**< @brief Thread working area base.       */
+  stkline_t         *wend;      /**< @brief Thread working area end.        */
   tprio_t           prio;       /**< @brief Thread priority slot.           */
   tfunc_t           funcp;      /**< @brief Thread function.                */
   void              *arg;       /**< @brief Thread function argument.       */
@@ -554,7 +547,7 @@ struct nil_thread {
   msg_t                 sntmsg;     /**< @brief Sent message.               */
 #endif
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
-  stkline_t            *wabase;    /**< @brief Thread stack boundary.      */
+  stkline_t             *wabase;    /**< @brief Thread stack boundary.      */
 #endif
   /* Optional extra fields.*/
   CH_CFG_THREAD_EXT_FIELDS
