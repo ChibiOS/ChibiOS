@@ -176,6 +176,10 @@ static void delay_cb(virtual_timer_t *vtp, void *arg) {
  */
 
 void sbVRQSetFlagsI(sb_class_t *sbp, sb_vrqnum_t nvrq, uint32_t flags) {
+  const sb_vrqnum_t vrq_num =
+    (sb_vrqnum_t)(sizeof sbp->vrq.flags / sizeof sbp->vrq.flags[0]);
+
+  chDbgCheck(nvrq < vrq_num);
 
   sbp->vrq.flags[nvrq] |= flags;
 }
@@ -191,9 +195,12 @@ void sbVRQSetFlagsI(sb_class_t *sbp, sb_vrqnum_t nvrq, uint32_t flags) {
  * @sclass
  */
 void sbVRQTriggerS(sb_class_t *sbp, sb_vrqnum_t nvrq) {
+  const sb_vrqnum_t vrq_num =
+    (sb_vrqnum_t)(sizeof sbp->vrq.flags / sizeof sbp->vrq.flags[0]);
 
   chDbgCheckClassS();
 
+  chDbgCheck(nvrq < vrq_num);
   chDbgAssert(sbp->thread.owner == currcore, "different core");
 
   /* Adding VRQ mask to the pending mask.*/
@@ -247,9 +254,12 @@ void sbVRQTriggerS(sb_class_t *sbp, sb_vrqnum_t nvrq) {
  * @iclass
  */
 void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq) {
+  const sb_vrqnum_t vrq_num =
+    (sb_vrqnum_t)(sizeof sbp->vrq.flags / sizeof sbp->vrq.flags[0]);
 
   chDbgCheckClassI();
 
+  chDbgCheck(nvrq < vrq_num);
   chDbgAssert(sbp->thread.owner == currcore, "different core");
 
   /* Adding VRQ mask to the pending mask.*/
