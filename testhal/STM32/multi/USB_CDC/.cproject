@@ -222,7 +222,7 @@
 					<folderInfo id="0.1093754934.1746620542.582861461." name="/" resourcePath="">
 						<toolChain id="org.eclipse.cdt.build.core.prefbase.toolchain.976489350" name="No ToolChain" resourceTypeBasedDiscovery="false" superClass="org.eclipse.cdt.build.core.prefbase.toolchain">
 							<targetPlatform id="org.eclipse.cdt.build.core.prefbase.toolchain.976489350.1120491640" name=""/>
-							<builder arguments="-f ./make/stm32l4r5_nucleo144.make" command="make" id="org.eclipse.cdt.build.core.settings.default.builder.1837940768" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="unlimited" superClass="org.eclipse.cdt.build.core.settings.default.builder"/>
+							<builder arguments="-f ./make/stm32l4r5zi_nucleo144.make" command="make" id="org.eclipse.cdt.build.core.settings.default.builder.1837940768" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="unlimited" superClass="org.eclipse.cdt.build.core.settings.default.builder"/>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.libs.207186880" name="holder for library settings" superClass="org.eclipse.cdt.build.core.settings.holder.libs"/>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.581585405" name="Assembly" superClass="org.eclipse.cdt.build.core.settings.holder">
 								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1402399502" languageId="org.eclipse.cdt.core.assembly" languageName="Assembly" sourceContentType="org.eclipse.cdt.core.asmSource" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
@@ -600,6 +600,7 @@
 		</configuration>
 		<configuration configurationName="Build for STM32H755ZI-Nucleo144"/>
 		<configuration configurationName="Build for STM32G474RE-Discovery-DPOW1"/>
+		<configuration configurationName="Build for STM32U385-Nucleo64-Q"/>
 		<configuration configurationName="Default">
 			<resource resourceType="PROJECT" workspacePath="/STM32-USB_CDC"/>
 		</configuration>
