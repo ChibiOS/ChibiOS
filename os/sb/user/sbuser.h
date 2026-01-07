@@ -236,7 +236,7 @@ typedef uint32_t eventflags_t;
  *
  * @api
  */
-#define __sb_vrq_return()   __syscall0(255)
+#define __sb_vrq_return()   __syscall0(127)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -929,7 +929,7 @@ static inline void __sb_vrq_wait(void) {
  */
 static inline uint32_t __sb_vrq_gcsts(uint32_t nvrq) {
 
-  __syscall1r(120, nvrq);
+  __syscall1r(119, nvrq);
   return r0;
 }
 
