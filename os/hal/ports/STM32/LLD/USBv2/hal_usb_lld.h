@@ -147,19 +147,22 @@
 #error "invalid STM32_USB_HOST_WAKEUP_DURATION setting, it must be between 2 and 15"
 #endif
 
-#if (STM32_USB_48MHZ_DELTA < 0) || (STM32_USB_48MHZ_DELTA > 120000)
-#error "invalid STM32_USB_48MHZ_DELTA setting, it must not exceed 120000"
-#endif
-
 /* Clock-related checks.*/
 #if !defined(STM32_USBCLK)
 #error "STM32_USBCLK not defined"
 #endif
 
-/* Allowing for a small tolerance.*/
+/* Maximum clock delta, note, clock is not just checked here but also at
+   runtime because the source could be dynamic.*/
+#if (STM32_USB_48MHZ_DELTA < 0) || (STM32_USB_48MHZ_DELTA > 120000)
+#error "invalid STM32_USB_48MHZ_DELTA setting, it must not exceed 120000"
+#endif
+
+#if !defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
 #if (STM32_USBCLK < (48000000 - STM32_USB_48MHZ_DELTA)) ||                  \
     (STM32_USBCLK > (48000000 + STM32_USB_48MHZ_DELTA))
 #error "the USB USBv1 driver requires a 48MHz clock"
+#endif
 #endif
 
 /*===========================================================================*/

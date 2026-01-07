@@ -518,10 +518,12 @@ msg_t usb_lld_start(USBDriver *usbp) {
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
 
+#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
       if ((STM32_USBCLK < (48000000U - STM32_USB_48MHZ_DELTA)) ||
           (STM32_USBCLK > (48000000U + STM32_USB_48MHZ_DELTA))) {
         return HAL_RET_CONFIG_ERROR;
       }
+#endif
 
       /* USB clock enabled.*/
       rccEnableUSB(true);
@@ -529,10 +531,6 @@ msg_t usb_lld_start(USBDriver *usbp) {
 
       /* Powers up the transceiver while holding the USB in reset state.*/
       usbp->usb->CNTR = USB_CNTR_USBRST;
-
-      /* Enabling the USB IRQ vectors, this also gives enough time to allow
-         the transceiver power up (1uS).*/
-      nvicEnableVector(STM32_USB1_NUMBER, STM32_IRQ_USB1_PRIORITY);
 
       /* Releases the USB reset.*/
       usbp->usb->CNTR = 0U;
@@ -558,8 +556,6 @@ void usb_lld_stop(USBDriver *usbp) {
   if (usbp->state != USB_STOP) {
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
-
-      nvicDisableVector(STM32_USB1_NUMBER);
 
       usbp->usb->CNTR = USB_CNTR_PDWN | USB_CNTR_L2RES;
       rccDisableUSB();
