@@ -375,13 +375,6 @@
  */
 #define CH_CFG_HARDENING_LEVEL          0
 
-/* Recursive locks port capability assessed.*/
-#if defined(port_get_lock_status) && defined(port_is_locked)
-#define CH_PORT_SUPPORTS_RECURSIVE_LOCKS    TRUE
-#else
-#define CH_PORT_SUPPORTS_RECURSIVE_LOCKS    FALSE
-#endif
-
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -496,6 +489,13 @@ typedef threads_queue_t semaphore_t;
 
 /* Late inclusion of port core layer.*/
 #include "chcore.h"
+
+/* Recursive locks port capability assessed.*/
+#if defined(port_get_lock_status) && defined(port_is_locked)
+#define CH_PORT_SUPPORTS_RECURSIVE_LOCKS    TRUE
+#else
+#define CH_PORT_SUPPORTS_RECURSIVE_LOCKS    FALSE
+#endif
 
 /**
  * @brief   Structure representing a queue of threads.
