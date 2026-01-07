@@ -234,7 +234,7 @@ int main(void) {
   }
 
   /*
-   * Sandbox objects initialization, regions are statically assigned.
+   * Sandbox objects initialization, regions are assigned explicitly.
    */
   sbObjectInit(&sbx1);
   sbSetRegion(&sbx1, 0, STARTUP_FLASH1_BASE, STARTUP_FLASH1_SIZE, SB_REG_IS_CODE);

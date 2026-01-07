@@ -235,7 +235,7 @@ int main(void) {
   }
 
   /*
-   * Sandbox objects initialization, regions are statically assigned.
+   * Sandbox objects initialization, regions are assigned explicitly.
    */
   sbObjectInit(&sbx1);
   sbSetRegion(&sbx1, 0, STARTUP_FLASH1_BASE, STARTUP_FLASH1_SIZE, SB_REG_IS_CODE);
@@ -249,7 +249,7 @@ int main(void) {
   sbSetFileSystem(&sbx2, (vfs_driver_c *)&root_overlay_driver);
 
   /*
-   * Creating **static** boxes using MPU.
+   * Creating fixed-region MPU boxes.
    * Note: The two regions cover both sandbox 1 and 2, there is no
    *       isolation among them.
    */
