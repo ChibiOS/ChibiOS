@@ -394,7 +394,7 @@ static void usb_packet_write_from_buffer(USBDriver *usbp,
   }
 #endif /* STM32_USB_USE_FAST_COPY */
 
-  while (i > 0) {
+  while (i >= 4) {
     uint32_t w;
 
     w  = (uint32_t)(*buf++);
@@ -403,6 +403,25 @@ static void usb_packet_write_from_buffer(USBDriver *usbp,
     w |= (uint32_t)(*buf++) << 24;
     *pmap++ = w;
     i -= 4U;
+  }
+
+  if (i != 0) {
+    uint32_t w = 0U;
+
+    switch (i) {
+    case 3:
+      w |= (uint32_t)buf[2] << 16;
+      /* Falls through.*/
+    case 2:
+      w |= (uint32_t)buf[1] << 8;
+      /* Falls through.*/
+    case 1:
+      w |= (uint32_t)buf[0];
+      break;
+    default:
+      break;
+    }
+    *pmap++ = w;
   }
 }
 
