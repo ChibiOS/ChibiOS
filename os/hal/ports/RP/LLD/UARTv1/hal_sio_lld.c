@@ -112,7 +112,7 @@ __STATIC_INLINE void uart_init(SIODriver *siop) {
   uint32_t div, idiv, fdiv;
   halfreq_t clock;
 
-  clock = halClockGetPointX(clk_peri);
+  clock = halClockGetPointX(RP_CLK_PERI);
 
   osalDbgAssert(clock > 0U, "no clock");
 

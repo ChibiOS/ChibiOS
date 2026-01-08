@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@
  */
 
 #include "hal.h"
+#include "rp_clocks.h"
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -36,7 +37,7 @@
  * @brief   CMSIS system core clock variable.
  * @note    It is declared in system_rp2040.h.
  */
-uint32_t SystemCoreClock;
+uint32_t SystemCoreClock = RP_CLK_SYS_FREQ;
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
@@ -47,7 +48,6 @@ uint32_t SystemCoreClock;
 /*===========================================================================*/
 
 #if RP_CORE1_START == TRUE
-/* Courtesy of Pico-SDK.*/
 static void start_core1(void) {
   extern uint32_t RP_CORE1_STACK_END;
   extern uint32_t RP_CORE1_VECTORS_TABLE;
@@ -57,14 +57,6 @@ static void start_core1(void) {
                              (uint32_t)&RP_CORE1_STACK_END,
                              (uint32_t)RP_CORE1_ENTRY_POINT};
   unsigned seq;
-
-#if 0
-  /* Resetting core1.*/
-  PSM_SET->FRCE_OFF = PSM_ANY_PROC1;
-  while ((PSM->FRCE_OFF & PSM_ANY_PROC1) == 0U) {
-  }
-  PSM_CLR->FRCE_OFF = PSM_ANY_PROC1;
-#endif
 
   /* Starting core 1.*/
   seq = 0;
@@ -80,7 +72,7 @@ static void start_core1(void) {
     response = fifoBlockingRead();
     /* Checking response, going forward or back to first step.*/
     seq = cmd == response ? seq + 1U : 0U;
-  } while (seq < count_of(cmd_sequence));
+  } while (seq < 6U);
 }
 #endif
 
@@ -100,9 +92,7 @@ static void start_core1(void) {
 void hal_lld_init(void) {
 
 #if RP_NO_INIT == FALSE
-  runtime_init_clocks();
-
-  SystemCoreClock = RP_CORE_CLK;
+  rp_clock_init();
 
   hal_lld_peripheral_unreset(RESETS_ALLREG_BUSCTRL);
   hal_lld_peripheral_unreset(RESETS_ALLREG_SYSINFO);
