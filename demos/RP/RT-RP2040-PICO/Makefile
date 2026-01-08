@@ -116,7 +116,7 @@ include $(CHIBIOS)/os/various/pico_bindings/pico-sdk.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/various/shell/shell.mk
 
-# Define linker script file here
+# Define linker script file here 
 LDSCRIPT= $(STARTUPLD)/RP2040_FLASH.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
@@ -186,6 +186,9 @@ include $(RULESPATH)/rules.mk
 ##############################################################################
 # Custom rules
 #
+
+build/ch.uf2: build/ch.elf
+	picotool uf2 convert build/ch.elf build/ch.uf2
 
 #
 # Custom rules
