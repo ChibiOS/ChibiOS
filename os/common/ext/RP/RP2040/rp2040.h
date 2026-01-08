@@ -3018,7 +3018,7 @@ typedef struct {
  * @note    This is atomic - a single write to the XOR alias register.
  */
 #define rp_write_masked(addr, value, mask) \
-    hw_xor_bits((addr), (*(volatile uint32_t *)(addr) ^ (value)) & (mask))
+    rp_xor_bits((addr), (*(volatile uint32_t *)(addr) ^ (value)) & (mask))
 /** @} */
 
 #ifdef __cplusplus
