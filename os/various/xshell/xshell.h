@@ -149,7 +149,7 @@ typedef struct xshell xshell_t;
 /**
  * @brief   Type of a shell release callback.
  */
-typedef void (*xshell_callback_t)(xshell_t *xshp);
+typedef void (*xshell_callback_t)(xshell_t *xshp, void *par);
 
 /**
  * @brief   Type of a command handler function.
@@ -353,7 +353,7 @@ extern "C" {
                         tprio_t prio,
                         char *envp[]);
   bool xshellGetLine(xshell_t *xshp, char *line, size_t size);
-  ucnt_t xshellGarbageCollect(xshell_manager_t *smp, xshell_callback_t cb);
+  ucnt_t xshellGarbageCollect(xshell_manager_t *smp, xshell_callback_t cb, void *par);
 #if XSHELL_HISTORY_DEPTH > 0
   void xshellClearHistory(xshell_t *xshp);
 #endif
@@ -389,6 +389,19 @@ static inline void xshellUsage(xshell_t *xshp, const char *message) {
 static inline xshell_manager_t *xshellGetManager(xshell_t *xshp) {
 
   return xshp->thread.object;
+}
+
+/**
+ * @brief   Returns the stream associated to a shell.
+ *
+ * @param[in] xshp              pointer to a @p xshell_t object
+ * @return                      stream reference.
+ *
+ * @api
+ */
+static inline shell_stream_i *xshellGetStream(xshell_t *xshp) {
+
+  return xshp->stream;
 }
 
 #if (XSHELL_HISTORY_DEPTH > 0) || defined(__DOXYGEN__)

@@ -493,8 +493,8 @@ xshell_t *xshellSpawn(xshell_manager_t *smp,
       chThdSetCallbackX(tp, xshell_free, (void *)smp);
 
 #if defined(XSHELL_INIT_HOOK)
-      /* Instance initialisation hook.*/
-      XSHELL_INIT_HOOK(xshp);
+    	/* Instance initialisation hook.*/
+    	XSHELL_INIT_HOOK(xshp);
 #endif
 
       tp = chThdStart(tp);
@@ -516,17 +516,17 @@ xshell_t *xshellSpawn(xshell_manager_t *smp,
  *          shell a reference is released causing, if the reference counter
  *          drops to zero, the memory to be released.
  * @note    This function assumes that the shell thread has at least one
- *          reference because @p xshellSpawn() does not release it, the
+ *          reference because @p xshellSpawn() does not release it so the
  *          first reference logically belongs to the shell manager itself.
- *          releases.
  *
  * @param[in] smp               pointer to the @p xshell_manager_t object
  * @oaram[in] cb                shell release callback or @p NULL
+ * @param[in] par               parameter to be passed to callback
  * @return                      The number of cleared terminated shells.
  *
  * @api
  */
-ucnt_t xshellGarbageCollect(xshell_manager_t *smp, xshell_callback_t cb) {
+ucnt_t xshellGarbageCollect(xshell_manager_t *smp, xshell_callback_t cb, void *par) {
   thread_t *tp;
   ucnt_t n = (ucnt_t)0;
 
@@ -547,7 +547,7 @@ ucnt_t xshellGarbageCollect(xshell_manager_t *smp, xshell_callback_t cb) {
 
         /* The found shell is reported before freeing memory.*/
         if (cb != NULL) {
-          cb((xshell_t *)__CH_OWNEROF(tp, xshell_t, thread));
+          cb((xshell_t *)__CH_OWNEROF(tp, xshell_t, thread), par);
         }
 
         /* Releasing the shell manager reference, this will cause the shell
