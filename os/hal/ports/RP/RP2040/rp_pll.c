@@ -103,7 +103,7 @@ void rp_pll_init(PLL_TypeDef *pll, uint32_t refdiv, uint32_t vco_freq,
   pll->FBDIV_INT = fbdiv;
 
   /* Turn on PLL */
-  hw_clear_bits(&pll->PWR, PLL_PWR_PD | PLL_PWR_VCOPD);
+  rp_clear_bits(&pll->PWR, PLL_PWR_PD | PLL_PWR_VCOPD);
 
   /* Wait for PLL lock */
   if (halRegWaitAnySet32X(&pll->CS, PLL_CS_LOCK,
