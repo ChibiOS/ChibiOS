@@ -56,6 +56,7 @@
 /**
  * @brief   Initializes the XOSC
  * @note    Assumes 1-15 MHz crystal is attached.
+ * @note    See RP2040 Datasheet 2.16 XOSC
  */
 void rp_xosc_init(void) {
 
