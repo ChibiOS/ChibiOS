@@ -2999,19 +2999,19 @@ typedef struct {
  * @brief   Atomically set bits in a hardware register.
  */
 #define rp_set_bits(addr, mask) \
-    (*(volatile uint32_t *)((uintptr_t)(addr) | REG_ALIAS_SET_BITS) = (mask))
+    (*(volatile uint32_t *)((uintptr_t)(addr) | RP_REG_ALIAS_SET_BITS) = (mask))
 
 /**
  * @brief   Atomically clear bits in a hardware register.
  */
 #define rp_clear_bits(addr, mask) \
-    (*(volatile uint32_t *)((uintptr_t)(addr) | REG_ALIAS_CLR_BITS) = (mask))
+    (*(volatile uint32_t *)((uintptr_t)(addr) | RP_REG_ALIAS_CLR_BITS) = (mask))
 
 /**
  * @brief   Atomically XOR bits in a hardware register.
  */
 #define rp_xor_bits(addr, mask) \
-    (*(volatile uint32_t *)((uintptr_t)(addr) | REG_ALIAS_XOR_BITS) = (mask))
+    (*(volatile uint32_t *)((uintptr_t)(addr) | RP_REG_ALIAS_XOR_BITS) = (mask))
 
 /**
  * @brief   Atomically write a value with mask using single XOR operation.
