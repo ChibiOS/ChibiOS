@@ -1180,7 +1180,9 @@
 #define STM32_HAS_UART8                     FALSE
 
 /* USB attributes.*/
-#define STM32_HAS_USB1                      FALSE
+#define STM32_HAS_USB1                      TRUE
+#define STM32_USB_PMA_SIZE                  2048
+
 #define STM32_HAS_UCPD1                     FALSE
 #define STM32_HAS_UCPD2                     FALSE
 
