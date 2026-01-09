@@ -15,27 +15,29 @@
 */
 
 /**
- * @file    RP2350/rp_xosc.h
- * @brief   RP2350 XOSC header.
+ * @file    RP2350/rp_pll.h
+ * @brief   RP2350 PLL header.
  *
- * @addtogroup RP_XOSC
+ * @addtogroup RP_PLL
  * @{
  */
 
-#ifndef RP_XOSC_H
-#define RP_XOSC_H
+#ifndef RP_PLL_H
+#define RP_PLL_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
 /**
- * @brief   XOSC startup delay multiplier.
- * @note    Default value of 1 for 12MHz crystal.
+ * @brief   Minimum VCO frequency in Hz.
  */
-#if !defined(RP_XOSC_STARTUP_DELAY_MULTIPLIER)
-#define RP_XOSC_STARTUP_DELAY_MULTIPLIER    1U
-#endif
+#define RP_PLL_VCO_MIN_FREQ             750000000U
+
+/**
+ * @brief   Maximum VCO frequency in Hz.
+ */
+#define RP_PLL_VCO_MAX_FREQ             1600000000U
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -44,14 +46,6 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-/**
- * @brief   XOSC startup delay value.
- * @note    Delay is in multiples of 256 crystal periods
- *          For 12MHz, each count is ~21.3us. Default gives 1ms startup.
- */
-#define RP_XOSC_STARTUP_DELAY               \
-    ((((RP_XOSCCLK / 1000U) + 128U) / 256U) * RP_XOSC_STARTUP_DELAY_MULTIPLIER)
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -68,12 +62,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void rp_xosc_init(void);
-  void rp_xosc_disable(void);
+  void rp_pll_init(PLL_TypeDef *pll, uint32_t refdiv, uint32_t vco_freq,
+                   uint32_t postdiv1, uint32_t postdiv2);
+  void rp_pll_deinit(PLL_TypeDef *pll);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* RP_XOSC_H */
+#endif /* RP_PLL_H */
 
 /** @} */

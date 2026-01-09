@@ -16,7 +16,7 @@
 
 /**
  * @file    RP2350/rp_xosc.c
- * @brief   RP2350 XOSC driver source.
+ * @brief   RP2350 XOSC source.
  *
  * @addtogroup RP_XOSC
  * @{
