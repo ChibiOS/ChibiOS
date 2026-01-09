@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    RP2040/rp_isr.c
- * @brief   RP2040 ISR handler code.
+ * @file    RP2350/rp_isr.c
+ * @brief   RP2350 ISR handler code.
  *
- * @addtogroup RP2040_ISR
+ * @addtogroup RP2350_ISR
  * @{
  */
 
