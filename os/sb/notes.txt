@@ -1,21 +1,24 @@
-*** SB-related notes and ideas ***
+**** SB types ****
 
-* Use und#xxx instruction for syscall instead of svc#xxx.
-  + Faster context switch.
-  * Requires to enable USBFAULTENA and give UsageFault a priority.
-    + Enable all other vectors and make a proper handler finally.
-  - Needs to deal with the CFSR multiple status bits, probably slower than
-    doing syscalls through SVCALL.
+* Definitions:
+  * SandBox : An isolated execution enclave composed by a Mix of ROM/Flash
+              and RAM memory regions. Also used as generic name.
+  * RAMBox  : Name used for SandBoxes with exclusively RAM memory regions,
+              code loaded at runtime in RAM.
+  * Static	: Attribute, regions Address and size decided at compile time.
+  * Dynamic	: Attribute, regions allocated at runtime, always RAMBoxes,
+              always of "switched" type.
+  * Valid combinations:
+    * Static SandBox
+    * Static RAMBox
+    * Dynamic RAMBox
 
-* Dynamic sandbox allocation and execution.
-  ? Need a way to get the SB required size from the elf file.
-    ? Sum of the ALLOC regions sizes.
-      ? MSH needs extra space to load-call applications, how is that
-        decided?
-  * Fork/exec API to allow SBs to spawn other SBs.
-    + No separate fork and exec, single API doing both for simplicity.
-    + VFS settings and file handles would be inherited.
-    + VIO settings would not be inherited.
-    + Environment variables would be inherited.
-    + MSH could spawn separate SBs instead of load-call.
-      + Could do both, 2 different ways to launch applications.
+* In addition there are various system-wide modes of managing the MPU:
+  * Simple	: The MPU is programmed once on initialization, regions are not
+              reprogrammed on contex switch. Faster but SBs are not protected
+              from each other. Only applicable to static SBs, ideal when there
+              is a single SB in the system.
+  * Managed : Eeach SB has its own regions, MPU is reprogrammed on context
+              switch, full isolation but has time/space overhead.
+  * Mixed	: Each SB has a number of managed regions (1..M) and all SBs
+              share a number of fixed regions (M+1..N) which are not switched.
