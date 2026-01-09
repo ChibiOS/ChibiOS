@@ -28,7 +28,7 @@
 
 #include <stdint.h>
 
-#define __CM33_REV                        1U 
+#define __CM33_REV                        0x0100U  /* r1p0 */
 #define __MPU_PRESENT                     1U
 #define __VTOR_PRESENT                    1U
 #define __NVIC_PRIO_BITS                  4U
