@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -33,33 +33,58 @@
  * @name    ISR names and numbers
  * @{
  */
+
+/* TIMER0 interrupts (4 alarms) */
 #define RP_TIMER0_IRQ0_HANDLER              Vector40
 #define RP_TIMER0_IRQ1_HANDLER              Vector44
 #define RP_TIMER0_IRQ2_HANDLER              Vector48
 #define RP_TIMER0_IRQ3_HANDLER              Vector4C
+
+/* PWM interrupts */
 #define RP_PWM_IRQ_WRAP_HANDLER             Vector50
+
+/* DMA interrupts */
+#define RP_DMA_IRQ_0_HANDLER                Vector6C
+#define RP_DMA_IRQ_1_HANDLER                Vector70
+
+/* USB interrupt */
 #define RP_USBCTRL_IRQ_HANDLER              Vector54
 #define RP_XIP_IRQ_HANDLER                  Vector58
+
+/* PIO interrupts */
 #define RP_PIO0_IRQ_0_HANDLER               Vector5C
 #define RP_PIO0_IRQ_1_HANDLER               Vector60
 #define RP_PIO1_IRQ_0_HANDLER               Vector64
 #define RP_PIO1_IRQ_1_HANDLER               Vector68
-#define RP_DMA_IRQ_0_HANDLER                Vector6C
-#define RP_DMA_IRQ_1_HANDLER                Vector70
+
+/* IO Bank interrupts */
 #define RP_IO_IRQ_BANK0_HANDLER             Vector74
 #define RP_IO_IRQ_QSPI_HANDLER              Vector78
+
+/* SIO interrupts */
 #define RP_SIO_IRQ_PROC0_HANDLER            Vector7C
 #define RP_SIO_IRQ_PROC1_HANDLER            Vector80
+
+/* Clocks interrupt */
 #define RP_CLOCKS_IRQ_HANDLER               Vector84
+
+/* SPI interrupts */
 #define RP_SPI0_IRQ_HANDLER                 Vector88
 #define RP_SPI1_IRQ_HANDLER                 Vector8C
+
+/* UART interrupts */
 #define RP_UART0_IRQ_HANDLER                Vector90
 #define RP_UART1_IRQ_HANDLER                Vector94
+
+/* ADC interrupt */
 #define RP_ADC_IRQ_FIFO_HANDLER             Vector98
+
+/* I2C interrupts */
 #define RP_I2C0_IRQ_HANDLER                 Vector9C
 #define RP_I2C1_IRQ_HANDLER                 VectorA0
 #define RP_RTC_IRQ_HANDLER                  VectorA4
 
+/* IRQ numbers */
 #define RP_TIMER0_IRQ0_NUMBER               0
 #define RP_TIMER0_IRQ1_NUMBER               1
 #define RP_TIMER0_IRQ2_NUMBER               2
