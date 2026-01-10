@@ -110,7 +110,7 @@ static void vrq_pushctx_other(sb_class_t *sbp, sb_vrqnum_t nvrq) {
   ectxp = (struct port_extctx *)((uintptr_t)sbp->thread.ctx.sp - sizeof (struct port_extctx));
 
   /* Checking if the new frame is within the sandbox else failure.*/
-  if (!sb_is_valid_write_range(sbp, (void *)ectxp, sizeof (struct port_extctx))) {
+  if (!chMemIsSpaceWithinX(sbp->u_data, (void *)ectxp, sizeof (struct port_extctx))) {
     /* Making the sandbox return on a privileged address, this
        will cause a fault and sandbox termination.*/
     ectxp = vrq_set_doomed(sbp);
@@ -133,7 +133,7 @@ static void vrq_pushctx_this(sb_class_t *sbp, uint32_t psp, sb_vrqnum_t nvrq) {
   ectxp = (struct port_extctx *)(psp - sizeof (struct port_extctx));
 
   /* Checking if the new frame is within the sandbox else failure.*/
-  if (!sb_is_valid_write_range(sbp, (void *)ectxp, sizeof (struct port_extctx))) {
+  if (!chMemIsSpaceWithinX(sbp->u_data, (void *)ectxp, sizeof (struct port_extctx))) {
     /* Making the sandbox return on a privileged address, this
        will cause a fault and sandbox termination.*/
     ectxp = vrq_set_doomed(sbp);
