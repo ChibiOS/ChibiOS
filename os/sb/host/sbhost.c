@@ -553,6 +553,15 @@ thread_t *sbStart(sb_class_t *sbp, tprio_t prio, stkline_t *stkbase,
                            (size_t)2)) {
     return NULL;
   }
+  /* Checking header VRQ vector.*/
+  if (!chMemIsSpaceWithinX(&codereg->area,
+                           (const void *)sbhp->hdr_vrq,
+                           (size_t)2)) {
+    return NULL;
+  }
+#if SB_CFG_ENABLE_VRQ == TRUE
+  sbp->vrq_entry = sbhp->hdr_vrq;
+#endif
 
   /* Locating region for data, it could be also region zero.*/
   datareg = sb_locate_data_region(sbp);
@@ -633,6 +642,13 @@ msg_t sbExecStatic(sb_class_t *sbp, tprio_t prio,
   if (!chMemIsSpaceWithinX(&ma, (const void *)sbhp->hdr_entry, (size_t)2)) {
     return CH_RET_EFAULT;
   }
+  /* Checking header VRQ vector.*/
+  if (!chMemIsSpaceWithinX(&ma, (const void *)sbhp->hdr_vrq, (size_t)2)) {
+    return CH_RET_ENOEXEC;
+  }
+#if SB_CFG_ENABLE_VRQ == TRUE
+  sbp->vrq_entry = sbhp->hdr_vrq;
+#endif
 
 #if SB_CFG_EXEC_DEBUG == TRUE
   *((uint16_t *)(sbhp->hdr_entry & ~(uint32_t)1)) = 0xBE00U;
@@ -748,6 +764,14 @@ msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio, size_t heapsize,
     ret = CH_RET_EFAULT;
     goto skip3;
   }
+  /* Checking header VRQ vector.*/
+  if (!chMemIsSpaceWithinX(&elfma, (const void *)sbhp->hdr_vrq, (size_t)2)) {
+    ret = CH_RET_ENOEXEC;
+    goto skip3;
+  }
+#if SB_CFG_ENABLE_VRQ == TRUE
+  sbp->vrq_entry = sbhp->hdr_vrq;
+#endif
 
 #if SB_CFG_EXEC_DEBUG == TRUE
   *((uint16_t *)(sbhp->hdr_entry & ~(uint32_t)1)) = 0xBE00U;

@@ -258,6 +258,12 @@ struct sb_class {
    * @brief   Saved unprivileged PSP position.
    */
   uint32_t                      u_psp;
+#if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Cached VRQ handler entry address.
+   */
+  uint32_t                      vrq_entry;
+#endif
 #if (SB_CFG_ENABLE_VIO == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   VIO configuration associated to this sandbox.
