@@ -170,6 +170,20 @@ static const uint8_t elf32_header[16] = {
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+static msg_t vfs_read_exact(vfs_file_node_c *fnp, void *buf, size_t size) {
+  ssize_t ret;
+
+  ret = vfsReadFile(fnp, (uint8_t *)buf, size);
+  if (CH_RET_IS_ERROR(ret)) {
+    return (msg_t)ret;
+  }
+  if ((size_t)ret != size) {
+    return CH_RET_ENOEXEC;
+  }
+
+  return CH_RET_SUCCESS;
+}
+
 static msg_t area_is_intersecting(elf_load_context_t *ctxp,
                                  const memory_area_t *map) {
   elf_section_info_t *esip;
@@ -245,7 +259,7 @@ static msg_t allocate_load_section(elf_load_context_t *ctxp,
   /* Loading section data.*/
   ret = vfsSetFilePosition(ctxp->fnp, (vfs_offset_t)shp->sh_offset, VFS_SEEK_SET);
   CH_RETURN_ON_ERROR(ret);
-  ret = vfsReadFile(ctxp->fnp, (void *)esip->area.base, esip->area.size);
+  ret = vfs_read_exact(ctxp->fnp, (void *)esip->area.base, esip->area.size);
   CH_RETURN_ON_ERROR(ret);
 
   ctxp->next++;
@@ -386,11 +400,11 @@ static msg_t reloc_section(elf_load_context_t *ctxp,
                              esip->rel_off + (vfs_offset_t)done_size,
                              VFS_SEEK_SET);
     CH_BREAK_ON_ERROR(ret);
-    ret = vfsReadFile(ctxp->fnp, (void *)rbuf, size);
+    ret = vfs_read_exact(ctxp->fnp, (void *)rbuf, size);
     CH_BREAK_ON_ERROR(ret);
 
     /* Number of relocation entries in the buffer.*/
-    n = (unsigned)ret / (unsigned)sizeof (elf32_rel_t);
+    n = (unsigned)size / (unsigned)sizeof (elf32_rel_t);
     for (i = 0U; i < n; i++) {
       ret = reloc_entry(ctxp, esip, &rbuf[i]);
       CH_BREAK_ON_ERROR(ret);
@@ -399,6 +413,11 @@ static msg_t reloc_section(elf_load_context_t *ctxp,
 
     remaining_size -= size;
     done_size      += size;
+  }
+
+  /* A MOVW must be paired with a MOVT.*/
+  if (ctxp->rel_movw_found) {
+    ret = CH_RET_ENOEXEC;
   }
 
   vfs_buffer_release(shbuf);
@@ -436,7 +455,7 @@ msg_t sbElfLoad(vfs_file_node_c *fnp, const memory_area_t *map) {
     /* Reading the main ELF header.*/
     ret = vfsSetFilePosition(ctx.fnp, (vfs_offset_t)0, VFS_SEEK_SET);
     CH_RETURN_ON_ERROR(ret);
-    ret = vfsReadFile(ctx.fnp, (void *)&u.h, sizeof (elf32_header_t));
+    ret = vfs_read_exact(ctx.fnp, (void *)&u.h, sizeof (elf32_header_t));
     CH_RETURN_ON_ERROR(ret);
 
     /* Checking for the expected header.*/
@@ -469,7 +488,7 @@ msg_t sbElfLoad(vfs_file_node_c *fnp, const memory_area_t *map) {
                                                    (vfs_offset_t)sizeof (elf32_section_header_t)),
                                VFS_SEEK_SET);
       CH_RETURN_ON_ERROR(ret);
-      ret = vfsReadFile(ctx.fnp, (void *)&u.sh, sizeof (elf32_section_header_t));
+      ret = vfs_read_exact(ctx.fnp, (void *)&u.sh, sizeof (elf32_section_header_t));
       CH_RETURN_ON_ERROR(ret);
 
       /* Empty sections are not processed.*/
@@ -576,7 +595,7 @@ msg_t sbElfGetAllocation(vfs_file_node_c *fnp, size_t *sizep) {
     /* Reading the main ELF header.*/
     ret = vfsSetFilePosition(fnp, (vfs_offset_t)0, VFS_SEEK_SET);
     CH_RETURN_ON_ERROR(ret);
-    ret = vfsReadFile(fnp, (void *)&u.h, sizeof (elf32_header_t));
+    ret = vfs_read_exact(fnp, (void *)&u.h, sizeof (elf32_header_t));
     CH_RETURN_ON_ERROR(ret);
 
     /* Checking for the expected header.*/
@@ -607,7 +626,7 @@ msg_t sbElfGetAllocation(vfs_file_node_c *fnp, size_t *sizep) {
                                                (vfs_offset_t)sizeof (elf32_section_header_t)),
                                VFS_SEEK_SET);
       CH_RETURN_ON_ERROR(ret);
-      ret = vfsReadFile(fnp, (void *)&u.sh, sizeof (elf32_section_header_t));
+      ret = vfs_read_exact(fnp, (void *)&u.sh, sizeof (elf32_section_header_t));
       CH_RETURN_ON_ERROR(ret);
 
       /* Empty sections are not processed.*/
