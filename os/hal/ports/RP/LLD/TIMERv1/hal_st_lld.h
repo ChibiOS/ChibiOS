@@ -77,31 +77,31 @@
 #endif
 
 /**
- * @brief   TIMER alarm 0 IRQ priority.
+ * @brief   TIMER0 alarm 0 IRQ priority.
  */
-#if !defined(RP_IRQ_TIMER_ALARM0_PRIORITY) || defined(__DOXYGEN__)
-#define RP_IRQ_TIMER_ALARM0_PRIORITY        2
+#if !defined(RP_IRQ_TIMER0_ALARM0_PRIORITY) || defined(__DOXYGEN__)
+#define RP_IRQ_TIMER0_ALARM0_PRIORITY        2
 #endif
 
 /**
- * @brief   TIMER alarm 1 IRQ priority.
+ * @brief   TIMER0 alarm 1 IRQ priority.
  */
-#if !defined(RP_IRQ_TIMER_ALARM1_PRIORITY) || defined(__DOXYGEN__)
-#define RP_IRQ_TIMER_ALARM1_PRIORITY        2
+#if !defined(RP_IRQ_TIMER0_ALARM1_PRIORITY) || defined(__DOXYGEN__)
+#define RP_IRQ_TIMER0_ALARM1_PRIORITY        2
 #endif
 
 /**
- * @brief   TIMER alarm 2 IRQ priority.
+ * @brief   TIMER0 alarm 2 IRQ priority.
  */
-#if !defined(RP_IRQ_TIMER_ALARM2_PRIORITY) || defined(__DOXYGEN__)
-#define RP_IRQ_TIMER_ALARM2_PRIORITY        2
+#if !defined(RP_IRQ_TIMER0_ALARM2_PRIORITY) || defined(__DOXYGEN__)
+#define RP_IRQ_TIMER0_ALARM2_PRIORITY        2
 #endif
 
 /**
- * @brief   TIMER alarm 3 IRQ priority.
+ * @brief   TIMER0 alarm 3 IRQ priority.
  */
-#if !defined(RP_IRQ_TIMER_ALARM3_PRIORITY) || defined(__DOXYGEN__)
-#define RP_IRQ_TIMER_ALARM3_PRIORITY        2
+#if !defined(RP_IRQ_TIMER0_ALARM3_PRIORITY) || defined(__DOXYGEN__)
+#define RP_IRQ_TIMER0_ALARM3_PRIORITY        2
 #endif
 /** @} */
 
