@@ -238,6 +238,7 @@ static ssize_t sb_io_write(sb_class_t *sbp, int fd, const void *buf, size_t coun
 }
 
 static off_t sb_io_lseek(sb_class_t *sbp, int fd, off_t offset, int whence) {
+  vfs_offset_t pos;
 
   if ((whence != SEEK_SET) && (whence != SEEK_CUR) && (whence != SEEK_END)) {
     return CH_RET_EINVAL;
@@ -255,18 +256,34 @@ static off_t sb_io_lseek(sb_class_t *sbp, int fd, off_t offset, int whence) {
     return CH_RET_ESPIPE;
   }
 
-  return vfsSetFilePosition((struct vfs_file_node *)sbp->io.vfs_nodes[fd],
-                            offset,
-                            whence);
+  pos = vfsSetFilePosition((struct vfs_file_node *)sbp->io.vfs_nodes[fd],
+                           offset,
+                           whence);
+  if (CH_RET_IS_ERROR(pos)) {
+    return (off_t)pos;
+  }
+
+  return (off_t)vfsGetFilePosition((struct vfs_file_node *)sbp->io.vfs_nodes[fd]);
 }
 
 static ssize_t sb_io_getdents(sb_class_t *sbp, int fd, void *buf, size_t count) {
   vfs_shared_buffer_t *shbuf;
   vfs_direntry_info_t *dip;
   msg_t ret;
+  size_t min_entry;
+  size_t max_entry;
+
+  if (count == (size_t)0) {
+    return (ssize_t)CH_RET_EINVAL;
+  }
 
   if (!sb_is_valid_write_range(sbp, buf, count)) {
     return (ssize_t)CH_RET_EFAULT;
+  }
+
+  min_entry = sizeof (struct dirent) + (size_t)1;
+  if (count < min_entry) {
+    return (ssize_t)CH_RET_EINVAL;
   }
 
   if (!sb_is_existing_descriptor(&sbp->io, fd)) {
@@ -277,32 +294,55 @@ static ssize_t sb_io_getdents(sb_class_t *sbp, int fd, void *buf, size_t count) 
     return (ssize_t)CH_RET_ENOTDIR;
   }
 
+  max_entry = sizeof (struct dirent) + (size_t)VFS_CFG_NAMELEN_MAX + (size_t)1;
+
   shbuf = vfs_buffer_take_wait();
   dip = (vfs_direntry_info_t *)(void *)shbuf->buf;
 
   do {
-    size_t n;
-    struct dirent *dep = (struct dirent *)buf;
+    size_t total;
+    size_t remaining;
+    char *p;
 
-    ret = vfsReadDirectoryNext((vfs_directory_node_c *)sbp->io.vfs_nodes[fd], dip);
-    if (ret <= 0) {
-      /* Note, zero means no more directory entries available.*/
-      break;
+    total = 0U;
+    remaining = count;
+    p = (char *)buf;
+
+    while (remaining >= min_entry) {
+      size_t n;
+      struct dirent *dep = (struct dirent *)(void *)p;
+
+      /* Avoid consuming entries we cannot guarantee to fit.*/
+      if ((total > 0U) && (remaining < max_entry)) {
+        break;
+      }
+
+      ret = vfsReadDirectoryNext((vfs_directory_node_c *)sbp->io.vfs_nodes[fd], dip);
+      if (ret <= 0) {
+        /* Note, zero means no more directory entries available.*/
+        break;
+      }
+
+      n = sizeof (struct dirent) + strlen(dip->name) + (size_t)1;
+      if (remaining < n) {
+        ret = CH_RET_EINVAL;
+        break;
+      }
+
+      /* Copying data from VFS structure to the Posix one.*/
+      dep->d_ino    = (ino_t)1; /* TODO */
+      dep->d_reclen = n;
+      dep->d_type   = IFTODT(dip->mode);
+      strcpy(dep->d_name, dip->name);
+
+      p += n;
+      remaining -= n;
+      total += n;
     }
 
-    n = sizeof (struct dirent) + strlen(dip->name) + (size_t)1;
-    if (count < n) {
-      ret = CH_RET_EINVAL;
-      break;
+    if (total > 0U) {
+      ret = (msg_t)total;
     }
-
-    /* Copying data from VFS structure to the Posix one.*/
-    dep->d_ino    = (ino_t)1; /* TODO */
-    dep->d_reclen = n;
-    dep->d_type   = IFTODT(sbp->io.vfs_nodes[fd]->mode);
-    strcpy(dep->d_name, dip->name);
-
-    ret = (msg_t)n;
 
   } while (false);
 

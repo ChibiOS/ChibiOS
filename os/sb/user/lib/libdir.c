@@ -74,6 +74,13 @@ struct dirent *readdir (DIR *dirp) {
     }
 
     dep = (struct dirent *)(dirp->buf + dirp->next);
+    if ((dep->d_reclen == 0U) ||
+        ((dirp->next + dep->d_reclen) > dirp->size)) {
+      dirp->next = 0;
+      dirp->size = 0;
+      __errno_r(_REENT) = EINVAL;
+      return NULL;
+    }
     dirp->next += dep->d_reclen;
 
     return dep;
