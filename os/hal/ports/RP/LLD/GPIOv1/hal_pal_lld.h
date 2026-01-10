@@ -400,11 +400,19 @@ __STATIC_INLINE void __pal_lld_pad_set_mode(ioportid_t port,
   padbits  = (mode & 0xFF000000U) >> 24U;
 
   /* Setting up GPIO direction first.*/
-  if (oebits != 0U) {
-    SIO->GPIO_OE_SET = 1U << pad;
-  }
-  else {
-    SIO->GPIO_OE_CLR = 1U << pad;
+  if (pad < 32U) {
+    if (oebits != 0U) {
+      SIO->GPIO_OE_SET = 1U << pad;
+    } else {
+      SIO->GPIO_OE_CLR = 1U << pad;
+    }
+  } else {
+    /* RP2350: GPIO 32+ use the interleaved GPIO_HI registers */
+    if (oebits != 0U) {
+      SIO->GPIO_HI_OE_SET = 1U << (pad - 32U);
+    } else {
+      SIO->GPIO_HI_OE_CLR = 1U << (pad - 32U);
+    }
   }
 
   /* Then IO and PAD settings.*/

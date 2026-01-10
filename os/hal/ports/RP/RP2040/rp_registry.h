@@ -44,6 +44,7 @@
 
 /* GPIO attributes.*/
 #define RP_GPIO_NUM_LINES                   30
+#define RP_GPIO_INTR_REGS                   4
 
 /* UART attributes.*/
 #define RP_HAS_UART0                        TRUE

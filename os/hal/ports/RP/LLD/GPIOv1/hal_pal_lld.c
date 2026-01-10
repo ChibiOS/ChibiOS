@@ -36,7 +36,7 @@
 
 #if (PAL_USE_WAIT == TRUE) || (PAL_USE_CALLBACKS == TRUE) || defined(__DOXYGEN__)
 /**
- * @brief   Event records for the 30 GPIO lines.
+ * @brief   Event records for GPIO lines.
  */
 palevent_t _pal_events[RP_GPIO_NUM_LINES];
 #endif
@@ -63,7 +63,7 @@ OSAL_IRQ_HANDLER(RP_IO_IRQ_BANK0_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  for(int i=0; i < 4; ++i) {
+  for (int i = 0; i < RP_GPIO_INTR_REGS; ++i) {
     int line;
     uint32_t ints = IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTS[i];
 
@@ -75,8 +75,8 @@ OSAL_IRQ_HANDLER(RP_IO_IRQ_BANK0_HANDLER) {
       }
       ints >>= 4;
       ++line;
-    };
-  };
+    }
+  }
 
   OSAL_IRQ_EPILOGUE();
 }
