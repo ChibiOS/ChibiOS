@@ -16,7 +16,7 @@
 
 /**
  * @file    hal_wdg_lld.c
- * @brief   RP2040 watchdog low level driver source.
+ * @brief   RP watchdog low level driver source.
  *
  * @addtogroup WDG
  * @{
@@ -29,6 +29,15 @@
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
+
+/**
+ * @brief   Mask of all valid bits for watchdog reset
+ */
+#if defined(RP2040)
+#define PSM_WDSEL_ALL_BITS              0x1FFFFU
+#else /* RP2350 */
+#define PSM_WDSEL_ALL_BITS              0x1FFFFFFU
+#endif
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -51,11 +60,14 @@ WDGDriver WDGD1;
  */
 static void set_wdg_counter(WDGDriver *wdgp) {
 
-  /* Set the time. */
+  /* Set the time in milliseconds, default to 50ms */
   uint32_t time = wdgp->config->rlr;
+  time = ((time == 0U) ? 50U : time) * 1000U;
 
-  /* Due to a silicon bug (see errata RP2040-E1) WDG decrements at each edge.*/
-  time = ((time == 0U) ? 50 : time) * 2 * 1000;
+#if defined(RP2040)
+  /* RP2040-E1 Errata: Watchdog counter decrements on both clock edges */
+  time = time * 2U;
+#endif
 
   /* Set ceiling if greater than count capability.*/
   time = (time > WATCHDOG_CTRL_TIME) ? WATCHDOG_CTRL_TIME : time;
@@ -101,22 +113,8 @@ void wdg_lld_start(WDGDriver *wdgp) {
   /* Set the watchdog counter.*/
   set_wdg_counter(wdgp);
 
-  /* When watchdog fires reset everything except ROSC and XOS.*/
-  PSM->WDSEL =  PSM_ANY_PROC1                 |
-                PSM_ANY_PROC0                 |
-                PSM_ANY_SIO                   |
-                PSM_ANY_VREG_AND_CHIP_RESET   |
-                PSM_ANY_XIP                   |
-                PSM_ANY_SRAM5                 |
-                PSM_ANY_SRAM4                 |
-                PSM_ANY_SRAM3                 |
-                PSM_ANY_SRAM2                 |
-                PSM_ANY_SRAM1                 |
-                PSM_ANY_SRAM0                 |
-                PSM_ANY_ROM                   |
-                PSM_ANY_BUSFABRIC             |
-                PSM_ANY_RESETS                |
-                PSM_ANY_CLOCKS;
+  /* When watchdog fires, reset everything except ROSC and XOSC. */
+  PSM->WDSEL = PSM_WDSEL_ALL_BITS & ~(PSM_ANY_ROSC | PSM_ANY_XOSC);
 
   /* Set control bits and enable WDG.*/
   wdgp->wdg->CTRL = WATCHDOG_CTRL_PAUSE_DBG0  |
