@@ -275,6 +275,37 @@ static const sb_memory_region_t *sb_locate_data_region(sb_class_t *sbp) {
   return NULL;
 }
 
+static msg_t sb_check_header(const sb_header_t *sbhp,
+                             const memory_area_t *code_area) {
+
+  /* Checking header magic numbers.*/
+  if ((sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
+      (sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
+    return CH_RET_ENOEXEC;
+  }
+
+  /* Checking header size.*/
+  if (sbhp->hdr_size != sizeof (sb_header_t)) {
+    return CH_RET_ENOEXEC;
+  }
+
+  /* Checking header entry point.*/
+  if (!chMemIsSpaceWithinX(code_area,
+                           (const void *)sbhp->hdr_entry,
+                           (size_t)2)) {
+    return CH_RET_EFAULT;
+  }
+
+  /* Checking header VRQ vector.*/
+  if (!chMemIsSpaceWithinX(code_area,
+                           (const void *)sbhp->hdr_vrq,
+                           (size_t)2)) {
+    return CH_RET_EFAULT;
+  }
+
+  return CH_RET_SUCCESS;
+}
+
 static size_t sb_init_environment(sb_class_t *sbp, const memory_area_t *up,
                                   const char *argv[], const char *envp[]) {
   void *usp, *uargv, *uenvp;
@@ -531,32 +562,14 @@ thread_t *sbStart(sb_class_t *sbp, tprio_t prio, stkline_t *stkbase,
                   const char *argv[], const char *envp[]) {
   const sb_memory_region_t *codereg, *datareg;
   const sb_header_t *sbhp;
+  msg_t ret;
 
   /* Region zero is assumed to be executable and contain the start header.*/
   codereg = &sbp->regions[0];
   sbhp = (const sb_header_t *)(void *)codereg->area.base;
 
-  /* Checking header magic numbers.*/
-  if ((sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
-      (sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
-    return NULL;
-  }
-
-  /* Checking header size and alignment.*/
-  if (sbhp->hdr_size != sizeof (sb_header_t)) {
-    return NULL;
-  }
-
-  /* Checking header entry point.*/
-  if (!chMemIsSpaceWithinX(&codereg->area,
-                           (const void *)sbhp->hdr_entry,
-                           (size_t)2)) {
-    return NULL;
-  }
-  /* Checking header VRQ vector.*/
-  if (!chMemIsSpaceWithinX(&codereg->area,
-                           (const void *)sbhp->hdr_vrq,
-                           (size_t)2)) {
+  ret = sb_check_header(sbhp, &codereg->area);
+  if (CH_RET_IS_ERROR(ret)) {
     return NULL;
   }
 #if SB_CFG_ENABLE_VRQ == TRUE
@@ -627,24 +640,9 @@ msg_t sbExecStatic(sb_class_t *sbp, tprio_t prio,
   /* Header location.*/
   sbhp = (const sb_header_t *)(void *)ma.base;
 
-  /* Checking header magic numbers.*/
-  if ((sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
-      (sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
-    return CH_RET_ENOEXEC;
-  }
-
-  /* Checking header size.*/
-  if (sbhp->hdr_size != sizeof (sb_header_t)) {
-    return CH_RET_ENOEXEC;
-  }
-
-  /* Checking header entry point.*/
-  if (!chMemIsSpaceWithinX(&ma, (const void *)sbhp->hdr_entry, (size_t)2)) {
-    return CH_RET_EFAULT;
-  }
-  /* Checking header VRQ vector.*/
-  if (!chMemIsSpaceWithinX(&ma, (const void *)sbhp->hdr_vrq, (size_t)2)) {
-    return CH_RET_ENOEXEC;
+  ret = sb_check_header(sbhp, &ma);
+  if (CH_RET_IS_ERROR(ret)) {
+    return ret;
   }
 #if SB_CFG_ENABLE_VRQ == TRUE
   sbp->vrq_entry = sbhp->hdr_vrq;
@@ -746,27 +744,8 @@ msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio, size_t heapsize,
   /* Header location.*/
   sbhp = (const sb_header_t *)(void *)umap->base;
 
-  /* Checking header magic numbers.*/
-  if ((sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
-      (sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
-    ret = CH_RET_ENOEXEC;
-    goto skip3;
-  }
-
-  /* Checking header size.*/
-  if (sbhp->hdr_size != sizeof (sb_header_t)) {
-    ret = CH_RET_ENOEXEC;
-    goto skip3;
-  }
-
-  /* Checking header entry point.*/
-  if (!chMemIsSpaceWithinX(&elfma, (const void *)sbhp->hdr_entry, (size_t)2)) {
-    ret = CH_RET_EFAULT;
-    goto skip3;
-  }
-  /* Checking header VRQ vector.*/
-  if (!chMemIsSpaceWithinX(&elfma, (const void *)sbhp->hdr_vrq, (size_t)2)) {
-    ret = CH_RET_ENOEXEC;
+  ret = sb_check_header(sbhp, &elfma);
+  if (CH_RET_IS_ERROR(ret)) {
     goto skip3;
   }
 #if SB_CFG_ENABLE_VRQ == TRUE
