@@ -39,6 +39,10 @@
 /* Relevant ELF file types.*/
 #define ET_EXEC                 2U
 
+/* Relevant machine and version.*/
+#define EM_ARM                  40U
+#define EV_CURRENT              1U
+
 /* Relevant section types.*/
 #define SHT_PROGBITS            1U
 #define SHT_SYMTAB              2U
@@ -377,6 +381,10 @@ static msg_t reloc_section(elf_load_context_t *ctxp,
   size_t size, done_size, remaining_size;
   msg_t ret;
 
+  if ((esip->rel_size % sizeof (elf32_rel_t)) != 0U) {
+    return CH_RET_ENOEXEC;
+  }
+
   shbuf = vfs_buffer_take_wait();
   rbuf = (elf32_rel_t *)(void *)shbuf->buf;
 
@@ -468,7 +476,12 @@ msg_t sbElfLoad(vfs_file_node_c *fnp, const memory_area_t *map) {
       return CH_RET_ENOEXEC;
     }
 
-    /* TODO more consistency checks.*/
+    if ((u.h.e_machine != EM_ARM) ||
+        (u.h.e_version != EV_CURRENT) ||
+        (u.h.e_ehsize != sizeof (elf32_header_t)) ||
+        (u.h.e_shentsize != sizeof (elf32_section_header_t))) {
+      return CH_RET_ENOEXEC;
+    }
 
     /* Storing info required later.*/
 //    ctx.entry        = u.h.e_entry;
@@ -608,7 +621,12 @@ msg_t sbElfGetAllocation(vfs_file_node_c *fnp, size_t *sizep) {
       return CH_RET_ENOEXEC;
     }
 
-    /* TODO more consistency checks.*/
+    if ((u.h.e_machine != EM_ARM) ||
+        (u.h.e_version != EV_CURRENT) ||
+        (u.h.e_ehsize != sizeof (elf32_header_t)) ||
+        (u.h.e_shentsize != sizeof (elf32_section_header_t))) {
+      return CH_RET_ENOEXEC;
+    }
   }
 
   /* Loading phase, scanning section headers.*/
