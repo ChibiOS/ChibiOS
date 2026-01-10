@@ -56,6 +56,13 @@ const rp_dma_channel_t __rp_dma_channels[RP_DMA_NUM_CHANNELS] = {
   {DMA, &DMA->CH[9],  9U,  1U << 9},
   {DMA, &DMA->CH[10], 10U, 1U << 10},
   {DMA, &DMA->CH[11], 11U, 1U << 11}
+#if RP_DMA_NUM_CHANNELS > 12
+  ,
+  {DMA, &DMA->CH[12], 12U, 1U << 12},
+  {DMA, &DMA->CH[13], 13U, 1U << 13},
+  {DMA, &DMA->CH[14], 14U, 1U << 14},
+  {DMA, &DMA->CH[15], 15U, 1U << 15}
+#endif
 };
 
 /*===========================================================================*/
