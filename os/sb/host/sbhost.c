@@ -281,6 +281,8 @@ static size_t sb_init_environment(sb_class_t *sbp, const memory_area_t *up,
   size_t totsize, envsize, argsize, parsize;
   int uargc, uenvc;
 
+  chDbgCheck(MEM_IS_ALIGNED(up->base, PORT_STACK_ALIGN));
+
   /* Setting up an initial stack for the sandbox.*/
   usp = up->base + up->size;
 
@@ -321,9 +323,7 @@ static size_t sb_init_environment(sb_class_t *sbp, const memory_area_t *up,
 
   /* Initial stack pointer is placed just below the environment data.*/
   sbp->u_psp    = (uint32_t)usp;
-#if PORT_SAVE_PSPLIM == TRUE
-  sbp->u_psplim = (uint32_t)up->base;
-#endif
+  sbp->u_data   = up;
 
   return totsize;
 }

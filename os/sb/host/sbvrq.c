@@ -59,6 +59,19 @@ static void vrq_privileged_code(void) {
 }
 
 CC_FORCE_INLINE
+static inline struct port_extctx *vrq_set_doomed(sb_class_t *sbp) {
+  struct port_extctx *ectxp = (struct port_extctx *)(void *)sbp->u_data->base;
+
+  ectxp->pc = (uint32_t)vrq_privileged_code;
+  ectxp->xpsr   = 0x01000000U;
+#if CORTEX_USE_FPU == TRUE
+  ectxp->fpscr  = FPU->FPDSCR;
+#endif
+
+  return ectxp;
+}
+
+CC_FORCE_INLINE
 static inline void vrq_initctx(sb_class_t *sbp,
                                struct port_extctx *ectxp,
                                sb_vrqnum_t nvrq) {
@@ -100,7 +113,7 @@ static void vrq_pushctx_other(sb_class_t *sbp, sb_vrqnum_t nvrq) {
   if (!sb_is_valid_write_range(sbp, (void *)ectxp, sizeof (struct port_extctx))) {
     /* Making the sandbox return on a privileged address, this
        will cause a fault and sandbox termination.*/
-    ectxp->pc = (uint32_t)vrq_privileged_code;
+    ectxp = vrq_set_doomed(sbp);
   }
   else {
     /* Creating a new context for the VRQ handler return.*/
@@ -123,16 +136,16 @@ static void vrq_pushctx_this(sb_class_t *sbp, uint32_t psp, sb_vrqnum_t nvrq) {
   if (!sb_is_valid_write_range(sbp, (void *)ectxp, sizeof (struct port_extctx))) {
     /* Making the sandbox return on a privileged address, this
        will cause a fault and sandbox termination.*/
-    ectxp->pc = (uint32_t)vrq_privileged_code;
+    ectxp = vrq_set_doomed(sbp);
   }
   else {
     /* Creating a new context for the VRQ handler return.*/
     vrq_initctx(sbp, ectxp, nvrq);
-    __set_PSP((uint32_t)ectxp);
-#if PORT_SAVE_PSPLIM
-    __set_PSPLIM(sbp->u_psplim);
-#endif
   }
+  __set_PSP((uint32_t)ectxp);
+#if PORT_SAVE_PSPLIM
+  __set_PSPLIM((uint32_t)sbp->u_data->base);
+#endif
 }
 
 CC_NO_INLINE
@@ -467,7 +480,7 @@ void sb_fastc_vrq_return(sb_class_t *sbp, struct port_extctx *ectxp) {
     /* Keeping the current return context.*/
     __set_PSP((uint32_t)ectxp);
 #if PORT_SAVE_PSPLIM
-    __set_PSPLIM(sbp->u_psplim);
+    __set_PSPLIM((uint32_t)sbp->u_data->base);
 #endif
   }
 }
@@ -497,7 +510,7 @@ void __sb_vrq_check_pending(sb_class_t *sbp, struct port_extctx *ectxp) {
 
   __set_PSP((uint32_t)ectxp);
 #if PORT_SAVE_PSPLIM
-  __set_PSPLIM(sbp->u_psplim);
+  __set_PSPLIM((uint32_t)sbp->u_data->base);
 #endif
 }
 

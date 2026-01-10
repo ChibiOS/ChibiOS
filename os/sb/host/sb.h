@@ -244,19 +244,20 @@ struct sb_class {
    * @brief   SandBox regions.
    * @note    Region zero is always used for code execution. The data
    *          region is assumed to be the first region in the list with
-   *          attribute @p SB_REG_WRITABLE.
+   *          attribute @p SB_REG_ATTR_WRITABLE.
    */
   sb_memory_region_t            regions[SB_CFG_NUM_REGIONS];
+  /**
+   * @brief   Pointer to the memory area used for data and stack.
+   * @note    The user stack pointer is assumed to stay within this area,
+   *          relocating it to other areas is forbidden, the base of this
+   *          area is used for user-PSPLIM on ARMv8-M architecture.
+   */
+  const memory_area_t           *u_data;
   /**
    * @brief   Saved unprivileged PSP position.
    */
   uint32_t                      u_psp;
-#if (PORT_SAVE_PSPLIM == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Saved unprivileged PSPLIM position.
-   */
-  uint32_t                      u_psplim;
-#endif
 #if (SB_CFG_ENABLE_VIO == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   VIO configuration associated to this sandbox.
