@@ -18,7 +18,7 @@
               reprogrammed on contex switch. Faster but SBs are not protected
               from each other. Only applicable to static SBs, ideal when there
               is a single SB in the system.
-  * Managed : Eeach SB has its own regions, MPU is reprogrammed on context
+  * Switched: Eeach SB has its own regions, MPU is reprogrammed on context
               switch, full isolation but has time/space overhead.
-  * Mixed	: Each SB has a number of managed regions (1..M) and all SBs
+  * Mixed	: Each SB has a number of switched regions (1..M) and all SBs
               share a number of fixed regions (M+1..N) which are not switched.

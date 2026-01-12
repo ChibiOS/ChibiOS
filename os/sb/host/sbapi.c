@@ -102,6 +102,9 @@ void sb_sysc_exit(sb_class_t *sbp, struct port_extctx *ectxp) {
 #endif
 
   chSysLock();
+#if SB_CFG_ENABLE_VRQ == TRUE
+  chVTResetI(&sbp->vrq.alarm_vt);
+#endif
 #if CH_CFG_USE_EVENTS == TRUE
   chEvtBroadcastI(&sb.termination_es);
 #endif
