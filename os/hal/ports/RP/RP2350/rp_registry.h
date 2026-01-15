@@ -79,6 +79,13 @@
 #define RP_HAS_WDG                          TRUE
 #define RP_WDG_STORAGE_SIZE                 32U
 
+/* USB attributes.*/
+#define RP_HAS_USB                          TRUE
+#define USB_ENDOPOINTS_NUMBER               15
+
+/* Flash attributes.*/
+#define RP_HAS_FLASH                        TRUE
+
 #define RP_HAS_HSTX                         TRUE
 #define RP_HAS_TRNG                         TRUE
 #define RP_HAS_SHA256                       TRUE

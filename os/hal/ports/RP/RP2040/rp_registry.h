@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -77,6 +77,13 @@
 /* WDG attributes.*/
 #define RP_HAS_WDG                          TRUE
 #define RP_WDG_STORAGE_SIZE                 32U
+
+/* USB attributes.*/
+#define RP_HAS_USB                          TRUE
+#define USB_ENDOPOINTS_NUMBER               15
+
+/* Flash attributes.*/
+#define RP_HAS_FLASH                        TRUE
 
 /** @} */
 
