@@ -27,7 +27,7 @@ single_makefiles := $(filter-out %.make,$(makefiles))
 multi_makefiles := $(filter %.make,$(makefiles))
 
 # External dependencies
-external := $(addprefix $(ROOT)/ext/,fatfs lwip pico-sdk wolfssl littlefs)
+external := $(addprefix $(ROOT)/ext/,fatfs lwip wolfssl littlefs)
 
 # Documents
 docs := $(shell find $(ROOT)/doc -type f -name Doxyfile_html)
