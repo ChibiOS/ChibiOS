@@ -80,7 +80,7 @@
 
 /* USB attributes.*/
 #define RP_HAS_USB                          TRUE
-#define USB_ENDOPOINTS_NUMBER               15
+#define USB_ENDPOINTS_NUMBER                15
 
 /* Flash attributes.*/
 #define RP_HAS_FLASH                        TRUE
