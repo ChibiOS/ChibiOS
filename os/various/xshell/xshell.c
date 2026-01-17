@@ -413,14 +413,6 @@ void xshellObjectInit(xshell_manager_t *smp,
   /* Shell events.*/
   chEvtObjectInit(&smp->events);
 
-#if 0
-#if XSHELL_HISTORY_DEPTH > 0
-  chMtxObjectInit(&smp->history_mutex);
-  smp->history_head = smp->history_buffer[0];
-  memset(smp->history_buffer, 0, sizeof smp->history_buffer);
-#endif
-#endif
-
   /* Shell manager initialization hook.*/
 #if defined(XSHELL_MGR_INIT_HOOK)
   XSHELL_MGR_INIT_HOOK(smp);
@@ -889,5 +881,27 @@ void xshellClearHistory(xshell_t *xshp) {
   xshell_reset_history(xshp);
 }
 #endif
+
+/**
+ * @brief   Prints out formatted usage message
+ *
+ * @param[in] xshp              pointer to a @p xshell_t object
+ * @param[in] message           pointer to formatted message string
+ * @param[in] ...               optional message parameters
+ *
+ * @api
+ */
+void xshellUsage(xshell_t *xshp, const char *message, ...) {
+
+  va_list ap;
+
+  chprintf(xshp->stream, "Usage: %s " , xshp->args[0]);
+  va_start(ap, message);
+  (void) chvprintf(xshp->stream, message, ap);
+  va_end(ap);
+  chprintf(xshp->stream, XSHELL_NEWLINE_STR);
+
+  return;
+}
 
 /** @} */

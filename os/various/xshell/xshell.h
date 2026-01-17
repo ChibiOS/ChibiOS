@@ -232,26 +232,6 @@ typedef struct xshell_manager {
    * @brief   Shell events;
    */
   event_source_t                events;
-#if 0
-#if (XSHELL_HISTORY_DEPTH > 0) || defined(__DOXYGEN__)
-  /**
-   * @brief   Mutex protecting the history buffer.
-   */
-  mutex_t                       history_mutex;
-  /**
-   * @brief   Head of history circular buffer.
-   */
-  char                          *history_head;
-  /**
-   * @brief   Current position in history circular buffer.
-   */
-  char                          *history_current;
-  /**
-   * @brief   History buffer.
-   */
-  char                          history_buffer[XSHELL_HISTORY_DEPTH][XSHELL_LINE_LENGTH];
-#endif
-#endif
 #if defined(XSHELL_MGR_EXTRA_FIELDS)
   /* Extra fields defined in xshellconf.h.*/
   XSHELL_MGR_EXTRA_FIELDS
@@ -357,6 +337,7 @@ extern "C" {
 #if XSHELL_HISTORY_DEPTH > 0
   void xshellClearHistory(xshell_t *xshp);
 #endif
+  void xshellUsage(xshell_t *xshp, const char *message, ...);
 #ifdef __cplusplus
 }
 #endif
@@ -364,19 +345,6 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
-
-/**
- * @brief   Prints out usage message
- *
- * @param[in] xshp              pointer to a @p xshell_t object
- * @param[in] message           pointer to message string
- *
- * @api
- */
-static inline void xshellUsage(xshell_t *xshp, const char *message) {
-
-  chprintf(xshp->stream, "Usage: %s" XSHELL_NEWLINE_STR, message);
-}
 
 /**
  * @brief   Returns the shell manager associated to a shell.
