@@ -261,12 +261,12 @@ extern "C" {
 
 __STATIC_INLINE void hal_lld_peripheral_reset(uint32_t mask) {
 
-  rp_set_bits(&RESETS->RESET, mask);
+  RESETS->SET.RESET = mask;
 }
 
 __STATIC_INLINE void hal_lld_peripheral_unreset(uint32_t mask) {
 
-  rp_clear_bits(&RESETS->RESET, mask);
+  RESETS->CLR.RESET = mask;
   while ((RESETS->RESET_DONE & mask) != mask) {
     /* Waiting for peripheral to come out of reset */
   }

@@ -67,7 +67,7 @@ void rp_xosc_init(void) {
   XOSC->STARTUP = RP_XOSC_STARTUP_DELAY;
 
   /* Enable the XOSC */
-  rp_set_bits(&XOSC->CTRL, XOSC_CTRL_ENABLE_ENABLE);
+  XOSC->SET.CTRL = XOSC_CTRL_ENABLE_ENABLE;
 
   /* Wait for XOSC to be stable with timeout protection. */
   if (halRegWaitAnySet32X((volatile uint32_t *)&XOSC->STATUS, XOSC_STATUS_STABLE,
@@ -83,7 +83,7 @@ void rp_xosc_init(void) {
 void rp_xosc_disable(void) {
 
   /* Disable XOSC */
-  rp_write_masked(&XOSC->CTRL, XOSC_CTRL_ENABLE_DISABLE, XOSC_CTRL_ENABLE_Msk);
+  XOSC->XOR.CTRL = (XOSC->CTRL ^ XOSC_CTRL_ENABLE_DISABLE) & XOSC_CTRL_ENABLE_Msk;
 }
 
 /** @} */
