@@ -1329,6 +1329,34 @@ typedef struct {
   __IO uint32_t         STARTUP;
   __I  uint32_t         resvd10[3];
   __IO uint32_t         COUNT;
+  __I  uint32_t         resvd20[1016];
+  struct {
+    __IO uint32_t       CTRL;
+    __I  uint32_t       STATUS;
+    __IO uint32_t       DORMANT;
+    __IO uint32_t       STARTUP;
+    __I  uint32_t       resvd10[3];
+    __IO uint32_t       COUNT;
+    __I  uint32_t       resvd20[1016];
+  } XOR;
+  struct {
+    __IO uint32_t       CTRL;
+    __I  uint32_t       STATUS;
+    __IO uint32_t       DORMANT;
+    __IO uint32_t       STARTUP;
+    __I  uint32_t       resvd10[3];
+    __IO uint32_t       COUNT;
+    __I  uint32_t       resvd20[1016];
+  } SET;
+  struct {
+    __IO uint32_t       CTRL;
+    __I  uint32_t       STATUS;
+    __IO uint32_t       DORMANT;
+    __IO uint32_t       STARTUP;
+    __I  uint32_t       resvd10[3];
+    __IO uint32_t       COUNT;
+    __I  uint32_t       resvd20[1016];
+  } CLR;
 } XOSC_TypeDef;
 
 typedef struct {
@@ -1340,6 +1368,40 @@ typedef struct {
   __IO uint32_t         INTE;
   __IO uint32_t         INTF;
   __I  uint32_t         INTS;
+  __I  uint32_t         resvd20[1016];
+  struct {
+    __IO uint32_t       CS;
+    __IO uint32_t       PWR;
+    __IO uint32_t       FBDIV_INT;
+    __IO uint32_t       PRIM;
+    __IO uint32_t       INTR;
+    __IO uint32_t       INTE;
+    __IO uint32_t       INTF;
+    __I  uint32_t       INTS;
+    __I  uint32_t       resvd20[1016];
+  } XOR;
+  struct {
+    __IO uint32_t       CS;
+    __IO uint32_t       PWR;
+    __IO uint32_t       FBDIV_INT;
+    __IO uint32_t       PRIM;
+    __IO uint32_t       INTR;
+    __IO uint32_t       INTE;
+    __IO uint32_t       INTF;
+    __I  uint32_t       INTS;
+    __I  uint32_t       resvd20[1016];
+  } SET;
+  struct {
+    __IO uint32_t       CS;
+    __IO uint32_t       PWR;
+    __IO uint32_t       FBDIV_INT;
+    __IO uint32_t       PRIM;
+    __IO uint32_t       INTR;
+    __IO uint32_t       INTE;
+    __IO uint32_t       INTF;
+    __I  uint32_t       INTS;
+    __I  uint32_t       resvd20[1016];
+  } CLR;
 } PLL_TypeDef;
 
 typedef struct {
@@ -1378,6 +1440,55 @@ typedef struct {
   __IO uint32_t         INTE;
   __IO uint32_t         INTF;
   __I  uint32_t         INTS;
+  __I  uint32_t         resvdC8[974];
+  struct {
+    CLOCKS_CLK_TypeDef  CLK[10];
+    CLOCKS_RESUS_TypeDef RESUS;
+    CLOCKS_FC0_TypeDef  FC0;
+    __IO uint32_t       WAKE_EN0;
+    __IO uint32_t       WAKE_EN1;
+    __IO uint32_t       SLEEP_EN0;
+    __IO uint32_t       SLEEP_EN1;
+    __I  uint32_t       ENABLED0;
+    __I  uint32_t       ENABLED1;
+    __I  uint32_t       INTR;
+    __IO uint32_t       INTE;
+    __IO uint32_t       INTF;
+    __I  uint32_t       INTS;
+    __I  uint32_t       resvdC8[974];
+  } XOR;
+  struct {
+    CLOCKS_CLK_TypeDef  CLK[10];
+    CLOCKS_RESUS_TypeDef RESUS;
+    CLOCKS_FC0_TypeDef  FC0;
+    __IO uint32_t       WAKE_EN0;
+    __IO uint32_t       WAKE_EN1;
+    __IO uint32_t       SLEEP_EN0;
+    __IO uint32_t       SLEEP_EN1;
+    __I  uint32_t       ENABLED0;
+    __I  uint32_t       ENABLED1;
+    __I  uint32_t       INTR;
+    __IO uint32_t       INTE;
+    __IO uint32_t       INTF;
+    __I  uint32_t       INTS;
+    __I  uint32_t       resvdC8[974];
+  } SET;
+  struct {
+    CLOCKS_CLK_TypeDef  CLK[10];
+    CLOCKS_RESUS_TypeDef RESUS;
+    CLOCKS_FC0_TypeDef  FC0;
+    __IO uint32_t       WAKE_EN0;
+    __IO uint32_t       WAKE_EN1;
+    __IO uint32_t       SLEEP_EN0;
+    __IO uint32_t       SLEEP_EN1;
+    __I  uint32_t       ENABLED0;
+    __I  uint32_t       ENABLED1;
+    __I  uint32_t       INTR;
+    __IO uint32_t       INTE;
+    __IO uint32_t       INTF;
+    __I  uint32_t       INTS;
+    __I  uint32_t       resvdC8[974];
+  } CLR;
 } CLOCKS_TypeDef;
 
 /**
