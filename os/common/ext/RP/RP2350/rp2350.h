@@ -17,6 +17,13 @@
 /**
  * @file    RP/rp2350.h
  * @brief   CMSIS device file for the RP2350.
+ * @note    This was created to roughly match the style and structure of the
+ *          existing RP2040 CMSIS header. This allows for compatibility with
+ *          existing RP LLD code and makes debugging and visual comparison
+ *          easier. While not used in the final version the early work by
+ *          @KarlK90 and @davidbuzz on the RP2350 cmsis header, particularly 
+ *          using svdtools to group registers, facilitated the creation of
+ *          this header.
  *
  * @defgroup CMSIS_RP2350 RP2350 Device File
  * @ingroup CMSIS_DEVICE
