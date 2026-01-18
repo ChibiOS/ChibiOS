@@ -2832,42 +2832,6 @@ typedef struct {
 #define RP_CLK_COUNT                      10U
 /** @} */
 
-/**
- * @name    Atomic register access aliases
- * @note    RP2350 peripherals support atomic SET/CLR/XOR operations via
- *          register aliases at offsets +0x1000, +0x2000, +0x3000 from base.
- * @{
- */
-#define RP_REG_ALIAS_XOR_BITS                0x1000U
-#define RP_REG_ALIAS_SET_BITS                0x2000U
-#define RP_REG_ALIAS_CLR_BITS                0x3000U
-
-/**
- * @brief   Atomically set bits in a hardware register.
- */
-#define rp_set_bits(addr, mask) \
-    (*(volatile uint32_t *)((uintptr_t)(addr) | RP_REG_ALIAS_SET_BITS) = (mask))
-
-/**
- * @brief   Atomically clear bits in a hardware register.
- */
-#define rp_clear_bits(addr, mask) \
-    (*(volatile uint32_t *)((uintptr_t)(addr) | RP_REG_ALIAS_CLR_BITS) = (mask))
-
-/**
- * @brief   Atomically XOR bits in a hardware register.
- */
-#define rp_xor_bits(addr, mask) \
-    (*(volatile uint32_t *)((uintptr_t)(addr) | RP_REG_ALIAS_XOR_BITS) = (mask))
-
-/**
- * @brief   Atomically write a value with mask using single XOR operation.
- * @note    This is atomic - a single write to the XOR alias register.
- */
-#define rp_write_masked(addr, value, mask) \
-    rp_xor_bits((addr), (*(volatile uint32_t *)(addr) ^ (value)) & (mask))
-/** @} */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
