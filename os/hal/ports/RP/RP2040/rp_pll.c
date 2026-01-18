@@ -103,7 +103,7 @@ void rp_pll_init(PLL_TypeDef *pll, uint32_t refdiv, uint32_t vco_freq,
   pll->FBDIV_INT = fbdiv;
 
   /* Turn on PLL */
-  rp_clear_bits(&pll->PWR, PLL_PWR_PD | PLL_PWR_VCOPD);
+  pll->CLR.PWR = PLL_PWR_PD | PLL_PWR_VCOPD;
 
   /* Wait for PLL lock */
   if (halRegWaitAnySet32X(&pll->CS, PLL_CS_LOCK,
@@ -115,7 +115,7 @@ void rp_pll_init(PLL_TypeDef *pll, uint32_t refdiv, uint32_t vco_freq,
   pll->PRIM = pdiv;
 
   /* Turn on post divider */
-  rp_clear_bits(&pll->PWR, PLL_PWR_POSTDIVPD);
+  pll->CLR.PWR = PLL_PWR_POSTDIVPD;
 }
 
 /**

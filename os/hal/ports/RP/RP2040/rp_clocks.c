@@ -83,11 +83,11 @@ void rp_clock_init(void) {
   rp_xosc_init();
 
   /* Switch clk_sys and clk_ref to safe sources */
-  rp_clear_bits(&CLOCKS->CLK[RP_CLK_SYS].CTRL, CLOCKS_CLK_SYS_CTRL_SRC_Msk);
+  CLOCKS->CLR.CLK[RP_CLK_SYS].CTRL = CLOCKS_CLK_SYS_CTRL_SRC_Msk;
   while ((CLOCKS->CLK[RP_CLK_SYS].SELECTED & 1U) == 0U) {
     /* Wait for clk_sys to switch to clk_ref */
   }
-  rp_clear_bits(&CLOCKS->CLK[RP_CLK_REF].CTRL, CLOCKS_CLK_REF_CTRL_SRC_Msk);
+  CLOCKS->CLR.CLK[RP_CLK_REF].CTRL = CLOCKS_CLK_REF_CTRL_SRC_Msk;
   while ((CLOCKS->CLK[RP_CLK_REF].SELECTED & 1U) == 0U) {
     /* Wait for clk_ref to switch to ROSC */
   }
@@ -104,9 +104,9 @@ void rp_clock_init(void) {
   {
     uint32_t src = CLOCKS_CLK_REF_CTRL_SRC_XOSC >> CLOCKS_CLK_REF_CTRL_SRC_Pos;
     CLOCKS->CLK[RP_CLK_REF].DIV = 1U << 8;
-    rp_write_masked(&CLOCKS->CLK[RP_CLK_REF].CTRL,
-                    src << CLOCKS_CLK_REF_CTRL_SRC_Pos,
-                    CLOCKS_CLK_REF_CTRL_SRC_Msk);
+    CLOCKS->XOR.CLK[RP_CLK_REF].CTRL =
+        (CLOCKS->CLK[RP_CLK_REF].CTRL ^ (src << CLOCKS_CLK_REF_CTRL_SRC_Pos)) &
+        CLOCKS_CLK_REF_CTRL_SRC_Msk;
     while ((CLOCKS->CLK[RP_CLK_REF].SELECTED & (1U << src)) == 0U) {
       /* Wait for switch to XOSC */
     }
@@ -114,49 +114,49 @@ void rp_clock_init(void) {
   }
 
   /* CLK_SYS = PLL_SYS = 125 MHz */
-  rp_clear_bits(&CLOCKS->CLK[RP_CLK_SYS].CTRL, CLOCKS_CLK_SYS_CTRL_SRC_Msk);
+  CLOCKS->CLR.CLK[RP_CLK_SYS].CTRL = CLOCKS_CLK_SYS_CTRL_SRC_Msk;
   while ((CLOCKS->CLK[RP_CLK_SYS].SELECTED & 1U) == 0U) {
     /* Wait for switch to clk_ref */
   }
-  rp_write_masked(&CLOCKS->CLK[RP_CLK_SYS].CTRL,
-                  CLOCKS_CLK_SYS_CTRL_AUXSRC_PLL_SYS,
-                  CLOCKS_CLK_SYS_CTRL_AUXSRC_Msk);
-  rp_set_bits(&CLOCKS->CLK[RP_CLK_SYS].CTRL, CLOCKS_CLK_SYS_CTRL_SRC_AUX);
+  CLOCKS->XOR.CLK[RP_CLK_SYS].CTRL =
+      (CLOCKS->CLK[RP_CLK_SYS].CTRL ^ CLOCKS_CLK_SYS_CTRL_AUXSRC_PLL_SYS) &
+      CLOCKS_CLK_SYS_CTRL_AUXSRC_Msk;
+  CLOCKS->SET.CLK[RP_CLK_SYS].CTRL = CLOCKS_CLK_SYS_CTRL_SRC_AUX;
   while ((CLOCKS->CLK[RP_CLK_SYS].SELECTED & 2U) == 0U) {
     /* Wait for switch to aux */
   }
   configured_freq[RP_CLK_SYS] = RP_PLL_SYS_CLK;
 
   /* CLK_USB = PLL_USB = 48 MHz */
-  rp_write_masked(&CLOCKS->CLK[RP_CLK_USB].CTRL,
-                  CLOCKS_CLK_USB_CTRL_AUXSRC_PLL_USB,
-                  CLOCKS_CLK_USB_CTRL_AUXSRC_Msk);
+  CLOCKS->XOR.CLK[RP_CLK_USB].CTRL =
+      (CLOCKS->CLK[RP_CLK_USB].CTRL ^ CLOCKS_CLK_USB_CTRL_AUXSRC_PLL_USB) &
+      CLOCKS_CLK_USB_CTRL_AUXSRC_Msk;
   CLOCKS->CLK[RP_CLK_USB].DIV = 1U << 8;
-  rp_set_bits(&CLOCKS->CLK[RP_CLK_USB].CTRL, CLOCKS_CLK_PERI_CTRL_ENABLE);
+  CLOCKS->SET.CLK[RP_CLK_USB].CTRL = CLOCKS_CLK_PERI_CTRL_ENABLE;
   configured_freq[RP_CLK_USB] = RP_PLL_USB_CLK;
 
   /* CLK_ADC = PLL_USB = 48 MHz */
-  rp_write_masked(&CLOCKS->CLK[RP_CLK_ADC].CTRL,
-                  CLOCKS_CLK_ADC_CTRL_AUXSRC_PLL_USB,
-                  CLOCKS_CLK_ADC_CTRL_AUXSRC_Msk);
+  CLOCKS->XOR.CLK[RP_CLK_ADC].CTRL =
+      (CLOCKS->CLK[RP_CLK_ADC].CTRL ^ CLOCKS_CLK_ADC_CTRL_AUXSRC_PLL_USB) &
+      CLOCKS_CLK_ADC_CTRL_AUXSRC_Msk;
   CLOCKS->CLK[RP_CLK_ADC].DIV = 1U << 8;
-  rp_set_bits(&CLOCKS->CLK[RP_CLK_ADC].CTRL, CLOCKS_CLK_PERI_CTRL_ENABLE);
+  CLOCKS->SET.CLK[RP_CLK_ADC].CTRL = CLOCKS_CLK_PERI_CTRL_ENABLE;
   configured_freq[RP_CLK_ADC] = RP_PLL_USB_CLK;
 
   /* CLK_RTC = PLL_USB / 1024 = 46875Hz */
-  rp_write_masked(&CLOCKS->CLK[RP_CLK_RTC].CTRL,
-                  CLOCKS_CLK_RTC_CTRL_AUXSRC_PLL_USB,
-                  CLOCKS_CLK_RTC_CTRL_AUXSRC_Msk);
+  CLOCKS->XOR.CLK[RP_CLK_RTC].CTRL =
+      (CLOCKS->CLK[RP_CLK_RTC].CTRL ^ CLOCKS_CLK_RTC_CTRL_AUXSRC_PLL_USB) &
+      CLOCKS_CLK_RTC_CTRL_AUXSRC_Msk;
   CLOCKS->CLK[RP_CLK_RTC].DIV = RP_RTC_CLK_DIV << 8;
-  rp_set_bits(&CLOCKS->CLK[RP_CLK_RTC].CTRL, CLOCKS_CLK_PERI_CTRL_ENABLE);
+  CLOCKS->SET.CLK[RP_CLK_RTC].CTRL = CLOCKS_CLK_PERI_CTRL_ENABLE;
   configured_freq[RP_CLK_RTC] = RP_PLL_USB_CLK / RP_RTC_CLK_DIV;
 
-  /* CLK_ADC = PLL_USB = 48 MHz */
-  rp_write_masked(&CLOCKS->CLK[RP_CLK_PERI].CTRL,
-                  CLOCKS_CLK_PERI_CTRL_AUXSRC_SYS,
-                  CLOCKS_CLK_PERI_CTRL_AUXSRC_Msk);
+  /* CLK_PERI = PLL_SYS = 125 MHz */
+  CLOCKS->XOR.CLK[RP_CLK_PERI].CTRL =
+      (CLOCKS->CLK[RP_CLK_PERI].CTRL ^ CLOCKS_CLK_PERI_CTRL_AUXSRC_SYS) &
+      CLOCKS_CLK_PERI_CTRL_AUXSRC_Msk;
   CLOCKS->CLK[RP_CLK_PERI].DIV = 1U << 8;
-  rp_set_bits(&CLOCKS->CLK[RP_CLK_PERI].CTRL, CLOCKS_CLK_PERI_CTRL_ENABLE);
+  CLOCKS->SET.CLK[RP_CLK_PERI].CTRL = CLOCKS_CLK_PERI_CTRL_ENABLE;
   configured_freq[RP_CLK_PERI] = RP_PLL_SYS_CLK;
 
   /* Calculate cycles for 1us tick based on clk_ref frequency. */
