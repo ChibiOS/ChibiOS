@@ -6,8 +6,7 @@ include $(LWIPDIR)/Filelists.mk
 
 LWBINDSRC = \
         $(CHIBIOS)/os/various/lwip_bindings/lwipthread.c \
-        $(CHIBIOS)/os/various/lwip_bindings/arch/sys_arch.c \
-        $(CHIBIOS)/os/various/evtimer.c
+        $(CHIBIOS)/os/various/lwip_bindings/arch/sys_arch.c
 
 
 # Add blocks of files from Filelists.mk as required for enabled options
