@@ -182,8 +182,13 @@ include $(RULESPATH)/rules.mk
 # Custom rules
 #
 
-build/ch.uf2: build/ch.elf
-	picotool uf2 convert build/ch.elf build/ch.uf2
+PICOTOOL ?= picotool
+
+$(BUILDDIR)/$(PROJECT).uf2: $(BUILDDIR)/$(PROJECT).elf
+	$(PICOTOOL) uf2 convert $(BUILDDIR)/$(PROJECT).elf $(BUILDDIR)/$(PROJECT).uf2
+
+upload: $(BUILDDIR)/$(PROJECT).uf2
+	$(PICOTOOL) load -v -x $(BUILDDIR)/$(PROJECT).uf2
 
 #
 # Custom rules
