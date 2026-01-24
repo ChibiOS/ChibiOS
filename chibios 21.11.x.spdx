@@ -20,7 +20,7 @@ PackageSupplier: Organization:ChibiOS
 PackageOriginator: Organization:ChibiOS
 PackageSummary: "ChibiOS real-time operating system distribution for embedded systems."
 PackageComment: "This SBOM describes ChibiOS distribution version 21.11.4, including its RT (7.0.5), NIL (4.1.3), OSLIB (1.3.2), HAL (9.0.0), architecture ports and other internal support components. Third-party middleware (such as FatFs, lwIP, LittleFS, wolfSSL and vendor CMSIS headers) is not modeled as separate packages in this SBOM and should be considered based on the specific project configuration."
-PackageVerificationCode: 0000000000000000000000000000000000000000
+PackageVerificationCode: 317c31c3567a57fe173b7c38d3e72e45d9910987
 PackageLicenseDeclared: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageCopyrightText: NOASSERTION
@@ -39,7 +39,7 @@ PackageSupplier: Organization:ChibiOS
 PackageOriginator: Organization:ChibiOS
 PackageSummary: "ChibiOS real-time kernel (RT) version 7.0.5."
 PackageComment: "ChibiOS-RT 7.0.5 included in ChibiOS 21.11.4 distribution. Licensed under commercial terms from ChibiOS; see the accompanying commercial license agreement. The open-source GPL variant is available separately but is not described by this SBOM."
-PackageVerificationCode: 0000000000000000000000000000000000000000
+PackageVerificationCode: 75c23af8035b648bc258b1abb6f2f624e01a6f67
 PackageLicenseDeclared: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageCopyrightText: NOASSERTION
@@ -54,7 +54,7 @@ PackageSupplier: Organization:ChibiOS
 PackageOriginator: Organization:ChibiOS
 PackageSummary: "ChibiOS NIL lightweight kernel version 4.1.3."
 PackageComment: "ChibiOS-NIL 4.1.3 included in ChibiOS 21.11.4 distribution. Licensed under commercial terms from ChibiOS; see the accompanying commercial license agreement."
-PackageVerificationCode: 0000000000000000000000000000000000000000
+PackageVerificationCode: 8844060aeac6dd55cccbd5f77a7e3af01980bc33
 PackageLicenseDeclared: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageCopyrightText: NOASSERTION
@@ -69,7 +69,7 @@ PackageSupplier: Organization:ChibiOS
 PackageOriginator: Organization:ChibiOS
 PackageSummary: "ChibiOS OSLIB shared kernel library 1.3.2."
 PackageComment: "ChibiOS-OSLIB 1.3.2 included in ChibiOS 21.11.4 distribution. Licensed under commercial terms from ChibiOS; see the accompanying commercial license agreement."
-PackageVerificationCode: 0000000000000000000000000000000000000000
+PackageVerificationCode: c72ce8b70ec1beb34737ac8aa512ec2dea41352a
 PackageLicenseDeclared: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageCopyrightText: NOASSERTION
@@ -84,7 +84,7 @@ PackageSupplier: Organization:ChibiOS
 PackageOriginator: Organization:ChibiOS
 PackageSummary: "ChibiOS Hardware Abstraction Layer (HAL) version 9.0.0."
 PackageComment: "HAL 9.0.0 included in ChibiOS 21.11.4 distribution. HAL is licensed under the Apache License 2.0."
-PackageVerificationCode: 0000000000000000000000000000000000000000
+PackageVerificationCode: 3eb9b0fb0a29617aa319cdf7e945b72fdb1208c6
 PackageLicenseDeclared: Apache-2.0
 PackageLicenseConcluded: Apache-2.0
 PackageCopyrightText: NOASSERTION
@@ -99,7 +99,7 @@ PackageSupplier: Organization:ChibiOS
 PackageOriginator: Organization:ChibiOS
 PackageSummary: "Architecture ports (ARM, ARMv7-M, ARMv6-M, ARMv8-M-ML and related low-level code) included in ChibiOS 21.11.4."
 PackageComment: "This package represents the architecture-specific ports (e.g. ARM, ARMv7-M, ARMv6-M, ARMv8-M-ML) shipped as part of ChibiOS 21.11.4. These ports are licensed under commercial terms from ChibiOS; see the accompanying commercial license agreement. They are not provided under GPL or other open-source terms in this distribution."
-PackageVerificationCode: 0000000000000000000000000000000000000000
+PackageVerificationCode: 00bf12511e8f376662f4b78374422c86a5d8e9be
 PackageLicenseDeclared: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageCopyrightText: NOASSERTION
@@ -114,7 +114,7 @@ PackageSupplier: Organization:ChibiOS
 PackageOriginator: Organization:ChibiOS
 PackageSummary: "Other minor ChibiOS components and support modules included in ChibiOS 21.11.4 that are licensed under Apache-2.0, similar to HAL."
 PackageComment: "This package groups various minor support components that are part of the ChibiOS 21.11.4 distribution and are licensed under Apache License 2.0, consistent with the licensing of the HAL. Refer to the source tree and embedded license headers for exact file-level details."
-PackageVerificationCode: 0000000000000000000000000000000000000000
+PackageVerificationCode: a0bd948c48c03af8ac89d6c9150eb1b68a74dd8c
 PackageLicenseDeclared: Apache-2.0
 PackageLicenseConcluded: Apache-2.0
 PackageCopyrightText: NOASSERTION
@@ -123,10 +123,10 @@ PackageCopyrightText: NOASSERTION
 ##### Representative Files                             ####
 #########################################################
 
-FileName: os/license/version.h
+FileName: os/license/chversion.h
 SPDXID: SPDXRef-FILE-VER
 FileComment: "Representative top-level file for the ChibiOS 21.11.4 distribution."
-FileChecksum: SHA1: 0000000000000000000000000000000000000000
+FileChecksum: SHA1: 071236495fe009bcb5b7199dfcf2e438318872d4
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: NOASSERTION
 FileCopyrightText: NOASSERTION
@@ -134,7 +134,7 @@ FileCopyrightText: NOASSERTION
 FileName: os/rt/include/ch.h
 SPDXID: SPDXRef-FILE-RT-CH-H
 FileComment: "Representative header file from ChibiOS RT 7.0.5."
-FileChecksum: SHA1: 0000000000000000000000000000000000000000
+FileChecksum: SHA1: f526ca7a3494035ce459e5f38c69075b9fd0db4f
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: NOASSERTION
 FileCopyrightText: NOASSERTION
@@ -142,7 +142,7 @@ FileCopyrightText: NOASSERTION
 FileName: os/nil/include/ch.h
 SPDXID: SPDXRef-FILE-NIL-CH-H
 FileComment: "Representative header file from ChibiOS NIL 4.1.3."
-FileChecksum: SHA1: 0000000000000000000000000000000000000000
+FileChecksum: SHA1: 73320eb08a119c07ff128ea0b96decbb9b93643c
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: NOASSERTION
 FileCopyrightText: NOASSERTION
@@ -150,7 +150,7 @@ FileCopyrightText: NOASSERTION
 FileName: os/oslib/include/chlib.h
 SPDXID: SPDXRef-FILE-OSLIB-CHLIB-H
 FileComment: "Representative header file from ChibiOS OSLIB."
-FileChecksum: SHA1: 0000000000000000000000000000000000000000
+FileChecksum: SHA1: 5b80f8c78cdb9535a2a7f71cab0313e706c2509c
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: NOASSERTION
 FileCopyrightText: NOASSERTION
@@ -158,23 +158,23 @@ FileCopyrightText: NOASSERTION
 FileName: os/hal/include/hal.h
 SPDXID: SPDXRef-FILE-HAL-HAL-H
 FileComment: "Representative header file from ChibiOS HAL 9.0.0."
-FileChecksum: SHA1: 0000000000000000000000000000000000000000
+FileChecksum: SHA1: 4c74aeafc6b7b38a60fcd5e98f11f000c036e65c
 LicenseConcluded: Apache-2.0
 LicenseInfoInFile: Apache-2.0
 FileCopyrightText: NOASSERTION
 
-FileName: os/common/ports/ARMCMx/chcore.h
+FileName: os/common/ports/ARMv6-M/chcore.h
 SPDXID: SPDXRef-FILE-PORTS-CHCORE-H
-FileComment: "Representative header file from the architecture ports in ChibiOS 21.11.4."
-FileChecksum: SHA1: 0000000000000000000000000000000000000000
+FileComment: "Representative header file from the ARMv6-M architecture port in ChibiOS 21.11.4."
+FileChecksum: SHA1: 926d30788ff45f335c9d13f79403f589ddb0d6c0
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: NOASSERTION
 FileCopyrightText: NOASSERTION
 
-FileName: os/common/startup/ARMCMx/compilers/GCC/crt0_v7m.S
-SPDXID: SPDXRef-FILE-OTHER-CRT0-V7M-S
+FileName: os/common/startup/ARMCMx/compilers/GCC/crt0_v6m.S
+SPDXID: SPDXRef-FILE-OTHER-CRT0-V6M-S
 FileComment: "Representative source file from other minor ChibiOS components licensed under Apache-2.0."
-FileChecksum: SHA1: 0000000000000000000000000000000000000000
+FileChecksum: SHA1: de1de40f852dbaef29f2caf77225f6997dfa62ab
 LicenseConcluded: Apache-2.0
 LicenseInfoInFile: Apache-2.0
 FileCopyrightText: NOASSERTION
@@ -197,4 +197,4 @@ Relationship: SPDXRef-NIL-4-1-3 CONTAINS SPDXRef-FILE-NIL-CH-H
 Relationship: SPDXRef-OSLIB-1-3-2 CONTAINS SPDXRef-FILE-OSLIB-CHLIB-H
 Relationship: SPDXRef-HAL-9-0-0 CONTAINS SPDXRef-FILE-HAL-HAL-H
 Relationship: SPDXRef-PORTS-21-11-4 CONTAINS SPDXRef-FILE-PORTS-CHCORE-H
-Relationship: SPDXRef-OTHER-21-11-4 CONTAINS SPDXRef-FILE-OTHER-CRT0-V7M-S
+Relationship: SPDXRef-OTHER-21-11-4 CONTAINS SPDXRef-FILE-OTHER-CRT0-V6M-S
