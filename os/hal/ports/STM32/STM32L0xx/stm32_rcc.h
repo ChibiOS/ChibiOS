@@ -803,6 +803,34 @@
 #define rccResetUSB() rccResetAPB1(RCC_APB1RSTR_USBRST)
 /** @} */
 
+/**
+ * @name    CRC peripherals specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the CRC peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableCRC(lp) rccEnableAHB(RCC_AHBENR_CRCEN, lp)
+
+/**
+ * @brief   Disables the CRC peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableCRC() rccDisableAHB(RCC_AHBENR_CRCEN)
+
+/**
+ * @brief   Resets the CRC peripheral.
+ *
+ * @api
+ */
+#define rccResetCRC() rccResetAHB(RCC_AHBRSTR_CRCRST)
+/** @} */
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
