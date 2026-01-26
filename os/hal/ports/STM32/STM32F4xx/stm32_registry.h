@@ -150,7 +150,7 @@
 #define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              TRUE
 #define STM32_RCC_CK48MSEL_USES_I2S         FALSE
-#define STM32_PLL48CLK_ALTSRC               STM32_PLLSAI_Q_CLKOUT
+#define STM32_PLL48CLK_ALTSRC               STM32_PLLSAI_P_CLKOUT
 #define STM32_TIMPRE_PRESCALE4              TRUE
 
 /* ADC attributes.*/
