@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>RT-STM32G474RE-NUCLEO64-SB_HOST_STATIC</name>
+	<name>RT-STM32G474RE-NUCLEO64-SB_HOST_NOSWITCH</name>
 	<comment></comment>
 	<projects>
 	</projects>
