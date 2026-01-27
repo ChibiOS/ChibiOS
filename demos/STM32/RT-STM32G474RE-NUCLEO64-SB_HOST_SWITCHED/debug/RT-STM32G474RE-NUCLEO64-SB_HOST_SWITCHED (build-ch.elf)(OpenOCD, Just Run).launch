@@ -32,11 +32,11 @@
     <stringAttribute key="org.eclipse.cdt.launch.COREFILE_PATH" value=""/>
     <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_START_MODE" value="remote"/>
     <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="build/ch.elf"/>
-    <stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="RT-STM32G474RE-NUCLEO64-SB_HOST_STATIC"/>
+    <stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="RT-STM32G474RE-NUCLEO64-SB_HOST_SWITCHED"/>
     <booleanAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_AUTO_ATTR" value="false"/>
     <stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value=""/>
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-        <listEntry value="/RT-STM32G474RE-NUCLEO64-SB_HOST_STATIC"/>
+        <listEntry value="/RT-STM32G474RE-NUCLEO64-SB_HOST_SWITCHED"/>
     </listAttribute>
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
         <listEntry value="4"/>
