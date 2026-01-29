@@ -155,7 +155,6 @@
 - NEW: Added MEM_NATURAL_ALIGN macro to RT and NIL.
 - NEW: Added static initializer for virtual timers in RT.
 - NEW: Added new function chHeapIntegrityCheck().
-- NEW: Function chCoreGetStatusX() changed to return a memory region object
-       instead of a simple size.
+- NEW: Function chCoreGetStatusX() changed to return a memory region object instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
