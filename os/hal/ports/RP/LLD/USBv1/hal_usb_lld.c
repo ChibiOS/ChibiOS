@@ -383,16 +383,17 @@ static void usb_serve_endpoint(USBDriver *usbp, usbep_t ep, bool is_in) {
 #if RP_USB_USE_USB1 || defined(__DOXYGEN__)
 
 /**
- * @brief   USB interrupt service routine body.
- * @details This function contains the core USB interrupt handling logic.
- *          It is called from the platform-specific interrupt handler.
+ * @brief   USB interrupt handler.
  *
- * @param[in] usbp      pointer to the @p USBDriver object
- *
- * @notapi
+ * @isr
  */
-void usb_lld_serve_interrupt(USBDriver *usbp) {
-  uint32_t ints = USB->INTS;
+OSAL_IRQ_HANDLER(RP_USBCTRL_IRQ_HANDLER) {
+  USBDriver *usbp = &USBD1;
+  uint32_t ints;
+
+  OSAL_IRQ_PROLOGUE();
+
+  ints = USB->INTS;
 
   /* USB setup packet handling. */
   if (ints & USB_INTS_SETUP_REQ) {
