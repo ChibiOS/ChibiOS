@@ -5,8 +5,8 @@
               and RAM memory regions. Also used as generic name.
   * RAMBox  : Name used for SandBoxes with exclusively RAM memory regions,
               code loaded at runtime in RAM.
-  * Static	: Attribute, regions Address and size decided at compile time.
-  * Dynamic	: Attribute, regions allocated at runtime, always RAMBoxes,
+  * Static  : Attribute, regions Address and size decided at compile time.
+  * Dynamic : Attribute, regions allocated at runtime, always RAMBoxes,
               always of "switched" type.
   * Valid combinations:
     * Static SandBox
@@ -14,11 +14,11 @@
     * Dynamic RAMBox
 
 * In addition there are various system-wide modes of managing the MPU:
-  * Simple	: The MPU is programmed once on initialization, regions are not
+  * NoSwitch: The MPU is programmed once on initialization, regions are not
               reprogrammed on contex switch. Faster but SBs are not protected
               from each other. Only applicable to static SBs, ideal when there
               is a single SB in the system.
   * Switched: Eeach SB has its own regions, MPU is reprogrammed on context
               switch, full isolation but has time/space overhead.
-  * Mixed	: Each SB has a number of switched regions (1..M) and all SBs
+  * Mixed   : Each SB has a number of switched regions (1..M) and all SBs
               share a number of fixed regions (M+1..N) which are not switched.
