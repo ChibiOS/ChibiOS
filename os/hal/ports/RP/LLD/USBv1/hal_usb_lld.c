@@ -383,17 +383,33 @@ static void usb_serve_endpoint(USBDriver *usbp, usbep_t ep, bool is_in) {
 #if RP_USB_USE_USB1 || defined(__DOXYGEN__)
 
 /**
- * @brief   USB interrupt handler.
+ * @brief   USB interrupt service routine.
  *
- * @isr
+ * @param[in] usbp      pointer to the @p USBDriver object
+ *
+ * @notapi
  */
-OSAL_IRQ_HANDLER(RP_USBCTRL_IRQ_HANDLER) {
-  USBDriver *usbp = &USBD1;
+static void usb_lld_serve_interrupt(USBDriver *usbp) {
   uint32_t ints;
 
-  OSAL_IRQ_PROLOGUE();
-
   ints = USB->INTS;
+
+  /* Endpoint events handling. */
+  if (ints & USB_INTS_BUFF_STATUS) {
+    uint32_t buf_status = USB->BUFSTATUS;
+    uint32_t bit = 1U;
+    for (uint8_t i = 0; buf_status && i < 32; i++) {
+      if (buf_status & bit) {
+        /* Clear flag. */
+        USB->CLR.BUFSTATUS = bit;
+        /* Finish on the endpoint or transfer remained data. */
+        usb_serve_endpoint(usbp, i >> 1U, (i & 1U) == 0);
+
+        buf_status &= ~bit;
+      }
+      bit <<= 1U;
+    }
+  }
 
   /* USB setup packet handling. */
   if (ints & USB_INTS_SETUP_REQ) {
@@ -445,28 +461,23 @@ OSAL_IRQ_HANDLER(RP_USBCTRL_IRQ_HANDLER) {
     (void)USB->SOFRD;
   }
 
-  /* Endpoint events handling.*/
-  if (ints & USB_INTS_BUFF_STATUS) {
-    uint32_t buf_status = USB->BUFSTATUS;
-    uint32_t bit = 1U;
-    for (uint8_t i = 0; buf_status && i < 32; i++) {
-      if (buf_status & bit) {
-        /* Clear flag */
-        USB->CLR.BUFSTATUS = bit;
-        /* Finish on the endpoint or transfer remained data */
-        usb_serve_endpoint(&USBD1, i >> 1U, (i & 1U) == 0);
-
-        buf_status &= ~bit;
-      }
-      bit <<= 1U;
-    }
-  }
-
 #if RP_USB_USE_ERROR_DATA_SEQ_INTR == TRUE
-  if (ints & USB_INTE_ERROR_DATA_SEQ) {
+  if (ints & USB_INTS_ERROR_DATA_SEQ) {
     USB->CLR.SIESTATUS = USB_SIE_STATUS_DATA_SEQ_ERROR;
   }
 #endif /* RP_USB_USE_ERROR_DATA_SEQ_INTR */
+}
+
+/**
+ * @brief   USB interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(RP_USBCTRL_IRQ_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  usb_lld_serve_interrupt(&USBD1);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -503,7 +514,11 @@ void usb_lld_start(USBDriver *usbp) {
 #if RP_USB_USE_USB1 == TRUE
   if (&USBD1 == usbp) {
     if (usbp->state == USB_STOP) {
-      /* Reset usb controller */
+
+      osalDbgAssert(RP_USB_CLK == 48000000U,
+                    "invalid USB clock frequency");
+
+      /* Reset usb controller. */
       hal_lld_peripheral_reset(RESETS_ALLREG_USBCTRL);
       hal_lld_peripheral_unreset(RESETS_ALLREG_USBCTRL);
 
@@ -645,6 +660,12 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
         return;
     }
 
+    /* Isochronous endpoints cannot be bidirectional per USB 2.0 specification. */
+    if (epcp->ep_mode == USB_EP_MODE_TYPE_ISOC) {
+        osalDbgAssert((epcp->in_state == NULL) || (epcp->out_state == NULL),
+                      "isochronous EP cannot be IN and OUT");
+    }
+
     if (epcp->in_state) {
         buf_ctrl                 = 0U;
         BUF_CTRL(ep).IN          = buf_ctrl;
@@ -776,7 +797,7 @@ void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
   (void)usbp;
   (void)ep;
   /* Copy data from hardware buffer to user buffer */
-  usb_dpram_memcpy((void *)buf, (void *)USB_DPSRAM->SETUPPACKET, 8);
+  usb_dpram_memcpy(buf, (void *)USB_DPSRAM->SETUPPACKET, 8);
 }
 
 /**
