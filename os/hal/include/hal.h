@@ -286,7 +286,7 @@ static inline halfreq_t halClockGetPointX(halclkpt_t clkpt) {
 /**
  * @brief   Switches to a different clock configuration
  *
- * @param[in] ccp       pointer to clock a @p halclkcfg_t structure
+ * @param[in] ccp       pointer to a @p halclkcfg_t structure
  * @return              The clock switch result.
  * @retval false        if the clock switch succeeded
  * @retval true         if the clock switch failed
