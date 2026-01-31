@@ -83,7 +83,10 @@ static size_t sio_sync_read(hal_sio_driver_c *siop, uint8_t *bp, size_t n,
     msg_t msg;
 
     msg = sioSynchronizeRX(siop, timeout);
-    if (msg != MSG_OK) {
+    if (msg == SIO_MSG_ERRORS) {
+      (void)sioGetAndClearErrors(siop);
+    }
+    else if (msg != MSG_OK) {
       break;
     }
 
@@ -126,20 +129,21 @@ static void __bsio_default_cb(void *ip) {
 
   osalSysLockFromISR();
 
-  /* Drain/fill FIFOs before re-enabling data interrupts in the LLD.
-     NOTE: this assumes status/error flags are not cleared by data reads,
-     otherwise non-data events could be lost before sioGetAndClearEventsX(). */
-  if (!sioIsRXEmptyX(siop)) {
-    __bsio_pop_data(bsiop);
-  }
-  if (!sioIsTXFullX(siop)) {
-    __bsio_push_data(bsiop);
-  }
-
   /* Posting the non-data SIO events as channel event flags, the masks are
      made to match.*/
   events = sioGetAndClearEventsX(siop, SIO_EV_ALL_EVENTS);
   bsAddFlagsI(bsiop, (eventflags_t)(events & ~SIO_EV_ALL_DATA));
+
+  /* RX FIFO event.*/
+  if ((events & SIO_EV_RX_NOTEMPTY) != (sioevents_t)0) {
+
+    __bsio_pop_data(bsiop);
+  }
+
+  /* TX FIFO event.*/
+  if ((events & SIO_EV_TX_NOTFULL) != (sioevents_t)0) {
+     __bsio_push_data(bsiop);
+  }
 
   osalSysUnlockFromISR();
 }
@@ -241,12 +245,18 @@ static int __sio_chn_get_impl(void *ip) {
   hal_sio_driver_c *self = oopIfGetOwner(hal_sio_driver_c, ip);
   msg_t msg;
 
-  msg = sioSynchronizeRX(self, TIME_INFINITE);
-  if (msg != MSG_OK) {
-    return msg;
-  }
+  while (true) {
+    msg = sioSynchronizeRX(self, TIME_INFINITE);
+    if (msg == SIO_MSG_ERRORS) {
+      (void)sioGetAndClearErrors(self);
+      continue;
+    }
+    if (msg != MSG_OK) {
+      return msg;
+    }
 
-  return sioGetX(self);
+    return sioGetX(self);
+  }
 }
 
 /**
@@ -354,12 +364,18 @@ static msg_t __sio_chn_gett_impl(void *ip, sysinterval_t timeout) {
   hal_sio_driver_c *self = oopIfGetOwner(hal_sio_driver_c, ip);
   msg_t msg;
 
-  msg = sioSynchronizeRX(self, timeout);
-  if (msg != MSG_OK) {
-    return msg;
-  }
+  while (true) {
+    msg = sioSynchronizeRX(self, timeout);
+    if (msg == SIO_MSG_ERRORS) {
+      (void)sioGetAndClearErrors(self);
+      continue;
+    }
+    if (msg != MSG_OK) {
+      return msg;
+    }
 
-  return sioGetX(self);
+    return sioGetX(self);
+  }
 }
 
 /**

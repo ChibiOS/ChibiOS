@@ -330,15 +330,15 @@
  *              be called from the @p cb callback handler.
  *
  * @param[in,out] siop          Pointer to the @p hal_sio_driver_c object
- * @param[in]     size          Maximum number of frames to read.
  * @param[out]    buffer        Buffer for the received data.
+ * @param[in]     n             Maximum number of frames to read.
  * @return                      The number of received frames.
  * @retval 0                    RX FIFO is empty.
  *
  * @xclass
  */
-#define sioAsyncReadX(siop, size, buffer)                                   \
-  sio_lld_read(siop, size, buffer)
+#define sioAsyncReadX(siop, buffer, n)                                      \
+  sio_lld_read(siop, buffer, n)
 
 /**
  * @brief       Writes data into the TX FIFO.
@@ -348,15 +348,15 @@
  *              be called from the @p cb callback handler.
  *
  * @param[in,out] siop          Pointer to the @p hal_sio_driver_c object
- * @param[in]     size          Maximum number of frames to read.
  * @param[in]     buffer        Buffer containing the data to be transmitted
+ * @param[in]     n             Maximum number of frames to read.
  * @return                      The number of transmitted frames.
  * @retval 0                    TX FIFO is full.
  *
  * @xclass
  */
-#define sioAsyncWriteX(siop, size, buffer)                                  \
-  sio_lld_write(siop, size, buffer)
+#define sioAsyncWriteX(siop, buffer, n)                                     \
+  sio_lld_write(siop, buffer, n)
 
 /**
  * @brief       Control operation on a serial port.
@@ -522,9 +522,9 @@ typedef struct hal_sio_driver SIODriver;
 struct hal_sio_config {
   /* End of the mandatory fields.*/
   sio_lld_config_fields;
-#if (defined(SIO_CONFIG_EXT_FIELS)) || defined (__DOXYGEN__)
+#if (defined(SIO_CONFIG_EXT_FIELDS)) || defined (__DOXYGEN__)
   SIO_CONFIG_EXT_FIELDS
-#endif /* defined(SIO_CONFIG_EXT_FIELS) */
+#endif /* defined(SIO_CONFIG_EXT_FIELDS) */
 };
 
 /**
@@ -651,7 +651,7 @@ struct hal_sio_driver {
    */
   thread_reference_t        sync_txend;
 #endif /* HAL_USE_MUTUAL_EXCLUSION == TRUE */
-#if defined(SIO_DRIVER_EXT_FIELS)
+#if defined(SIO_DRIVER_EXT_FIELDS)
   SIO_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/

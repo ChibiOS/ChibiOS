@@ -251,14 +251,14 @@ do {
         <param name="siop" dir="both">pointer to the @p hal_sio_driver_c
           object
         </param>
-        <param name="size" dir="in">maximum number of frames to read
-        </param>
         <param name="buffer" dir="out">buffer for the received data
+        </param>
+        <param name="n" dir="in">maximum number of frames to read
         </param>
         <return>The number of received frames.</return>
         <retval value="0">RX FIFO is empty.</retval>
         <xclass />
-        <implementation><![CDATA[sio_lld_read(siop, size, buffer)]]></implementation>
+        <implementation><![CDATA[sio_lld_read(siop, buffer, n)]]></implementation>
       </macro>
       <macro name="sioAsyncWriteX">
         <brief>Writes data into the TX FIFO.</brief>
@@ -273,15 +273,15 @@ do {
         <param name="siop" dir="both">pointer to the @p hal_sio_driver_c
           object
         </param>
-        <param name="size" dir="in">maximum number of frames to read
-        </param>
         <param name="buffer" dir="in">buffer containing the data to be
           transmitted
+        </param>
+        <param name="n" dir="in">maximum number of frames to read
         </param>
         <return>The number of transmitted frames.</return>
         <retval value="0">TX FIFO is full.</retval>
         <xclass />
-        <implementation><![CDATA[sio_lld_write(siop, size, buffer)]]></implementation>
+        <implementation><![CDATA[sio_lld_write(siop, buffer, n)]]></implementation>
       </macro>
       <macro name="sioControlX">
         <brief>Control operation on a serial port.</brief>
@@ -443,7 +443,7 @@ do {
           <verbatim><![CDATA[
 /* End of the mandatory fields.*/
 sio_lld_config_fields;]]></verbatim>
-          <condition check="defined(SIO_CONFIG_EXT_FIELS)">
+          <condition check="defined(SIO_CONFIG_EXT_FIELDS)">
             <verbatim><![CDATA[
 SIO_CONFIG_EXT_FIELDS]]></verbatim>
           </condition>
@@ -496,12 +496,18 @@ return MSG_OK;]]></implementation>
                 <implementation><![CDATA[
 msg_t msg;
 
-msg = sioSynchronizeRX(self, TIME_INFINITE);
-if (msg != MSG_OK) {
-  return msg;
-}
+while (true) {
+  msg = sioSynchronizeRX(self, TIME_INFINITE);
+  if (msg == SIO_MSG_ERRORS) {
+    (void)sioGetAndClearErrors(self);
+    continue;
+  }
+  if (msg != MSG_OK) {
+    return msg;
+  }
 
-return sioGetX(self);]]></implementation>
+  return sioGetX(self);
+}]]></implementation>
               </method>
               <method shortname="unget">
                 <implementation><![CDATA[
@@ -537,12 +543,18 @@ return MSG_OK;]]></implementation>
                 <implementation><![CDATA[
 msg_t msg;
 
-msg = sioSynchronizeRX(self, timeout);
-if (msg != MSG_OK) {
-  return msg;
-}
+while (true) {
+  msg = sioSynchronizeRX(self, timeout);
+  if (msg == SIO_MSG_ERRORS) {
+    (void)sioGetAndClearErrors(self);
+    continue;
+  }
+  if (msg != MSG_OK) {
+    return msg;
+  }
 
-return sioGetX(self);]]></implementation>
+  return sioGetX(self);
+}]]></implementation>
               </method>
               <method shortname="getclr">
                 <implementation><![CDATA[
@@ -586,7 +598,7 @@ return HAL_RET_SUCCESS;]]></implementation>
             </field>
           </condition>
           <verbatim><![CDATA[
-#if defined(SIO_DRIVER_EXT_FIELS)
+#if defined(SIO_DRIVER_EXT_FIELDS)
 SIO_DRIVER_EXT_FIELDS
 #endif
 /* End of the mandatory fields.*/
@@ -1076,7 +1088,10 @@ while (i < n) {
   msg_t msg;
 
   msg = sioSynchronizeRX(siop, timeout);
-  if (msg != MSG_OK) {
+  if (msg == SIO_MSG_ERRORS) {
+    (void)sioGetAndClearErrors(siop);
+  }
+  else if (msg != MSG_OK) {
     break;
   }
 

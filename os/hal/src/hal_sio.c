@@ -122,12 +122,18 @@ static msg_t __get(void *ip) {
   SIODriver *siop = (SIODriver *)ip;
   msg_t msg;
 
-  msg = sioSynchronizeRX(siop, TIME_INFINITE);
-  if (msg != MSG_OK) {
-    return msg;
-  }
+  while (true) {
+    msg = sioSynchronizeRX(siop, TIME_INFINITE);
+    if (msg == SIO_MSG_ERRORS) {
+      (void)sioGetAndClearErrors(siop);
+      continue;
+    }
+    if (msg != MSG_OK) {
+      return msg;
+    }
 
-  return sioGetX(siop);
+    return sioGetX(siop);
+  }
 }
 
 static msg_t __putt(void *ip, uint8_t b, sysinterval_t timeout) {
@@ -147,12 +153,18 @@ static msg_t __gett(void *ip, sysinterval_t timeout) {
   SIODriver *siop = (SIODriver *)ip;
   msg_t msg;
 
-  msg = sioSynchronizeRX(siop, timeout);
-  if (msg != MSG_OK) {
-    return msg;
-  }
+  while (true) {
+    msg = sioSynchronizeRX(siop, timeout);
+    if (msg == SIO_MSG_ERRORS) {
+      (void)sioGetAndClearErrors(siop);
+      continue;
+    }
+    if (msg != MSG_OK) {
+      return msg;
+    }
 
-  return sioGetX(siop);
+    return sioGetX(siop);
+  }
 }
 
 static size_t __writet(void *ip, const uint8_t *bp, size_t n,
