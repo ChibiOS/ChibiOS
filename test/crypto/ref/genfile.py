@@ -7,7 +7,7 @@ blocksize = 1024
 i = 0
 
 license ='/*\n'\
-'    ChibiOS - Copyright (C) 2006..2017 Giovanni Di Sirio\n'\
+ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 '\n'\
 '    Licensed under the Apache License, Version 2.0 (the "License");\n'\
 '    you may not use this file except in compliance with the License.\n'\

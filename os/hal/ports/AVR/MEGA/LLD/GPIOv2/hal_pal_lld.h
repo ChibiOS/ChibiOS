@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2006-2026 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
               Copyright (C) 2006-2026 Nathan Lewis
 
     Licensed under the Apache License, Version 2.0 (the "License");
