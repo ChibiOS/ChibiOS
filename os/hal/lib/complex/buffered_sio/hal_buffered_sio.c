@@ -204,6 +204,7 @@ msg_t bsioStart(BufferedSIODriver *bsiop, const BufferedSIOConfig *config) {
   msg = sioStart(bsiop->siop, config);
   if (msg == HAL_RET_SUCCESS) {
     osalSysLock();
+    bsiop->siop->arg = (void *)bsiop;
     sioSetCallbackX(bsiop->siop, &__bsio_default_cb);
     sioWriteEnableFlagsX(bsiop->siop, SIO_EV_ALL_EVENTS);
     bsiop->state = BS_READY;

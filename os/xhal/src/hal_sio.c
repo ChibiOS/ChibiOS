@@ -955,6 +955,7 @@ msg_t __bsio_start_impl(void *ip) {
   /* Starting the undelying SIO driver.*/
   msg = drvStartS(self->siop);
   if (msg == HAL_RET_SUCCESS) {
+    drvSetArgumentX(self->siop, self);
     drvSetCallbackX(self->siop, &__bsio_default_cb);
     sioWriteEnableFlagsX(self->siop, SIO_EV_ALL_EVENTS);
   }
