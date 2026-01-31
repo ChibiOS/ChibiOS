@@ -23,7 +23,7 @@
  *          Serial device drivers are usually designed to have a lower side
  *          (lower driver, it is usually an interrupt service routine) and an
  *          upper side (upper driver, accessed by the application threads).<br>
- *          There are several kind of queues:<br>
+ *          There are several kinds of queues:<br>
  *          - <b>Input queue</b>, unidirectional queue where the writer is the
  *            lower side and the reader is the upper side.
  *          - <b>Output queue</b>, unidirectional queue where the writer is the
