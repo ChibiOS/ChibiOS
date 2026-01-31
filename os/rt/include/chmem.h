@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio.
+    Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 

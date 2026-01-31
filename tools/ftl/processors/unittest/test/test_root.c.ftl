@@ -1,6 +1,6 @@
 [#ftl]
 [#--
-    ChibiOS/RT - Copyright (C) 2006..2018 Giovanni Di Sirio
+    Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
