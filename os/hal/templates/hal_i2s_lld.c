@@ -34,7 +34,7 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/** @brief I2S2 driver identifier.*/
+/** @brief I2S1 driver identifier.*/
 #if (PLATFORM_I2S_USE_I2S1 == TRUE) || defined(__DOXYGEN__)
 I2SDriver I2SD1;
 #endif
@@ -62,7 +62,7 @@ I2SDriver I2SD1;
  */
 void i2s_lld_init(void) {
 
-#if PLATFORM_I2S_USE_I2S1
+#if PLATFORM_I2S_USE_I2S1 == TRUE
   i2sObjectInit(&I2SD1);
 #endif
 }
@@ -79,7 +79,7 @@ void i2s_lld_start(I2SDriver *i2sp) {
   /* If in stopped state then enables the SPI and DMA clocks.*/
   if (i2sp->state == I2S_STOP) {
 
-#if PLATFORM_I2S_USE_I2S1
+#if PLATFORM_I2S_USE_I2S1 == TRUE
     if (&I2SD1 == i2sp) {
 
     }
@@ -98,7 +98,7 @@ void i2s_lld_stop(I2SDriver *i2sp) {
 
   /* If in ready state then disables the SPI clock.*/
   if (i2sp->state == I2S_READY) {
-#if PLATFORM_I2S_USE_I2S1
+#if PLATFORM_I2S_USE_I2S1 == TRUE
     if (&I2SD1 == i2sp) {
 
     }
