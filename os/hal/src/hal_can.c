@@ -151,7 +151,6 @@ void canStop(CANDriver *canp) {
                 "invalid state");
 
   /* The low level driver is stopped.*/
-  canp->state  = CAN_STOPPING;
   can_lld_stop(canp);
   canp->config = NULL;
   canp->state  = CAN_STOP;
