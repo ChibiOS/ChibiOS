@@ -172,7 +172,7 @@ systime_t stGetAlarm(void) {
  *
  * @return              The alarm status.
  * @retval false        if the alarm is not active.
- * @retval true         is the alarm is active
+ * @retval true         if the alarm is active.
  *
  * @api
  */
@@ -213,7 +213,7 @@ void stSetCallback(unsigned alarm, st_callback_t cb) {
 void stBindAlarmN(unsigned alarm) {
 
   osalDbgCheck(alarm < (unsigned)ST_LLD_NUM_ALARMS);
-  osalDbgAssert(stIsAlarmActive() == false, "already active");
+  osalDbgAssert(stIsAlarmActiveN(alarm) == false, "already active");
 
   st_lld_bind_alarm_n(alarm);
 }
@@ -297,7 +297,7 @@ systime_t stGetAlarmN(unsigned alarm) {
  * @param[in] alarm     alarm channel number (0..ST_LLD_NUM_ALARMS-1)
  * @return              The alarm status.
  * @retval false        if the alarm is not active.
- * @retval true         is the alarm is active
+ * @retval true         if the alarm is active.
  *
  * @api
  */

@@ -127,7 +127,7 @@ static inline systime_t st_lld_get_alarm(void) {
  *
  * @return              The alarm status.
  * @retval false        if the alarm is not active.
- * @retval true         is the alarm is active
+ * @retval true         if the alarm is active.
  *
  * @notapi
  */
