@@ -188,7 +188,7 @@ struct hal_wspi_driver {
 /**
  * @name    Transfer options
  * @note    The low level driver has the option to override the following
- *          definitions and use its own ones. In must take care to use
+ *          definitions and use its own ones. It must take care to use
  *          the same name for the same function or compatibility is not
  *          ensured.
  * @{
@@ -256,7 +256,7 @@ struct hal_wspi_driver {
                                                  WSPI_CFG_ALT_DTR   |       \
                                                  WSPI_CFG_DATA_DTR)
 /** @} */
-#endif /* WSPI_USE_DEFAULT_CFG_MASKS == TRUE */
+#endif /* WSPI_DEFAULT_CFG_MASKS == TRUE */
 
 /**
  * @name    Macro Functions
@@ -286,7 +286,7 @@ struct hal_wspi_driver {
  *
  * @param[in] wspip     pointer to the @p WSPIDriver object
  * @param[in] cmdp      pointer to the command descriptor
- * @param[in] n         number of bytes to send or zero if no data phase
+ * @param[in] n         number of bytes to send
  * @param[in] txbuf     the pointer to the transmit buffer
  *
  * @iclass
@@ -306,7 +306,7 @@ struct hal_wspi_driver {
  *
  * @param[in] wspip     pointer to the @p WSPIDriver object
  * @param[in] cmdp      pointer to the command descriptor
- * @param[in] n         number of bytes to receive or zero if no data phase
+ * @param[in] n         number of bytes to receive
  * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @iclass
