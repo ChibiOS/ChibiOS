@@ -136,8 +136,7 @@ static msg_t _ctl(void *ip, unsigned int operation, void *arg) {
     osalDbgCheck(arg == NULL);
     break;
   case CHN_CTL_INVALID:
-    osalDbgAssert(false, "invalid CTL operation");
-    break;
+    return HAL_RET_UNKNOWN_CTL;
   default:
 #if defined(SDU_LLD_IMPLEMENTS_CTL)
     /* The SDU driver does not have a LLD but the application can use this
@@ -150,7 +149,7 @@ static msg_t _ctl(void *ip, unsigned int operation, void *arg) {
     break;
 #endif
   }
-  return MSG_OK;
+  return HAL_RET_SUCCESS;
 }
 
 static const struct SerialUSBDriverVMT vmt = {
@@ -242,14 +241,22 @@ void sduObjectInit(SerialUSBDriver *sdup) {
  * @api
  */
 msg_t sduStart(SerialUSBDriver *sdup, const SerialUSBConfig *config) {
-  USBDriver *usbp = config->usbp;
+  USBDriver *usbp;
 
-  osalDbgCheck(sdup != NULL);
+  osalDbgCheck((sdup != NULL) && (config != NULL) && (config->usbp != NULL));
+  osalDbgCheck((config->bulk_in > 0U) &&
+               (config->bulk_in <= (usbep_t)USB_MAX_ENDPOINTS));
+  osalDbgCheck((config->bulk_out > 0U) &&
+               (config->bulk_out <= (usbep_t)USB_MAX_ENDPOINTS));
+  if (config->int_in > 0U) {
+    osalDbgCheck(config->int_in <= (usbep_t)USB_MAX_ENDPOINTS);
+  }
 
   osalSysLock();
   osalDbgAssert((sdup->state == SDU_STOP) || (sdup->state == SDU_READY),
                 "invalid state");
 
+  usbp = config->usbp;
   usbp->in_params[config->bulk_in - 1U]   = sdup;
   usbp->out_params[config->bulk_out - 1U] = sdup;
   if (config->int_in > 0U) {
@@ -273,7 +280,7 @@ msg_t sduStart(SerialUSBDriver *sdup, const SerialUSBConfig *config) {
  * @api
  */
 void sduStop(SerialUSBDriver *sdup) {
-  USBDriver *usbp = sdup->config->usbp;
+  USBDriver *usbp = NULL;
 
   osalDbgCheck(sdup != NULL);
 
@@ -282,11 +289,17 @@ void sduStop(SerialUSBDriver *sdup) {
   osalDbgAssert((sdup->state == SDU_STOP) || (sdup->state == SDU_READY),
                 "invalid state");
 
+  if (sdup->config != NULL) {
+    usbp = sdup->config->usbp;
+  }
+
   /* Driver in stopped state.*/
-  usbp->in_params[sdup->config->bulk_in - 1U]   = NULL;
-  usbp->out_params[sdup->config->bulk_out - 1U] = NULL;
-  if (sdup->config->int_in > 0U) {
-    usbp->in_params[sdup->config->int_in - 1U]  = NULL;
+  if (usbp != NULL) {
+    usbp->in_params[sdup->config->bulk_in - 1U]   = NULL;
+    usbp->out_params[sdup->config->bulk_out - 1U] = NULL;
+    if (sdup->config->int_in > 0U) {
+      usbp->in_params[sdup->config->int_in - 1U]  = NULL;
+    }
   }
   sdup->config = NULL;
   sdup->state  = SDU_STOP;
@@ -306,7 +319,7 @@ void sduStop(SerialUSBDriver *sdup) {
  *          non-blocking mode, this way the application cannot get stuck
  *          in the middle of an I/O operations.
  * @note    If this function is not called from an ISR then an explicit call
- *          to @p osalOsRescheduleS() in necessary afterward.
+ *          to @p osalOsRescheduleS() is necessary afterward.
  *
  * @param[in] sdup      pointer to a @p SerialUSBDriver object
  *
@@ -329,7 +342,7 @@ void sduSuspendHookI(SerialUSBDriver *sdup) {
  *          operations.
  *
  * @note    If this function is not called from an ISR then an explicit call
- *          to @p osalOsRescheduleS() in necessary afterward.
+ *          to @p osalOsRescheduleS() is necessary afterward.
  *
  * @param[in] sdup      pointer to a @p SerialUSBDriver object
  *
@@ -442,6 +455,11 @@ void sduSOFHookI(SerialUSBDriver *sdup) {
 void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
   uint8_t *buf;
   size_t n;
+
+  osalDbgAssert(ep != 0U, "invalid endpoint");
+  if (ep == 0U) {
+    return;
+  }
   SerialUSBDriver *sdup = usbp->in_params[ep - 1U];
 
   if (sdup == NULL) {
@@ -494,6 +512,11 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
  */
 void sduDataReceived(USBDriver *usbp, usbep_t ep) {
   size_t size;
+
+  osalDbgAssert(ep != 0U, "invalid endpoint");
+  if (ep == 0U) {
+    return;
+  }
   SerialUSBDriver *sdup = usbp->out_params[ep - 1U];
 
   if (sdup == NULL) {
@@ -538,7 +561,7 @@ void sduInterruptTransmitted(USBDriver *usbp, usbep_t ep) {
 /**
  * @brief   Control operation on a serial USB port.
  *
- * @param[in] usbp       pointer to a @p USBDriver object
+ * @param[in] sdup      pointer to a @p SerialUSBDriver object
  * @param[in] operation control operation code
  * @param[in,out] arg   operation argument
  *
@@ -549,9 +572,9 @@ void sduInterruptTransmitted(USBDriver *usbp, usbep_t ep) {
  *
  * @api
  */
-msg_t sduControl(USBDriver *usbp, unsigned int operation, void *arg) {
+msg_t sduControl(SerialUSBDriver *sdup, unsigned int operation, void *arg) {
 
-  return _ctl((void *)usbp, operation, arg);
+  return _ctl((void *)sdup, operation, arg);
 }
 
 #endif /* HAL_USE_SERIAL_USB == TRUE */
