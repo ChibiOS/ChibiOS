@@ -394,7 +394,8 @@ void usbInitEndpointI(USBDriver *usbp, usbep_t ep,
                       const USBEndpointConfig *epcp) {
 
   osalDbgCheckClassI();
-  osalDbgCheck((usbp != NULL) && (epcp != NULL));
+  osalDbgCheck((usbp != NULL) && (epcp != NULL) &&
+               (ep <= (usbep_t)USB_MAX_ENDPOINTS));
   osalDbgAssert(usbp->state == USB_ACTIVE,
                 "invalid state");
   osalDbgAssert(usbp->epc[ep] == NULL, "already initialized");
@@ -455,6 +456,29 @@ void usbDisableEndpointsI(USBDriver *usbp) {
 }
 
 /**
+ * @brief   Reads a setup packet from the dedicated packet buffer.
+ * @details This function must be invoked in the context of the @p setup_cb
+ *          callback in order to read the received setup packet.
+ * @pre     In order to use this function the endpoint must have been
+ *          initialized as a control endpoint.
+ * @note    This function can be invoked from ISR context.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ * @param[out] buf      buffer where to copy the packet data
+ *
+ * @iclass
+ */
+void usbReadSetupI(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
+
+  osalDbgCheckClassI();
+  osalDbgCheck((usbp != NULL) && (buf != NULL) &&
+               (ep <= (usbep_t)USB_MAX_ENDPOINTS));
+
+  usb_lld_read_setup(usbp, ep, buf);
+}
+
+/**
  * @brief   Starts a receive transaction on an OUT endpoint.
  * @note    This function is meant to be called from ISR context outside
  *          critical zones because there is a potentially slow operation
@@ -463,7 +487,7 @@ void usbDisableEndpointsI(USBDriver *usbp) {
  *          has been met:
  *          - The specified amount of data has been received.
  *          - A short packet has been received.
- *          - A zero-lenght packet has been received.
+ *          - A zero-length packet has been received.
  *          - The USB has been reset by host or the driver went into
  *            @p USB_SUSPENDED state.
  *          .

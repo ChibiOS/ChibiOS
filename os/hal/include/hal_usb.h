@@ -190,7 +190,7 @@
  */
 #define USB_DESC_INTERFACE_ASSOCIATION(bFirstInterface,                     \
                            bInterfaceCount, bFunctionClass,                 \
-                           bFunctionSubClass, bFunctionProcotol,            \
+                           bFunctionSubClass, bFunctionProtocol,            \
                            iInterface)                                      \
   USB_DESC_BYTE(USB_DESC_INTERFACE_ASSOCIATION_SIZE),                       \
   USB_DESC_BYTE(USB_DESCRIPTOR_INTERFACE_ASSOCIATION),                      \
@@ -198,7 +198,7 @@
   USB_DESC_BYTE(bInterfaceCount),                                           \
   USB_DESC_BYTE(bFunctionClass),                                            \
   USB_DESC_BYTE(bFunctionSubClass),                                         \
-  USB_DESC_BYTE(bFunctionProcotol),                                         \
+  USB_DESC_BYTE(bFunctionProtocol),                                         \
   USB_DESC_INDEX(iInterface)
 
 /**
@@ -549,7 +549,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  */
 #if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 #define _usb_isr_invoke_in_cb(usbp, ep) {                                   \
-  (usbp)->transmitting &= ~(1 << (ep));                                     \
+  (usbp)->transmitting &= ~(uint16_t)((unsigned)1U << (unsigned)(ep));      \
   if ((usbp)->epc[ep]->in_cb != NULL) {                                     \
     (usbp)->epc[ep]->in_cb(usbp, ep);                                       \
   }                                                                         \
@@ -559,7 +559,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 }
 #else
 #define _usb_isr_invoke_in_cb(usbp, ep) {                                   \
-  (usbp)->transmitting &= ~(1 << (ep));                                     \
+  (usbp)->transmitting &= ~(uint16_t)((unsigned)1U << (unsigned)(ep));      \
   if ((usbp)->epc[ep]->in_cb != NULL) {                                     \
     (usbp)->epc[ep]->in_cb(usbp, ep);                                       \
   }                                                                         \
@@ -576,7 +576,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  */
 #if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 #define _usb_isr_invoke_out_cb(usbp, ep) {                                  \
-  (usbp)->receiving &= ~(1 << (ep));                                        \
+  (usbp)->receiving &= ~(uint16_t)((unsigned)1U << (unsigned)(ep));         \
   if ((usbp)->epc[ep]->out_cb != NULL) {                                    \
     (usbp)->epc[ep]->out_cb(usbp, ep);                                      \
   }                                                                         \
@@ -587,7 +587,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 }
 #else
 #define _usb_isr_invoke_out_cb(usbp, ep) {                                  \
-  (usbp)->receiving &= ~(1 << (ep));                                        \
+  (usbp)->receiving &= ~(uint16_t)((unsigned)1U << (unsigned)(ep));         \
   if ((usbp)->epc[ep]->out_cb != NULL) {                                    \
     (usbp)->epc[ep]->out_cb(usbp, ep);                                      \
   }                                                                         \
