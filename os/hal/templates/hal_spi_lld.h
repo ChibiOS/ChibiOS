@@ -98,8 +98,6 @@ extern "C" {
   void spi_lld_select(SPIDriver *spip);
   void spi_lld_unselect(SPIDriver *spip);
 #endif
-  void spi_lld_select(SPIDriver *spip);
-  void spi_lld_unselect(SPIDriver *spip);
   void spi_lld_ignore(SPIDriver *spip, size_t n);
   void spi_lld_exchange(SPIDriver *spip, size_t n,
                         const void *txbuf, void *rxbuf);

@@ -196,7 +196,7 @@ flash_offset_t flashGetAddressOffset(BaseFlash *devp, void *addr) {
   uintptr_t base_value = (uintptr_t)descriptor->address;
 
   osalDbgAssert((addr_value >= base_value) &&
-                (addr_value <= (base_value + (uintptr_t)descriptor->size)),
+                (addr_value < (base_value + (uintptr_t)descriptor->size)),
                 "invalid address");
 
   return (flash_offset_t)(addr_value - base_value);
