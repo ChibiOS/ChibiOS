@@ -70,7 +70,7 @@ void mac_lld_init(void) {
 
 #if PLATFORM_MAC_USE_MAC1 == TRUE
   /* Driver initialization.*/
-  macObjectInit(&MACD1);
+  macObjectInit(&ETHD1);
 #endif
 }
 
@@ -86,7 +86,7 @@ void mac_lld_start(MACDriver *macp) {
   if (macp->state == MAC_STOP) {
     /* Enables the peripheral.*/
 #if PLATFORM_MAC_USE_MAC1 == TRUE
-    if (&MACD1 == macp) {
+    if (&ETHD1 == macp) {
 
     }
 #endif
@@ -109,7 +109,7 @@ void mac_lld_stop(MACDriver *macp) {
 
     /* Disables the peripheral.*/
 #if PLATFORM_MAC_USE_MAC1 == TRUE
-    if (&MACD1 == macp) {
+    if (&ETHD1 == macp) {
 
     }
 #endif

@@ -47,14 +47,14 @@
  * @{
  */
 /**
- * @brief   Enables an event sources for incoming packets.
+ * @brief   Enables zero-copy support in the MAC API.
  */
 #if !defined(MAC_USE_ZERO_COPY) || defined(__DOXYGEN__)
 #define MAC_USE_ZERO_COPY           FALSE
 #endif
 
 /**
- * @brief   Enables an event sources for incoming packets.
+ * @brief   Enables an event source for incoming packets.
  */
 #if !defined(MAC_USE_EVENTS) || defined(__DOXYGEN__)
 #define MAC_USE_EVENTS              TRUE
@@ -158,13 +158,13 @@ struct hal_mac_driver {
   maccb_t                   cb;
   /**
    * @brief   User argument.
-   * @note    Can be retrieved through the @p ethp argument of the callback.
+   * @note    Can be retrieved through the @p macp argument of the callback.
    */
   void                      *arg;
   /* End of the mandatory fields.*/
   mac_lld_driver_fields
-#if defined(MAC_DRIVER_EXT_FIELS)
-  MAC_DRIVER_EXT_FIELS
+#if defined(MAC_DRIVER_EXT_FIELDS)
+  MAC_DRIVER_EXT_FIELDS
 #endif
 };
 
@@ -237,7 +237,7 @@ struct hal_mac_receive_descriptor {
   osalSysUnlockFromISR();                                                   \
 } while (false)
 #else
-#define __mac_tx_event(macp) do {                                           \
+#define __mac_tx_wakeup(macp) do {                                          \
   osalSysLockFromISR();                                                     \
   osalThreadDequeueAllI(&(macp)->tdqueue, MSG_OK);                          \
   (macp)->flags |= MAC_FLAGS_TX;                                            \
@@ -261,7 +261,7 @@ struct hal_mac_receive_descriptor {
   osalSysUnlockFromISR();                                                   \
 } while (false)
 #else
-#define __mac_rx_event(macp) do {                                           \
+#define __mac_rx_wakeup(macp) do {                                          \
   osalSysLockFromISR();                                                     \
   osalThreadDequeueAllI(&(macp)->rdqueue, MSG_OK);                          \
   (macp)->flags |= MAC_FLAGS_RX;                                            \
@@ -280,7 +280,7 @@ struct hal_mac_receive_descriptor {
  * @param[in] macp      pointer to the @p MACDriver object
  * @param[in] f         callback to be associated
  */
-#define macSetCallbackX(macp, f) (siop)->cb = (f)
+#define macSetCallbackX(macp, f) (macp)->cb = (f)
 
 /**
  * @brief   Returns the driver events source.
