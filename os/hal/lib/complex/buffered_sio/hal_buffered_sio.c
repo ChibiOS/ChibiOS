@@ -71,6 +71,10 @@ static void __bsio_default_cb(SIODriver *siop) {
   BufferedSIODriver *bsiop = (BufferedSIODriver *)siop->arg;
   sioevents_t events;
 
+  if (bsiop == NULL) {
+    return;
+  }
+
   osalSysLockFromISR();
 
   /* Drain/fill FIFOs before re-enabling data interrupts in the LLD.
