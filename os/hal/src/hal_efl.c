@@ -108,6 +108,7 @@ void eflObjectInit(EFlashDriver *eflp) {
 
   eflp->vmt = &vmt;
   eflp->state = FLASH_STOP;
+  eflp->config = NULL;
 #if EFL_USE_MUTUAL_EXCLUSION == TRUE
   osalMutexObjectInit(&eflp->mutex);
 #endif
@@ -172,6 +173,7 @@ void eflStop(EFlashDriver *eflp) {
                 "invalid state");
 
   efl_lld_stop(eflp);
+  eflp->config = NULL;
   eflp->state = FLASH_STOP;
 
   osalSysUnlock();
