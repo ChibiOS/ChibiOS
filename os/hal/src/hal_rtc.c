@@ -298,7 +298,7 @@ void rtcConvertStructTmToDateTime(const struct tm *timp,
  */
 uint32_t rtcConvertDateTimeToFAT(const RTCDateTime *timespec) {
   uint32_t fattime;
-  uint32_t sec, min, hour, day, month;
+  uint32_t sec, min, hour, day, month, year;
 
   sec   = timespec->millisecond / 1000U;
   hour  = sec / 3600U;
@@ -307,6 +307,7 @@ uint32_t rtcConvertDateTimeToFAT(const RTCDateTime *timespec) {
   sec  %= 60U;
   day   = timespec->day;
   month = timespec->month;
+  year  = timespec->year;
 
   /* Handle DST flag.*/
   if (1U == timespec->dstflag) {
@@ -317,6 +318,10 @@ uint32_t rtcConvertDateTimeToFAT(const RTCDateTime *timespec) {
       if (day > (uint32_t)month_len[month - 1U]) {
         day = 1U;
         month += 1U;
+        if (month > 12U) {
+          month = 1U;
+          year += 1U;
+        }
       }
     }
   }
@@ -326,7 +331,7 @@ uint32_t rtcConvertDateTimeToFAT(const RTCDateTime *timespec) {
   fattime |= hour  << 11U;
   fattime |= day   << 16U;
   fattime |= month << 21U;
-  fattime |= (uint32_t)timespec->year << 25U;
+  fattime |= year << 25U;
 
   return fattime;
 }

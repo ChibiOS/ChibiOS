@@ -77,7 +77,7 @@ void rtc_lld_init(void) {
 /**
  * @brief   Set current time.
  * @note    Fractional part will be silently ignored. There is no possibility
- *          to set it on PLATFORM platform.
+ *          to set it on the PLATFORM platform.
  * @note    The function can be called from any context.
  *
  * @param[in] rtcp      pointer to RTC driver structure
@@ -110,7 +110,7 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
 /**
  * @brief   Set alarm time.
  * @note    Default value after BKP domain reset for both comparators is 0.
- * @note    Function does not performs any checks of alarm time validity.
+ * @note    Function does not perform any checks of alarm time validity.
  * @note    The function can be called from any context.
  *
  * @param[in] rtcp      pointer to RTC driver structure.
