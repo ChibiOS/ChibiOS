@@ -103,7 +103,7 @@
 /**
  * @brief       Support for SPI user configurations.
  * @note        When enabled the user must provide a variable named @p
- *              sio_configurations of type @p sio_configurations_t.
+ *              spi_configurations of type @p spi_configurations_t.
  */
 #if !defined(SPI_USE_CONFIGURATIONS) || defined(__DOXYGEN__)
 #define SPI_USE_CONFIGURATIONS              FALSE
@@ -136,7 +136,7 @@
 /**
  * @brief       Return a pointer to the configuration structure.
  *
- * @param         ip            Pointer to the @p hal_sio_driver_c object.
+ * @param         ip            Pointer to the @p hal_spi_driver_c object.
  * @return                      A pointer to the configuration structure.
  *
  * @notapi
@@ -147,7 +147,7 @@
 /**
  * @brief       Retrieves a configuration field.
  *
- * @param         ip            Pointer to the @p hal_sio_driver_c object.
+ * @param         ip            Pointer to the @p hal_spi_driver_c object.
  * @param         field         Configuration field to be retrieved.
  * @return                      The field value.
  *
@@ -208,9 +208,9 @@ struct hal_spi_config {
   spi_mode_t                mode;
   /* End of the mandatory fields.*/
   spi_lld_config_fields;
-#if (defined(SPI_CONFIG_EXT_FIELS)) || defined (__DOXYGEN__)
+#if (defined(SPI_CONFIG_EXT_FIELDS)) || defined (__DOXYGEN__)
   SPI_CONFIG_EXT_FIELDS
-#endif /* defined(SPI_CONFIG_EXT_FIELS) */
+#endif /* defined(SPI_CONFIG_EXT_FIELDS) */
 };
 
 /**
@@ -314,7 +314,7 @@ struct hal_spi_driver {
    */
   thread_reference_t        sync_transfer;
 #endif /* SPI_USE_SYNCHRONIZATION == TRUE */
-#if defined(SPI_DRIVER_EXT_FIELS)
+#if defined(SPI_DRIVER_EXT_FIELDS)
   SPI_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/

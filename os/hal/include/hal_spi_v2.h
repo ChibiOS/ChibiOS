@@ -101,9 +101,9 @@
 
 /* Some modes have a dependency on the PAL driver, making the required
    checks here.*/
-#if ((SPI_SELECT_MODE != SPI_SELECT_MODE_PAD)  ||                           \
-     (SPI_SELECT_MODE != SPI_SELECT_MODE_PORT) ||                           \
-     (SPI_SELECT_MODE != SPI_SELECT_MODE_LINE)) &&                          \
+#if ((SPI_SELECT_MODE == SPI_SELECT_MODE_PAD)  ||                           \
+     (SPI_SELECT_MODE == SPI_SELECT_MODE_PORT) ||                           \
+     (SPI_SELECT_MODE == SPI_SELECT_MODE_LINE)) &&                          \
     (HAL_USE_PAL != TRUE)
 #error "current SPI_SELECT_MODE requires HAL_USE_PAL"
 #endif
