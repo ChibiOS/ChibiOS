@@ -35,7 +35,7 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
-#if !defined(ICU_USE_OVERFLOW_SCALING)
+#if !defined(ICU_USE_OVERFLOW_SCALING) || defined(__DOXYGEN__)
 #define ICU_USE_OVERFLOW_SCALING    FALSE
 #endif
 
@@ -231,7 +231,9 @@ typedef void (*icucallback_t)(ICUDriver *icup);
  * @notapi
  */
 #define _icu_isr_invoke_overflow_cb(icup) do {                              \
-  (icup)->config->overflow_cb(icup);                                        \
+  if ((icup)->config->overflow_cb != NULL) {                                \
+    (icup)->config->overflow_cb(icup);                                      \
+  }                                                                         \
   (icup)->state = ICU_WAITING;                                              \
 } while (0)
 #endif /* ICU_USE_OVERFLOW_SCALING != TRUE */
