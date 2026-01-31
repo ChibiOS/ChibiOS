@@ -109,6 +109,26 @@ struct GPTDriver {
 /*===========================================================================*/
 
 /**
+ * @brief   Returns the interval of GPT peripheral.
+ *
+ * @param[in] gptp      pointer to a @p GPTDriver object
+ * @return              The current interval.
+ *
+ * @notapi
+ */
+#define gpt_lld_get_interval(gptp) 0U
+
+/**
+ * @brief   Returns the counter value of GPT peripheral.
+ *
+ * @param[in] gptp      pointer to a @p GPTDriver object
+ * @return              The current counter value.
+ *
+ * @notapi
+ */
+#define gpt_lld_get_counter(gptp) 0U
+
+/**
  * @brief   Changes the interval of GPT peripheral.
  * @details This function changes the interval of a running GPT unit.
  * @pre     The GPT unit must have been activated using @p gptStart().
