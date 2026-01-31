@@ -136,7 +136,7 @@ void sdc_lld_stop_clk(SDCDriver *sdcp) {
 }
 
 /**
- * @brief   Switches the bus to 4 bits mode.
+ * @brief   Switches the bus to the selected mode.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
  * @param[in] mode      bus mode
@@ -256,6 +256,33 @@ bool sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
 }
 
 /**
+ * @brief   Reads special registers.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ * @param[out] buf      pointer to the read buffer
+ * @param[in] bytes     number of bytes to read
+ * @param[in] cmd       card command
+ * @param[in] argument  command argument
+ *
+ * @return              The operation status.
+ * @retval HAL_SUCCESS  operation succeeded.
+ * @retval HAL_FAILED   operation failed.
+ *
+ * @notapi
+ */
+bool sdc_lld_read_special(SDCDriver *sdcp, uint8_t *buf, size_t bytes,
+                          uint8_t cmd, uint32_t argument) {
+
+  (void)sdcp;
+  (void)buf;
+  (void)bytes;
+  (void)cmd;
+  (void)argument;
+
+  return HAL_SUCCESS;
+}
+
+/**
  * @brief   Reads one or more blocks.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
@@ -285,7 +312,7 @@ bool sdc_lld_read(SDCDriver *sdcp, uint32_t startblk,
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
  * @param[in] startblk  first block to write
- * @param[out] buf      pointer to the write buffer
+ * @param[in] buf       pointer to the write buffer
  * @param[in] n         number of blocks to write
  *
  * @return              The operation status.
