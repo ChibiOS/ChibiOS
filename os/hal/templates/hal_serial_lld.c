@@ -47,7 +47,7 @@ SerialDriver SD1;
  * @brief   Driver default configuration.
  */
 static const SerialConfig default_config = {
-  38400
+  SERIAL_DEFAULT_BITRATE
 };
 
 /*===========================================================================*/
@@ -70,7 +70,12 @@ static const SerialConfig default_config = {
 void sd_lld_init(void) {
 
 #if PLATFORM_SERIAL_USE_USART1 == TRUE
-  sdObjectInit(&SD1, NULL, notify1);
+#if !defined(SERIAL_ADVANCED_BUFFERING_SUPPORT) ||                          \
+    (SERIAL_ADVANCED_BUFFERING_SUPPORT == FALSE)
+  sdObjectInit(&SD1, NULL, NULL);
+#else
+  sdObjectInit(&SD1);
+#endif
 #endif
 }
 
