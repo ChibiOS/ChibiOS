@@ -24,7 +24,7 @@
  *          On the ISR side data can be exchanged only using buffers,
  *          on the thread side data can be exchanged both using buffers and/or
  *          using an emulation of regular byte queues.
- *          There are several kind of buffers queues:<br>
+ *          There are several kinds of buffers queues:<br>
  *          - <b>Input queue</b>, unidirectional queue where the writer is the
  *            ISR side and the reader is the thread side.
  *          - <b>Output queue</b>, unidirectional queue where the writer is the
@@ -76,7 +76,7 @@
 void ibqObjectInit(input_buffers_queue_t *ibqp, bool suspended, uint8_t *bp,
                    size_t size, size_t n, bqnotify_t infy, void *link) {
 
-  osalDbgCheck((ibqp != NULL) && (bp != NULL) && (size >= 2U));
+  osalDbgCheck((ibqp != NULL) && (bp != NULL) && (size >= 2U) && (n > 0U));
 
   osalThreadQueueObjectInit(&ibqp->waiting);
   ibqp->suspended = suspended;
@@ -428,7 +428,7 @@ size_t ibqReadTimeout(input_buffers_queue_t *ibqp, uint8_t *bp,
 void obqObjectInit(output_buffers_queue_t *obqp, bool suspended, uint8_t *bp,
                    size_t size, size_t n, bqnotify_t onfy, void *link) {
 
-  osalDbgCheck((obqp != NULL) && (bp != NULL) && (size >= 2U));
+  osalDbgCheck((obqp != NULL) && (bp != NULL) && (size >= 2U) && (n > 0U));
 
   osalThreadQueueObjectInit(&obqp->waiting);
   obqp->suspended = suspended;
