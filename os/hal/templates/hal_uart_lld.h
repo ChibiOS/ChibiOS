@@ -111,7 +111,7 @@ typedef struct hal_uart_config {
    */
   uartcb_t                  rxend_cb;
   /**
-   * @brief Character received while out if the @p UART_RECEIVE state.
+   * @brief Character received while out of the @p UART_RX_ACTIVE state.
    */
   uartccb_t                 rxchar_cb;
   /**

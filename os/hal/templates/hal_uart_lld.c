@@ -155,7 +155,7 @@ size_t uart_lld_stop_send(UARTDriver *uartp) {
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
- * @param[in] n         number of data frames to send
+ * @param[in] n         number of data frames to receive
  * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @notapi
