@@ -727,6 +727,7 @@ void _usb_reset(USBDriver *usbp) {
   usbp->status        = 0;
   usbp->address       = 0;
   usbp->configuration = 0;
+  usbp->ep0n          = 0;
   usbp->transmitting  = 0;
   usbp->receiving     = 0;
 
@@ -816,7 +817,7 @@ void _usb_suspend(USBDriver *usbp) {
  */
 void _usb_wakeup(USBDriver *usbp) {
 
-  /* It could happen that multiple waakeup events are triggered.*/
+  /* It could happen that multiple wakeup events are triggered.*/
   if (usbp->state == USB_SUSPENDED) {
 
     /* State transition, returning to the previous state.*/
@@ -843,11 +844,16 @@ void _usb_ep0setup(USBDriver *usbp, usbep_t ep) {
   /* Is the EP0 state machine in the correct state for handling setup
      packets?*/
   if (usbp->ep0state != USB_EP0_STP_WAITING) {
-    /* This is unexpected could require handling with a warning event.*/
-    /* CHTODO: handling here.*/
-
-    /* Resetting the EP0 state machine and going ahead.*/
+    /* If a new SETUP packet arrives from the host while the device is still
+     in a previous control transfer (for example, an OUT data transfer), the
+     ongoing transfer is aborted. The EP0 state machine and transmitting and
+     receiving bits, must be reset. The count is also reset.*/
+    /* EP0 is driven by the control-transfer state machine; no waiters
+       are expected on EP0 transfers.*/
+    usbp->receiving &= ~1U;
+    usbp->transmitting &= ~1U;
     usbp->ep0state = USB_EP0_STP_WAITING;
+    usbp->ep0n     = 0;
   }
 
   /* Reading the setup data into the driver buffer.*/
@@ -981,6 +987,7 @@ void _usb_ep0in(USBDriver *usbp, usbep_t ep) {
       usbp->ep0endcb(usbp);
     }
     usbp->ep0state = USB_EP0_STP_WAITING;
+    usbp->ep0n     = 0;
     return;
   case USB_EP0_STP_WAITING:
   case USB_EP0_OUT_WAITING_STS:
@@ -1039,6 +1046,7 @@ void _usb_ep0out(USBDriver *usbp, usbep_t ep) {
       usbp->ep0endcb(usbp);
     }
     usbp->ep0state = USB_EP0_STP_WAITING;
+    usbp->ep0n     = 0;
     return;
   case USB_EP0_STP_WAITING:
   case USB_EP0_IN_TX:
