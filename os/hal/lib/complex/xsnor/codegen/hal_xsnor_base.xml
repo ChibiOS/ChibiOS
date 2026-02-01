@@ -270,6 +270,11 @@ self->state = FLASH_ERASE;
 /* Actual erase implementation.*/
 err = xsnor_device_start_erase_all(self);
 
+/* Restore ready state on failure.*/
+if (err != FLASH_NO_ERROR) {
+  self->state = FLASH_READY;
+}
+
 /* Bus released.*/
 __xsnor_bus_release(self);
 
@@ -295,6 +300,11 @@ self->state = FLASH_ERASE;
 
 /* Actual erase implementation.*/
 err = xsnor_device_start_erase_sector(self, sector);
+
+/* Restore ready state on failure.*/
+if (err != FLASH_NO_ERROR) {
+  self->state = FLASH_READY;
+}
 
 /* Bus released.*/
 __xsnor_bus_release(self);
