@@ -465,6 +465,9 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @brief   Request transfer setup.
  * @details This macro is used by the request handling callbacks in order to
  *          prepare a transaction over the endpoint zero.
+ * @note    Endpoint zero transfers are managed by the control-transfer state
+ *          machine; applications must not use the blocking wait APIs
+ *          (usbTransmit()/usbReceive()) on EP0.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] buf       pointer to a buffer for the transaction data
