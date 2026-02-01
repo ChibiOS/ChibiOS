@@ -4,7 +4,8 @@ PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
                $(CHIBIOS)/os/hal/ports/RP/RP2040/rp_isr.c \
                $(CHIBIOS)/os/hal/ports/RP/RP2040/rp_pll.c \
                $(CHIBIOS)/os/hal/ports/RP/RP2040/rp_xosc.c \
-               $(CHIBIOS)/os/hal/ports/RP/RP2040/hal_lld.c
+               $(CHIBIOS)/os/hal/ports/RP/RP2040/hal_lld.c \
+               $(CHIBIOS)/os/hal/ports/RP/RP2040/hal_efl_lld.c
 
 # Required include directories.
 PLATFORMINC := $(CHIBIOS)/os/hal/ports/common/ARMCMx \
