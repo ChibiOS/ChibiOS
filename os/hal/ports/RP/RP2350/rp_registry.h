@@ -91,6 +91,20 @@
 #define RP_HAS_SHA256                       TRUE
 #define RP_HAS_OTP                          TRUE
 
+/* ADC attributes.
+   Note: RP2350A (QFN-60) has 5 channels (4 external + temp on ch4)
+         RP2350B (QFN-80) has 9 channels (8 external + temp on ch8)
+   Default configuration is for RP2350A (Pico 2). */
+#define RP_HAS_ADC                          TRUE
+#define RP_ADC_NUM_CHANNELS                 5U
+#define RP_ADC_HAS_TEMPERATURE_SENSOR       TRUE
+#define RP_ADC_TEMPERATURE_CHANNEL          4U
+#define RP_ADC_FIFO_DEPTH                   8U
+#define RP_ADC_BASE_PIN                     26U
+#define RP_ADC_DREQ                         48U
+#define RP_ADC_AINSEL_BITS                  4U
+#define RP_ADC_RROBIN_MASK                  0x01FF0000U
+
 /** @} */
 
 #endif /* RP_REGISTRY_H */
