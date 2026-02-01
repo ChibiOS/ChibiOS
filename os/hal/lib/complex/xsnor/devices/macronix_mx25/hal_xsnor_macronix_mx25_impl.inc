@@ -532,7 +532,8 @@ void *__mx25_objinit_impl(void *ip, const void *vmt) {
   /* Initialization code.*/
   self->descriptor.attributes    = FLASH_ATTR_ERASED_IS_ONE |
                                    FLASH_ATTR_REWRITABLE |
-                                   FLASH_ATTR_SUSPEND_ERASE_CAPABLE;
+                                   FLASH_ATTR_SUSPEND_ERASE_CAPABLE |
+                                   FLASH_ATTR_SPI_4BYTES_ADDR_HINT;
   self->descriptor.page_size     = 256U;
   self->descriptor.sectors_count = 0U; /* Overwritten.*/
   self->descriptor.sectors       = NULL;
