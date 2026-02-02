@@ -194,6 +194,9 @@
 #define STM32_HAS_OCTOSPI1                  FALSE
 #define STM32_HAS_OCTOSPI2                  FALSE
 
+/* PWR attributes.*/
+#define STM32_PWR_HAS_VDDIO2                FALSE
+
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE
 
@@ -405,6 +408,9 @@
 #define STM32_HAS_OCTOSPI1                  FALSE
 #define STM32_HAS_OCTOSPI2                  FALSE
 
+/* PWR attributes.*/
+#define STM32_PWR_HAS_VDDIO2                FALSE
+
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE
 
@@ -609,6 +615,9 @@
 /* OCTOSPI attributes.*/
 #define STM32_HAS_OCTOSPI1                  FALSE
 #define STM32_HAS_OCTOSPI2                  FALSE
+
+/* PWR attributes.*/
+#define STM32_PWR_HAS_VDDIO2                FALSE
 
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE
@@ -835,6 +844,9 @@
 /* OCTOSPI attributes.*/
 #define STM32_HAS_OCTOSPI1                  FALSE
 #define STM32_HAS_OCTOSPI2                  FALSE
+
+/* PWR attributes.*/
+#define STM32_PWR_HAS_VDDIO2                TRUE
 
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE
@@ -1069,6 +1081,9 @@
 /* OCTOSPI attributes.*/
 #define STM32_HAS_OCTOSPI1                  FALSE
 #define STM32_HAS_OCTOSPI2                  FALSE
+
+/* PWR attributes.*/
+#define STM32_PWR_HAS_VDDIO2                FALSE
 
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE

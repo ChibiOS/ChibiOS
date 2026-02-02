@@ -156,6 +156,21 @@
 #define STM32_PVDRT_LEV5        STM32_PVDRT(5U) /**< PVDRT level 5.         */
 #define STM32_PVDRT_LEV6        STM32_PVDRT(6U) /**< PVDRT level 6.         */
 #define STM32_PVDRT_LEV7        STM32_PVDRT(7U) /**< PVDRT level 7.         */
+
+/* Missing from ST headers but present in documentation, may conflict
+   in future.*/
+#if !defined(PWR_CR2_PVMENDAC)
+#define PWR_CR2_PVMENDAC_Pos                (7U)
+#define PWR_CR2_PVMENDAC_Msk                (0x1UL << PWR_CR2_PVMENDAC_Pos)
+#define PWR_CR2_PVMENDAC                    PWR_CR2_PVMENDAC_Msk
+#endif
+
+#if (STM32_PWR_HAS_VDDIO2 == TRUE) || defined(__DOXYGEN__)
+#define PWR_CR2_VDDIO2_FIELD(n)     ((n) << 8)
+#define PWR_CR2_VDDIO2_MONITORING_DISABLED  PWR_CR2_VDDIO2_FIELD(0U)
+#define PWR_CR2_VDDIO2_MONITORING_ENABLED   PWR_CR2_VDDIO2_FIELD(1U)
+#define PWR_CR2_VDDIO2_MONITORING_BYPASSED  PWR_CR2_VDDIO2_FIELD(6U)
+#endif
 /** @} */
 
 /**

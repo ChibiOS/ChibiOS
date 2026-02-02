@@ -68,12 +68,8 @@ uint32_t SystemCoreClock = STM32_HCLK;
  */
 const halclkcfg_t hal_clkcfg_reset = {
   .pwr_cr1              = PWR_CR1_VOS_0 | PWR_CR1_FPD_STOP,
-#if defined (PWR_CR2_PVMEN_USB)
-  .pwr_cr2              = PWR_CR2_PVMEN_USB,
-#elif defined(PWR_CR2_USV) && HAL_USE_USB
-
-  /* The USB peripheral power is enabled.*/
-  .pwr_cr2              = PWR_CR2_USV,
+#if STM32_PWR_HAS_VDDIO2 == TRUE
+  .pwr_cr2              = PWR_CR2_VDDIO2_MONITORING_ENABLED,
 #else
   .pwr_cr2              = 0U,
 #endif
@@ -88,15 +84,7 @@ const halclkcfg_t hal_clkcfg_reset = {
  */
 const halclkcfg_t hal_clkcfg_default = {
   .pwr_cr1              = STM32_VOS_RANGE1 | PWR_CR1_DBP,
-#if defined (PWR_CR2_PVMEN_USB)
-  .pwr_cr2              = PWR_CR2_PVMEN_USB,
-#elif defined(PWR_CR2_USV) && HAL_USE_USB
-
-  /* The USB peripheral power is enabled.*/
-  .pwr_cr2              = PWR_CR2_USV,
-#else
-  .pwr_cr2              = 0U,
-#endif
+  .pwr_cr2              = STM32_PWR_CR2,
   .rcc_cr               = STM32_HSIDIV
 #if STM32_HSI16_ENABLED
                         | RCC_CR_HSIKERON | RCC_CR_HSION
@@ -849,13 +837,8 @@ void stm32_clock_init(void) {
   /* Static PWR configurations.*/
   hal_lld_set_static_pwr();
 
-#if defined(STM32G0B0xx) && HAL_USE_USB
-  /* Enable USB peripheral. Note: retaining set bits in CR2 required.*/
-  PWR->CR2 |= PWR_CR2_USV;
-#elif !defined(STM32G0B0xx)
   /* Additional PWR configurations.*/
   PWR->CR2 = STM32_PWR_CR2;
-#endif
 
   /* Core voltage setup.*/
   PWR->CR1 = STM32_VOS | PWR_CR1_DBP;
