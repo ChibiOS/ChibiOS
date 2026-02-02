@@ -202,8 +202,8 @@
 #if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
 #include "chcoresmp.h"
 
-#if !defined(PORT_SMP_CORES_NUM)
-#error "PORT_SMP_CORES_NUM not defined in chcoresmp.h"
+#if !defined(PORT_CORES_NUMBER)
+#error "PORT_CORES_NUMBER not defined in chcoresmp.h"
 #endif
 
 #else /* CH_CFG_SMP_MODE != TRUE */

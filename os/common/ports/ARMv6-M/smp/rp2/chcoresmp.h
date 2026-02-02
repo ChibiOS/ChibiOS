@@ -1,7 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006-2026,
-              2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025
-              ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -36,10 +34,10 @@
 /**
  * @brief   Number of SMP cores.
  */
-#define PORT_SMP_CORES_NUM              2
+#define PORT_CORES_NUMBER               2
 
 /* RP2040 supports a realtime counter via TIMER0 unit, overriding the
-   default.*/
+   default in chcore.h.*/
 #undef PORT_SUPPORTS_RT
 #define PORT_SUPPORTS_RT                TRUE
 
@@ -54,6 +52,13 @@
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Spinlock to be used by the port layer.
+ */
+#if !defined(PORT_SPINLOCK_NUMBER)
+#define PORT_SPINLOCK_NUMBER            31
+#endif
 
 /**
  * @brief   Preferential local and coherent BSS section for core zero.
@@ -86,6 +91,10 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if (PORT_SPINLOCK_NUMBER < 0) || (PORT_SPINLOCK_NUMBER > 31)
+  #error "invalid PORT_SPINLOCK_NUMBER value"
+#endif
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
