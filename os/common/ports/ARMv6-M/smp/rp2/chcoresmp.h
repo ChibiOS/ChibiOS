@@ -117,10 +117,6 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/* The following code is not processed when the file is included from an
-   asm module.*/
-#if !defined(_FROM_ASM_)
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -189,8 +185,6 @@ __STATIC_INLINE core_id_t port_get_core_id(void) {
 
   return SIO->CPUID;
 }
-
-#endif /* !defined(_FROM_ASM_) */
 
 /*===========================================================================*/
 /* Module late inclusions.                                                   */

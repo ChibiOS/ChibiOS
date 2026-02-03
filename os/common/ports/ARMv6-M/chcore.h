@@ -200,12 +200,18 @@
 
 /* Inclusion of SMP support, if enabled.*/
 #if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
+#if !defined(_FROM_ASM_)
+#if !defined(__CHIBIOS_RT__)
+#error "SMP is supported in RT only"
+#endif
+
 #include "chcoresmp.h"
 
 #if !defined(PORT_CORES_NUMBER)
 #error "PORT_CORES_NUMBER not defined in chcoresmp.h"
 #endif
 
+#endif
 #else /* CH_CFG_SMP_MODE != TRUE */
 #endif /* CH_CFG_SMP_MODE != TRUE */
 
