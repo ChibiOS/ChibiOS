@@ -96,6 +96,11 @@ typedef uint64_t            port_stkalign_t;
 #define ALIGNED_VAR(n)      CC_ALIGN_DATA(n)
 
 /**
+ * @brief   Packed variable specifier.
+ */
+#define PACKED_VAR          CC_PACK
+
+/**
  * @brief   Size of a pointer.
  * @note    To be used where the sizeof operator cannot be used, preprocessor
  *          expressions for example.
