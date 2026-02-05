@@ -164,7 +164,7 @@
 /*
  * USB units.
  */
-#if STM32_HAS_UCPD1 && STM32_HAS_UCPD1
+#if STM32_HAS_UCPD1 && STM32_HAS_UCPD2
 #define STM32_USB1_UCPD1_2_HANDLER          Vector60
 #define STM32_USB1_UCPD1_2_NUMBER           8
 #else
