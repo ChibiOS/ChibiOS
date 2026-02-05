@@ -1015,19 +1015,20 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
         /* Interrupt source disabled.*/
         cr1 &= ~USART_CR1_IDLEIE;
 
-#if 0 /* TODO: check this code.*/
         /* Conditionally enable interrupt on first character received after idle.
            This is required where a USART FIFO threshold set at minimum may be
            greater than one character thus a threshold interrupt will not be
            triggered at the next character. Any configuration setting other
-           than non-empty will be handled according the specified threshold.*/
-        if ((siop->config->cr3 & USART_CR3_RXFTCFG_Msk) == USART_CR3_RXFTCFG_NONEMPTY) {
-          cr1 |= USART_CR1_RXNEIE_RXFNEIE;
+           than non-empty will be handled according the specified threshold.
+           Only enable if RXNOTEMPTY events are enabled. */
+        if ((siop->enabled & SIO_EV_RXNOTEMPY) != 0U) {
+          if ((siop->config->cr3 & USART_CR3_RXFTCFG_Msk) == USART_CR3_RXFTCFG_NONEMPTY) {
+            cr1 |= USART_CR1_RXNEIE_RXFNEIE;
+          }
+          else {
+            cr3 |= USART_CR3_RXFTIE;
+          }
         }
-        else {
-          cr3 |= USART_CR3_RXFTIE;
-        }
-#endif
 
         /* Waiting thread woken, if any.*/
         __sio_wakeup_rxidle(siop);
