@@ -68,7 +68,7 @@
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         2
+#define CH_KERNEL_PATCH         3
 /** @} */
 
 /**
@@ -367,13 +367,6 @@
 #define THD_IDLE_END                    NULL
 #endif
 
-/* Recursive locks port capability assessed.*/
-#if defined(port_get_lock_status) && defined(port_is_locked)
-#define CH_PORT_SUPPORTS_RECURSIVE_LOCKS    TRUE
-#else
-#define CH_PORT_SUPPORTS_RECURSIVE_LOCKS    FALSE
-#endif
-
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -446,6 +439,13 @@ typedef threads_queue_t semaphore_t;
 
 /* Late inclusion of port core layer.*/
 #include "chcore.h"
+
+/* Recursive locks port capability assessed.*/
+#if defined(port_get_lock_status) && defined(port_is_locked)
+#define CH_PORT_SUPPORTS_RECURSIVE_LOCKS    TRUE
+#else
+#define CH_PORT_SUPPORTS_RECURSIVE_LOCKS    FALSE
+#endif
 
 /**
  * @brief   Structure representing a queue of threads.

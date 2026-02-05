@@ -73,6 +73,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 20.3.6 ***
+- FIX: Fixed problem with CH_PORT_SUPPORTS_RECURSIVE_LOCKS in NIL (bug #1298).
+
 *** 20.3.5 ***
 - NEW: Recursive locks in RT and NIL made optional, only enabled if the
        underlying port supports the capability.
