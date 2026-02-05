@@ -40,6 +40,16 @@
 #define STM32_FLASH_ACR_RESET           0x00040600U
 
 /**
+ * @brief   PWR CR1 reset value.
+ */
+#define STM32_PWR_CR1_RESET             (PWR_CR1_VOS_0 | PWR_CR1_FPD_STOP)
+
+/**
+ * @brief   PWR CR2 reset value.
+ */
+#define STM32_PWR_CR2_RESET             0U
+
+/**
  * @brief   RCC CR reset value.
  */
 #define STM32_RCC_CR_RESET              (RCC_CR_HSION)
@@ -83,11 +93,13 @@ uint32_t SystemCoreClock = STM32_HCLK;
  * @brief   Post-reset clock configuration.
  */
 const halclkcfg_t hal_clkcfg_reset = {
-  .pwr_cr1              = PWR_CR1_VOS_0 | PWR_CR1_FPD_STOP,
+  .pwr_cr1              = STM32_PWR_CR1_RESET,
+#if STM32_PWR_HAS_CR2 == TRUE
 #if STM32_PWR_HAS_VDDIO2 == TRUE
   .pwr_cr2              = PWR_CR2_VDDIO2_MONITORING_ENABLED,
 #else
-  .pwr_cr2              = 0U,
+  .pwr_cr2              = STM32_PWR_CR2_RESET,
+#endif
 #endif
   .rcc_cr               = STM32_RCC_CR_RESET,
   .rcc_cfgr             = STM32_RCC_CFGR_RESET,
@@ -100,7 +112,9 @@ const halclkcfg_t hal_clkcfg_reset = {
  */
 const halclkcfg_t hal_clkcfg_default = {
   .pwr_cr1              = STM32_VOS | PWR_CR1_DBP,
+#if STM32_PWR_HAS_CR2 == TRUE
   .pwr_cr2              = STM32_PWR_CR2,
+#endif
   .rcc_cr               = STM32_HSIDIV
 #if STM32_HSI16_ENABLED
                         | RCC_CR_HSIKERON | RCC_CR_HSION
@@ -250,6 +264,11 @@ __STATIC_INLINE void hal_lld_set_static_pwr(void) {
   rccEnablePWRInterface(false);
 
   /* Static PWR configurations.*/
+#if defined(STM32G0B0xx) && HAL_USE_USB
+  /* Special case, CR2 is handled as static. Note: retaining set bits in
+     CR2 is required.*/
+  PWR->CR2  |= PWR_CR2_USV;
+#endif
   PWR->CR3   = STM32_PWR_CR3;
   PWR->CR4   = STM32_PWR_CR4;
   PWR->PUCRA = STM32_PWR_PUCRA;
@@ -432,10 +451,7 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
 
   /* Final PWR modes.*/
   halRegWrite32X(&PWR->CR1, ccp->pwr_cr1, true);
-#if defined(STM32G0B0xx) && HAL_USE_USB
-  /* Enable USB peripheral. Note: retaining set bits in CR2 required.*/
-  PWR->CR2 |= PWR_CR2_USV;
-#elif !defined(STM32G0B0xx)
+#if STM32_PWR_HAS_CR2 == TRUE
   halRegWrite32X(&PWR->CR2, ccp->pwr_cr2, true);
 #endif
 

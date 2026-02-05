@@ -2118,7 +2118,9 @@
  */
 typedef struct {
   uint32_t          pwr_cr1;
+#if (STM32_PWR_HAS_CR2 == TRUE) || defined(__DOXYGEN__)
   uint32_t          pwr_cr2;
+#endif
   uint32_t          rcc_cr;
   uint32_t          rcc_cfgr;
   uint32_t          rcc_pllcfgr;
