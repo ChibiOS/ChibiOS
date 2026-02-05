@@ -74,6 +74,9 @@
 *****************************************************************************
 
 *** 21.11.4 ***
+- FIX: Fixed problem with CH_PORT_SUPPORTS_RECURSIVE_LOCKS in NIL (bug #1298).
+
+*** 21.11.4 ***
 - NEW: STM32C0xx support.
 - NEW: STM32G0B0 support.
 - NEW: STM32H5xx support.
@@ -105,7 +108,7 @@
 - FIX: Fixed wrong STM32 ADCv2 stop method (bug 1294).
 - FIX: Fixed STM32 OTGv1 driver does not re-enables endpoints on wakeup
        (bug 1293).
-- FIX: Fixed missing assertion in OSLIB factory module (bug 1292).
+- FIX: Fixed missing assertion in OSLIB factory module (bug #1292).
 - FIX: Fixed problem in FDCANv1 driver for G4 (bug #1291).
 - FIX: Fixed problem in recursive locks functions (bug #1288).
 - FIX: Fixed ARMv8-M-ML port compile fail when FPU is enabled (bug #1281).
