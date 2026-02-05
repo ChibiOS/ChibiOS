@@ -325,7 +325,7 @@ typedef struct
 typedef struct
 {
   __IO uint32_t CR1;          /*!< PWR Power Control Register 1,                     Address offset: 0x00 */
-       uint32_t RESERVED0;    /*!< Reserved,                                         Address offset: 0x04 */
+  __IO uint32_t CR2;          /*!< PWR Power Control Register 2,                     Address offset: 0x04 */
   __IO uint32_t CR3;          /*!< PWR Power Control Register 3,                     Address offset: 0x08 */
   __IO uint32_t CR4;          /*!< PWR Power Control Register 4,                     Address offset: 0x0C */
   __IO uint32_t SR1;          /*!< PWR Power Status Register 1,                      Address offset: 0x10 */
@@ -4363,6 +4363,9 @@ typedef struct
 #define PWR_CR1_LPR_Msk           (0x1UL << PWR_CR1_LPR_Pos)                   /*!< 0x00004000 */
 #define PWR_CR1_LPR               PWR_CR1_LPR_Msk                              /*!< Regulator Low-Power Run mode */
 
+#define PWR_CR2_USV_Pos           (10U)
+#define PWR_CR2_USV_Msk           (0x1UL << PWR_CR2_USV_Pos)                   /*!< 0x00000400 */
+#define PWR_CR2_USV               PWR_CR2_USV_Msk                              /*!< VDD USB Supply Valid */
 
 /********************  Bit definition for PWR_CR3 register  ********************/
 #define PWR_CR3_EWUP_Pos          (0U)
