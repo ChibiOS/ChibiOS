@@ -497,6 +497,27 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @special
  */
 #define usbReadSetup(usbp, ep, buf) usb_lld_read_setup(usbp, ep, buf)
+
+/**
+ * @brief   Restores setup handling.
+ * @details This function removes stall and restores setup state.
+ * @pre     In order to use this function the endpoint must have been
+ *          initialized as a control endpoint.
+ * @note    This function can be invoked both in thread and IRQ context.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ *
+ * @special
+ */
+#define usbRestoreSetup(usbp, ep) {                                         \
+  usb_lld_clear_in(usbp, ep);                                               \
+  usb_lld_clear_out(usbp, ep);                                              \
+  (usbp)->receiving &= ~1U;                                                 \
+  (usbp)->transmitting &= ~1U;                                              \
+  (usbp)->ep0n = 0;                                                         \
+  (usbp)->ep0state = USB_EP0_STP_WAITING;                                   \
+}
 /** @} */
 
 /**
