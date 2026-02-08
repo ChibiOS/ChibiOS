@@ -56,19 +56,6 @@
  */
 #define STM32_RCC_CRRCR_RESET           0x00000000U
 
-/**
- * @name    Stabilization times
- * @{
- */
-#define STM32_RELAXED_TIMEOUT_FACTOR    5U
-#define STM32_HSI_STARTUP_TIME          (4U * STM32_RELAXED_TIMEOUT_FACTOR)
-#define STM32_OSCILLATORS_STARTUP_TIME  (2000U * STM32_RELAXED_TIMEOUT_FACTOR)
-#define STM32_HSI48_STARTUP_TIME        (6U * STM32_RELAXED_TIMEOUT_FACTOR)
-#define STM32_PLL_STARTUP_TIME          (40U * STM32_RELAXED_TIMEOUT_FACTOR)
-#define STM32_SYSCLK_SWITCH_TIME        (50U * STM32_RELAXED_TIMEOUT_FACTOR)
-#define STM32_REGULATORS_TRANSITION_TIME (40U * STM32_RELAXED_TIMEOUT_FACTOR)
-/** @} */
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/

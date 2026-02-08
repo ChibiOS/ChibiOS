@@ -86,26 +86,26 @@ endif
 PROJECT = ch
 
 # Target settings.
-MCU  = cortex-m0
+MCU  = cortex-m4
 
 # Imported source files and paths.
 CHIBIOS  := ../../..
-CONFDIR  := ./cfg/stm32g0b1re_nucleo64
-BUILDDIR := ./build/stm32g0b1re_nucleo64_alt
-DEPDIR   := ./.dep/stm32g0b1re_nucleo64_alt
+CONFDIR  := ./cfg/stm32g474re_nucleo64
+BUILDDIR := ./build/stm32g474re_nucleo64_alt
+DEPDIR   := ./.dep/stm32g474re_nucleo64_alt
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
-include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32g0xx.mk
+include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32g4xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32G0xx_ALT/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_G0B1RE/board.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32G4xx_ALT/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_G474RE/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/common/ports/ARMv6-M/compilers/GCC/mk/port.mk
+include $(CHIBIOS)/os/common/ports/ARMv7-M-ALT/compilers/GCC/mk/port.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
@@ -116,7 +116,7 @@ include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/various/xshell/xshell.mk
 
 # Define linker script file here.
-LDSCRIPT= $(STARTUPLD)/STM32G0B1xE.ld
+LDSCRIPT= $(STARTUPLD)/STM32G474xE.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -139,7 +139,7 @@ ASMXSRC = $(ALLXASMSRC)
 INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC)
 
 # Define C warning options here.
-CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes -Wcast-align=strict
+CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
 
 # Define C++ warning options here.
 CPPWARN = -Wall -Wextra -Wundef
@@ -153,7 +153,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -D__TEST_RT -D__TEST_OSLIB
+UDEFS =
 
 # Define ASM defines here
 UADEFS =
