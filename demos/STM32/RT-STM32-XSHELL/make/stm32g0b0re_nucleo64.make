@@ -91,8 +91,8 @@ MCU  = cortex-m0
 # Imported source files and paths.
 CHIBIOS  := ../../..
 CONFDIR  := ./cfg/stm32g0b0re_nucleo64
-BUILDDIR := ./build/stm32g0b0re_nucleo64_alt
-DEPDIR   := ./.dep/stm32g0b0re_nucleo64_alt
+BUILDDIR := ./build/stm32g0b0re_nucleo64
+DEPDIR   := ./.dep/stm32g0b0re_nucleo64
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
@@ -100,7 +100,7 @@ include $(CHIBIOS)/os/license/license.mk
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32g0xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32G0xx_ALT/platform.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32G0xx/platform.mk
 include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_G0B0RE/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
@@ -112,10 +112,10 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 include $(CHIBIOS)/os/test/test.mk
 include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
-#include $(CHIBIOS)/os/hal/lib/streams/streams.mk
-#include $(CHIBIOS)/os/various/shell/shell.mk
+include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+include $(CHIBIOS)/os/various/xshell/xshell.mk
 
-# Define linker script file here
+# Define linker script file here.
 LDSCRIPT= $(STARTUPLD)/STM32G0B0xE.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global

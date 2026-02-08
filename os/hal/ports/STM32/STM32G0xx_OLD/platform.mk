@@ -1,12 +1,12 @@
 # Required platform files.
 PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
-               $(CHIBIOS)/os/hal/ports/STM32/STM32G0xx_ALT/stm32_isr.c \
-               $(CHIBIOS)/os/hal/ports/STM32/STM32G0xx_ALT/hal_lld.c \
-               $(CHIBIOS)/os/hal/ports/STM32/STM32G0xx_ALT/hal_efl_lld.c
+               $(CHIBIOS)/os/hal/ports/STM32/STM32G0xx_OLD/stm32_isr.c \
+               $(CHIBIOS)/os/hal/ports/STM32/STM32G0xx_OLD/hal_lld.c \
+               $(CHIBIOS)/os/hal/ports/STM32/STM32G0xx_OLD/hal_efl_lld.c
 
 # Required include directories.
 PLATFORMINC := $(CHIBIOS)/os/hal/ports/common/ARMCMx \
-               $(CHIBIOS)/os/hal/ports/STM32/STM32G0xx_ALT
+               $(CHIBIOS)/os/hal/ports/STM32/STM32G0xx_OLD
 
 # Optional platform files.
 ifeq ($(USE_SMART_BUILD),yes)
