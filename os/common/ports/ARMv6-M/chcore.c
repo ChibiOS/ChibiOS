@@ -112,6 +112,10 @@ void port_init(os_instance_t *oip) {
 
   (void)oip;
 
+#if defined(port_smp_init)
+  port_smp_init(oip);
+#endif
+
   NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
 }
 

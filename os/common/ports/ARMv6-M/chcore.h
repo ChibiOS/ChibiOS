@@ -454,6 +454,15 @@ struct port_context {
  */
 #define port_is_locked(sts) !__port_irq_enabled(sts)
 
+/**
+ * @brief   SMP-related port initialization.
+ * @note    The port checks on presence of this macro so this
+ *          must be a macro.
+ *
+ * @param[in, out] oip  pointer to the @p os_instance_t structure
+ */
+#define port_smp_init(oip) __port_smp_init(oip)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -603,7 +612,11 @@ static inline void port_wait_for_interrupt(void) {
 #if !defined(_FROM_ASM_)
 
 #if CH_CFG_ST_TIMEDELTA > 0
+#if (CH_CFG_SMP_MODE == TRUE) && (PORT_CORES_NUMBER > 1)
+#include "chcoresmp_timer.h"
+#else
 #include "chcore_timer.h"
+#endif
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
 #endif /* !defined(_FROM_ASM_) */

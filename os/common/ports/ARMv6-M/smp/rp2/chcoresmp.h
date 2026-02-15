@@ -120,6 +120,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void __port_smp_init(os_instance_t *oip);
   void __port_spinlock_take(void);
   void __port_spinlock_release(void);
 #ifdef __cplusplus

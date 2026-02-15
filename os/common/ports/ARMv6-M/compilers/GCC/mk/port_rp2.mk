@@ -10,7 +10,7 @@ PORTSRC = $(CHIBIOS)/os/common/ports/ARMv6-M/chcore.c \
 PORTASM = $(CHIBIOS)/os/common/ports/ARMv6-M/compilers/GCC/chcoreasm.S
 
 PORTINC = $(CHIBIOS)/os/common/ports/ARMv6-M \
-          $(CHIBIOS)/os/common/ports/ARMv6-M\smp\rp2
+          $(CHIBIOS)/os/common/ports/ARMv6-M/smp/rp2
 
 # Shared variables
 ALLXASMSRC += $(PORTASM)
