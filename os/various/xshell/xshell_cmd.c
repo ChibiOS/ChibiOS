@@ -68,7 +68,7 @@ static void cmd_exit(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc > 1) {
-    xshellUsage(xshp, "exit");
+    xshellUsage(xshp, "");
     return;
   }
   
@@ -83,7 +83,7 @@ static void cmd_info(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc > 1) {
-    xshellUsage(xshp, "info");
+    xshellUsage(xshp, "");
     return;
   }
 
@@ -118,7 +118,7 @@ static void cmd_echo(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc != 2) {
-    xshellUsage(xshp, "echo \"message\"");
+    xshellUsage(xshp, "\"message\"");
     return;
   }
 
@@ -133,7 +133,7 @@ static void cmd_systime(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc > 1) {
-    xshellUsage(xshp, "systime");
+    xshellUsage(xshp, "");
     return;
   }
 
@@ -150,7 +150,7 @@ static void cmd_mem(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc > 1) {
-    xshellUsage(xshp, "mem");
+    xshellUsage(xshp, "");
     return;
   }
   n = chHeapStatus(NULL, &total, &largest);
@@ -171,7 +171,7 @@ static void cmd_threads(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc > 1) {
-    xshellUsage(xshp, "threads");
+    xshellUsage(xshp, "");
     return;
   }
   chprintf(xshp->stream, "core stklimit    stack     addr refs prio     state         name" XSHELL_NEWLINE_STR);
@@ -212,7 +212,7 @@ static void cmd_test(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc > 2) {
-    xshellUsage(xshp, "test [rt|oslib]");
+    xshellUsage(xshp, "[rt|oslib]");
     return;
   }
   else if (argc == 1) {
@@ -226,7 +226,7 @@ static void cmd_test(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
     test_execute(xshp->stream, &oslib_test_suite);
   }
   else {
-    xshellUsage(xshp, "test rt|oslib");
+    xshellUsage(xshp, "rt|oslib");
     return;
   }
 }
@@ -239,12 +239,12 @@ static void cmd_prompt(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc != 2) {
-    xshellUsage(xshp, "prompt \"string\"");
+    xshellUsage(xshp, "\"string\"");
     return;
   }
 
   if (strlen(argv[1]) > XSHELL_PROMPT_STR_LENGTH) {
-    xshellUsage(xshp, "prompt string too long");
+    chprintf(xshp->stream, "string too long" XSHELL_NEWLINE_STR);
     return;
   }
 
@@ -314,7 +314,7 @@ static void cmd_tree(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc > 1) {
-    chprintf(xshp->stream, "Usage: tree" XSHELL_NEWLINE_STR);
+    xshellUsage(xshp, "");
     return;
   }
 
@@ -346,7 +346,7 @@ static void cmd_cat(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc != 2) {
-    chprintf(xshp->stream, "Usage: cat <source>" XSHELL_NEWLINE_STR);
+    xshellUsage(xshp, "<source>");
     return;
   }
 
@@ -401,7 +401,7 @@ static void cmd_cp(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc != 3) {
-    chprintf(xshp->stream, "Usage: cp <source file> <destination file>" XSHELL_NEWLINE_STR);
+    xshellUsage(xshp, "<source file> <destination file>");
     return;
   }
 
@@ -467,7 +467,7 @@ static void cmd_cd(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc != 2) {
-    chprintf(xshp->stream, "Usage: cd <dirpath>" XSHELL_NEWLINE_STR);
+    xshellUsage(xshp, "<dirpath>");
     return;
   }
 
@@ -488,7 +488,7 @@ static void cmd_ls(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc > 2) {
-    chprintf(xshp->stream, "Usage: ls [<dirpath>]" XSHELL_NEWLINE_STR);
+    xshellUsage(xshp, "[<dirpath>]");
     return;
   }
 
@@ -529,7 +529,7 @@ static void cmd_mkdir(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc != 2) {
-    chprintf(xshp->stream, "Usage: mkdir <dirpath>" XSHELL_NEWLINE_STR);
+    xshellUsage(xshp, "<dirpath>");
     return;
   }
 
@@ -545,7 +545,7 @@ static void cmd_mv(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc != 3) {
-    chprintf(xshp->stream, "Usage: mv <oldpath> <newpath>" XSHELL_NEWLINE_STR);
+    xshellUsage(xshp, "<oldpath> <newpath>");
     return;
   }
 
@@ -562,7 +562,7 @@ static void cmd_pwd(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc != 1) {
-    chprintf(xshp->stream, "Usage: pwd" XSHELL_NEWLINE_STR);
+    xshellUsage(xshp, "");
     return;
   }
 
@@ -596,7 +596,7 @@ static void cmd_rm(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc != 2) {
-    chprintf(xshp->stream, "Usage: rm <filepath>" XSHELL_NEWLINE_STR);
+    xshellUsage(xshp, "<filepath>");
     return;
   }
 
@@ -612,7 +612,7 @@ static void cmd_rmdir(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc != 2) {
-    chprintf(xshp->stream, "Usage: rmdir <dirpath>" XSHELL_NEWLINE_STR);
+    xshellUsage(xshp, "<dirpath>");
     return;
   }
 
@@ -629,7 +629,7 @@ static void cmd_stat(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc != 2) {
-    chprintf(xshp->stream, "Usage: stat <path>" XSHELL_NEWLINE_STR);
+    xshellUsage(xshp, "<path>");
     return;
   }
 

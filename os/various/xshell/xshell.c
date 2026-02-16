@@ -222,7 +222,7 @@ static THD_FUNCTION(xshell_thread, p) {
         /* Built-in commands, just "help" currently.*/
         if (strcmp(xshp->args[0], "help") == 0) {
           if (n > 1) {
-            xshellUsage(xshp, "help");
+            xshellUsage(xshp, "");
             continue;
           }
 
@@ -307,6 +307,10 @@ static size_t xshell_get_history_prev(xshell_t *xshp, char *line) {
   size_t len;
   char *p;
 
+  if (xshell_is_line_empty(xshp->history.history_buffer[0])) {
+    return (size_t)0;
+  }
+
   p = xshp->history.history_current - XSHELL_LINE_LENGTH;
     if (p < xshp->history.history_buffer[0]) {
       p = xshp->history.history_buffer[XSHELL_HISTORY_DEPTH - 1];
@@ -322,6 +326,10 @@ static size_t xshell_get_history_prev(xshell_t *xshp, char *line) {
 static size_t xshell_get_history_next(xshell_t *xshp, char *line) {
   size_t len;
   char *p;
+
+  if (xshell_is_line_empty(xshp->history.history_buffer[0])) {
+    return (size_t)0;
+  }
 
   p = xshp->history.history_current + XSHELL_LINE_LENGTH;
     if (p > xshp->history.history_buffer[XSHELL_HISTORY_DEPTH - 1]) {
