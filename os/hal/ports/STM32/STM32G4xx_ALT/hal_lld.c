@@ -53,9 +53,11 @@
 
 /**
  * @brief   CMSIS system core clock variable.
+ * @note    Must be kept updated during clock initializtions because timeouts
+ *          calculation depends on this variable.
  * @note    It is declared in system_stm32g4xx.h.
  */
-uint32_t SystemCoreClock = STM32_HCLK;
+uint32_t SystemCoreClock;
 
 /**
  * @brief   Post-reset clock configuration.
@@ -231,6 +233,11 @@ static const system_limits_t vos_range2 = {
 
 #include "stm32_bd.inc"
 
+__STATIC_INLINE void hal_lld_set_coreclock(halfreq_t coreclock) {
+
+  SystemCoreClock = (uint32_t)coreclock;
+}
+
 /**
  * @brief   Configures the PWR unit.
  * @note    CR1, CR2 and CR5 are not initialized inside this function.
@@ -399,7 +406,7 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
                  true);
 
   /* Final flash ACR settings.*/
-  halRegWrite32X(&RCC->CR, ccp->flash_acr, true);
+  halRegWrite32X(&FLASH->ACR, ccp->flash_acr, true);
 
   /* Final PWR modes.*/
   halRegWrite32X(&PWR->CR1, ccp->pwr_cr1, true);
@@ -758,12 +765,20 @@ void stm32_clock_init(void) {
   /* Static clocks setup.*/
   hal_lld_set_static_clocks();
 
+  /* Assuming HSI16 as initial clock because initially SystemCoreClock
+     is not initialized.*/
+  hal_lld_set_coreclock(STM32_HSI16CLK);
+
   /* Selecting the default clock/power/flash configuration.*/
   halSftFailOnError(hal_lld_clock_configure(&hal_clkcfg_default), "clkinit");
 
   /* Backup domain initializations.*/
   bd_init();
 #endif /* STM32_NO_INIT */
+
+  /* Frequency after applying the default configuration or ->assumed<- set
+     by the bootloader in case of NO_INIT.*/
+  hal_lld_set_coreclock(STM32_HCLK);
 }
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
@@ -779,16 +794,19 @@ void stm32_clock_init(void) {
  */
 bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
 
+  /* Recalculating all clock points and performing coarse configuration
+     validity checks.*/
   if (hal_lld_clock_check_tree(ccp)) {
     return true;
   }
 
+  /* Attempting configuration switch.*/
   if (hal_lld_clock_configure(ccp)) {
     return true;
   }
 
-  /* Updating the CMSIS variable.*/
-  SystemCoreClock = hal_lld_get_clock_point(CLK_HCLK);
+  /* Updating the current system clock setting value.*/
+  hal_lld_set_coreclock(hal_lld_get_clock_point(CLK_HCLK));
 
   return false;
 }
