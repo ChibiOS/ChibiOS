@@ -731,7 +731,7 @@ void stm32_clock_init(void) {
 
 #if !STM32_NO_INIT
   /* Assuming HSI16 as initial clock.*/
-  hal_lld_set_coreclock(STM32_HSICLK_RESET);
+  hal_lld_set_coreclock(STM32_HSI16CLK);
 
   /* Reset of all peripherals.
      Note, GPIOs are not reset because initialized before this point in
