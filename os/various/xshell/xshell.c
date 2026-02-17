@@ -303,6 +303,18 @@ static void xshell_save_history(xshell_t *xshp, char *line) {
   }
 }
 
+static bool xshell_is_line_empty(const char *str) {
+
+  while (*str != '\0') {
+    if (*str != ' ') {
+      return false;
+    }
+    str++;
+  }
+
+  return true;
+}
+
 static size_t xshell_get_history_prev(xshell_t *xshp, char *line) {
   size_t len;
   char *p;
@@ -348,18 +360,6 @@ static void xshell_reset_history(xshell_t *xshp) {
   xshp->history.history_head = xshp->history.history_buffer[0];
   xshp->history.history_current = xshp->history.history_head;
   memset(xshp->history.history_buffer, 0, sizeof xshp->history.history_buffer);
-}
-
-static bool xshell_is_line_empty(const char *str) {
-
-  while (*str != '\0') {
-    if (*str != ' ') {
-      return false;
-    }
-    str++;
-  }
-
-  return true;
 }
 #endif /* (XSHELL_HISTORY_DEPTH > 0) || defined(__DOXYGEN__) */
 
