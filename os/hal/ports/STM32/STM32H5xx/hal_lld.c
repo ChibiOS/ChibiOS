@@ -902,6 +902,10 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
  */
 void hal_lld_init(void) {
 
+  /* Frequency after applying the default configuration or ->assumed<- set
+     by the bootloader in case of NO_INIT.*/
+  hal_lld_set_coreclock(STM32_HCLK);
+
   /* DMA subsystems initialization.*/
 #if defined(STM32_DMA3_REQUIRED)
   dma3Init();
@@ -972,10 +976,6 @@ void stm32_clock_init(void) {
   /* Backup domain initializations.*/
   bd_init();
 #endif /* STM32_NO_INIT */
-
-  /* Frequency after applying the default configuration or ->assumed<- set
-     by the bootloader in case of NO_INIT.*/
-  hal_lld_set_coreclock(STM32_HCLK);
 }
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
