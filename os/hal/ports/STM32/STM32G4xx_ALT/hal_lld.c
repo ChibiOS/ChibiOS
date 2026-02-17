@@ -730,6 +730,9 @@ void stm32_clock_init(void) {
   halRegSet32X(&DWT->CTRL, DWT_CTRL_CYCCNTENA_Msk, true);
 
 #if !STM32_NO_INIT
+  /* Assuming HSI16 as initial clock.*/
+  hal_lld_set_coreclock(STM32_HSICLK_RESET);
+
   /* Reset of all peripherals.
      Note, GPIOs are not reset because initialized before this point in
      board files.*/
@@ -764,10 +767,6 @@ void stm32_clock_init(void) {
 
   /* Static clocks setup.*/
   hal_lld_set_static_clocks();
-
-  /* Assuming HSI16 as initial clock because initially SystemCoreClock
-     is not initialized.*/
-  hal_lld_set_coreclock(STM32_HSI16CLK);
 
   /* Selecting the default clock/power/flash configuration.*/
   halSftFailOnError(hal_lld_clock_configure(&hal_clkcfg_default), "clkinit");

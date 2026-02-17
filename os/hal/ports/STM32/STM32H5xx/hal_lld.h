@@ -3612,7 +3612,7 @@ typedef uint32_t halcnt_t;
  * @note    The counter is the internal DWS cycles counter so in runs at
  *          the same frequency of CPU.
  */
-#define HAL_LLD_GET_CNT_FREQUENCY()         hal_lld_get_clock_point(CLK_HCLK)
+#define HAL_LLD_GET_CNT_FREQUENCY()         SystemCoreClock
 
 /**
  * @brief   Real time counter value exported to the safety module.

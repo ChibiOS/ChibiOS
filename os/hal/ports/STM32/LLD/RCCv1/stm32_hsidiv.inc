@@ -27,9 +27,14 @@
 /*===========================================================================*/
 
 /**
- * @brief   HSI16 clock frequency.
+ * @brief   HSIDIV base clock frequency.
  */
 #define STM32_HSI64CLK              64000000U
+
+/**
+ * @brief   HSI clock frequency after reset.
+ */
+#define STM32_HSICLK_RESET          32000000U
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

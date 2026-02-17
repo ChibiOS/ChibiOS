@@ -62,7 +62,7 @@
  * @brief   CMSIS system core clock variable.
  * @note    It is declared in system_stm32h5xx.h.
  */
-uint32_t SystemCoreClock = STM32_HCLK;
+uint32_t SystemCoreClock;
 
 /**
  * @brief   Post-reset clock configuration.
@@ -272,6 +272,11 @@ static const system_limits_t vos_range3 = {
 
 #include "stm32_bd.inc"
 
+__STATIC_INLINE void hal_lld_set_coreclock(halfreq_t coreclock) {
+
+  SystemCoreClock = (uint32_t)coreclock;
+}
+
 /**
  * @brief   Configures the PWR unit.
  */
@@ -382,7 +387,9 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
 
   /* HSI could be not activated, activating it taking care to not disturb
      other clocks yet, not touching HSIDIV yet because it could be feeding
-     a PLL.*/
+     a PLL.
+     NOTE: Timeouts are transiently not accurate but it is OK because there
+           is built-in margin in timeout constants.*/
   halRegSet32X(&RCC->CR, RCC_CR_HSION, true);
   if (halRegWaitAllSet32X(&RCC->CR, RCC_CR_HSIRDY, STM32_HSI_STARTUP_TIME, NULL)) {
     return true;
@@ -921,6 +928,9 @@ void stm32_clock_init(void) {
   halRegSet32X(&DWT->CTRL, DWT_CTRL_CYCCNTENA_Msk, true);
 
 #if !STM32_NO_INIT
+  /* Assuming HSI/2 as initial clock.*/
+  hal_lld_set_coreclock(STM32_HSICLK_RESET);
+
   /* Reset of all peripherals.
      Note, GPIOs are not reset because initialized before this point in
      board files.*/
@@ -962,84 +972,11 @@ void stm32_clock_init(void) {
   /* Backup domain initializations.*/
   bd_init();
 #endif /* STM32_NO_INIT */
+
+  /* Frequency after applying the default configuration or ->assumed<- set
+     by the bootloader in case of NO_INIT.*/
+  hal_lld_set_coreclock(STM32_HCLK);
 }
-
-#if 0
-void stm32_clock_init(void) {
-
-#if !STM32_NO_INIT
-
-  /* Reset of all peripherals.
-     Note, GPIOs are not reset because initialized before this point in
-     board files.*/
-  rccResetAHB1(~0);
-  rccResetAHB2(~STM32_GPIO_EN_MASK);
-#if STM32_SYSTEM_HAS_AHB4
-  rccResetAHB4(~0);
-#endif
-  rccResetAPB1L(~0);
-  rccResetAPB1H(~0);
-  rccResetAPB2(~0);
-  rccResetAPB3(~0);
-
-  /* SBS clock enabled here because it is a multi-functional unit shared
-     among multiple drivers.*/
-  rccEnableAPB3(RCC_APB3ENR_SBSEN, true);
-
-  /* RTC APB clock enable.*/
-#if (HAL_USE_RTC == TRUE) && defined(RCC_APB3ENR_RTCAPBEN)
-  rccEnableAPB3(RCC_APB3ENR_RTCAPBEN, true);
-#endif
-
-  /* Static PWR configurations.*/
-  hal_lld_set_static_pwr();
-
-  /* PWR core voltage and thresholds setup.*/
-  PWR->VOSCR = STM32_PWR_VOSCR;
-  while ((PWR->VOSSR & PWR_VOSSR_ACTVOSRDY) == 0U) {
-    /* Wait until regulator is stable.*/
-  }
-  PWR->VMCR = STM32_PWR_VMCR;
-
-  /* Backup domain reset.*/
-  bd_reset();
-
-  /* Clocks setup.*/
-  lse_init();
-  lsi_init();
-  hsi_init();
-  hsi48_init();
-  hse_init();
-
-  /* Backup domain initializations.*/
-  bd_init();
-
-  /* PLLs activation, if required.*/
-  pll1_init();
-  pll2_init();
-  pll3_init();
-
-  /* Static clocks setup.*/
-  hal_lld_set_static_clocks();
-
-  /* Set flash WS's for SYSCLK source.*/
-  flash_set_acr(STM32_FLASHBITS);
-
-  /* Switching to the configured SYSCLK source if it is different from HSI.*/
-#if STM32_SW != RCC_CFGR1_SW_HSI
-  RCC->CFGR1 |= STM32_SW;       /* Switches on the selected clock source.   */
-//  while(1);
-  while ((RCC->CFGR1 & RCC_CFGR1_SWS_Msk) != (STM32_SW << RCC_CFGR1_SWS_Pos)) {
-    /* Wait until SYSCLK is stable.*/
-  }
-#endif
-
-  /* Cache enable.*/
-  icache_init();
-
-#endif /* STM32_NO_INIT */
-}
-#endif
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
@@ -1062,8 +999,8 @@ bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
     return true;
   }
 
-  /* Updating the CMSIS variable.*/
-  SystemCoreClock = hal_lld_get_clock_point(CLK_HCLK);
+  /* Updating the current system clock setting value.*/
+  hal_lld_set_coreclock(hal_lld_get_clock_point(CLK_HCLK));
 
   return false;
 }
