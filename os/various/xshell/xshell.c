@@ -330,8 +330,8 @@ static size_t xshell_get_history_prev(xshell_t *xshp, char *line) {
     p = xshp->history.history_buffer[XSHELL_HISTORY_DEPTH - 1];
   }
 
-  /* Do not go into an empty slot unless it is the head.*/
-  if ((*p == '\0') && (p != xshp->history.history_head)) {
+  /* Do not go into empty slots.*/
+  if (*p == '\0') {
     return (size_t)-1;
   }
 
@@ -860,6 +860,7 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
 
     /* Check for session close.*/
     if (c == CTRL('D')) {
+      streamWrite(xshp->stream, (const uint8_t *)"^D", 2);
       return true;
     }
     /* Check for execute line.*/
@@ -881,10 +882,12 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
       continue;
 #if XSHELL_LINE_EDITING == TRUE
     if (p < line + size - 1) {
+      bool at_eol = (*p == '\0');
+
       if (xshp->insert_mode) {
 
         /* Check if cursor at current EOL.*/
-        if (*p != '\0') {
+        if (!at_eol) {
 
           /* This is an insert so move line data and insert new character.*/
           memmove(p + 1, p, strlen(p) + 1);
@@ -909,11 +912,15 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
         streamPut(xshp->stream, c);
       }
       p++;
+      if (at_eol) {
+        *p = '\0';
+      }
     }
 #else
     if (p < line + size - 1) {
       streamPut(xshp->stream, c);
       *p++ = (char)c;
+      *p = '\0';
     }
 #endif
   }
