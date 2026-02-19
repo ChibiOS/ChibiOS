@@ -287,6 +287,10 @@ typedef struct xshell {
    *          NULL-terminated.
    */
   char *args[XSHELL_MAX_ARGUMENTS + 2];
+  /**
+   * @brief   Insert mode flag.
+   */
+  bool                          insert_mode;
 #if defined(XSHELL_EXTRA_FIELDS)
   /* Extra fields defined in xshellconf.h.*/
   XSHELL_EXTRA_FIELDS

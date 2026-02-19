@@ -164,6 +164,9 @@ static THD_FUNCTION(xshell_thread, p) {
   xshell_t *xshp = p;
   char *ap, *tokp;
 
+  /* Initializing shell parameters.*/
+  xshp->insert_mode = true;
+
   /* Shell banner, if defined.*/
   if (smp->config->banner != NULL) {
     chprintf(xshp->stream, "%s", smp->config->banner);
@@ -316,43 +319,45 @@ static bool xshell_is_line_empty(const char *str) {
 }
 
 static size_t xshell_get_history_prev(xshell_t *xshp, char *line) {
-  size_t len;
   char *p;
 
   if (xshell_is_line_empty(xshp->history.history_buffer[0])) {
-    return (size_t)0;
+    return (size_t)-1;
   }
 
   p = xshp->history.history_current - XSHELL_LINE_LENGTH;
-    if (p < xshp->history.history_buffer[0]) {
-      p = xshp->history.history_buffer[XSHELL_HISTORY_DEPTH - 1];
+  if (p < xshp->history.history_buffer[0]) {
+    p = xshp->history.history_buffer[XSHELL_HISTORY_DEPTH - 1];
   }
-  if ((len = strlen(p)) > (size_t)0) {
-    xshp->history.history_current = p;
+
+  /* Do not go into an empty slot unless it is the head.*/
+  if ((*p == '\0') && (p != xshp->history.history_head)) {
+    return (size_t)-1;
   }
+
+  xshp->history.history_current = p;
   strcpy(line, xshp->history.history_current);
 
-  return len;
+  return strlen(line);
 }
 
 static size_t xshell_get_history_next(xshell_t *xshp, char *line) {
-  size_t len;
   char *p;
 
-  if (xshell_is_line_empty(xshp->history.history_buffer[0])) {
-    return (size_t)0;
+  /* If already at the empty line, do nothing.*/
+  if (xshp->history.history_current == xshp->history.history_head) {
+    return (size_t)-1;
   }
 
   p = xshp->history.history_current + XSHELL_LINE_LENGTH;
-    if (p > xshp->history.history_buffer[XSHELL_HISTORY_DEPTH - 1]) {
-      p = xshp->history.history_buffer[0];
+  if (p > xshp->history.history_buffer[XSHELL_HISTORY_DEPTH - 1]) {
+    p = xshp->history.history_buffer[0];
   }
-  if ((len = strlen(p)) > (size_t)0) {
-    xshp->history.history_current = p;
-  }
+
+  xshp->history.history_current = p;
   strcpy(line, xshp->history.history_current);
 
-  return len;
+  return strlen(line);
 }
 
 static void xshell_reset_history(xshell_t *xshp) {
@@ -589,6 +594,7 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
 
 #if XSHELL_LINE_EDITING == TRUE
   bool vt      = false;
+  bool vt_ins  = false;
 #endif
 #if XSHELL_HISTORY_DEPTH > 0
   xshp->history.history_current = xshp->history.history_head;
@@ -602,6 +608,9 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
 
     if (streamRead(xshp->stream, (uint8_t *)&c, 1) == 0)
       return true;
+#if defined(XSHELL_INPUT_CHAR_HOOK)
+    XSHELL_INPUT_CHAR_HOOK(xshp, c);
+#endif
 #if (XSHELL_LINE_EDITING == TRUE) && (XSHELL_HISTORY_DEPTH == 0)
     /* Escape sequences decoding.*/
     if (c == 27) {
@@ -637,12 +646,23 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
           }
           continue;
         }
+        if (c == '2') {
+          /* VT sequence. Followed by ~ for insert/overwrite toggle.*/
+          vt_ins = true;
+          continue;
+        }
         if (c == '3') {
           /* VT sequence. Followed by ~ for delete.*/
           vt = true;
           continue;
         }
       }
+    }
+    if (c == '~' && vt_ins == true) {
+      /* Toggle insert/overwrite mode.*/
+      vt_ins = false;
+      xshp->insert_mode = !xshp->insert_mode;
+      continue;
     }
     if (c == '~' && vt == true) {
       /* Do delete at cursor. TODO: Add support INSERT/OVERWRITE mode.*/
@@ -654,6 +674,7 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
       continue;
     }
     vt = false;
+    vt_ins = false;
     if ((c == CTRL('H')) || (c == 127)) {
       if (p != line) {
         p--;
@@ -686,7 +707,7 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
           /* Cursor up.*/
           size_t len = xshell_get_history_prev(xshp, line);
 
-          if (len > (size_t)0) {
+          if (len != (size_t)-1) {
             xshell_reset_line(xshp);
             chprintf(xshp->stream, "%s", line);
             p = line + len;
@@ -697,7 +718,7 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
           /* Cursor down.*/
           size_t len = xshell_get_history_next(xshp, line);
 
-          if (len > (size_t)0) {
+          if (len != (size_t)-1) {
             xshell_reset_line(xshp);
             chprintf(xshp->stream, "%s", line);
             p = line + len;
@@ -722,12 +743,23 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
           }
           continue;
         }
+        if (c == '2') {
+          /* VT sequence. Followed by ~ for insert/overwrite toggle.*/
+          vt_ins = true;
+          continue;
+        }
         if (c == '3') {
           /* VT sequence. Followed by ~ for delete.*/
           vt = true;
           continue;
         }
       }
+    }
+    if (c == '~' && vt_ins == true) {
+      /* Toggle insert/overwrite mode.*/
+      vt_ins = false;
+      xshp->insert_mode = !xshp->insert_mode;
+      continue;
     }
     if (c == '~' && vt == true) {
       /* Do delete at cursor. TODO: Add support INSERT/OVERWRITE mode.*/
@@ -739,9 +771,11 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
       continue;
     }
     vt = false;
+    vt_ins = false;
     if (c == CTRL('U')) {
       xshp->history.history_current = xshp->history.history_head;
       p = line;
+      memset(line, 0, size);
       xshell_reset_line(xshp);
       continue;
     }
@@ -777,7 +811,7 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
           /* Cursor up.*/
           size_t len = xshell_get_history_prev(xshp, line);
 
-          if (len > (size_t)0) {
+          if (len != (size_t)-1) {
             xshell_reset_line(xshp);
             chprintf(xshp->stream, "%s", line);
             p = line + len;
@@ -788,7 +822,7 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
           /* Cursor down.*/
           size_t len = xshell_get_history_next(xshp, line);
 
-          if (len > (size_t)0) {
+          if (len != (size_t)-1) {
             xshell_reset_line(xshp);
             chprintf(xshp->stream, "%s", line);
             p = line + len;
@@ -800,6 +834,7 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
     if (c == CTRL('U')) {
       xshp->history.history_current = xshp->history.history_head;
       p = line;
+      memset(line, 0, size);
       xshell_reset_line(xshp);
       continue;
     }
@@ -807,6 +842,7 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
       if (p != line) {
         streamWrite(xshp->stream, (const uint8_t *)"\010 \010", 3);
         p--;
+        *p = '\0';
       }
       continue;
     }
@@ -816,6 +852,7 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
       if (p != line) {
         streamWrite(xshp->stream, (const uint8_t *)"\010 \010", 3);
         p--;
+        *p = '\0';
       }
       continue;
     }
@@ -844,26 +881,32 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
       continue;
 #if XSHELL_LINE_EDITING == TRUE
     if (p < line + size - 1) {
+      if (xshp->insert_mode) {
 
-      /* Check if cursor at current EOL.*/
-      if (*p != '\0') {
+        /* Check if cursor at current EOL.*/
+        if (*p != '\0') {
 
-        /* This is an insert so move line data and insert new character.*/
-        memmove(p + 1, p, strlen(p) + 1);
-        *p = (char)c;
+          /* This is an insert so move line data and insert new character.*/
+          memmove(p + 1, p, strlen(p) + 1);
+          *p = (char)c;
 
-        /* Redraw line. Cursor will be at end of output.*/
-        xshell_reset_line(xshp);
-        chprintf(xshp->stream, "%s", line);
+          /* Redraw line. Cursor will be at end of output.*/
+          xshell_reset_line(xshp);
+          chprintf(xshp->stream, "%s", line);
 
-        /* Restore cursor position.*/
-        xshell_move_cursor(xshp, -strlen(p) + 1);
+          /* Restore cursor position.*/
+          xshell_move_cursor(xshp, -strlen(p) + 1);
+        }
+        else {
+
+          /* At end of line so just output and store character.*/
+          streamPut(xshp->stream, c);
+          *p = (char)c;
+        }
       }
       else {
-
-        /* At end of line so just output and store character.*/
-        streamPut(xshp->stream, c);
         *p = (char)c;
+        streamPut(xshp->stream, c);
       }
       p++;
     }

@@ -380,9 +380,13 @@ static void cmd_cat(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
 
     while ((n = read(fd, buf, XSHELL_CMD_FILES_BUFFER_SIZE)) > 0) {
       streamWrite(xshp->stream, (const uint8_t *)buf, n);
+#if CH_HAL_MAJOR >= 10
+#error "TODO: Handle new streams/channels in XHAL here"
+#else
       if (chnGetTimeout((BaseChannel*)xshp->stream, TIME_IMMEDIATE) != STM_TIMEOUT) {
         break;
       }
+#endif
     }
     chprintf(xshp->stream, XSHELL_NEWLINE_STR);
 
@@ -441,15 +445,32 @@ static void cmd_cp(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
     }
 
     while ((n = read(fd_in, buf, XSHELL_CMD_FILES_BUFFER_SIZE)) > 0) {
-      if (write(fd_out, buf, n) < 0) {
-        chprintf(xshp->stream, "Error writing destination file" XSHELL_NEWLINE_STR);
+      bool write_error = false;
+      size_t total_written = 0;
+      while (total_written < (size_t)n) {
+        ssize_t written_this_call = write(fd_out,
+                                          buf + total_written,
+                                          (size_t)n - total_written);
+        if (written_this_call < 0) {
+          chprintf(xshp->stream, "Error writing destination file" XSHELL_NEWLINE_STR);
+          write_error = true;
+          break;
+        }
+        total_written += (size_t)written_this_call;
+      }
+
+      if (write_error) {
         break;
       }
 
       /* Check for abort.*/
+#if CH_HAL_MAJOR >= 10
+#error "TODO: Handle new streams/channels in XHAL here"
+#else
       if (chnGetTimeout((BaseChannel*)xshp->stream, TIME_IMMEDIATE) != STM_TIMEOUT) {
         break;
       }
+#endif
     }
     chprintf(xshp->stream, XSHELL_NEWLINE_STR);
     (void) close(fd_out);
