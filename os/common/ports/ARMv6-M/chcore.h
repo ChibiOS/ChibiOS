@@ -454,15 +454,6 @@ struct port_context {
  */
 #define port_is_locked(sts) !__port_irq_enabled(sts)
 
-/**
- * @brief   SMP-related port initialization.
- * @note    The port checks on presence of this macro so this
- *          must be a macro.
- *
- * @param[in, out] oip  pointer to the @p os_instance_t structure
- */
-#define port_smp_init(oip) __port_smp_init(oip)
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

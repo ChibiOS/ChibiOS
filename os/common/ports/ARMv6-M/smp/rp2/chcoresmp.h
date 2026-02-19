@@ -113,6 +113,15 @@
     SIO->FIFO_WR = PORT_FIFO_PANIC_MESSAGE;                                 \
   } while (false)
 
+/**
+ * @brief   SMP-related port initialization.
+ * @note    The port checks on presence of this macro so this
+ *          must be a macro.
+ *
+ * @param[in, out] oip  pointer to the @p os_instance_t structure
+ */
+#define port_smp_init(oip) __port_smp_init(oip)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
