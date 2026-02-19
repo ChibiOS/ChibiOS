@@ -665,7 +665,7 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
       continue;
     }
     if (c == '~' && vt == true) {
-      /* Do delete at cursor. TODO: Add support INSERT/OVERWRITE mode.*/
+      /* Do delete at cursor.*/
       vt = false;
       memmove(p, p + 1, strlen(p + 1) + 1);
       xshell_reset_line(xshp);
@@ -762,7 +762,7 @@ bool xshellGetLine(xshell_t *xshp, char *line, size_t size) {
       continue;
     }
     if (c == '~' && vt == true) {
-      /* Do delete at cursor. TODO: Add support INSERT/OVERWRITE mode.*/
+      /* Do delete at cursor.*/
       vt = false;
       memmove(p, p + 1, strlen(p + 1) + 1);
       xshell_reset_line(xshp);
