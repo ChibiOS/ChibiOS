@@ -1709,6 +1709,7 @@ typedef struct {
 #define DMA_CTRL_TRIG_DATA_SIZE_HWORD     DMA_CTRL_TRIG_DATA_SIZE(1U)
 #define DMA_CTRL_TRIG_DATA_SIZE_WORD      DMA_CTRL_TRIG_DATA_SIZE(2U)
 #define DMA_CTRL_TRIG_HIGH_PRIORITY       (1U << 1)
+#define DMA_CTRL_TRIG_PRIORITY(n)         ((n) << 1)
 #define DMA_CTRL_TRIG_EN                  (1U << 0)
 /** @} */
 
