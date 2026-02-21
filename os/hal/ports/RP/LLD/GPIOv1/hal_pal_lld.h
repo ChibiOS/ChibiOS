@@ -388,6 +388,19 @@ typedef uint32_t iopadid_t;
 #define pal_lld_setpadmode(port, pad, mode)                                 \
   __pal_lld_pad_set_mode(port, pad, mode)
 
+/**
+ * @brief   Pads group mode setup.
+ *
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask
+ * @param[in] offset    group bit offset within the port
+ * @param[in] mode      group mode
+ *
+ * @notapi
+ */
+#define pal_lld_setgroupmode(port, mask, offset, mode)                     \
+  __pal_lld_group_set_mode(port, mask, offset, mode)
+
 __STATIC_INLINE void __pal_lld_pad_set_mode(ioportid_t port,
                                             iopadid_t pad,
                                             iomode_t mode) {
@@ -418,6 +431,20 @@ __STATIC_INLINE void __pal_lld_pad_set_mode(ioportid_t port,
   /* Then IO and PAD settings.*/
   IO_BANK0->GPIO[pad].CTRL = ctrlbits;
   PADS_BANK0->GPIO[pad] = padbits;
+}
+
+__STATIC_INLINE void __pal_lld_group_set_mode(ioportid_t port,
+                                              ioportmask_t mask,
+                                              unsigned offset,
+                                              iomode_t mode) {
+  unsigned i;
+  ioportmask_t m = mask;
+
+  for (i = 0U; m != 0U; i++, m >>= 1U) {
+    if ((m & 1U) != 0U) {
+      __pal_lld_pad_set_mode(port, (iopadid_t)(i + offset), mode);
+    }
+  }
 }
 
 

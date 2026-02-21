@@ -148,7 +148,10 @@ void _pal_lld_enablelineevent(ioline_t line, ioeventmode_t mode) {
     mode_clr |= 2;
 
 
-  IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTE[line/8] &= 
+  /* Clear any pending interrupt status before enabling. */
+  IO_BANK0->INTR[line / 8] = 0x0FU << (4U * (line & 0x07U));
+
+  IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTE[line/8] &=
     ~(mode_clr << (4*(line & 0x07)));
   IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTE[line/8] |=
     mode_set << (4*(line & 0x07));
@@ -165,6 +168,14 @@ void _pal_lld_enablelineevent(ioline_t line, ioeventmode_t mode) {
 void _pal_lld_disablelineevent(ioline_t line) {
   IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTE[line/8] &=
     ~(0x0FU << (4*(line & 0x07)));
+
+  /* Clear pending interrupt status. INTR is W1C.*/
+  IO_BANK0->INTR[line / 8] = 0x0FU << (4U * (line & 0x07U));
+
+#if PAL_USE_CALLBACKS || PAL_USE_WAIT
+  /* Callback cleared and/or thread reset.*/
+  _pal_clear_event(line);
+#endif
 };
 
 /**
