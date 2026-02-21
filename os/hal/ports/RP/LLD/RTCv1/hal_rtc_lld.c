@@ -157,7 +157,7 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
   syssts_t sts = osalSysGetStatusAndLockX();
 
   /* Disable RTC. */
-  rtcp->rtc->CTRL &= ~RTC_CTRL_RTC_ENABLE;
+  rtcp->rtc->CTRL = 0;
 
   /* Wait for RTC to go inactive. */
   while ((rtcp->rtc->CTRL & RTC_CTRL_RTC_ACTIVE) != 0)
@@ -167,16 +167,18 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
   rtcp->rtc->SETUP0 = (RTC_SETUP_0_YEAR(timespec->year + RTC_BASE_YEAR))    |
                       (RTC_SETUP_0_MONTH(timespec->month))                  |
                       (RTC_SETUP_0_DAY(timespec->day));
-  rtcp->rtc->SETUP1 = (RTC_SETUP_1_DOTW(timespec->dayofweek - 1))           |
-                      (RTC_SETUP_1_HOUR(hour))                              |
-                      (RTC_SETUP_1_MIN(min))                                |
-                      (RTC_SETUP_1_SEC(sec));
+  rtcp->rtc->SETUP1 = (RTC_SETUP_1_DOTW(timespec->dayofweek > 0U ?
+                          timespec->dayofweek - 1U : 0U)
+                          & RTC_SETUP_1_DOTW_Msk)                          |
+                      (RTC_SETUP_1_HOUR(hour) & RTC_SETUP_1_HOUR_Msk)      |
+                      (RTC_SETUP_1_MIN(min) & RTC_SETUP_1_MIN_Msk)         |
+                      (RTC_SETUP_1_SEC(sec) & RTC_SETUP_1_SEC_Msk);
 
   /* Move setup values into RTC clock domain. */
   rtcp->rtc->CTRL = RTC_CTRL_LOAD;
 
   /* Enable RTC and wait for active. */
-  rtcp->rtc->CTRL |= RTC_CTRL_RTC_ENABLE;
+  rtcp->rtc->CTRL = RTC_CTRL_RTC_ENABLE;
 
   /* Leaving a reentrant critical zone.*/
   osalSysRestoreStatusX(sts);
@@ -258,13 +260,14 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
   year = timespec->year + RTC_BASE_YEAR;
 
   /* Setup register data. */
-  setup0 = (RTC_IRQ_SETUP_0_YEAR(year))        |
-           (RTC_IRQ_SETUP_0_MONTH(month))      |
-           (RTC_IRQ_SETUP_0_DAY(day));
-  setup1 = (RTC_IRQ_SETUP_1_DOTW(dotw - 1))    |
-           (RTC_IRQ_SETUP_1_HOUR(hour))        |
-           (RTC_IRQ_SETUP_1_MIN(min))          |
-           (RTC_IRQ_SETUP_1_SEC(sec));
+  setup0 = (RTC_IRQ_SETUP_0_YEAR(year) & RTC_IRQ_SETUP_0_YEAR_Msk)     |
+           (RTC_IRQ_SETUP_0_MONTH(month) & RTC_IRQ_SETUP_0_MONTH_Msk)  |
+           (RTC_IRQ_SETUP_0_DAY(day) & RTC_IRQ_SETUP_0_DAY_Msk);
+  setup1 = (RTC_IRQ_SETUP_1_DOTW(dotw > 0U ? dotw - 1U : 0U)
+               & RTC_IRQ_SETUP_1_DOTW_Msk)                             |
+           (RTC_IRQ_SETUP_1_HOUR(hour) & RTC_IRQ_SETUP_1_HOUR_Msk)    |
+           (RTC_IRQ_SETUP_1_MIN(min) & RTC_IRQ_SETUP_1_MIN_Msk)       |
+           (RTC_IRQ_SETUP_1_SEC(sec) & RTC_IRQ_SETUP_1_SEC_Msk);
 
   /* Check and set match enable bits. */
   if (RTC_ALARM_TEST_MATCH(dtmask, RTC_DT_ALARM_YEAR))
