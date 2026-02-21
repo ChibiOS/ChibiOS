@@ -37,7 +37,7 @@ MEMORY
     ram4   (wx) : org = 0x20040000, len = 4k    /* SRAM4                */
     ram5   (wx) : org = 0x20041000, len = 4k    /* SRAM5                */
     ram6   (wx) : org = 0x00000000, len = 0
-    ram7   (wx) : org = 0x20041f00, len = 256   /* SRAM5 boot           */
+    ram7   (wx) : org = 0x00000000, len = 0
 }
 
 /* For each data/text section two region are defined, a virtual region
