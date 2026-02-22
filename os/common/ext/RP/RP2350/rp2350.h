@@ -289,39 +289,50 @@ typedef struct {
   struct {
     __I  uint32_t       STATUS;
     __IO uint32_t       CTRL;
-  } GPIO[48];
-  __I  uint32_t         resvd180[32];
-  __IO uint32_t         INTR[6];
-  __I  uint32_t         resvd218[2];
+  } GPIO[48];                               /* 0x000-0x17F */
+  __I  uint32_t         resvd180[32];        /* 0x180-0x1FF */
+  struct {
+    __I  uint32_t       SECURE[2];
+    __I  uint32_t       NONSECURE[2];
+  } IRQSUMMARY_PROC[2];                     /* 0x200-0x21F */
+  __I  uint32_t         IRQSUMMARY_DW_S[2];  /* 0x220-0x227 */
+  __I  uint32_t         IRQSUMMARY_DW_NS[2]; /* 0x228-0x22F */
+  __IO uint32_t         INTR[6];             /* 0x230-0x247 */
   struct {
     __IO uint32_t       INTE[6];
-    __I  uint32_t       resvd18[2];
     __IO uint32_t       INTF[6];
-    __I  uint32_t       resvd38[2];
     __I  uint32_t       INTS[6];
-    __I  uint32_t       resvd58[2];
-  } PROC[2];
-  __IO uint32_t         DW_INTE[6];
-  __I  uint32_t         resvd2F8[2];
-  __IO uint32_t         DW_INTF[6];
-  __I  uint32_t         resvd318[2];
-  __I  uint32_t         DW_INTS[6];
+  } PROC[2];                                /* 0x248-0x2D7 */
+  __IO uint32_t         DW_INTE[6];          /* 0x2D8-0x2EF */
+  __IO uint32_t         DW_INTF[6];          /* 0x2F0-0x307 */
+  __I  uint32_t         DW_INTS[6];          /* 0x308-0x31F */
 } IOUSER_TypeDef;
 
 typedef struct {
   struct {
     __I  uint32_t       STATUS;
     __IO uint32_t       CTRL;
-  } GPIO[6];
-  __IO uint32_t         INTR[1];
+  } USBPHY[2];                             /* 0x000-0x00F */
   struct {
-    __IO uint32_t       INTE[1];
-    __IO uint32_t       INTF[1];
-    __I  uint32_t       INTS[1];
-  } PROC[2];
-  __IO uint32_t         DW_INTE[1];
-  __IO uint32_t         DW_INTF[1];
-  __I  uint32_t         DW_INTS[1];
+    __I  uint32_t       STATUS;
+    __IO uint32_t       CTRL;
+  } GPIO[6];                               /* 0x010-0x03F */
+  __I  uint32_t         resvd040[112];      /* 0x040-0x1FF */
+  struct {
+    __I  uint32_t       SECURE;
+    __I  uint32_t       NONSECURE;
+  } IRQSUMMARY_PROC[2];                    /* 0x200-0x20F */
+  __I  uint32_t         IRQSUMMARY_DW_S;    /* 0x210 */
+  __I  uint32_t         IRQSUMMARY_DW_NS;   /* 0x214 */
+  __IO uint32_t         INTR;               /* 0x218 */
+  struct {
+    __IO uint32_t       INTE;
+    __IO uint32_t       INTF;
+    __I  uint32_t       INTS;
+  } PROC[2];                               /* 0x21C-0x233 */
+  __IO uint32_t         DW_INTE;            /* 0x234 */
+  __IO uint32_t         DW_INTF;            /* 0x238 */
+  __I  uint32_t         DW_INTS;            /* 0x23C */
 } IOQSPI_TypeDef;
 
 typedef struct {
@@ -983,7 +994,7 @@ typedef struct {
   __IO uint32_t         IRQ1_INTE;
   __IO uint32_t         IRQ1_INTF;
   __I  uint32_t         IRQ1_INTS;
-  __I  uint32_t         resvdpwm[968];
+  __I  uint32_t         resvdpwm[956];
   struct {
     struct {
       __IO uint32_t     CSR;
@@ -1000,7 +1011,7 @@ typedef struct {
     __IO uint32_t       IRQ1_INTE;
     __IO uint32_t       IRQ1_INTF;
     __I  uint32_t       IRQ1_INTS;
-    __I  uint32_t       resvdpwm[968];
+    __I  uint32_t       resvdpwm[956];
   } XOR;
   struct {
     struct {
@@ -1018,7 +1029,7 @@ typedef struct {
     __IO uint32_t       IRQ1_INTE;
     __IO uint32_t       IRQ1_INTF;
     __I  uint32_t       IRQ1_INTS;
-    __I  uint32_t       resvdpwm[968];
+    __I  uint32_t       resvdpwm[956];
   } SET;
   struct {
     struct {
@@ -1036,7 +1047,7 @@ typedef struct {
     __IO uint32_t       IRQ1_INTE;
     __IO uint32_t       IRQ1_INTF;
     __I  uint32_t       IRQ1_INTS;
-    __I  uint32_t       resvdpwm[968];
+    __I  uint32_t       resvdpwm[956];
   } CLR;
 } PWM_TypeDef;
 
@@ -1218,7 +1229,7 @@ typedef struct {
     __IO uint32_t       INSTR;
     __IO uint32_t       PINCTRL;
   } SM[4];
-  __IO uint32_t         RXF_PUTGET[4];
+  __IO uint32_t         RXF_PUTGET[4][4];
   __I  uint32_t         GPIOBASE;
   __IO uint32_t         INTR;
   __IO uint32_t         IRQ0_INTE;
@@ -1227,7 +1238,7 @@ typedef struct {
   __IO uint32_t         IRQ1_INTE;
   __IO uint32_t         IRQ1_INTF;
   __I  uint32_t         IRQ1_INTS;
-  __I  uint32_t         resvd164[935];
+  __I  uint32_t         resvd188[926];
   struct {
     __IO uint32_t       CTRL;
     __I  uint32_t       FSTAT;
@@ -1250,7 +1261,7 @@ typedef struct {
       __IO uint32_t     INSTR;
       __IO uint32_t     PINCTRL;
     } SM[4];
-    __IO uint32_t       RXF_PUTGET[4];
+    __IO uint32_t       RXF_PUTGET[4][4];
     __I  uint32_t       GPIOBASE;
     __IO uint32_t       INTR;
     __IO uint32_t       IRQ0_INTE;
@@ -1259,7 +1270,7 @@ typedef struct {
     __IO uint32_t       IRQ1_INTE;
     __IO uint32_t       IRQ1_INTF;
     __I  uint32_t       IRQ1_INTS;
-    __I  uint32_t       resvd164[935];
+    __I  uint32_t       resvd188[926];
   } XOR;
   struct {
     __IO uint32_t       CTRL;
@@ -1283,7 +1294,7 @@ typedef struct {
       __IO uint32_t     INSTR;
       __IO uint32_t     PINCTRL;
     } SM[4];
-    __IO uint32_t       RXF_PUTGET[4];
+    __IO uint32_t       RXF_PUTGET[4][4];
     __I  uint32_t       GPIOBASE;
     __IO uint32_t       INTR;
     __IO uint32_t       IRQ0_INTE;
@@ -1292,7 +1303,7 @@ typedef struct {
     __IO uint32_t       IRQ1_INTE;
     __IO uint32_t       IRQ1_INTF;
     __I  uint32_t       IRQ1_INTS;
-    __I  uint32_t       resvd164[935];
+    __I  uint32_t       resvd188[926];
   } SET;
   struct {
     __IO uint32_t       CTRL;
@@ -1316,7 +1327,7 @@ typedef struct {
       __IO uint32_t     INSTR;
       __IO uint32_t     PINCTRL;
     } SM[4];
-    __IO uint32_t       RXF_PUTGET[4];
+    __IO uint32_t       RXF_PUTGET[4][4];
     __I  uint32_t       GPIOBASE;
     __IO uint32_t       INTR;
     __IO uint32_t       IRQ0_INTE;
@@ -1325,7 +1336,7 @@ typedef struct {
     __IO uint32_t       IRQ1_INTE;
     __IO uint32_t       IRQ1_INTF;
     __I  uint32_t       IRQ1_INTS;
-    __I  uint32_t       resvd164[935];
+    __I  uint32_t       resvd188[926];
   } CLR;
 } PIO_TypeDef;
 
@@ -1435,6 +1446,9 @@ typedef struct {
 
 typedef struct {
   CLOCKS_CLK_TypeDef    CLK[10];
+  __IO uint32_t         DFTCLK_XOSC_CTRL;
+  __IO uint32_t         DFTCLK_ROSC_CTRL;
+  __IO uint32_t         DFTCLK_LPOSC_CTRL;
   CLOCKS_RESUS_TypeDef  RESUS;
   CLOCKS_FC0_TypeDef    FC0;
   __IO uint32_t         WAKE_EN0;
@@ -1447,9 +1461,12 @@ typedef struct {
   __IO uint32_t         INTE;
   __IO uint32_t         INTF;
   __I  uint32_t         INTS;
-  __I  uint32_t         resvdC8[974];
+  __I  uint32_t         resvdD4[971];
   struct {
     CLOCKS_CLK_TypeDef  CLK[10];
+    __IO uint32_t       DFTCLK_XOSC_CTRL;
+    __IO uint32_t       DFTCLK_ROSC_CTRL;
+    __IO uint32_t       DFTCLK_LPOSC_CTRL;
     CLOCKS_RESUS_TypeDef RESUS;
     CLOCKS_FC0_TypeDef  FC0;
     __IO uint32_t       WAKE_EN0;
@@ -1462,10 +1479,13 @@ typedef struct {
     __IO uint32_t       INTE;
     __IO uint32_t       INTF;
     __I  uint32_t       INTS;
-    __I  uint32_t       resvdC8[974];
+    __I  uint32_t       resvdD4[971];
   } XOR;
   struct {
     CLOCKS_CLK_TypeDef  CLK[10];
+    __IO uint32_t       DFTCLK_XOSC_CTRL;
+    __IO uint32_t       DFTCLK_ROSC_CTRL;
+    __IO uint32_t       DFTCLK_LPOSC_CTRL;
     CLOCKS_RESUS_TypeDef RESUS;
     CLOCKS_FC0_TypeDef  FC0;
     __IO uint32_t       WAKE_EN0;
@@ -1478,10 +1498,13 @@ typedef struct {
     __IO uint32_t       INTE;
     __IO uint32_t       INTF;
     __I  uint32_t       INTS;
-    __I  uint32_t       resvdC8[974];
+    __I  uint32_t       resvdD4[971];
   } SET;
   struct {
     CLOCKS_CLK_TypeDef  CLK[10];
+    __IO uint32_t       DFTCLK_XOSC_CTRL;
+    __IO uint32_t       DFTCLK_ROSC_CTRL;
+    __IO uint32_t       DFTCLK_LPOSC_CTRL;
     CLOCKS_RESUS_TypeDef RESUS;
     CLOCKS_FC0_TypeDef  FC0;
     __IO uint32_t       WAKE_EN0;
@@ -1494,7 +1517,7 @@ typedef struct {
     __IO uint32_t       INTE;
     __IO uint32_t       INTF;
     __I  uint32_t       INTS;
-    __I  uint32_t       resvdC8[974];
+    __I  uint32_t       resvdD4[971];
   } CLR;
 } CLOCKS_TypeDef;
 
