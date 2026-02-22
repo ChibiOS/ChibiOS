@@ -1691,7 +1691,7 @@ typedef struct {
 
 #define SPI_SSPCPSR_CPSDVSR_Pos           0U
 #define SPI_SSPCPSR_CPSDVSR_Msk           (255U << SPI_SSPCPSR_CPSDVSR_Pos)
-#define SPI_SSPCPSR_CPSDVSR(n)            ((n) << SPI_SSPCPSR_CPSDVSR_Msk)
+#define SPI_SSPCPSR_CPSDVSR(n)            ((n) << SPI_SSPCPSR_CPSDVSR_Pos)
 
 #define SPI_SSPIMSC_TXIM_Pos              3U
 #define SPI_SSPIMSC_TXIM_Msk              (1U << SPI_SSPIMSC_TXIM_Pos)
