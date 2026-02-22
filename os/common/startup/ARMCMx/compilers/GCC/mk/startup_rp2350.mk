@@ -13,6 +13,9 @@ STARTUPINC = $(CHIBIOS)/os/common/portability/GCC \
 
 STARTUPLD  = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/ld
 
+USE_EXCEPTIONS_STACKSIZE ?= 0x800
+USE_PROCESS_STACKSIZE    ?= 0x800
+
 # RP2350-specific defines required for generic ARMv8-M-ML port compatibility
 # - CORTEX_SIMPLIFIED_PRIORITY: Use PendSV instead of SVC for context switch
 # - CH_DBG_ENABLE_STACK_CHECK: Always save/restore PSPLIM during context switch

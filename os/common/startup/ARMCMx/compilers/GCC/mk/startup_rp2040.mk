@@ -13,6 +13,9 @@ STARTUPINC = $(CHIBIOS)/os/common/portability/GCC \
 
 STARTUPLD  = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/ld
 
+USE_EXCEPTIONS_STACKSIZE ?= 0x800
+USE_PROCESS_STACKSIZE    ?= 0x800
+
 DDEFS += -DPICO_RISCV=0 -DPICO_RP2350=0 -DPICO_RP2040=1
 
 # Shared variables
