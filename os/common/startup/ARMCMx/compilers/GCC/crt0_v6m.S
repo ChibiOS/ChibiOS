@@ -325,7 +325,7 @@ _crt0_entry:
 
 #endif
 
-#if CRT0_EXTRA_CORES_NUMBER > 0
+#if CRT0_EXTRA_CORES_NUMBER == 1
                 .align  2
                 .thumb_func
                 .global _crt0_c1_entry
