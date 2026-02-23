@@ -96,9 +96,8 @@ include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMv8-M-ML/compilers/GCC/mk/port.mk
 
 # Define linker script file here
-# For RAM execution (useful for debugging):
-#LDSCRIPT= $(STARTUPLD)/RP2350_RAM.ld
-# For flash (XIP) execution:
+# Use RP2350_RAM.ld for RAM execution (debugging only, code loaded via debugger)
+# Use RP2350_FLASH.ld for flash execution (persistent after power cycle)
 LDSCRIPT= $(STARTUPLD)/RP2350_FLASH.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
