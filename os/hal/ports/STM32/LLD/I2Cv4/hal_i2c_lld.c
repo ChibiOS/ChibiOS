@@ -67,6 +67,8 @@
   ((uint32_t)(I2C_ISR_TCR | I2C_ISR_TC | I2C_ISR_STOPF | I2C_ISR_NACKF |    \
               I2C_ISR_ADDR | I2C_ISR_RXNE | I2C_ISR_TXIS))
 
+#define I2C_MAX_XFR_BYTES   (I2C_CR2_NBYTES >> I2C_CR2_NBYTES_Pos)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -219,8 +221,8 @@ static void i2c_lld_setup_rx_transfer(I2CDriver *i2cp) {
 
   /* The unit can transfer 255 bytes maximum in a single operation.*/
   n = i2cp->rxbytes;
-  if (n > 255U) {
-    n = 255U;
+  if (n > (size_t)I2C_MAX_XFR_BYTES) {
+    n = (size_t)I2C_MAX_XFR_BYTES;
     reload = I2C_CR2_RELOAD;
   }
   else {
@@ -230,7 +232,7 @@ static void i2c_lld_setup_rx_transfer(I2CDriver *i2cp) {
   /* Configures the CR2 registers with both the calculated and static
      settings.*/
   dp->CR2 = (dp->CR2 & ~(I2C_CR2_NBYTES | I2C_CR2_RELOAD)) | i2cp->config->cr2 |
-            I2C_CR2_RD_WRN | (n << 16U) | reload;
+            I2C_CR2_RD_WRN | (n << I2C_CR2_NBYTES_Pos) | reload;
 }
 
 /**
@@ -247,8 +249,8 @@ static void i2c_lld_setup_tx_transfer(I2CDriver *i2cp) {
 
   /* The unit can transfer 255 bytes maximum in a single operation.*/
   n = i2cp->txbytes;
-  if (n > 255U) {
-    n = 255U;
+  if (n > (size_t)I2C_MAX_XFR_BYTES) {
+    n = (size_t)I2C_MAX_XFR_BYTES;
     reload = I2C_CR2_RELOAD;
   }
   else {
@@ -258,7 +260,7 @@ static void i2c_lld_setup_tx_transfer(I2CDriver *i2cp) {
   /* Configures the CR2 registers with both the calculated and static
      settings.*/
   dp->CR2 = (dp->CR2 & ~(I2C_CR2_NBYTES | I2C_CR2_RELOAD)) | i2cp->config->cr2 |
-            (n << 16U) | reload;
+            (n << I2C_CR2_NBYTES_Pos) | reload;
 }
 
 /**
@@ -447,9 +449,15 @@ static void i2c_lld_serve_events(I2CDriver *i2cp, uint32_t isr) {
   /* Partial transfer handling, restarting the transfer and returning.*/
   if ((isr & I2C_ISR_TCR) != 0U) {
     if (i2cp->state == I2C_ACTIVE_TX) {
+#if STM32_I2C_USE_DMA == TRUE
+      i2cp->txbytes -= (size_t)I2C_MAX_XFR_BYTES;
+#endif
       i2c_lld_setup_tx_transfer(i2cp);
     }
     else {
+#if STM32_I2C_USE_DMA == TRUE
+      i2cp->rxbytes -= (size_t)I2C_MAX_XFR_BYTES;
+#endif
       i2c_lld_setup_rx_transfer(i2cp);
     }
     return;
