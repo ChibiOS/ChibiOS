@@ -53,6 +53,7 @@
 #define PAL_RP_IOCTRL_INOVER_DRVLOW         (2U << 16)
 #define PAL_RP_IOCTRL_INOVER_DRVHIGH        (3U << 16)
 
+#if defined(RP2040)
 #define PAL_RP_IOCTRL_OEOVER_DRVPERI        (0U << 12)
 #define PAL_RP_IOCTRL_OEOVER_DRVINVPERI     (1U << 12)
 #define PAL_RP_IOCTRL_OEOVER_DISABLE        (2U << 12)
@@ -62,6 +63,19 @@
 #define PAL_RP_IOCTRL_OUTOVER_DRVINVPERI    (1U << 8)
 #define PAL_RP_IOCTRL_OUTOVER_DRVLOW        (2U << 8)
 #define PAL_RP_IOCTRL_OUTOVER_DRVHIGH       (3U << 8)
+#elif defined(RP2350)
+#define PAL_RP_IOCTRL_OEOVER_DRVPERI        (0U << 14)
+#define PAL_RP_IOCTRL_OEOVER_DRVINVPERI     (1U << 14)
+#define PAL_RP_IOCTRL_OEOVER_DISABLE        (2U << 14)
+#define PAL_RP_IOCTRL_OEOVER_ENABLE         (3U << 14)
+
+#define PAL_RP_IOCTRL_OUTOVER_DRVPERI       (0U << 12)
+#define PAL_RP_IOCTRL_OUTOVER_DRVINVPERI    (1U << 12)
+#define PAL_RP_IOCTRL_OUTOVER_DRVLOW        (2U << 12)
+#define PAL_RP_IOCTRL_OUTOVER_DRVHIGH       (3U << 12)
+#else
+#error "Unsupported RP chip: define RP2040 or RP2350"
+#endif
 
 #define PAL_RP_IOCTRL_FUNCSEL(n)            ((n) << 0)
 #define PAL_RP_IOCTRL_FUNCSEL_SPI           PAL_RP_IOCTRL_FUNCSEL(1U)
