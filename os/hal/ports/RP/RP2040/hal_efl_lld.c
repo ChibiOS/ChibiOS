@@ -540,37 +540,26 @@ RAMFUNC static void rp_flash_erase_sector_full(EFlashDriver *eflp,
 }
 
 /**
- * @brief   Complete program operation (runs entirely in RAM).
+ * @brief   Single-page program operation that runs entirely in RAM.
  * @note    This function MUST be in RAM. It handles the entire sequence
  *          from exit XIP to enter XIP so no flash code executes while
  *          XIP is disabled.
  *
  * @param[in] eflp      pointer to the EFlashDriver object
- * @param[in] offset    starting flash offset
- * @param[in] pp        pointer to data to program
- * @param[in] n         number of bytes to program
+ * @param[in] offset    flash offset (must not cross page boundary)
+ * @param[in] data      pointer to data in RAM
+ * @param[in] len       number of bytes to program
  */
-RAMFUNC static void rp_flash_program_full(EFlashDriver *eflp,
-                                          uint32_t offset,
-                                          const uint8_t *pp,
-                                          size_t n) {
+RAMFUNC static void rp_flash_program_page_full(EFlashDriver *eflp,
+                                               uint32_t offset,
+                                               const uint8_t *data,
+                                               size_t len) {
 
   /* Exit XIP mode. */
   rp_flash_exit_xip(eflp);
 
-  /* Program in page-sized chunks. */
-  while (n > 0U) {
-    /* Calculate bytes to program in this page. */
-    size_t page_offset = offset & RP_FLASH_PAGE_MASK;
-    size_t page_remaining = RP_FLASH_PAGE_SIZE - page_offset;
-    size_t chunk = (n < page_remaining) ? n : page_remaining;
-
-    rp_flash_program_page(eflp, offset, pp, chunk);
-
-    offset += chunk;
-    pp += chunk;
-    n -= chunk;
-  }
+  /* Program the page. */
+  rp_flash_program_page(eflp, offset, data, len);
 
   /* Re-enter XIP mode. */
   rp_flash_enter_xip(eflp);
@@ -714,14 +703,27 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
   /* FLASH_PGM state while the operation is performed. */
   devp->state = FLASH_PGM;
 
-  /* Lock system - interrupts could cause crash if they access flash. */
-  sts = osalSysGetStatusAndLockX();
+  /* Program in page-sized chunks, source data is copied into RAM */
+  while (n > 0U) {
+    uint8_t page_buf[RP_FLASH_PAGE_SIZE];
+    size_t page_offset = offset & RP_FLASH_PAGE_MASK;
+    size_t page_remaining = RP_FLASH_PAGE_SIZE - page_offset;
+    size_t chunk = (n < page_remaining) ? n : page_remaining;
 
-  /* Perform the entire program sequence in RAM. */
-  rp_flash_program_full(devp, offset, pp, n);
+    /* Copy to RAM while flash is still readable. */
+    memcpy(page_buf, pp, chunk);
 
-  /* Restore system state. */
-  osalSysRestoreStatusX(sts);
+    sts = osalSysGetStatusAndLockX();
+
+    /* Program the page. */
+    rp_flash_program_page_full(devp, offset, page_buf, chunk);
+
+    osalSysRestoreStatusX(sts);
+
+    offset += chunk;
+    pp += chunk;
+    n -= chunk;
+  }
 
   /* Ready state again. */
   devp->state = FLASH_READY;
