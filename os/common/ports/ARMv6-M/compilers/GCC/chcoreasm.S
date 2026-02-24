@@ -145,6 +145,9 @@ __port_exit_from_isr:
 #endif
                 str     r3, [r2, #0]
 #if CORTEX_ALTERNATE_SWITCH
+#if CH_CFG_SMP_MODE == TRUE
+                bl      __port_spinlock_release
+#endif
                 cpsie   i
 #endif
 1:              b       1b

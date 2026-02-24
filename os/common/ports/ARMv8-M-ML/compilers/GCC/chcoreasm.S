@@ -122,6 +122,9 @@ __port_thread_start:
 #if CH_DBG_STATISTICS
                 bl      __stats_stop_measure_crit_thd
 #endif
+#if CH_CFG_SMP_MODE == TRUE
+                bl      __port_spinlock_release
+#endif
 #if CORTEX_SIMPLIFIED_PRIORITY
                 cpsie   i
 #else
@@ -162,6 +165,9 @@ __port_exit_from_isr:
                 movt    r3, #:upper16:SCB_ICSR
                 mov     r2, ICSR_PENDSVSET
                 str     r2, [r3, #0]
+#if CH_CFG_SMP_MODE == TRUE
+                bl      __port_spinlock_release
+#endif
                 cpsie   i
 #else /* !CORTEX_SIMPLIFIED_PRIORITY */
                 svc     #0
