@@ -866,7 +866,7 @@ void __xsnor_bus_cmd_addr_dummy_receive(void *ip, uint32_t cmd,
  */
 flash_error_t xsnorStart(void *ip, const xsnor_config_t *config) {
   hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
-  flash_error_t err;
+  flash_error_t err = FLASH_NO_ERROR;
 
   osalDbgCheck((self != NULL) && (config != NULL));
   osalDbgAssert(self->state != FLASH_UNINIT, "invalid state");

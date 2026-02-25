@@ -879,7 +879,7 @@ else {
               <retval value="FLASH_ERROR_HW_FAILURE">If initialization failed.</retval>
               <api />
               <implementation><![CDATA[
-flash_error_t err;
+flash_error_t err = FLASH_NO_ERROR;
 
 osalDbgCheck((self != NULL) && (config != NULL));
 osalDbgAssert(self->state != FLASH_UNINIT, "invalid state");
