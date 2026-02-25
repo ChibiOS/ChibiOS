@@ -112,6 +112,7 @@
 
 #define STM32_IRQ_TIM1_UP_PRIORITY          1
 #define STM32_IRQ_TIM1_CC_PRIORITY          1
+#define STM32_IRQ_TIM2_PRIORITY             1
 #define STM32_IRQ_TIM3_PRIORITY             1
 #define STM32_IRQ_TIM14_PRIORITY            1
 #define STM32_IRQ_TIM16_PRIORITY            1
