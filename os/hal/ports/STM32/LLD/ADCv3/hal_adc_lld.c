@@ -774,13 +774,16 @@ void adc_lld_start(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC5
     if (&ADCD5 == adcp) {
+      osalDbgAssert(STM32_ADC5_CLOCK <= STM32_ADCCLK_MAX,
+                    "invalid clock frequency");
+
       adcp->dmastp = dmaStreamAllocI(STM32_ADC_ADC5_DMA_STREAM,
                                      STM32_ADC_ADC5_DMA_IRQ_PRIORITY,
                                      (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                                      (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
-      clkmask |= (1 << 3);
+      clkmask |= (1 << 4);
 #if defined(STM32G4XX)
       rccEnableADC345(true);
 #endif
@@ -864,7 +867,7 @@ void adc_lld_stop(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC5
     if (&ADCD5 == adcp) {
-      clkmask &= ~(1 << 3);
+      clkmask &= ~(1 << 4);
     }
 #endif
 
@@ -902,7 +905,7 @@ void adc_lld_stop(ADCDriver *adcp) {
 #endif
 
 #if STM32_HAS_ADC3 || STM32_HAS_ADC4 || STM32_HAS_ADC5
-    if ((clkmask & 0xC) == 0) {
+    if ((clkmask & 0x1C) == 0) {
       rccDisableADC345();
     }
 #endif
