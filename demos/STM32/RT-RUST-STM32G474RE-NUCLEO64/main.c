@@ -54,7 +54,7 @@ static void cmd_write(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   (void)envp;
 
   if (argc != 1) {
-    xshellUsage(stream, "write");
+    xshellUsage(xshp, "write");
     return;
   }
 
