@@ -18,7 +18,7 @@
 
 /**
  * @file    ARMv6-M/smp/rp2/chcoresmp.h
- * @brief   ARMv6-M-RP2 SMP macros and structures.
+ * @brief   ARMv6-M RP2 SMP macros and structures.
  *
  * @addtogroup ARMV6M_CORE_SMP_RP2
  * @{
