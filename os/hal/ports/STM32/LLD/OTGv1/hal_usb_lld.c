@@ -422,7 +422,8 @@ static void otg_epin_handler(USBDriver *usbp, usbep_t ep) {
   otgp->ie[ep].DIEPINT = epint;
 
   if (epint & DIEPINT_TOC) {
-    /* Timeouts not handled yet, not sure how to handle.*/
+    /* Timeout condition is intentionally masked out in DIEPMSK because
+       it does not represent transfer completion/failure for this driver.*/
   }
   if ((epint & DIEPINT_XFRC) && (otgp->DIEPMSK & DIEPMSK_XFRCM)) {
     /* Transmit transfer complete.*/
@@ -1009,7 +1010,7 @@ void usb_lld_reset(USBDriver *usbp) {
 
   /* Enables also EP-related interrupt sources.*/
   otgp->GINTMSK  |= GINTMSK_RXFLVLM | GINTMSK_OEPM  | GINTMSK_IEPM;
-  otgp->DIEPMSK   = DIEPMSK_TOCM    | DIEPMSK_XFRCM;
+  otgp->DIEPMSK   = /*DIEPMSK_TOCM    |*/ DIEPMSK_XFRCM;
   otgp->DOEPMSK   = DOEPMSK_STUPM   | DOEPMSK_XFRCM;
 
   /* EP0 initialization, it is a special case.*/
