@@ -303,30 +303,25 @@ SVC_Handler:
                 PORT_STORE_FLOAT_CONTEXT
                 PORT_STORE_MPU_CONTEXT
 
-#if CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS
+#if CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS || CH_CFG_SMP_MODE
                 ldr     r3, [r0, #4]        /* BASEPRI offset */
                 cmp     r3, #0              /* CORTEX_BASEPRI_DISABLED */
                 bne     1f
                 mov     r4, r0
                 /* Returning to a preempted thread, performing a logical
-                   "unlock" and handling statistics.*/
+                   "unlock", handling statistics and releasing spinlock.*/
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      __dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
                 bl      __stats_stop_measure_crit_thd
 #endif
+#if CH_CFG_SMP_MODE == TRUE
+                bl      __port_spinlock_release
+#endif
                 mov     r0, r4
 1:
-#endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS */
-
-#if CH_CFG_SMP_MODE == TRUE
-                ldr     r3, [r0, #4]        /* BASEPRI offset */
-                cmp     r3, #CORTEX_BASEPRI_DISABLED
-                bne     2f
-                bl      __port_spinlock_release
-2:
-#endif
+#endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS || CH_CFG_SMP_MODE */
 
                 /* Context load for new thread through R0.*/
                 PORT_LOAD_MPU_CONTEXT
@@ -366,30 +361,25 @@ PendSV_Handler:
                 /* Context load for new thread through R0.*/
                 adds    r0, #CONTEXT_OFFSET
 
-#if CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS
+#if CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS || CH_CFG_SMP_MODE
                 ldr     r3, [r0, #4]        /* BASEPRI offset */
-                cmp     r3, #CORTEX_BASEPRI_DISABLED
+                cmp     r3, #0              /* CORTEX_BASEPRI_DISABLED */
                 bne     1f
                 mov     r4, r0
                 /* Returning to a preempted thread, performing a logical
-                   "unlock" and handling statistics.*/
+                   "unlock", handling statistics and releasing spinlock.*/
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      __dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
                 bl      __stats_stop_measure_crit_thd
 #endif
+#if CH_CFG_SMP_MODE == TRUE
+                bl      __port_spinlock_release
+#endif
                 mov     r0, r4
 1:
-#endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS */
-
-#if CH_CFG_SMP_MODE == TRUE
-                ldr     r3, [r0, #4]        /* BASEPRI offset */
-                cmp     r3, #CORTEX_BASEPRI_DISABLED
-                bne     2f
-                bl      __port_spinlock_release
-2:
-#endif
+#endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS || CH_CFG_SMP_MODE */
 
                 PORT_LOAD_MPU_CONTEXT
                 PORT_LOAD_INTEGER_CONTEXT

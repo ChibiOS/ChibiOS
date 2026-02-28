@@ -75,6 +75,9 @@ ICSR_PENDSVSET  SET 0x10000000
                 EXTERN  __dbg_check_unlock
                 EXTERN  __dbg_check_lock
 #endif
+#if CH_CFG_SMP_MODE == TRUE
+                EXTERN  __port_spinlock_release
+#endif
 
                 THUMB
 
@@ -119,6 +122,9 @@ __port_thread_start:
 #if CH_DBG_STATISTICS
                 bl      __stats_stop_measure_crit_thd
 #endif
+#if CH_CFG_SMP_MODE == TRUE
+                bl      __port_spinlock_release
+#endif
 #if CORTEX_SIMPLIFIED_PRIORITY
                 cpsie   i
 #else
@@ -157,6 +163,9 @@ __port_exit_from_isr:
                 movt    r3, #HWRD SCB_ICSR
                 mov	r2, #ICSR_PENDSVSET
                 str	r2, [r3]
+#if CH_CFG_SMP_MODE == TRUE
+                bl      __port_spinlock_release
+#endif
                 cpsie   i
 #else
                 svc     #0

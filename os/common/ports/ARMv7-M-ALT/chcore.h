@@ -338,6 +338,23 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* Inclusion of SMP support, if enabled.*/
+#if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
+#if !defined(_FROM_ASM_)
+#if !defined(__CHIBIOS_RT__)
+#error "SMP is supported in RT only"
+#endif
+
+#include "chcoresmp.h"
+
+#if !defined(PORT_CORES_NUMBER)
+#error "PORT_CORES_NUMBER not defined in chcoresmp.h"
+#endif
+
+#endif
+#else /* CH_CFG_SMP_MODE != TRUE */
+#endif /* CH_CFG_SMP_MODE != TRUE */
+
 #if (PORT_SWITCHED_REGIONS_NUMBER < 0) || (PORT_SWITCHED_REGIONS_NUMBER > 4)
   #error "invalid PORT_SWITCHED_REGIONS_NUMBER value"
 #endif
@@ -1005,6 +1022,9 @@ __STATIC_FORCEINLINE void port_lock(void) {
   __enable_irq();
 #endif
 #endif
+#if CH_CFG_SMP_MODE == TRUE
+  port_spinlock_take();
+#endif
 }
 
 /**
@@ -1014,6 +1034,9 @@ __STATIC_FORCEINLINE void port_lock(void) {
  */
 __STATIC_FORCEINLINE void port_unlock(void) {
 
+#if CH_CFG_SMP_MODE == TRUE
+  port_spinlock_release();
+#endif
   __set_BASEPRI(CORTEX_BASEPRI_DISABLED);
 }
 
@@ -1106,7 +1129,11 @@ __STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
 #if !defined(_FROM_ASM_)
 
 #if CH_CFG_ST_TIMEDELTA > 0
+#if (CH_CFG_SMP_MODE == TRUE) && (PORT_CORES_NUMBER > 1)
+#include "chcoresmp_timer.h"
+#else
 #include "chcore_timer.h"
+#endif
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
 #endif /* !defined(_FROM_ASM_) */

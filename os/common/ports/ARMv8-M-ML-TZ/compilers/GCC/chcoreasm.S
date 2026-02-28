@@ -260,7 +260,7 @@ __port_thread_start:
 #if CH_DBG_STATISTICS
                 bl      _stats_stop_measure_crit_thd
 #endif
-                movs    r3, #CORTEX_BASEPRI_DISABLED
+                movs    r3, #0              /* CORTEX_BASEPRI_DISABLED */
                 msr     BASEPRI, r3
                 mov     r0, r5
                 blx     r4

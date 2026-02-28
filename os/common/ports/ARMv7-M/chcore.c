@@ -160,6 +160,10 @@ void port_init(os_instance_t *oip) {
 #endif
   DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
+#if defined(port_smp_init)
+  port_smp_init(oip);
+#endif
+
   /* Initialization of the system vectors used by the port.*/
 #if CORTEX_SIMPLIFIED_PRIORITY == FALSE
   NVIC_SetPriority(SVCall_IRQn, CORTEX_PRIORITY_SVCALL);

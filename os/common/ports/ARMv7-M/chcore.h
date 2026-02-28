@@ -341,6 +341,23 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* Inclusion of SMP support, if enabled.*/
+#if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
+#if !defined(_FROM_ASM_)
+#if !defined(__CHIBIOS_RT__)
+#error "SMP is supported in RT only"
+#endif
+
+#include "chcoresmp.h"
+
+#if !defined(PORT_CORES_NUMBER)
+#error "PORT_CORES_NUMBER not defined in chcoresmp.h"
+#endif
+
+#endif
+#else /* CH_CFG_SMP_MODE != TRUE */
+#endif /* CH_CFG_SMP_MODE != TRUE */
+
 #if (CORTEX_FAST_PRIORITIES < 0U) ||                                         \
     (CORTEX_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 4U))
 #error "invalid CORTEX_FAST_PRIORITIES value specified"
@@ -853,6 +870,9 @@ __STATIC_FORCEINLINE void port_lock(void) {
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
   __disable_irq();
 #endif /* CORTEX_SIMPLIFIED_PRIORITY */
+#if CH_CFG_SMP_MODE == TRUE
+  port_spinlock_take();
+#endif
 }
 
 /**
@@ -862,6 +882,9 @@ __STATIC_FORCEINLINE void port_lock(void) {
  */
 __STATIC_FORCEINLINE void port_unlock(void) {
 
+#if CH_CFG_SMP_MODE == TRUE
+  port_spinlock_release();
+#endif
 #if CORTEX_SIMPLIFIED_PRIORITY == FALSE
   __set_BASEPRI(CORTEX_BASEPRI_DISABLED);
 #else /* CORTEX_SIMPLIFIED_PRIORITY */
@@ -964,7 +987,11 @@ __STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
 #if !defined(_FROM_ASM_)
 
 #if CH_CFG_ST_TIMEDELTA > 0
+#if (CH_CFG_SMP_MODE == TRUE) && (PORT_CORES_NUMBER > 1)
+#include "chcoresmp_timer.h"
+#else
 #include "chcore_timer.h"
+#endif
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
 #endif /* !defined(_FROM_ASM_) */
