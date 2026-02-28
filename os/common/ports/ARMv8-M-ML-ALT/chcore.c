@@ -189,6 +189,10 @@ void port_init(os_instance_t *oip) {
   CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
   DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
+#if defined(port_smp_init)
+  port_smp_init(oip);
+#endif
+
   /* Initialization of the system vectors used by the port.*/
   NVIC_SetPriority(SVCall_IRQn, CORTEX_PRIORITY_SVCALL);
   NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);

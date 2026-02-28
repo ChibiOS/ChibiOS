@@ -320,6 +320,14 @@ SVC_Handler:
 1:
 #endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS */
 
+#if CH_CFG_SMP_MODE == TRUE
+                ldr     r3, [r0, #4]        /* BASEPRI offset */
+                cmp     r3, #CORTEX_BASEPRI_DISABLED
+                bne     2f
+                bl      __port_spinlock_release
+2:
+#endif
+
                 /* Context load for new thread through R0.*/
                 PORT_LOAD_MPU_CONTEXT
                 PORT_LOAD_INTEGER_CONTEXT
@@ -375,6 +383,14 @@ PendSV_Handler:
 1:
 #endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS */
 
+#if CH_CFG_SMP_MODE == TRUE
+                ldr     r3, [r0, #4]        /* BASEPRI offset */
+                cmp     r3, #CORTEX_BASEPRI_DISABLED
+                bne     2f
+                bl      __port_spinlock_release
+2:
+#endif
+
                 PORT_LOAD_MPU_CONTEXT
                 PORT_LOAD_INTEGER_CONTEXT
                 PORT_LOAD_SPECIAL_CONTEXT
@@ -404,6 +420,9 @@ __port_thread_start:
 #endif
 #if CH_DBG_STATISTICS
                 bl      __stats_stop_measure_crit_thd
+#endif
+#if CH_CFG_SMP_MODE == TRUE
+                bl      __port_spinlock_release
 #endif
                 movs    r3, #0              /* CORTEX_BASEPRI_DISABLED */
                 msr     BASEPRI, r3
