@@ -187,16 +187,26 @@ static void otg_disable_ep(USBDriver *usbp) {
 
 static void otg_enable_ep(USBDriver *usbp) {
   stm32_otg_t *otgp = usbp->otg;
+  uint32_t daintmsk = 0U;
   unsigned i;
 
+  /* Rebuild endpoint interrupt mask from the active endpoint
+     configurations, this avoids dereferencing not-yet initialized
+     endpoint entries during early SOF/WKUP handling. */
   for (i = 0; i <= usbp->otgparams->num_endpoints; i++) {
-    if (usbp->epc[i]->out_state != NULL) {
-      otgp->DAINTMSK |= DAINTMSK_OEPM(i);
+    const USBEndpointConfig *epcp = usbp->epc[i];
+
+    if (epcp == NULL) {
+      continue;
     }
-    if (usbp->epc[i]->in_state != NULL) {
-      otgp->DAINTMSK |= DAINTMSK_IEPM(i);
+    if (epcp->out_state != NULL) {
+      daintmsk |= DAINTMSK_OEPM(i);
+    }
+    if (epcp->in_state != NULL) {
+      daintmsk |= DAINTMSK_IEPM(i);
     }
   }
+  otgp->DAINTMSK = daintmsk;
 }
 
 static void otg_rxfifo_flush(USBDriver *usbp) {
