@@ -77,6 +77,8 @@
 /* WDG attributes.*/
 #define RP_HAS_WDG                          TRUE
 #define RP_WDG_STORAGE_SIZE                 32U
+#define RP_PSM_WDSEL_ALL_BITS               0x1FFFFU
+#define RP_WDG_HAS_E1_ERRATA                TRUE
 
 /* USB attributes.*/
 #define RP_HAS_USB                          TRUE
@@ -84,6 +86,22 @@
 
 /* Flash attributes.*/
 #define RP_HAS_FLASH                        TRUE
+
+/* PWM attributes.*/
+#define RP_HAS_PWM                          TRUE
+#define RP_PWM_NUM_SLICES                   8
+#define RP_HAS_PWM0                         TRUE
+#define RP_HAS_PWM1                         TRUE
+#define RP_HAS_PWM2                         TRUE
+#define RP_HAS_PWM3                         TRUE
+#define RP_HAS_PWM4                         TRUE
+#define RP_HAS_PWM5                         TRUE
+#define RP_HAS_PWM6                         TRUE
+#define RP_HAS_PWM7                         TRUE
+#define RP_HAS_PWM8                         FALSE
+#define RP_HAS_PWM9                         FALSE
+#define RP_HAS_PWM10                        FALSE
+#define RP_HAS_PWM11                        FALSE
 
 /* ADC attributes.*/
 #define RP_HAS_ADC                          TRUE

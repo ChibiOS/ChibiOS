@@ -78,6 +78,8 @@
 /* WDG attributes.*/
 #define RP_HAS_WDG                          TRUE
 #define RP_WDG_STORAGE_SIZE                 32U
+#define RP_PSM_WDSEL_ALL_BITS               0x1FFFFFFU
+#define RP_WDG_HAS_E1_ERRATA                FALSE
 
 /* USB attributes.*/
 #define RP_HAS_USB                          TRUE
@@ -90,6 +92,22 @@
 #define RP_HAS_TRNG                         TRUE
 #define RP_HAS_SHA256                       TRUE
 #define RP_HAS_OTP                          TRUE
+
+/* PWM attributes.*/
+#define RP_HAS_PWM                          TRUE
+#define RP_PWM_NUM_SLICES                   12
+#define RP_HAS_PWM0                         TRUE
+#define RP_HAS_PWM1                         TRUE
+#define RP_HAS_PWM2                         TRUE
+#define RP_HAS_PWM3                         TRUE
+#define RP_HAS_PWM4                         TRUE
+#define RP_HAS_PWM5                         TRUE
+#define RP_HAS_PWM6                         TRUE
+#define RP_HAS_PWM7                         TRUE
+#define RP_HAS_PWM8                         TRUE
+#define RP_HAS_PWM9                         TRUE
+#define RP_HAS_PWM10                        TRUE
+#define RP_HAS_PWM11                        TRUE
 
 /* ADC attributes.
    Note: RP2350A (QFN-60) has 5 channels (4 external + temp on ch4)

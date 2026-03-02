@@ -55,6 +55,14 @@
 /** @} */
 
 /**
+ * @name    GPIO IOCTRL register field positions
+ * @{
+ */
+#define RP_GPIO_IOCTRL_OEOVER_Pos           12
+#define RP_GPIO_IOCTRL_OUTOVER_Pos          8
+/** @} */
+
+/**
  * @brief   Dynamic clock supported.
  */
 #define HAL_LLD_USE_CLOCK_MANAGEMENT
