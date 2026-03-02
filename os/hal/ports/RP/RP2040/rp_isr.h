@@ -41,7 +41,7 @@
 #define RP_TIMER0_IRQ3_HANDLER              Vector4C
 
 /* PWM interrupts */
-#define RP_PWM_IRQ_WRAP_HANDLER             Vector50
+#define RP_PWM_IRQ_WRAP_0_HANDLER           Vector50
 
 /* DMA interrupts */
 #define RP_DMA_IRQ_0_HANDLER                Vector6C
@@ -89,7 +89,7 @@
 #define RP_TIMER0_IRQ1_NUMBER               1
 #define RP_TIMER0_IRQ2_NUMBER               2
 #define RP_TIMER0_IRQ3_NUMBER               3
-#define RP_PWM_IRQ_WRAP_NUMBER              4
+#define RP_PWM_IRQ_WRAP_0_NUMBER            4
 #define RP_USBCTRL_IRQ_NUMBER               5
 #define RP_XIP_IRQ_NUMBER                   6
 #define RP_PIO0_IRQ_0_NUMBER                7
