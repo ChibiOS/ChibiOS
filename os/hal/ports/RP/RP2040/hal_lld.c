@@ -105,6 +105,11 @@ void hal_lld_init(void) {
   dmaInit();
 #endif
 
+  /* Bind the system timer IRQ to this core for tickless mode.*/
+#if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
+  stBind();
+#endif
+
 #if RP_CORE1_START == TRUE
   start_core1();
 #endif
