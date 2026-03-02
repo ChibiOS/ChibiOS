@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -Og -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -93,17 +93,24 @@ include $(CHIBIOS)/os/hal/boards/RP_PICO2_RP2350/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/common/ports/ARMv8-M-ML/compilers/GCC/mk/port.mk
+include $(CHIBIOS)/os/common/ports/ARMv8-M-ML/compilers/GCC/mk/port_rp2.mk
+# Auto-build files in ./source recursively.
+include $(CHIBIOS)/tools/mk/autobuild.mk
+# Other files (optional).
+include $(CHIBIOS)/os/test/test.mk
+include $(CHIBIOS)/test/rt/rt_test.mk
+include $(CHIBIOS)/test/oslib/oslib_test.mk
+include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+include $(CHIBIOS)/os/various/shell/shell.mk
 
 # Define linker script file here
-# Use RP2350_RAM.ld for RAM execution (debugging only, code loaded via debugger)
-# Use RP2350_FLASH.ld for flash execution (persistent after power cycle)
 LDSCRIPT= $(STARTUPLD)/RP2350_FLASH.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = $(ALLCSRC) \
-       main.c
+       $(TESTSRC) \
+       main.c c1_main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -116,7 +123,7 @@ ASMSRC = $(ALLASMSRC)
 ASMXSRC = $(ALLXASMSRC)
 
 # Inclusion directories.
-INCDIR = $(CONFDIR) $(ALLINC)
+INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC)
 
 # Define C warning options here.
 CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
@@ -133,12 +140,10 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-# Single-core demo: disable core 1 startup code
-UDEFS = -DCRT0_VTOR_INIT=1 -DNDEBUG
+UDEFS = -DCRT0_VTOR_INIT=1 -DCRT0_EXTRA_CORES_NUMBER=1 -DNDEBUG
 
 # Define ASM defines here
-# Single-core demo: disable core 1 startup code (CRT0_EXTRA_CORES_NUMBER=0)
-UADEFS = -DCRT0_VTOR_INIT=1 -DCRT0_EXTRA_CORES_NUMBER=0
+UADEFS = -DCRT0_VTOR_INIT=1 -DCRT0_EXTRA_CORES_NUMBER=1
 
 # List all user directories here
 UINCDIR =

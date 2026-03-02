@@ -33,7 +33,7 @@
  * HAL driver system settings.
  */
 #define RP_NO_INIT                          FALSE
-#define RP_CORE1_START                      FALSE
+#define RP_CORE1_START                      TRUE
 #define RP_CORE1_VECTORS_TABLE              _vectors
 #define RP_CORE1_ENTRY_POINT                _crt0_c1_entry
 #define RP_CORE1_STACK_END                  __c1_main_stack_end__
@@ -55,7 +55,7 @@
  * SIO driver system settings.
  */
 #define RP_SIO_USE_UART0                    TRUE
-#define RP_SIO_USE_UART1                    FALSE
+#define RP_SIO_USE_UART1                    TRUE
 
 /*
  * SPI driver system settings.
