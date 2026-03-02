@@ -28,20 +28,6 @@
 #define RP_USB_H
 
 /*===========================================================================*/
-/* Platform detection and configuration.                                     */
-/*===========================================================================*/
-
-#if defined(RP2040)
-#define RP_USBCTRL_IRQ_NUMBER           5
-#define RP_USBCTRL_IRQ_HANDLER          Vector54
-#elif defined(RP2350)
-#define RP_USBCTRL_IRQ_NUMBER           14
-#define RP_USBCTRL_IRQ_HANDLER          Vector78
-#else
-#error "Unknown RP platform for USB driver"
-#endif
-
-/*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
 

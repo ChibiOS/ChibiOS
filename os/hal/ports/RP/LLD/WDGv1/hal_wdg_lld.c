@@ -30,15 +30,6 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-/**
- * @brief   Mask of all valid bits for watchdog reset
- */
-#if defined(RP2040)
-#define PSM_WDSEL_ALL_BITS              0x1FFFFU
-#else /* RP2350 */
-#define PSM_WDSEL_ALL_BITS              0x1FFFFFFU
-#endif
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -64,8 +55,8 @@ static void set_wdg_counter(WDGDriver *wdgp) {
   uint32_t time = wdgp->config->rlr;
   time = ((time == 0U) ? 50U : time) * 1000U;
 
-#if defined(RP2040)
-  /* RP2040-E1 Errata: Watchdog counter decrements on both clock edges */
+#if RP_WDG_HAS_E1_ERRATA
+  /* RP2040-E1 Errata: Watchdog counter decrements on both clock edges. */
   time = time * 2U;
 #endif
 
@@ -114,7 +105,7 @@ void wdg_lld_start(WDGDriver *wdgp) {
   set_wdg_counter(wdgp);
 
   /* When watchdog fires, reset everything except ROSC and XOSC. */
-  PSM->WDSEL = PSM_WDSEL_ALL_BITS & ~(PSM_ANY_ROSC | PSM_ANY_XOSC);
+  PSM->WDSEL = RP_PSM_WDSEL_ALL_BITS & ~(PSM_ANY_ROSC | PSM_ANY_XOSC);
 
   /* Set control bits and enable WDG.*/
   wdgp->wdg->CTRL = WATCHDOG_CTRL_PAUSE_DBG0  |
