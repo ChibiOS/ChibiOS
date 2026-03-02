@@ -365,9 +365,9 @@ static void usb_serve_endpoint(USBDriver *usbp, usbep_t ep, bool is_in) {
 
     oesp->rxpkts -= 1;
 
-    /* Short packet or all packetes have been received. */
+    /* Short packet or all packets have been received. */
     if (oesp->rxpkts == 0 || n < epcp->out_maxsize) {
-      /* Transifer complete */
+      /* Transfer complete */
       _usb_isr_invoke_out_cb(usbp, ep);
     } else {
       /* Receive remained data */
@@ -522,7 +522,7 @@ void usb_lld_start(USBDriver *usbp) {
       hal_lld_peripheral_reset(RESETS_ALLREG_USBCTRL);
       hal_lld_peripheral_unreset(RESETS_ALLREG_USBCTRL);
 
-      /* Clear any previos state in dpram and hw regs */
+      /* Clear any previous state in dpram and hw regs */
       memset(USB, 0, sizeof(*USB));
       memset(USB_DPSRAM, 0, sizeof(*USB_DPSRAM));
 
