@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_i2c_lld.h
- * @brief   RP2040 I2C subsystem low level driver header.
+ * @file    I2Cv1/hal_i2c_lld.h
+ * @brief   RP I2C subsystem low level driver header.
  *
  * @addtogroup I2C
  * @{
@@ -36,22 +36,81 @@
 /*===========================================================================*/
 
 /**
- * @name    PLATFORM configuration options
+ * @name    RP configuration options
  * @{
  */
+
 /**
- * @brief   I2C1 driver enable switch.
- * @details If set to @p TRUE the support for I2C1 is included.
+ * @brief   I2C timeout on busy condition in milliseconds.
+ */
+#if !defined(RP_I2C_BUSY_TIMEOUT) || defined(__DOXYGEN__)
+#define RP_I2C_BUSY_TIMEOUT              50
+#endif
+
+/**
+ * @brief   I2C 10-bit address mode switch.
+ * @details If set to @p TRUE 10-bit address mode is enabled.
  * @note    The default is @p FALSE.
  */
-#if !defined(PLATFORM_I2C_USE_I2C1) || defined(__DOXYGEN__)
-#define PLATFORM_I2C_USE_I2C1                  FALSE
+#if !defined(RP_I2C_ADDRESS_MODE_10BIT) || defined(__DOXYGEN__)
+#define RP_I2C_ADDRESS_MODE_10BIT        FALSE
 #endif
+
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/* Registry checks for robustness. */
+#if !defined(RP_HAS_I2C0)
+#error "RP_HAS_I2C0 not defined in registry"
+#endif
+
+#if !defined(RP_HAS_I2C1)
+#error "RP_HAS_I2C1 not defined in registry"
+#endif
+
+/* Mcuconf.h checks. */
+#if !defined(RP_I2C_USE_I2C0)
+#error "RP_I2C_USE_I2C0 not defined in mcuconf.h"
+#endif
+
+#if !defined(RP_I2C_USE_I2C1)
+#error "RP_I2C_USE_I2C1 not defined in mcuconf.h"
+#endif
+
+#if !defined(RP_IRQ_I2C0_PRIORITY)
+#error "RP_IRQ_I2C0_PRIORITY not defined in mcuconf.h"
+#endif
+
+#if !defined(RP_IRQ_I2C1_PRIORITY)
+#error "RP_IRQ_I2C1_PRIORITY not defined in mcuconf.h"
+#endif
+
+/* Device selection checks. */
+#if RP_I2C_USE_I2C0 && !RP_HAS_I2C0
+#error "I2C0 not present in the selected device"
+#endif
+
+#if RP_I2C_USE_I2C1 && !RP_HAS_I2C1
+#error "I2C1 not present in the selected device"
+#endif
+
+#if !RP_I2C_USE_I2C0 && !RP_I2C_USE_I2C1
+#error "I2C driver activated but no I2C peripheral assigned"
+#endif
+
+/* IRQ priority checks. */
+#if RP_I2C_USE_I2C0 &&                                                     \
+    !OSAL_IRQ_IS_VALID_PRIORITY(RP_IRQ_I2C0_PRIORITY)
+#error "Invalid IRQ priority assigned to I2C0"
+#endif
+
+#if RP_I2C_USE_I2C1 &&                                                     \
+    !OSAL_IRQ_IS_VALID_PRIORITY(RP_IRQ_I2C1_PRIORITY)
+#error "Invalid IRQ priority assigned to I2C1"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -68,29 +127,24 @@ typedef uint16_t i2caddr_t;
 typedef uint32_t i2cflags_t;
 
 /**
- * @brief   I2C driver configuration structure.
+ * @brief   Type of I2C driver configuration structure.
  * @note    Implementations may extend this structure to contain more,
  *          architecture dependent, fields.
  */
-struct hal_i2c_config {
-  /* End of the mandatory fields.*/
-  uint32_t                  dummy;
-};
-
-/**
- * @brief   Type of a structure representing an I2C configuration.
- */
-typedef struct hal_i2c_config I2CConfig;
+typedef struct {
+  /* Baudrate setting. */
+  uint32_t                  baudrate;
+} I2CConfig;
 
 /**
  * @brief   Type of a structure representing an I2C driver.
  */
-typedef struct hal_i2c_driver I2CDriver;
+typedef struct I2CDriver I2CDriver;
 
 /**
  * @brief   Structure representing an I2C driver.
  */
-struct hal_i2c_driver {
+struct I2CDriver {
   /**
    * @brief   Driver state.
    */
@@ -110,6 +164,34 @@ struct hal_i2c_driver {
   I2C_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
+  /**
+   * @brief     Pointer to the I2Cx registers block.
+   */
+  I2C_TypeDef               *i2c;
+  /**
+   * @brief   Thread waiting for I/O completion.
+   */
+  thread_reference_t        thread;
+  /**
+   * @brief     Number of bytes in TX phase.
+   */
+  size_t                    txbytes;
+  /**
+   * @brief     Number of bytes in RX phase.
+   */
+  size_t                    rxbytes;
+  /**
+   * @brief     Send restart on next transmission.
+   */
+  bool                      send_restart;
+  /**
+   * @brief     Buffer for TX.
+   */
+  const uint8_t             *txptr;
+  /**
+   * @brief     Buffer for RX.
+   */
+  uint8_t                   *rxptr;
 };
 
 /*===========================================================================*/
@@ -129,7 +211,11 @@ struct hal_i2c_driver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if (PLATFORM_I2C_USE_I2C1 == TRUE) && !defined(__DOXYGEN__)
+#if (RP_I2C_USE_I2C0 == TRUE) && !defined(__DOXYGEN__)
+extern I2CDriver I2CD0;
+#endif
+
+#if (RP_I2C_USE_I2C1 == TRUE) && !defined(__DOXYGEN__)
 extern I2CDriver I2CD1;
 #endif
 
