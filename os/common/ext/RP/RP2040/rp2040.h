@@ -927,9 +927,18 @@ typedef struct {
   } CH[8];
   __IO uint32_t         EN;
   __IO uint32_t         INTR;
-  __IO uint32_t         INTE;
-  __IO uint32_t         INTF;
-  __I  uint32_t         INTS;
+  union {
+    __IO uint32_t       INTE;
+    __IO uint32_t       IRQ0_INTE;
+  };
+  union {
+    __IO uint32_t       INTF;
+    __IO uint32_t       IRQ0_INTF;
+  };
+  union {
+    __I  uint32_t       INTS;
+    __I  uint32_t       IRQ0_INTS;
+  };
   __I  uint32_t         resvdpwm[979];
   struct {
     struct {
@@ -941,9 +950,18 @@ typedef struct {
     } CH[8];
     __IO uint32_t       EN;
     __IO uint32_t       INTR;
-    __IO uint32_t       INTE;
-    __IO uint32_t       INTF;
-    __I  uint32_t       INTS;
+    union {
+      __IO uint32_t     INTE;
+      __IO uint32_t     IRQ0_INTE;
+    };
+    union {
+      __IO uint32_t     INTF;
+      __IO uint32_t     IRQ0_INTF;
+    };
+    union {
+      __I  uint32_t     INTS;
+      __I  uint32_t     IRQ0_INTS;
+    };
     __I  uint32_t       resvdpwm[979];
   } XOR;
   struct {
@@ -956,9 +974,18 @@ typedef struct {
     } CH[8];
     __IO uint32_t       EN;
     __IO uint32_t       INTR;
-    __IO uint32_t       INTE;
-    __IO uint32_t       INTF;
-    __I  uint32_t       INTS;
+    union {
+      __IO uint32_t     INTE;
+      __IO uint32_t     IRQ0_INTE;
+    };
+    union {
+      __IO uint32_t     INTF;
+      __IO uint32_t     IRQ0_INTF;
+    };
+    union {
+      __I  uint32_t     INTS;
+      __I  uint32_t     IRQ0_INTS;
+    };
     __I  uint32_t       resvdpwm[979];
   } SET;
   struct {
@@ -971,9 +998,18 @@ typedef struct {
     } CH[8];
     __IO uint32_t       EN;
     __IO uint32_t       INTR;
-    __IO uint32_t       INTE;
-    __IO uint32_t       INTF;
-    __I  uint32_t       INTS;
+    union {
+      __IO uint32_t     INTE;
+      __IO uint32_t     IRQ0_INTE;
+    };
+    union {
+      __IO uint32_t     INTF;
+      __IO uint32_t     IRQ0_INTF;
+    };
+    union {
+      __I  uint32_t     INTS;
+      __I  uint32_t     IRQ0_INTS;
+    };
     __I  uint32_t       resvdpwm[979];
   } CLR;
 } PWM_TypeDef;
