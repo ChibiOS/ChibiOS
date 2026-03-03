@@ -145,6 +145,8 @@ __STATIC_INLINE bool dmaChannelIsBusyX(const rp_dma_channel_t *dmachp) {
 
 /**
  * @brief   Get and clears channel interrupts state.
+ * @note    Also clears INTR via INTS0/ISTS1 (W1C) to prevent stale
+ *          interrupts left by @p dmaChannelAbortX().
  *
  * @param[in] dmachp    pointer to a rp_dma_channel_t structure
  * @return              The content of @p CTRL_TRIG register before clearing
@@ -159,6 +161,9 @@ __STATIC_INLINE uint32_t dmaChannelGetAndClearInterrupts(const rp_dma_channel_t 
   dmachp->channel->CTRL_TRIG = ctrl_trig |
                                DMA_CTRL_TRIG_READ_ERROR |
                                DMA_CTRL_TRIG_WRITE_ERROR;
+
+  dmachp->dma->INTS0 = dmachp->chnmask;
+  dmachp->dma->INTS1 = dmachp->chnmask;
 
   return ctrl_trig;
 }
