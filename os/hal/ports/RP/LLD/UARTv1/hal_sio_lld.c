@@ -249,8 +249,6 @@ void sio_lld_stop(SIODriver *siop) {
 void sio_lld_update_enable_flags(SIODriver *siop) {
   uint32_t imsc;
 
-  osalDbgAssert((siop->enabled & SIO_EV_TXDONE) == 0U, "unsupported event");
-
   imsc = __sio_reloc_field(siop->enabled, SIO_EV_RXNOTEMPY,   SIO_EV_RXNOTEMPY_POS,   UART_UARTIMSC_RXIM_Pos) |
          __sio_reloc_field(siop->enabled, SIO_EV_TXNOTFULL,   SIO_EV_TXNOTFULL_POS,   UART_UARTIMSC_TXIM_Pos) |
          __sio_reloc_field(siop->enabled, SIO_EV_OVERRUN_ERR, SIO_EV_OVERRUN_ERR_POS, UART_UARTIMSC_OEIM_Pos) |
