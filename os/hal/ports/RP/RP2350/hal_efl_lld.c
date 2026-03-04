@@ -114,6 +114,7 @@
 #define FLASHCMD_READ_STATUS                0x05U
 #define FLASHCMD_PAGE_PROGRAM               0x02U
 #define FLASHCMD_SECTOR_ERASE               0x20U
+#define FLASHCMD_READ_UNIQUE_ID             0x4BU
 /** @} */
 
 /**
@@ -535,6 +536,29 @@ RAMFUNC static void rp_flash_program_page_full(EFlashDriver *eflp,
   rp_flash_enter_xip(eflp);
 }
 
+/**
+ * @brief   Read flash unique ID (runs entirely in RAM).
+ * @note    This function MUST be in RAM. It handles the entire sequence
+ *          from exit XIP to enter XIP so no flash code executes while
+ *          XIP is disabled.
+ *
+ * @param[in] eflp      pointer to the EFlashDriver object
+ * @param[out] rx       receive buffer
+ * @param[in] count     number of bytes to transfer after command
+ */
+RAMFUNC static void rp_flash_read_uid_full(EFlashDriver *eflp,
+                                            uint8_t *rx, size_t count) {
+
+  /* Exit XIP mode. */
+  rp_flash_exit_xip(eflp);
+
+  /* Send read unique ID command. */
+  rp_flash_do_cmd(eflp, FLASHCMD_READ_UNIQUE_ID, NULL, rx, count);
+
+  /* Re-enter XIP mode. */
+  rp_flash_enter_xip(eflp);
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -850,6 +874,30 @@ flash_error_t efl_lld_verify_erase(void *instance, flash_sector_t sector) {
   devp->state = FLASH_READY;
 
   return err;
+}
+
+/**
+ * @brief   Reads the flash chip's unique ID.
+ * @note    The JEDEC 0x4B command requires 4 dummy bytes before the
+ *          8-byte unique ID. The memcpy runs after XIP is restored
+ *          so it is safe to call flash-resident libc.
+ *
+ * @param[in] eflp      pointer to a @p EFlashDriver structure
+ * @param[out] uid      pointer to an 8-byte buffer for the unique ID
+ *
+ * @api
+ */
+void efl_lld_read_unique_id(EFlashDriver *eflp, uint8_t *uid) {
+  uint8_t rx[4U + RP_FLASH_UNIQUE_ID_SIZE];
+  syssts_t sts;
+
+  osalDbgCheck((eflp != NULL) && (uid != NULL));
+
+  sts = osalSysGetStatusAndLockX();
+  rp_flash_read_uid_full(eflp, rx, sizeof(rx));
+  osalSysRestoreStatusX(sts);
+
+  memcpy(uid, rx + 4U, RP_FLASH_UNIQUE_ID_SIZE);
 }
 
 #endif /* HAL_USE_EFL == TRUE */

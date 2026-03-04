@@ -56,6 +56,11 @@
  */
 #define RP_XIP_CTRL_BASE                    0x400C8000U
 
+/**
+ * @brief   Flash unique ID size in bytes.
+ */
+#define RP_FLASH_UNIQUE_ID_SIZE             8U
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -147,6 +152,7 @@ extern "C" {
                                            flash_sector_t sector);
   flash_error_t efl_lld_query_erase(void *instance, uint32_t *wait_time);
   flash_error_t efl_lld_verify_erase(void *instance, flash_sector_t sector);
+  void efl_lld_read_unique_id(EFlashDriver *eflp, uint8_t *uid);
 #ifdef __cplusplus
 }
 #endif
