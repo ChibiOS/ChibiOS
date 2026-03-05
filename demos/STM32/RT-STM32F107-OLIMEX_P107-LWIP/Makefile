@@ -121,7 +121,6 @@ LDSCRIPT= $(STARTUPLD)/STM32F107xC.ld
 # setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
-       $(CHIBIOS)/os/various/evtimer.c \
        web/web.c main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
