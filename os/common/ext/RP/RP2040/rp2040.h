@@ -1168,12 +1168,12 @@ typedef struct {
   __O  uint32_t         TXF[4];            /* NUM_PIO_STATE_MACHINES */
   __I  uint32_t         RXF[4];            /* NUM_PIO_STATE_MACHINES */
   __IO uint32_t         IRQ;
-  __O  uint32_t         IRQFORCE;
-  __IO uint32_t         INPUTSYNCBYPASS;
-  __IO uint32_t         DBGPADOUT;
-  __IO uint32_t         DBGPADOE;
-  __IO uint32_t         DBGCFGINFO;
-  __O  uint32_t         INSTRMEM[32];
+  __O  uint32_t         IRQ_FORCE;
+  __IO uint32_t         INPUT_SYNC_BYPASS;
+  __IO uint32_t         DBG_PADOUT;
+  __IO uint32_t         DBG_PADOE;
+  __IO uint32_t         DBG_CFGINFO;
+  __O  uint32_t         INSTR_MEM[32];
   struct {
     __IO uint32_t       CLKDIV;
     __IO uint32_t       EXECCTRL;
@@ -1183,12 +1183,12 @@ typedef struct {
     __IO uint32_t       PINCTRL;
   } SM[4];                                /* NUM_PIO_STATE_MACHINES */
   __IO uint32_t         INTR;
-  __IO uint32_t         INTE0;
-  __IO uint32_t         INTF0;
-  __I  uint32_t         INTS0;
-  __IO uint32_t         INTE1;
-  __IO uint32_t         INTF1;
-  __I  uint32_t         INTS1;
+  __IO uint32_t         IRQ0_INTE;
+  __IO uint32_t         IRQ0_INTF;
+  __I  uint32_t         IRQ0_INTS;
+  __IO uint32_t         IRQ1_INTE;
+  __IO uint32_t         IRQ1_INTF;
+  __I  uint32_t         IRQ1_INTS;
   __I  uint32_t         resvd144[943];
   struct {
   __IO uint32_t         CTRL;
@@ -1198,12 +1198,12 @@ typedef struct {
   __O  uint32_t         TXF[4];            /* NUM_PIO_STATE_MACHINES */
   __I  uint32_t         RXF[4];            /* NUM_PIO_STATE_MACHINES */
   __IO uint32_t         IRQ;
-  __O  uint32_t         IRQFORCE;
-  __IO uint32_t         INPUTSYNCBYPASS;
-  __IO uint32_t         DBGPADOUT;
-  __IO uint32_t         DBGPADOE;
-  __IO uint32_t         DBGCFGINFO;
-  __O  uint32_t         INSTRMEM[32];
+  __O  uint32_t         IRQ_FORCE;
+  __IO uint32_t         INPUT_SYNC_BYPASS;
+  __IO uint32_t         DBG_PADOUT;
+  __IO uint32_t         DBG_PADOE;
+  __IO uint32_t         DBG_CFGINFO;
+  __O  uint32_t         INSTR_MEM[32];
   struct {
     __IO uint32_t       CLKDIV;
     __IO uint32_t       EXECCTRL;
@@ -1213,12 +1213,12 @@ typedef struct {
     __IO uint32_t       PINCTRL;
   } SM[4];                                /* NUM_PIO_STATE_MACHINES */
   __IO uint32_t         INTR;
-  __IO uint32_t         INTE0;
-  __IO uint32_t         INTF0;
-  __I  uint32_t         INTS0;
-  __IO uint32_t         INTE1;
-  __IO uint32_t         INTF1;
-  __I  uint32_t         INTS1;
+  __IO uint32_t         IRQ0_INTE;
+  __IO uint32_t         IRQ0_INTF;
+  __I  uint32_t         IRQ0_INTS;
+  __IO uint32_t         IRQ1_INTE;
+  __IO uint32_t         IRQ1_INTF;
+  __I  uint32_t         IRQ1_INTS;
   __I  uint32_t         resvd144[943];
   } XOR;
   struct {
@@ -1229,12 +1229,12 @@ typedef struct {
   __O  uint32_t         TXF[4];            /* NUM_PIO_STATE_MACHINES */
   __I  uint32_t         RXF[4];            /* NUM_PIO_STATE_MACHINES */
   __IO uint32_t         IRQ;
-  __O  uint32_t         IRQFORCE;
-  __IO uint32_t         INPUTSYNCBYPASS;
-  __IO uint32_t         DBGPADOUT;
-  __IO uint32_t         DBGPADOE;
-  __IO uint32_t         DBGCFGINFO;
-  __O  uint32_t         INSTRMEM[32];
+  __O  uint32_t         IRQ_FORCE;
+  __IO uint32_t         INPUT_SYNC_BYPASS;
+  __IO uint32_t         DBG_PADOUT;
+  __IO uint32_t         DBG_PADOE;
+  __IO uint32_t         DBG_CFGINFO;
+  __O  uint32_t         INSTR_MEM[32];
   struct {
     __IO uint32_t       CLKDIV;
     __IO uint32_t       EXECCTRL;
@@ -1244,12 +1244,12 @@ typedef struct {
     __IO uint32_t       PINCTRL;
   } SM[4];                                /* NUM_PIO_STATE_MACHINES */
   __IO uint32_t         INTR;
-  __IO uint32_t         INTE0;
-  __IO uint32_t         INTF0;
-  __I  uint32_t         INTS0;
-  __IO uint32_t         INTE1;
-  __IO uint32_t         INTF1;
-  __I  uint32_t         INTS1;
+  __IO uint32_t         IRQ0_INTE;
+  __IO uint32_t         IRQ0_INTF;
+  __I  uint32_t         IRQ0_INTS;
+  __IO uint32_t         IRQ1_INTE;
+  __IO uint32_t         IRQ1_INTF;
+  __I  uint32_t         IRQ1_INTS;
   __I  uint32_t         resvd144[943];
   } SET;
   struct {
@@ -1260,12 +1260,12 @@ typedef struct {
   __O  uint32_t         TXF[4];            /* NUM_PIO_STATE_MACHINES */
   __I  uint32_t         RXF[4];            /* NUM_PIO_STATE_MACHINES */
   __IO uint32_t         IRQ;
-  __O  uint32_t         IRQFORCE;
-  __IO uint32_t         INPUTSYNCBYPASS;
-  __IO uint32_t         DBGPADOUT;
-  __IO uint32_t         DBGPADOE;
-  __IO uint32_t         DBGCFGINFO;
-  __O  uint32_t         INSTRMEM[32];
+  __O  uint32_t         IRQ_FORCE;
+  __IO uint32_t         INPUT_SYNC_BYPASS;
+  __IO uint32_t         DBG_PADOUT;
+  __IO uint32_t         DBG_PADOE;
+  __IO uint32_t         DBG_CFGINFO;
+  __O  uint32_t         INSTR_MEM[32];
   struct {
     __IO uint32_t       CLKDIV;
     __IO uint32_t       EXECCTRL;
@@ -1275,12 +1275,12 @@ typedef struct {
     __IO uint32_t       PINCTRL;
   } SM[4];                                /* NUM_PIO_STATE_MACHINES */
   __IO uint32_t         INTR;
-  __IO uint32_t         INTE0;
-  __IO uint32_t         INTF0;
-  __I  uint32_t         INTS0;
-  __IO uint32_t         INTE1;
-  __IO uint32_t         INTF1;
-  __I  uint32_t         INTS1;
+  __IO uint32_t         IRQ0_INTE;
+  __IO uint32_t         IRQ0_INTF;
+  __I  uint32_t         IRQ0_INTS;
+  __IO uint32_t         IRQ1_INTE;
+  __IO uint32_t         IRQ1_INTF;
+  __I  uint32_t         IRQ1_INTS;
   __I  uint32_t         resvd144[943];
   } CLR;
 } PIO_TypeDef;
