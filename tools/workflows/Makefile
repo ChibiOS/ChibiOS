@@ -113,6 +113,8 @@ info :
 	@echo
 	@which python3 && python3 -V || echo "python3 not present"
 	@echo
+	@which rustup && rustup -V && rustup show -v || echo "rustup not present"
+	@echo
 
 # Prepare Python virtual environment
 venv : $(venv_activate)
