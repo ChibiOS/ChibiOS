@@ -44,8 +44,14 @@ def get_jobserver_auth_fds():
 
     for make_flag in make_flags.split():
         if make_flag.startswith(jobserver_auth_flag):
-            fdr, _, fdw = make_flag[len(jobserver_auth_flag):].partition(',')
-            return (int(fdr), int(fdw))
+            flag_value = make_flag[len(jobserver_auth_flag):]
+            # Starting from GNU make 4.4 the value has the "fifo:PATH" format
+            # where PATH is the filesystem path to a named pipe (FIFO). In this
+            # case a subprocess will be able to open this file and there is no
+            # need to extract and pass FDs into it.
+            if not flag_value.startswith('fifo:') and ',' in flag_value:
+                fdr, _, fdw = flag_value.partition(',')
+                return (int(fdr), int(fdw))
 
     return ()
 
