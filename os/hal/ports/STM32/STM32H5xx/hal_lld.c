@@ -414,6 +414,9 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
     return true;
   }
 
+  /* Updating the current system clock setting value.*/
+  hal_lld_set_coreclock(STM32_HSICLK_RESET);
+
   /* Resetting flash ACR settings to the default value.*/
   halRegWrite32X(&FLASH->ACR, STM32_FLASH_ACR_RESET, true);
 

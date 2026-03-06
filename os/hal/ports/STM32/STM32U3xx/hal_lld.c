@@ -55,7 +55,7 @@
  * @brief   CMSIS system core clock variable.
  * @note    It is declared in system_stm32u3xx.h.
  */
-uint32_t SystemCoreClock = STM32_HCLK;
+uint32_t SystemCoreClock;
 
 /**
  * @brief   Post-reset clock configuration.
@@ -207,6 +207,11 @@ static const system_limits_t vos_range2 = {
 
 #include "stm32_bd.inc"
 
+__STATIC_INLINE void hal_lld_set_coreclock(halfreq_t coreclock) {
+
+  SystemCoreClock = (uint32_t)coreclock;
+}
+
 /**
  * @brief   Configures the PWR unit.
  * @note    CR1, CR2, VOSR are not initialized inside this function.
@@ -326,6 +331,9 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   halRegWrite32X(&RCC->CFGR3, STM32_RCC_CFGR3_RESET, true);
   halRegWrite32X(&RCC->CFGR4, STM32_RCC_CFGR4_RESET, true);
   halRegWrite32X(&PWR->VOSR,  STM32_PWR_VOSR_RESET, true);
+
+  /* MSIRC1/4 as post-reset clock.*/
+  hal_lld_set_coreclock(6000000U);
 
   /* Enabling all required oscillators at same time, MSIS enforced active,
      PLLs not enabled yet because we are running in "reset" mode.*/
@@ -707,6 +715,10 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
  */
 void hal_lld_init(void) {
 
+  /* Frequency after applying the default configuration or ->assumed<- set
+     by the bootloader in case of NO_INIT.*/
+  hal_lld_set_coreclock(STM32_HCLK);
+
   /* DMA subsystems initialization.*/
 #if defined(STM32_DMA3_REQUIRED)
   dma3Init();
@@ -732,6 +744,9 @@ void stm32_clock_init(void) {
   halRegSet32X(&DWT->CTRL, DWT_CTRL_CYCCNTENA_Msk, true);
 
 #if !STM32_NO_INIT
+  /* Assuming MSIRC1/4 as post-reset clock.*/
+  hal_lld_set_coreclock(6000000U);
+
   /* Reset of all peripherals.
      Note, GPIOs are not reset because initialized before this point in
      board files.*/
@@ -794,8 +809,8 @@ bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
     return true;
   }
 
-  /* Updating the CMSIS variable.*/
-  SystemCoreClock = hal_lld_get_clock_point(CLK_HCLK);
+  /* Updating the current system clock setting value.*/
+  hal_lld_set_coreclock(hal_lld_get_clock_point(CLK_HCLK));
 
   return false;
 }
