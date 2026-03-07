@@ -1108,6 +1108,7 @@ __STATIC_FORCEINLINE void port_wait_for_interrupt(void) {
 #endif
 }
 
+#if !defined(port_rt_get_counter_value)
 /**
  * @brief   Returns the current value of the realtime counter.
  *
@@ -1117,6 +1118,7 @@ __STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
 
   return DWT->CYCCNT;
 }
+#endif
 
 /*lint -restore */
 

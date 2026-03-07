@@ -648,6 +648,8 @@
  * @brief   Port-specific information string.
  */
 #define PORT_INFO                       "Normal mode without TZ"
+#elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
+#define PORT_INFO                       "TZ guest mode"
 #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
 #define PORT_INFO                       "TZ guest mode"
 #else
@@ -714,6 +716,10 @@
  * @brief   Minimum usable priority for normal ISRs.
  */
 #define CORTEX_MIN_KERNEL_PRIORITY      (CORTEX_PRIORITY_PENDSV - 1U)
+
+#elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
+
+/* TBD */
 
 #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
 #define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
@@ -885,10 +891,19 @@ struct port_context {
  * @note    Enforcing a long context when FPU is enabled else using a
  *          short context.
  */
-#if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
-  #define CORTEX_EXC_RETURN         0xFFFFFFACU
-#else
-  #define CORTEX_EXC_RETURN         0xFFFFFFBCU
+#if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL) ||                        \
+    (PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST) || defined (__DOXYGEN__)
+  #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
+    #define CORTEX_EXC_RETURN       0xFFFFFFEDU
+  #else
+    #define CORTEX_EXC_RETURN       0xFFFFFFFDU
+  #endif
+#elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
+  #if CORTEX_USE_FPU == TRUE
+    #define CORTEX_EXC_RETURN       0xFFFFFFACU
+  #else
+    #define CORTEX_EXC_RETURN       0xFFFFFFBCU
+  #endif
 #endif
 
 /**
@@ -1303,6 +1318,7 @@ __STATIC_FORCEINLINE void port_wait_for_interrupt(void) {
 #endif
 }
 
+#if !defined(port_rt_get_counter_value)
 /**
  * @brief   Returns the current value of the realtime counter.
  *
@@ -1312,6 +1328,7 @@ __STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
 
   return DWT->CYCCNT;
 }
+#endif
 
 /*lint -restore*/
 
