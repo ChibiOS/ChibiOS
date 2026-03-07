@@ -10,7 +10,7 @@
 - Follow existing style patterns: 2-space indentation for C sources, and `STM32_*` macro naming for register constants (see `hal_lld.h`/`stm32_rcc.h`).
 - Keep functions `static` unless they are part of the public HAL API.
 - Regenerate formatting by hand; clang-format is not used on this port—mirror the surrounding code style.
-- EOL must be LF only, except in external files (non-ChibiOS copyright).
+- General rule: line endings must be LF, except for externally provided files (non-ChibiOS copyright).
 
 ## Build & Test Hygiene
 - Clean projects after test builds unless otherwise specified.
