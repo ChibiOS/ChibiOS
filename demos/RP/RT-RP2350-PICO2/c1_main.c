@@ -17,20 +17,21 @@
 #include "ch.h"
 #include "hal.h"
 
-#include "shell.h"
-#include "chprintf.h"
-
-#define _offsetof(type, m) ((size_t)((char *)&((type)0)->m - (char *)0))
+#include "xshell.h"
 
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
 
-static const ShellCommand commands[] = {
+static const xshell_command_t commands[] = {
   {NULL, NULL}
 };
 
-static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SIOD0,
-  commands
+static const xshell_manager_config_t shell_cfg1 = {
+  .thread_name      = "shell",
+  .banner           = XSHELL_DEFAULT_BANNER_STR,
+  .prompt           = XSHELL_DEFAULT_PROMPT_STR,
+  .commands         = commands,
+  .use_heap         = true,
+  .stack.size       = SHELL_WA_SIZE
 };
 
 /*
@@ -83,17 +84,18 @@ void c1_main(void) {
   /*
    * Shell manager initialization.
    */
-  shellInit();
+  static xshell_manager_t sm1;
+  xshellObjectInit(&sm1, &shell_cfg1);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop (re)spawning a shell.
    */
   while (true) {
-    thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                            "shell", NORMALPRIO + 1,
-                                            shellThread, (void *)&shell_cfg1);
-    chThdWait(shelltp);               /* Waiting termination.             */
+    xshell_t *shelltp = xshellSpawn(&sm1,
+                                    (BaseSequentialStream *)&SIOD0,
+                                    NORMALPRIO + 1, NULL);
+    xshellWait(shelltp);              /* Waiting termination.             */
     chThdSleepMilliseconds(500);
   }
 }
