@@ -24,7 +24,7 @@
 #ifndef LWIPTHREAD_H
 #define LWIPTHREAD_H
 
-#include <lwip/opt.h>
+#include <lwip/init.h>
 
 /**
  * @brief   lwIP default network interface maximum transmission unit (MTU).

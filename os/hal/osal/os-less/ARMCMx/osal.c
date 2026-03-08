@@ -201,10 +201,12 @@ void osalThreadSleep(sysinterval_t time) {
  * @sclass
  */
 msg_t osalThreadSuspendS(thread_reference_t *trp) {
-  thread_t self = {MSG_WAIT};
+  static thread_t self;
 
   osalDbgCheck(trp != NULL);
+  osalDbgAssert(*trp == NULL, "not NULL");
 
+  self.message = MSG_WAIT;
   *trp = &self;
   while (self.message == MSG_WAIT) {
     osalSysUnlock();

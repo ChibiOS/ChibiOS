@@ -38,7 +38,7 @@ mode that the device will be switched in.]]>
         </define>
         <define name="MX25_OPT_NICE_WAITING" value="(1U &lt;&lt; 6)">
           <brief>Delays insertion.</brief>
-          <details><![CDATA[If enabled this options inserts delays into the
+          <details><![CDATA[If enabled this option inserts delays into the
 flash waiting routines releasing some extra CPU time for threads with lower
 priority, this may slow down the driver a bit however.]]></details>
         </define>
@@ -56,7 +56,16 @@ priority, this may slow down the driver a bit however.]]></details>
         <methods>
           <objinit callsuper="true">
             <implementation><![CDATA[
-/* Implementation.*/]]></implementation>
+/* Initialization code.*/
+self->descriptor.attributes    = FLASH_ATTR_ERASED_IS_ONE |
+                                 FLASH_ATTR_REWRITABLE |
+                                 FLASH_ATTR_SUSPEND_ERASE_CAPABLE;
+self->descriptor.page_size     = 256U;
+self->descriptor.sectors_count = 0U; /* Overwritten.*/
+self->descriptor.sectors       = NULL;
+self->descriptor.sectors_size  = 0U;
+self->descriptor.address       = 0U;
+self->descriptor.size          = 0U; /* Overwritten.*/]]></implementation>
           </objinit>
           <dispose>
             <implementation><![CDATA[

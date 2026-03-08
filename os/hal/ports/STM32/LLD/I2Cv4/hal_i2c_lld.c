@@ -67,6 +67,8 @@
   ((uint32_t)(I2C_ISR_TCR | I2C_ISR_TC | I2C_ISR_STOPF | I2C_ISR_NACKF |    \
               I2C_ISR_ADDR | I2C_ISR_RXNE | I2C_ISR_TXIS))
 
+#define I2C_MAX_XFR_BYTES   (I2C_CR2_NBYTES >> I2C_CR2_NBYTES_Pos)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -148,7 +150,7 @@ __STATIC_FORCEINLINE void i2c_dma_enable_tx(I2CDriver *i2cp) {
   dmaStreamSetMode(i2cp->dma,
                    I2C_DMA_CR_COMMON(i2cp)                      |
                    STM32_DMA_CR_DIR_M2P                         |
-                   STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY) |
+                   STM32_DMA_CR_PL(i2cp->dprio) |
                    STM32_DMA_CR_CHSEL(i2cp->dreqtx));
   dmaStreamSetTransactionSize(i2cp->dma, i2cp->txbytes);
   dmaStreamSetPeripheral(i2cp->dma, &i2cp->i2c->TXDR);
@@ -176,7 +178,7 @@ __STATIC_FORCEINLINE void i2c_dma_enable_rx(I2CDriver *i2cp) {
   dmaStreamSetMode(i2cp->dma,
                    I2C_DMA_CR_COMMON(i2cp)                      |
                    STM32_DMA_CR_DIR_P2M                         |
-                   STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY) |
+                   STM32_DMA_CR_PL(i2cp->dprio) |
                    STM32_DMA_CR_CHSEL(i2cp->dreqrx));
   dmaStreamSetTransactionSize(i2cp->dma, i2cp->rxbytes);
   dmaStreamSetPeripheral(i2cp->dma, &i2cp->i2c->RXDR);
@@ -219,8 +221,8 @@ static void i2c_lld_setup_rx_transfer(I2CDriver *i2cp) {
 
   /* The unit can transfer 255 bytes maximum in a single operation.*/
   n = i2cp->rxbytes;
-  if (n > 255U) {
-    n = 255U;
+  if (n > (size_t)I2C_MAX_XFR_BYTES) {
+    n = (size_t)I2C_MAX_XFR_BYTES;
     reload = I2C_CR2_RELOAD;
   }
   else {
@@ -230,7 +232,7 @@ static void i2c_lld_setup_rx_transfer(I2CDriver *i2cp) {
   /* Configures the CR2 registers with both the calculated and static
      settings.*/
   dp->CR2 = (dp->CR2 & ~(I2C_CR2_NBYTES | I2C_CR2_RELOAD)) | i2cp->config->cr2 |
-            I2C_CR2_RD_WRN | (n << 16U) | reload;
+            I2C_CR2_RD_WRN | (n << I2C_CR2_NBYTES_Pos) | reload;
 }
 
 /**
@@ -247,8 +249,8 @@ static void i2c_lld_setup_tx_transfer(I2CDriver *i2cp) {
 
   /* The unit can transfer 255 bytes maximum in a single operation.*/
   n = i2cp->txbytes;
-  if (n > 255U) {
-    n = 255U;
+  if (n > (size_t)I2C_MAX_XFR_BYTES) {
+    n = (size_t)I2C_MAX_XFR_BYTES;
     reload = I2C_CR2_RELOAD;
   }
   else {
@@ -258,7 +260,7 @@ static void i2c_lld_setup_tx_transfer(I2CDriver *i2cp) {
   /* Configures the CR2 registers with both the calculated and static
      settings.*/
   dp->CR2 = (dp->CR2 & ~(I2C_CR2_NBYTES | I2C_CR2_RELOAD)) | i2cp->config->cr2 |
-            (n << 16U) | reload;
+            (n << I2C_CR2_NBYTES_Pos) | reload;
 }
 
 /**
@@ -313,7 +315,7 @@ static void i2c_lld_serve_events(I2CDriver *i2cp, uint32_t isr) {
 
 #if (I2C_ENABLE_SLAVE_MODE == TRUE)
     /* If master is done reading data and indicates this to the slave through a NACK. */
-    if (!i2cp->isMaster) {
+    if (!i2cp->is_master) {
       if (i2cp->state == I2C_ACTIVE_TX) {
         if (((isr & I2C_ISR_DIR) != 0U) && ((isr & I2C_ISR_TXIS) != 0U)) {
           /* Next interrupt is STOP. */
@@ -447,9 +449,15 @@ static void i2c_lld_serve_events(I2CDriver *i2cp, uint32_t isr) {
   /* Partial transfer handling, restarting the transfer and returning.*/
   if ((isr & I2C_ISR_TCR) != 0U) {
     if (i2cp->state == I2C_ACTIVE_TX) {
+#if STM32_I2C_USE_DMA == TRUE
+      i2cp->txbytes -= (size_t)I2C_MAX_XFR_BYTES;
+#endif
       i2c_lld_setup_tx_transfer(i2cp);
     }
     else {
+#if STM32_I2C_USE_DMA == TRUE
+      i2cp->rxbytes -= (size_t)I2C_MAX_XFR_BYTES;
+#endif
       i2c_lld_setup_rx_transfer(i2cp);
     }
     return;
@@ -909,7 +917,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   systime_t start, end;
 
 #if (I2C_ENABLE_SLAVE_MODE == TRUE)
-  i2cp->isMaster = true;
+  i2cp->is_master = true;
 #endif /* I2C_ENABLE_SLAVE_MODE == TRUE */
 
   /* Resetting error flags for this transfer.*/
@@ -1000,7 +1008,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 msg_t i2c_lld_match_address(I2CDriver *i2cp, i2caddr_t addr) {
   I2C_TypeDef *dp = i2cp->i2c;
 
-  i2cp->isMaster = false;
+  i2cp->is_master = false;
 
   /* Check 7 bit address. */
   if ((addr >> 7) == 0) {
@@ -1041,17 +1049,17 @@ msg_t i2c_lld_match_address(I2CDriver *i2cp, i2caddr_t addr) {
 msg_t i2c_lld_slave_receive_timeout(I2CDriver *i2cp, uint8_t *rxbuf, size_t rxbytes, sysinterval_t timeout) {
   I2C_TypeDef *dp = i2cp->i2c;
 
-  i2cp->isMaster = false;
+  i2cp->is_master = false;
 
   /* Reset Reply flag */
   i2cp->reply_required = false;
 
+  i2cp->rxptr   = rxbuf;
+  i2cp->rxbytes = rxbytes;
+
 #if STM32_I2C_USE_DMA == TRUE
   /* Setup DMA for RX.*/
   i2c_dma_enable_rx(i2cp);
-#else
-  i2cp->rxptr   = rxbuf;
-  i2cp->rxbytes = rxbytes;
 #endif
 
   /* Address match, RX and STOP interrupts enabled.*/
@@ -1088,14 +1096,14 @@ msg_t i2c_lld_slave_transmit_timeout(I2CDriver *i2cp,
                                      sysinterval_t timeout) {
   I2C_TypeDef *dp = i2cp->i2c;
 
-  i2cp->isMaster = false;
+  i2cp->is_master = false;
+
+  i2cp->txptr   = txbuf;
+  i2cp->txbytes = txbytes;
 
 #if STM32_I2C_USE_DMA == TRUE
   /* Setup DMA for TX.*/
   i2c_dma_enable_tx(i2cp);
-#else
-  i2cp->txptr   = txbuf;
-  i2cp->txbytes = txbytes;
 #endif
 
   /* Address match, TX and STOP interrupts enabled.*/

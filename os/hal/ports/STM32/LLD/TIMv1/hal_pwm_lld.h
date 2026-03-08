@@ -915,6 +915,16 @@ struct PWMDriver {
 #define pwm_lld_change_period(pwmp, period)                                 \
   ((pwmp)->tim->ARR = ((period) - 1))
 
+/**
+ * @brief   Returns the TIM associated with a PWM.
+ *
+ * @param[in] pwmp      pointer to the @p PWMDriver object
+ * @return              The TIM reference.
+ *
+ * @notapi
+ */
+#define pwm_lld_get_timer(pwmp) ((pwmp)->tim)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

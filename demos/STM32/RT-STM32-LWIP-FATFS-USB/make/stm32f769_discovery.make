@@ -125,7 +125,6 @@ LDSCRIPT= $(STARTUPLD)/STM32F76xxI.ld
 # setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
-       $(CHIBIOS)/os/various/evtimer.c \
        $(CONFDIR)/portab.c \
        main.c
 

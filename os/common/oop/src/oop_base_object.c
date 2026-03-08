@@ -62,9 +62,6 @@
  * @{
  */
 /**
- * @memberof    base_object_c
- * @protected
- *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
@@ -85,9 +82,6 @@ void *__bo_objinit_impl(void *ip, const void *vmt) {
 }
 
 /**
- * @memberof    base_object_c
- * @protected
- *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *

@@ -66,6 +66,11 @@
 
 #include "stm32_sdmmc1.inc"
 
+#include "stm32_i2c1.inc"
+#include "stm32_i2c2.inc"
+#include "stm32_i2c3.inc"
+#include "stm32_i2c4.inc"
+
 #include "stm32_usart1.inc"
 #include "stm32_usart2.inc"
 #include "stm32_usart3.inc"
@@ -107,6 +112,11 @@ void irqInit(void) {
 
   sdmmc1_irq_init();
 
+  i2c1_irq_init();
+  i2c2_irq_init();
+  i2c3_irq_init();
+  i2c4_irq_init();
+
   tim1_tim15_tim16_tim17_irq_init();
   tim2_irq_init();
   tim3_irq_init();
@@ -144,6 +154,11 @@ void irqDeinit(void) {
   exti21_22_irq_deinit();
 
   sdmmc1_irq_deinit();
+
+  i2c1_irq_deinit();
+  i2c2_irq_deinit();
+  i2c3_irq_deinit();
+  i2c4_irq_deinit();
 
   tim1_tim15_tim16_tim17_irq_deinit();
   tim2_irq_deinit();

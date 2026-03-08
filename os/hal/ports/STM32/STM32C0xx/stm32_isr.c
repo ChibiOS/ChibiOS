@@ -57,14 +57,19 @@
 #include "stm32_exti2_3.inc"
 #include "stm32_exti4_15.inc"
 
+#include "stm32_i2c1.inc"
+
 #include "stm32_usart1.inc"
 #include "stm32_usart2.inc"
 
 #include "stm32_tim1.inc"
+#include "stm32_tim2.inc"
 #include "stm32_tim3.inc"
 #include "stm32_tim14.inc"
 #include "stm32_tim16.inc"
 #include "stm32_tim17.inc"
+
+#include "stm32_usb1.inc"
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -81,7 +86,10 @@ void irqInit(void) {
   exti2_3_irq_init();
   exti4_15_irq_init();
 
+  i2c1_irq_init();
+
   tim1_irq_init();
+  tim2_irq_init();
   tim3_irq_init();
   tim14_irq_init();
   tim16_irq_init();
@@ -89,6 +97,8 @@ void irqInit(void) {
 
   usart1_irq_init();
   usart2_irq_init();
+
+  usb1_irq_init();
 }
 
 /**
@@ -102,7 +112,10 @@ void irqDeinit(void) {
   exti2_3_irq_deinit();
   exti4_15_irq_deinit();
 
+  i2c1_irq_deinit();
+
   tim1_irq_deinit();
+  tim2_irq_deinit();
   tim3_irq_deinit();
   tim14_irq_deinit();
   tim16_irq_deinit();
@@ -110,6 +123,8 @@ void irqDeinit(void) {
 
   usart1_irq_deinit();
   usart2_irq_deinit();
+
+  usb1_irq_deinit();
 }
 
 /** @} */

@@ -752,9 +752,9 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     adcp->adcs->ISR   = adcp->adcs->ISR;
     /* If a callback is set enable the overflow and analog watch dog interrupts. */
     if (grpp->error_cb != NULL) {
-    adcp->adcs->IER   = ADC_IER_OVRIE | ADC_IER_AWD1IE |
-                                        ADC_IER_AWD2IE |
-                                        ADC_IER_AWD3IE;
+      adcp->adcs->IER   = ADC_IER_OVRIE | ADC_IER_AWD1IE |
+                                          ADC_IER_AWD2IE |
+                                          ADC_IER_AWD3IE;
     }
     /* Configuring the CCR register with the user-specified settings
       in the conversion group configuration structure, static settings are
@@ -798,12 +798,9 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     /* ADC configuration.*/
     adcp->adcm->CFGR  = cfgr;
     adcp->adcs->CFGR  = cfgr;
-}
-#endif /* STM32_ADC_DUAL_MODE == TRUE && STM32_ADC_USE_ADC12 == TRUE */
-
-#if STM32_ADC_DUAL_MODE == FALSE || STM32_ADC_USE_ADC3 == TRUE
-  /* Configuration for ADC3 and single mode ADC1 */
-
+  } else {
+#if STM32_ADC_USE_ADC3 == TRUE
+    /* Configuration for ADC3 (skip ADCD1 in dual mode). */
     adcp->adcm->CFGR2   = grpp->cfgr2;
     adcp->adcm->PCSEL   = grpp->pcsel;
     adcp->adcm->LTR1    = grpp->ltr1;
@@ -824,6 +821,29 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     /* ADC configuration.*/
     adcp->adcm->CFGR  = cfgr;
 #endif
+  }
+#else
+  /* Configuration for ADC3 and single mode ADC1 */
+  adcp->adcm->CFGR2   = grpp->cfgr2;
+  adcp->adcm->PCSEL   = grpp->pcsel;
+  adcp->adcm->LTR1    = grpp->ltr1;
+  adcp->adcm->HTR1    = grpp->htr1;
+  adcp->adcm->LTR2    = grpp->ltr2;
+  adcp->adcm->HTR2    = grpp->htr2;
+  adcp->adcm->LTR3    = grpp->ltr3;
+  adcp->adcm->HTR3    = grpp->htr3;
+  adcp->adcm->AWD2CR  = grpp->awd2cr;
+  adcp->adcm->AWD3CR  = grpp->awd3cr;
+  adcp->adcm->SMPR1   = grpp->smpr[0];
+  adcp->adcm->SMPR2   = grpp->smpr[1];
+  adcp->adcm->SQR1    = grpp->sqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels);
+  adcp->adcm->SQR2    = grpp->sqr[1];
+  adcp->adcm->SQR3    = grpp->sqr[2];
+  adcp->adcm->SQR4    = grpp->sqr[3];
+
+  /* ADC configuration.*/
+  adcp->adcm->CFGR  = cfgr;
+#endif /* STM32_ADC_DUAL_MODE == TRUE && STM32_ADC_USE_ADC12 == TRUE */
 
   /* Starting conversion.*/
   adcp->adcm->CR   |= ADC_CR_ADSTART;

@@ -76,6 +76,26 @@
   }                                                                         \
 } while (false)
 
+#if (MFS_USE_FLASH_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
+static void mfs_flash_acquire(MFSDriver *mfsp) {
+  flash_error_t ferr;
+
+  ferr = flashAcquireExclusive(mfsp->config->flashp);
+  osalDbgAssert(ferr == FLASH_NO_ERROR, "flash exclusive access failed");
+}
+
+static void mfs_flash_release(MFSDriver *mfsp) {
+  flash_error_t ferr;
+
+  ferr = flashReleaseExclusive(mfsp->config->flashp);
+  osalDbgAssert(ferr == FLASH_NO_ERROR, "flash exclusive release failed");
+}
+
+#else
+#define mfs_flash_acquire(mfsp)  (void)(mfsp)
+#define mfs_flash_release(mfsp)  (void)(mfsp)
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -142,6 +162,12 @@ static void mfs_state_reset(MFSDriver *mfsp) {
   mfsp->next_offset     = 0U;
   mfsp->used_space      = 0U;
 
+#if (MFS_CFG_TRANSACTION_MAX > 0)
+  mfsp->tr_nops = 0U;
+  mfsp->tr_next_offset = 0U;
+  mfsp->tr_limit_offset = 0U;
+#endif
+
   for (i = 0; i < MFS_CFG_MAX_RECORDS; i++) {
     mfsp->descriptors[i].offset = 0U;
     mfsp->descriptors[i].size   = 0U;
@@ -171,14 +197,22 @@ static flash_offset_t mfs_flash_get_bank_offset(MFSDriver *mfsp,
 static mfs_error_t mfs_flash_read(MFSDriver *mfsp, flash_offset_t offset,
                                   size_t n, uint8_t *rp) {
   flash_error_t ferr;
+  mfs_error_t err;
+
+  mfs_flash_acquire(mfsp);
 
   ferr = flashRead(mfsp->config->flashp, offset, n, rp);
   if (ferr != FLASH_NO_ERROR) {
     mfsp->state = MFS_ERROR;
-    return MFS_ERR_FLASH_FAILURE;
+    err = MFS_ERR_FLASH_FAILURE;
+  }
+  else {
+    err = MFS_NO_ERROR;
   }
 
-  return MFS_NO_ERROR;
+  mfs_flash_release(mfsp);
+
+  return err;
 }
 
 /**
@@ -200,11 +234,16 @@ static mfs_error_t mfs_flash_write(MFSDriver *mfsp,
                                    const uint8_t *wp) {
   flash_error_t ferr;
 
+  mfs_flash_acquire(mfsp);
+
   ferr = flashProgram(mfsp->config->flashp, offset, n, wp);
   if (ferr != FLASH_NO_ERROR) {
     mfsp->state = MFS_ERROR;
+    mfs_flash_release(mfsp);
     return MFS_ERR_FLASH_FAILURE;
   }
+
+  mfs_flash_release(mfsp);
 
 #if MFS_CFG_WRITE_VERIFY == TRUE
   /* Verifying the written data by reading it back and comparing.*/
@@ -290,21 +329,28 @@ static mfs_error_t mfs_bank_erase(MFSDriver *mfsp, mfs_bank_t bank) {
   while (sector < end) {
     flash_error_t ferr;
 
+    mfs_flash_acquire(mfsp);
+
     ferr = flashStartEraseSector(mfsp->config->flashp, sector);
     if (ferr != FLASH_NO_ERROR) {
       mfsp->state = MFS_ERROR;
+      mfs_flash_release(mfsp);
       return MFS_ERR_FLASH_FAILURE;
     }
     ferr = flashWaitErase(mfsp->config->flashp);
     if (ferr != FLASH_NO_ERROR) {
       mfsp->state = MFS_ERROR;
+      mfs_flash_release(mfsp);
       return MFS_ERR_FLASH_FAILURE;
     }
     ferr = flashVerifyErase(mfsp->config->flashp, sector);
     if (ferr != FLASH_NO_ERROR) {
       mfsp->state = MFS_ERROR;
+      mfs_flash_release(mfsp);
       return MFS_ERR_FLASH_FAILURE;
     }
+
+    mfs_flash_release(mfsp);
 
     sector++;
   }
@@ -336,14 +382,20 @@ static mfs_error_t mfs_bank_verify_erase(MFSDriver *mfsp, mfs_bank_t bank) {
   while (sector < end) {
     flash_error_t ferr;
 
+    mfs_flash_acquire(mfsp);
+
     ferr = flashVerifyErase(mfsp->config->flashp, sector);
     if (ferr == FLASH_ERROR_VERIFY) {
+      mfs_flash_release(mfsp);
       return MFS_ERR_NOT_ERASED;
     }
     if (ferr != FLASH_NO_ERROR) {
       mfsp->state = MFS_ERROR;
+      mfs_flash_release(mfsp);
       return MFS_ERR_FLASH_FAILURE;
     }
+
+    mfs_flash_release(mfsp);
 
     sector++;
   }
@@ -453,6 +505,8 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
   while (hdr_offset < end_offset - ALIGNED_DHDR_SIZE) {
     mfs_data_header_t dhdr;
     uint16_t crc;
+    flash_offset_t data_offset;
+    flash_offset_t data_available;
 
     /* Reading the current record header.*/
     RET_ON_ERROR(mfs_flash_read(mfsp, hdr_offset,
@@ -466,12 +520,19 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
       break;
     }
 
+    data_offset = hdr_offset + (flash_offset_t)sizeof (mfs_data_header_t);
+    if (data_offset > end_offset) {
+      *wflagp = true;
+      break;
+    }
+    data_available = end_offset - data_offset;
+
     /* It is not erased so checking for integrity.*/
     if ((mfsp->ncbuf->dhdr.fields.magic1 != MFS_HEADER_MAGIC_1) ||
         (mfsp->ncbuf->dhdr.fields.magic2 != MFS_HEADER_MAGIC_2) ||
         (mfsp->ncbuf->dhdr.fields.id < 1U) ||
         (mfsp->ncbuf->dhdr.fields.id > (uint32_t)MFS_CFG_MAX_RECORDS) ||
-        (mfsp->ncbuf->dhdr.fields.size > end_offset - hdr_offset)) {
+        (mfsp->ncbuf->dhdr.fields.size > data_available)) {
       *wflagp = true;
       break;
     }
@@ -483,7 +544,6 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
        we have a limited buffer.*/
     crc = 0xFFFFU;
     if (dhdr.fields.size > 0U) {
-      flash_offset_t data = hdr_offset + sizeof (mfs_data_header_t);
       uint32_t total = dhdr.fields.size;
 
       while (total > 0U) {
@@ -491,13 +551,14 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
                                                        total;
 
         /* Reading the data chunk.*/
-        RET_ON_ERROR(mfs_flash_read(mfsp, data, chunk, mfsp->ncbuf->data8));
+        RET_ON_ERROR(mfs_flash_read(mfsp, data_offset, chunk,
+                                    mfsp->ncbuf->data8));
 
         /* CRC on the read data chunk.*/
         crc = crc16(crc, &mfsp->ncbuf->data8[0], chunk);
 
         /* Next chunk.*/
-        data  += chunk;
+        data_offset += chunk;
         total -= chunk;
       }
     }
@@ -1008,7 +1069,8 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, mfs_id_t id,
 
   osalDbgCheck((mfsp != NULL) &&
                (id >= 1U) && (id <= (mfs_id_t)MFS_CFG_MAX_RECORDS) &&
-               (n > 0U) && (buffer != NULL));
+               (n > (size_t)0) && (n <= (size_t)MFS_CFG_MAX_RECORD_SIZE) &&
+               (buffer != NULL));
 
   /* Aligned record size.*/
   asize = ALIGNED_REC_SIZE(n);
@@ -1086,9 +1148,11 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, mfs_id_t id,
     }
 
     /* If the required space is greater than the space allocated for the
-       transaction then error.*/
+       transaction then error.
+       Note, the condition check is written in a defensive way.*/
     rspace = asize;
-    if (rspace > mfsp->tr_limit_offet - mfsp->tr_next_offset) {
+    if ((mfsp->tr_next_offset > mfsp->tr_limit_offset) ||
+        (rspace > mfsp->tr_limit_offset - mfsp->tr_next_offset)) {
       return MFS_ERR_TRANSACTION_SIZE;
     }
 
@@ -1200,7 +1264,7 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, mfs_id_t id) {
 
     /* Adjusting bank-related metadata.*/
     mfsp->used_space  -= ALIGNED_REC_SIZE(mfsp->descriptors[id - 1U].size);
-    mfsp->next_offset += sizeof (mfs_data_header_t);
+    mfsp->next_offset += asize;
     mfsp->descriptors[id - 1U].offset = 0U;
     mfsp->descriptors[id - 1U].size   = 0U;
 
@@ -1224,9 +1288,11 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, mfs_id_t id) {
     }
 
     /* If the required space is greater than the space allocated for the
-       transaction then error.*/
+       transaction then error.
+       Note, the condition check is written in a defensive way.*/
     rspace = asize;
-    if (rspace > mfsp->tr_limit_offet - mfsp->tr_next_offset) {
+    if ((mfsp->tr_next_offset > mfsp->tr_limit_offset) ||
+        (rspace > mfsp->tr_limit_offset - mfsp->tr_next_offset)) {
       return MFS_ERR_TRANSACTION_SIZE;
     }
 
@@ -1351,7 +1417,7 @@ mfs_error_t mfsStartTransaction(MFSDriver *mfsp, size_t size) {
   /* Initializing transaction state.*/
   mfsp->tr_next_offset = mfsp->next_offset;
   mfsp->tr_nops        = 0U;
-  mfsp->tr_limit_offet = mfsp->tr_next_offset + tspace;
+  mfsp->tr_limit_offset = mfsp->tr_next_offset + tspace;
 
   return MFS_NO_ERROR;
 }

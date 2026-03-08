@@ -135,6 +135,13 @@
 #define STM32_USB_HOST_WAKEUP_DURATION      2
 #endif
 
+/**
+ * @brief   Allowed deviation for the 48MHz clock.
+ */
+#if !defined(STM32_USB_48MHZ_DELTA) || defined(__DOXYGEN__)
+#define STM32_USB_48MHZ_DELTA               120000
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -226,7 +233,7 @@
 #elif defined(STM32F10X_CL)
 #define STM32_USBCLK                        STM32_OTGFSCLK
 #elif defined(STM32L4XX) || defined(STM32L4XXP)
-#define STM32_USBCLK                        STM32_48CLK
+/**/
 #elif  defined(STM32H7XX)
 /* Defines directly STM32_USBCLK.*/
 #define rccEnableOTG_FS                     rccEnableUSB2_OTG_FS
@@ -241,13 +248,18 @@
 #error "unsupported STM32 platform for OTG functionality"
 #endif
 
-/* Allowing for a small tolerance.*/
-#if STM32_USBCLK < 47880000 || STM32_USBCLK > 48120000
-#error "the USB OTG driver requires a 48MHz clock"
-#endif
-
 #if (STM32_USB_HOST_WAKEUP_DURATION < 2) || (STM32_USB_HOST_WAKEUP_DURATION > 15)
 #error "invalid STM32_USB_HOST_WAKEUP_DURATION setting, it must be between 2 and 15"
+#endif
+
+/* Allowing for a small tolerance.*/
+#if (STM32_USB_48MHZ_DELTA < 0) || (STM32_USB_48MHZ_DELTA > 120000)
+#error "invalid STM32_USB_48MHZ_DELTA setting, it must not exceed 120000"
+#endif
+
+#if (STM32_USBCLK < (48000000 - STM32_USB_48MHZ_DELTA)) ||                  \
+    (STM32_USBCLK > (48000000 + STM32_USB_48MHZ_DELTA))
+#error "the USB USBv1 driver requires a 48MHz clock"
 #endif
 
 /*===========================================================================*/

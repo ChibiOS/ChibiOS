@@ -39,7 +39,9 @@
 #define CMD_MULTIPLE_IO_READ_ID                     0xAF
 #define CMD_READ_DISCOVERY_PARAMETER                0x5A
 #define CMD_READ                                    0x03
+#define CMD_READ4B                                  0x13
 #define CMD_FAST_READ                               0x0B
+#define CMD_FAST_READ4B                             0x0C
 #define CMD_WRITE_ENABLE                            0x06
 #define CMD_WRITE_DISABLE                           0x04
 #define CMD_READ_STATUS_REGISTER                    0x05
@@ -55,8 +57,11 @@
 #define CMD_READ_ENHANCED_V_CONF_REGISTER           0x65
 #define CMD_WRITE_ENHANCED_V_CONF_REGISTER          0x61
 #define CMD_PAGE_PROGRAM                            0x02
+#define CMD_PAGE_PROGRAM4B                          0x12
 #define CMD_SUBSECTOR_ERASE                         0x20
+#define CMD_SUBSECTOR_ERASE4B                       0x21
 #define CMD_SECTOR_ERASE                            0xD8
+#define CMD_SECTOR_ERASE4B                          0xDC
 #define CMD_BULK_ERASE                              0xC7
 #define CMD_PROGRAM_ERASE_RESUME                    0x7A
 #define CMD_PROGRAM_ERASE_SUSPEND                   0x75
@@ -110,6 +115,33 @@ static const xsnor_commands_t cmd1l = {
                            WSPI_CFG_ADDR_SIZE_24)
 };
 
+static const xsnor_commands_t cmd1l_4b = {
+  .cmd                  = (WSPI_CFG_CMD_MODE_ONE_LINE       |
+                           WSPI_CFG_ADDR_MODE_NONE          |
+                           WSPI_CFG_ALT_MODE_NONE           |
+                           WSPI_CFG_DATA_MODE_NONE          |
+                           WSPI_CFG_CMD_SIZE_8              |
+                           WSPI_CFG_ADDR_SIZE_32),
+  .cmd_addr             = (WSPI_CFG_CMD_MODE_ONE_LINE       |
+                           WSPI_CFG_ADDR_MODE_ONE_LINE      |
+                           WSPI_CFG_ALT_MODE_NONE           |
+                           WSPI_CFG_DATA_MODE_NONE          |
+                           WSPI_CFG_CMD_SIZE_8              |
+                           WSPI_CFG_ADDR_SIZE_32),
+  .cmd_data             = (WSPI_CFG_CMD_MODE_ONE_LINE       |
+                           WSPI_CFG_ADDR_MODE_NONE          |
+                           WSPI_CFG_ALT_MODE_NONE           |
+                           WSPI_CFG_DATA_MODE_ONE_LINE      |
+                           WSPI_CFG_CMD_SIZE_8              |
+                           WSPI_CFG_ADDR_SIZE_32),
+  .cmd_addr_data        = (WSPI_CFG_CMD_MODE_ONE_LINE       |
+                           WSPI_CFG_ADDR_MODE_ONE_LINE      |
+                           WSPI_CFG_ALT_MODE_NONE           |
+                           WSPI_CFG_DATA_MODE_ONE_LINE      |
+                           WSPI_CFG_CMD_SIZE_8              |
+                           WSPI_CFG_ADDR_SIZE_32)
+};
+
 static const xsnor_commands_t cmd2l = {
   .cmd                  = (WSPI_CFG_CMD_MODE_TWO_LINES      |
                            WSPI_CFG_ADDR_MODE_NONE          |
@@ -137,6 +169,33 @@ static const xsnor_commands_t cmd2l = {
                            WSPI_CFG_ADDR_SIZE_24)
 };
 
+static const xsnor_commands_t cmd2l_4b = {
+  .cmd                  = (WSPI_CFG_CMD_MODE_TWO_LINES      |
+                           WSPI_CFG_ADDR_MODE_NONE          |
+                           WSPI_CFG_ALT_MODE_NONE           |
+                           WSPI_CFG_DATA_MODE_NONE          |
+                           WSPI_CFG_CMD_SIZE_8              |
+                           WSPI_CFG_ADDR_SIZE_32),
+  .cmd_addr             = (WSPI_CFG_CMD_MODE_TWO_LINES      |
+                           WSPI_CFG_ADDR_MODE_TWO_LINES     |
+                           WSPI_CFG_ALT_MODE_NONE           |
+                           WSPI_CFG_DATA_MODE_NONE          |
+                           WSPI_CFG_CMD_SIZE_8              |
+                           WSPI_CFG_ADDR_SIZE_32),
+  .cmd_data             = (WSPI_CFG_CMD_MODE_TWO_LINES      |
+                           WSPI_CFG_ADDR_MODE_NONE          |
+                           WSPI_CFG_ALT_MODE_NONE           |
+                           WSPI_CFG_DATA_MODE_TWO_LINES     |
+                           WSPI_CFG_CMD_SIZE_8              |
+                           WSPI_CFG_ADDR_SIZE_32),
+  .cmd_addr_data        = (WSPI_CFG_CMD_MODE_TWO_LINES      |
+                           WSPI_CFG_ADDR_MODE_TWO_LINES     |
+                           WSPI_CFG_ALT_MODE_NONE           |
+                           WSPI_CFG_DATA_MODE_TWO_LINES     |
+                           WSPI_CFG_CMD_SIZE_8              |
+                           WSPI_CFG_ADDR_SIZE_32)
+};
+
 static const xsnor_commands_t cmd4l = {
   .cmd                  = (WSPI_CFG_CMD_MODE_FOUR_LINES     |
                            WSPI_CFG_ADDR_MODE_NONE          |
@@ -162,6 +221,33 @@ static const xsnor_commands_t cmd4l = {
                            WSPI_CFG_DATA_MODE_FOUR_LINES    |
                            WSPI_CFG_CMD_SIZE_8              |
                            WSPI_CFG_ADDR_SIZE_24)
+};
+
+static const xsnor_commands_t cmd4l_4b = {
+  .cmd                  = (WSPI_CFG_CMD_MODE_FOUR_LINES     |
+                           WSPI_CFG_ADDR_MODE_NONE          |
+                           WSPI_CFG_ALT_MODE_NONE           |
+                           WSPI_CFG_DATA_MODE_NONE          |
+                           WSPI_CFG_CMD_SIZE_8              |
+                           WSPI_CFG_ADDR_SIZE_32),
+  .cmd_addr             = (WSPI_CFG_CMD_MODE_FOUR_LINES     |
+                           WSPI_CFG_ADDR_MODE_FOUR_LINES    |
+                           WSPI_CFG_ALT_MODE_NONE           |
+                           WSPI_CFG_DATA_MODE_NONE          |
+                           WSPI_CFG_CMD_SIZE_8              |
+                           WSPI_CFG_ADDR_SIZE_32),
+  .cmd_data             = (WSPI_CFG_CMD_MODE_FOUR_LINES     |
+                           WSPI_CFG_ADDR_MODE_NONE          |
+                           WSPI_CFG_ALT_MODE_NONE           |
+                           WSPI_CFG_DATA_MODE_FOUR_LINES    |
+                           WSPI_CFG_CMD_SIZE_8              |
+                           WSPI_CFG_ADDR_SIZE_32),
+  .cmd_addr_data        = (WSPI_CFG_CMD_MODE_FOUR_LINES     |
+                           WSPI_CFG_ADDR_MODE_FOUR_LINES    |
+                           WSPI_CFG_ALT_MODE_NONE           |
+                           WSPI_CFG_DATA_MODE_FOUR_LINES    |
+                           WSPI_CFG_CMD_SIZE_8              |
+                           WSPI_CFG_ADDR_SIZE_32)
 };
 
 /* 1x N25Q_CMD_RESET_ENABLE command.*/
@@ -260,6 +346,11 @@ static flash_error_t n25q_poll_status(hal_xsnor_micron_n25q_c *self) {
   }
 
   return FLASH_NO_ERROR;
+}
+
+static inline bool n25q_spi_4bytes(const hal_xsnor_micron_n25q_c *self) {
+
+  return (self->descriptor.attributes & FLASH_ATTR_SPI_4BYTES_ADDR_HINT) != 0U;
 }
 
 #if (XSNOR_USE_WSPI == TRUE) || defined(__DOXYGEN__)
@@ -573,8 +664,33 @@ flash_error_t __n25q_init_impl(void *ip) {
   else {
     self->descriptor.sectors_size = 0x00010000U;
   }
-  self->descriptor.sectors_count = (1U << (size_t)config->buffers->databuf[2]) / self->descriptor.sectors_size;
-  self->descriptor.size = (size_t)self->descriptor.sectors_count * self->descriptor.sectors_size;
+  self->descriptor.size = (uint32_t)(1U << ((size_t)config->buffers->databuf[2] & 0x1FU));
+  self->descriptor.sectors_count = self->descriptor.size / self->descriptor.sectors_size;
+
+  if (self->descriptor.size > 0x01000000U) {
+    self->descriptor.attributes |= FLASH_ATTR_SPI_4BYTES_ADDR_HINT;
+  }
+  else {
+    self->descriptor.attributes &= ~FLASH_ATTR_SPI_4BYTES_ADDR_HINT;
+  }
+
+#if XSNOR_USE_WSPI == TRUE
+  switch (config->bus_type) {
+  case XSNOR_BUS_MODE_SPI:
+    break;
+  case XSNOR_BUS_MODE_WSPI_1LINE:
+    self->commands = n25q_spi_4bytes(self) ? &cmd1l_4b : &cmd1l;
+    break;
+  case XSNOR_BUS_MODE_WSPI_2LINES:
+    self->commands = n25q_spi_4bytes(self) ? &cmd2l_4b : &cmd2l;
+    break;
+  case XSNOR_BUS_MODE_WSPI_4LINES:
+    self->commands = n25q_spi_4bytes(self) ? &cmd4l_4b : &cmd4l;
+    break;
+  default:
+    break;
+  }
+#endif
 
   return FLASH_NO_ERROR;
 }
@@ -595,11 +711,16 @@ flash_error_t __n25q_read_impl(void *ip, flash_offset_t offset, size_t n,
 
   if (self->config->bus_type == XSNOR_BUS_MODE_SPI) {
     /* Using normal read command because it does not require dummy cycles.*/
-    __xsnor_bus_cmd_addr_receive(self, CMD_READ, offset, n, rp);
+    __xsnor_bus_cmd_addr_receive(self,
+                                 n25q_spi_4bytes(self) ? CMD_READ4B : CMD_READ,
+                                 offset, n, rp);
   }
   else {
     /* Fast read in order to leverage multiple lines.*/
-    __xsnor_bus_cmd_addr_dummy_receive(self, CMD_FAST_READ, offset,
+    __xsnor_bus_cmd_addr_dummy_receive(self,
+                                       n25q_spi_4bytes(self) ?
+                                       CMD_FAST_READ4B : CMD_FAST_READ,
+                                       offset,
                                        self->config->options & N25Q_OPT_DUMMY_CYCLES_MASK,
                                        n, rp);
   }
@@ -634,7 +755,10 @@ flash_error_t __n25q_program_impl(void *ip, flash_offset_t offset, size_t n,
     __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
 
     /* Page program command.*/
-    __xsnor_bus_cmd_addr_send(self, CMD_PAGE_PROGRAM, offset, chunk, pp);
+    __xsnor_bus_cmd_addr_send(self,
+                              n25q_spi_4bytes(self) ?
+                              CMD_PAGE_PROGRAM4B : CMD_PAGE_PROGRAM,
+                              offset, chunk, pp);
 
     /* Wait for status and check errors.*/
     err = n25q_poll_status(self);
@@ -688,10 +812,16 @@ flash_error_t __n25q_start_erase_sector_impl(void *ip, flash_sector_t sector) {
 
   /* Sector erase command.*/
   if ((self->config->options & N25Q_OPT_USE_SUBSECTORS) != 0U) {
-    __xsnor_bus_cmd_addr(self, CMD_SUBSECTOR_ERASE, offset);
+    __xsnor_bus_cmd_addr(self,
+                         n25q_spi_4bytes(self) ?
+                         CMD_SUBSECTOR_ERASE4B : CMD_SUBSECTOR_ERASE,
+                         offset);
   }
   else {
-    __xsnor_bus_cmd_addr(self, CMD_SECTOR_ERASE, offset);
+    __xsnor_bus_cmd_addr(self,
+                         n25q_spi_4bytes(self) ?
+                         CMD_SECTOR_ERASE4B : CMD_SECTOR_ERASE,
+                         offset);
   }
 
   return FLASH_NO_ERROR;
@@ -810,11 +940,12 @@ flash_error_t __n25q_mmap_on_impl(void *ip, uint8_t **addrp) {
     n25q_activate_xip(self);
 
     /* Starting WSPI memory mapped mode.*/
-    cmd.cfg   = WSPI_CFG_ADDR_SIZE_24 |
+    cmd.cfg   = (n25q_spi_4bytes(self) ? WSPI_CFG_ADDR_SIZE_32 :
+                 WSPI_CFG_ADDR_SIZE_24) |
                 WSPI_CFG_ALT_MODE_FOUR_LINES |  /* Always 4 lines, note.*/
                 WSPI_CFG_ALT_SIZE_8 |
                 WSPI_CFG_SIOO;
-    cmd.cmd   = CMD_FAST_READ;
+    cmd.cmd   = n25q_spi_4bytes(self) ? CMD_FAST_READ4B : CMD_FAST_READ;
     cmd.addr  = 0U;
     cmd.alt   = 0U;
     cmd.dummy = (self->config->options & N25Q_OPT_DUMMY_CYCLES_MASK) - 2U;

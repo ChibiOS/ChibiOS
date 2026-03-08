@@ -16,7 +16,7 @@
 
 /**
  * @file    hal_icu_lld.c
- * @brief   PLATFORM ADC subsystem low level driver source.
+ * @brief   PLATFORM ICU subsystem low level driver source.
  *
  * @addtogroup ICU
  * @{

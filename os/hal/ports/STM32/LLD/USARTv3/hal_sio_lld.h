@@ -40,28 +40,6 @@
                                          USART_ISR_PE   | USART_ISR_ORE  |  \
                                          USART_ISR_LBDF)
 
-/* Using shorter definitions of USARTv2 in order to make code more
-   similar.*/
-#if !defined(USART_ISR_RXNE_Pos)
-#define USART_ISR_RXNE_Pos      USART_ISR_RXNE_RXFNE_Pos
-#endif
-#if !defined(USART_ISR_RXNE_Msk)
-#define USART_ISR_RXNE_Msk      USART_ISR_RXNE_RXFNE_Msk
-#endif
-#if !defined(USART_ISR_RXNE)
-#define USART_ISR_RXNE          USART_ISR_RXNE_Msk
-#endif
-
-#if !defined(USART_ISR_TXE_Pos)
-#define USART_ISR_TXE_Pos       USART_ISR_TXE_TXFNF_Pos
-#endif
-#if !defined(USART_ISR_TXE_Msk)
-#define USART_ISR_TXE_Msk       USART_ISR_TXE_TXFNF_Msk
-#endif
-#if !defined(USART_ISR_TXE)
-#define USART_ISR_TXE           USART_ISR_TXE_Msk
-#endif
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -161,12 +139,12 @@
 #endif
 
 /**
- * @brief   SIO driver 8 enable switch.
+ * @brief   LP SIO driver 1 enable switch.
  * @details If set to @p TRUE the support for LPUART1 is included.
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_SIO_USE_LPUART1) || defined(__DOXYGEN__)
-#define STM32_SIO_USE_LPUART1               FALSE
+#define STM32_SIO_USE_LPUART1                FALSE
 #endif
 /** @} */
 
@@ -174,6 +152,56 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* Some devices have mixed USARTs, with and without FIFOs. This macros
+   indicates if in the current device there is a mixed situation, the
+   driver gets a bit more complex in that case.
+   LPUARTs are assumed to have FIFOs.*/
+#if !defined(STM32_USART_MIXED)
+#define STM32_USART_MIXED                   FALSE
+#endif
+
+#if !defined(STM32_USART1_HAS_FIFO)
+#define STM32_USART1_HAS_FIFO               TRUE
+#endif
+
+#if !defined(STM32_USART2_HAS_FIFO)
+#define STM32_USART2_HAS_FIFO               TRUE
+#endif
+
+#if !defined(STM32_USART3_HAS_FIFO)
+#define STM32_USART3_HAS_FIFO               TRUE
+#endif
+
+#if !defined(STM32_UART4_HAS_FIFO)
+#define STM32_UART4_HAS_FIFO                TRUE
+#endif
+
+#if !defined(STM32_UART5_HAS_FIFO)
+#define STM32_UART5_HAS_FIFO                TRUE
+#endif
+
+#if !defined(STM32_USART6_HAS_FIFO)
+#define STM32_USART6_HAS_FIFO               TRUE
+#endif
+
+#if !defined(STM32_UART7_HAS_FIFO)
+#define STM32_UART7_HAS_FIFO                TRUE
+#endif
+
+#if !defined(STM32_UART8_HAS_FIFO)
+#define STM32_UART8_HAS_FIFO                TRUE
+#endif
+
+#if !defined(STM32_UART9_HAS_FIFO)
+#define STM32_UART9_HAS_FIFO                TRUE
+#endif
+
+#if !defined(STM32_USART10_HAS_FIFO)
+#define STM32_USART10_HAS_FIFO              TRUE
+#endif
+
+/* This device is assumed to have at least one USART FIFO-capable else it
+   should use the previous driver.*/
 #if !defined(USART_CR1_FIFOEN)
 #error "FIFO mode not supported in this device"
 #endif
@@ -331,9 +359,17 @@
 /**
  * @brief   Low level fields of the SIO driver structure.
  */
+#if (STM32_USART_MIXED == TRUE) || defined(__DOXYGEN__)
+#define sio_lld_driver_fields                                               \
+  /* Pointer to the USARTx registers block.*/                               \
+  USART_TypeDef             *usart;                                         \
+  /* Flag indicating FIFO capability.*/                                     \
+  bool                      has_fifo;
+#else
 #define sio_lld_driver_fields                                               \
   /* Pointer to the USARTx registers block.*/                               \
   USART_TypeDef             *usart;
+#endif
 
 /**
  * @brief   Low level fields of the SIO configuration structure.
@@ -361,7 +397,7 @@
  * @notapi
  */
 #define sio_lld_is_rx_empty(siop)                                           \
-  (bool)(((siop)->usart->ISR & USART_ISR_RXNE) == 0U)
+  (bool)(((siop)->usart->ISR & USART_ISR_RXNE_RXFNE) == 0U)
 
 /**
  * @brief   Determines the activity state of the receiver.
@@ -402,7 +438,7 @@
  * @notapi
  */
 #define sio_lld_is_tx_full(siop)                                            \
-  (bool)(((siop)->usart->ISR & USART_ISR_TXE) == 0U)
+  (bool)(((siop)->usart->ISR & USART_ISR_TXE_TXFNF) == 0U)
 
 /**
  * @brief   Determines the transmission state.

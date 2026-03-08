@@ -96,6 +96,13 @@
 #define CLK_PCLK2TIM            16U
 #define CLK_MCO                 17U
 #define CLK_ARRAY_SIZE          18U
+
+#define CLK_POINT_NAMES                                                     \
+  {                                                                         \
+    "SYSCLK", "MSI", "MSIS", "PLLP", "PLLQ", "PLLR",                        \
+    "PLLSAI1P", "PLLSAI1Q", "PLLSAI1R", "PLLSAI2P", "PLLSAI2Q", "PLLSAI2R," \
+    "HCLK", "PCLK1", "PCLK1TIM", "PCLK2", "PCLK2TIM", "MCO"                 \
+  }
 /** @} */
 
 /**
@@ -234,10 +241,10 @@
  * @name    RCC_CCIPR2 register bits definitions
  * @{
  */
-#define STM32_I2C4SEL_MASK      (3 << 0)    /**< I2C1SEL mask.              */
-#define STM32_I2C4SEL_PCLK1     (0 << 0)    /**< I2C1 source is PCLK1.      */
-#define STM32_I2C4SEL_SYSCLK    (1 << 0)    /**< I2C1 source is SYSCLK.     */
-#define STM32_I2C4SEL_HSI16     (2 << 0)    /**< I2C1 source is HSI16.      */
+#define STM32_I2C4SEL_MASK      (3 << 0)    /**< I2C4SEL mask.              */
+#define STM32_I2C4SEL_PCLK1     (0 << 0)    /**< I2C4 source is PCLK1.      */
+#define STM32_I2C4SEL_SYSCLK    (1 << 0)    /**< I2C4 source is SYSCLK.     */
+#define STM32_I2C4SEL_HSI16     (2 << 0)    /**< I2C4 source is HSI16.      */
 
 #define STM32_DFSDMSEL_MASK     (1 << 2)    /**< DFSDMSEL mask.             */
 #define STM32_DFSDMSEL_PCLK2    (0 << 2)    /**< DFSDMSEL source is PCLK2.  */
@@ -997,7 +1004,7 @@
 #define STM32_BOOST_PLLIN_MAX               16000000
 #define STM32_BOOST_PLLIN_MIN               2660000
 #define STM32_BOOST_PLLVCO_MAX              344000000
-#define STM32_BOOST_PLLVCO_MIN              64000000
+#define STM32_BOOST_PLLVCO_MIN              63950000 /*Tolerance for MSIPLL real frequency.*/
 #define STM32_BOOST_PLLP_MAX                120000000
 #define STM32_BOOST_PLLP_MIN                2064500
 #define STM32_BOOST_PLLQ_MAX                120000000
@@ -1007,6 +1014,7 @@
 #define STM32_BOOST_PCLK1_MAX               120000000
 #define STM32_BOOST_PCLK2_MAX               120000000
 #define STM32_BOOST_ADCCLK_MAX              80000000
+#define STM32_BOOST_SDMMC_MAXCLK            120000000
 
 #define STM32_BOOST_0WS_THRESHOLD           20000000
 #define STM32_BOOST_1WS_THRESHOLD           40000000
@@ -1032,7 +1040,7 @@
 #define STM32_VOS1_PLLIN_MAX                16000000
 #define STM32_VOS1_PLLIN_MIN                2660000
 #define STM32_VOS1_PLLVCO_MAX               344000000
-#define STM32_VOS1_PLLVCO_MIN               64000000
+#define STM32_VOS1_PLLVCO_MIN               63950000 /*Tolerance for MSIPLL real frequency.*/
 #define STM32_VOS1_PLLP_MAX                 80000000
 #define STM32_VOS1_PLLP_MIN                 2064500
 #define STM32_VOS1_PLLQ_MAX                 80000000
@@ -1042,6 +1050,7 @@
 #define STM32_VOS1_PCLK1_MAX                80000000
 #define STM32_VOS1_PCLK2_MAX                80000000
 #define STM32_VOS1_ADCCLK_MAX               80000000
+#define STM32_VOS1_SDMMC_MAXCLK             80000000
 
 #define STM32_VOS1_0WS_THRESHOLD            20000000
 #define STM32_VOS1_1WS_THRESHOLD            40000000
@@ -1067,7 +1076,7 @@
 #define STM32_VOS2_PLLIN_MAX                16000000
 #define STM32_VOS2_PLLIN_MIN                2660000
 #define STM32_VOS2_PLLVCO_MAX               128000000
-#define STM32_VOS2_PLLVCO_MIN               64000000
+#define STM32_VOS2_PLLVCO_MIN               63950000 /*Tolerance for MSIPLL real frequency.*/
 #define STM32_VOS2_PLLP_MAX                 26000000
 #define STM32_VOS2_PLLP_MIN                 2064500
 #define STM32_VOS2_PLLQ_MAX                 26000000
@@ -1077,6 +1086,7 @@
 #define STM32_VOS2_PCLK1_MAX                26000000
 #define STM32_VOS2_PCLK2_MAX                26000000
 #define STM32_VOS2_ADCCLK_MAX               26000000
+#define STM32_VOS2_SDMMC_MAXCLK             26000000
 
 #define STM32_VOS2_0WS_THRESHOLD            8000000
 #define STM32_VOS2_1WS_THRESHOLD            16000000
@@ -1111,6 +1121,7 @@
 #define STM32_PCLK1_MAX                     STM32_BOOST_PCLK1_MAX
 #define STM32_PCLK2_MAX                     STM32_BOOST_PCLK2_MAX
 #define STM32_ADCCLK_MAX                    STM32_BOOST_ADCCLK_MAX
+#define STM32_SDMMC_MAXCLK                  STM32_BOOST_SDMMC_MAXCLK
 
 #define STM32_0WS_THRESHOLD                 STM32_BOOST_0WS_THRESHOLD
 #define STM32_1WS_THRESHOLD                 STM32_BOOST_1WS_THRESHOLD
@@ -1142,6 +1153,7 @@
 #define STM32_PCLK1_MAX                     STM32_VOS1_PCLK1_MAX
 #define STM32_PCLK2_MAX                     STM32_VOS1_PCLK2_MAX
 #define STM32_ADCCLK_MAX                    STM32_VOS1_ADCCLK_MAX
+#define STM32_SDMMC_MAXCLK                  STM32_VOS1_SDMMC_MAXCLK
 
 #define STM32_0WS_THRESHOLD                 STM32_VOS1_0WS_THRESHOLD
 #define STM32_1WS_THRESHOLD                 STM32_VOS1_1WS_THRESHOLD
@@ -1174,6 +1186,7 @@
 #define STM32_PCLK1_MAX                     STM32_VOS2_PCLK1_MAX
 #define STM32_PCLK2_MAX                     STM32_VOS2_PCLK2_MAX
 #define STM32_ADCCLK_MAX                    STM32_VOS2_ADCCLK_MAX
+#define STM32_SDMMC_MAXCLK                  STM32_VOS2_SDMMC_MAXCLK
 
 #define STM32_0WS_THRESHOLD                 STM32_VOS2_0WS_THRESHOLD
 #define STM32_1WS_THRESHOLD                 STM32_VOS2_1WS_THRESHOLD

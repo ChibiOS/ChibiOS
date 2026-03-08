@@ -50,7 +50,7 @@
 /**
  * @brief   ChibiOS version string.
  */
-#define CH_VERSION              "2021.11.4"
+#define CH_VERSION              "2021.11.5"
 
 /**
  * @brief   ChibiOS version release year
@@ -65,12 +65,12 @@
 /**
  * @brief   ChibiOS version patch number.
  */
-#define CH_VERSION_PATCH        4
+#define CH_VERSION_PATCH        5
 
 /**
  * @brief   ChibiOS version nickname.
  */
-#define CH_VERSION_NICKNAME     "Paestum"
+#define CH_VERSION_NICKNAME     "Agropoli"
 /** @} */
 
 /*===========================================================================*/

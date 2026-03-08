@@ -190,7 +190,7 @@
  */
 #define USB_DESC_INTERFACE_ASSOCIATION(bFirstInterface,                     \
                            bInterfaceCount, bFunctionClass,                 \
-                           bFunctionSubClass, bFunctionProcotol,            \
+                           bFunctionSubClass, bFunctionProtocol,            \
                            iInterface)                                      \
   USB_DESC_BYTE(USB_DESC_INTERFACE_ASSOCIATION_SIZE),                       \
   USB_DESC_BYTE(USB_DESCRIPTOR_INTERFACE_ASSOCIATION),                      \
@@ -198,7 +198,7 @@
   USB_DESC_BYTE(bInterfaceCount),                                           \
   USB_DESC_BYTE(bFunctionClass),                                            \
   USB_DESC_BYTE(bFunctionSubClass),                                         \
-  USB_DESC_BYTE(bFunctionProcotol),                                         \
+  USB_DESC_BYTE(bFunctionProtocol),                                         \
   USB_DESC_INDEX(iInterface)
 
 /**
@@ -465,6 +465,9 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @brief   Request transfer setup.
  * @details This macro is used by the request handling callbacks in order to
  *          prepare a transaction over the endpoint zero.
+ * @note    Endpoint zero transfers are managed by the control-transfer state
+ *          machine; applications must not use the blocking wait APIs
+ *          (usbTransmit()/usbReceive()) on EP0.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] buf       pointer to a buffer for the transaction data
@@ -494,6 +497,27 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  * @special
  */
 #define usbReadSetup(usbp, ep, buf) usb_lld_read_setup(usbp, ep, buf)
+
+/**
+ * @brief   Restores setup handling.
+ * @details This function removes stall and restores setup state.
+ * @pre     In order to use this function the endpoint must have been
+ *          initialized as a control endpoint.
+ * @note    This function can be invoked both in thread and IRQ context.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ * @param[in] ep        endpoint number
+ *
+ * @special
+ */
+#define usbRestoreSetup(usbp, ep) {                                         \
+  usb_lld_clear_in(usbp, ep);                                               \
+  usb_lld_clear_out(usbp, ep);                                              \
+  (usbp)->receiving &= ~1U;                                                 \
+  (usbp)->transmitting &= ~1U;                                              \
+  (usbp)->ep0n = 0;                                                         \
+  (usbp)->ep0state = USB_EP0_STP_WAITING;                                   \
+}
 /** @} */
 
 /**
@@ -549,7 +573,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  */
 #if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 #define _usb_isr_invoke_in_cb(usbp, ep) {                                   \
-  (usbp)->transmitting &= ~(1 << (ep));                                     \
+  (usbp)->transmitting &= ~(uint16_t)((unsigned)1U << (unsigned)(ep));      \
   if ((usbp)->epc[ep]->in_cb != NULL) {                                     \
     (usbp)->epc[ep]->in_cb(usbp, ep);                                       \
   }                                                                         \
@@ -559,7 +583,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 }
 #else
 #define _usb_isr_invoke_in_cb(usbp, ep) {                                   \
-  (usbp)->transmitting &= ~(1 << (ep));                                     \
+  (usbp)->transmitting &= ~(uint16_t)((unsigned)1U << (unsigned)(ep));      \
   if ((usbp)->epc[ep]->in_cb != NULL) {                                     \
     (usbp)->epc[ep]->in_cb(usbp, ep);                                       \
   }                                                                         \
@@ -576,7 +600,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
  */
 #if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 #define _usb_isr_invoke_out_cb(usbp, ep) {                                  \
-  (usbp)->receiving &= ~(1 << (ep));                                        \
+  (usbp)->receiving &= ~(uint16_t)((unsigned)1U << (unsigned)(ep));         \
   if ((usbp)->epc[ep]->out_cb != NULL) {                                    \
     (usbp)->epc[ep]->out_cb(usbp, ep);                                      \
   }                                                                         \
@@ -587,7 +611,7 @@ typedef const USBDescriptor * (*usbgetdescriptor_t)(USBDriver *usbp,
 }
 #else
 #define _usb_isr_invoke_out_cb(usbp, ep) {                                  \
-  (usbp)->receiving &= ~(1 << (ep));                                        \
+  (usbp)->receiving &= ~(uint16_t)((unsigned)1U << (unsigned)(ep));         \
   if ((usbp)->epc[ep]->out_cb != NULL) {                                    \
     (usbp)->epc[ep]->out_cb(usbp, ep);                                      \
   }                                                                         \

@@ -168,7 +168,7 @@ typedef enum {
 struct hal_sio_config {
   /* End of the mandatory fields.*/
   sio_lld_config_fields
-#if defined(SIO_CONFIG_EXT_FIELS)
+#if defined(SIO_CONFIG_EXT_FIELDS)
   SIO_CONFIG_EXT_FIELDS
 #endif
 };
@@ -240,7 +240,7 @@ struct hal_sio_driver {
    */
   thread_reference_t        sync_txend;
 #endif /* SIO_USE_SYNCHRONIZATION == TRUE */
-#if defined(SIO_DRIVER_EXT_FIELS)
+#if defined(SIO_DRIVER_EXT_FIELDS)
   SIO_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
@@ -428,13 +428,13 @@ struct hal_sio_driver {
  *          be called from the @p rxne_cb callback handler.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] size      maximum number of frames to read
  * @param[in] buffer    buffer for the received data
+ * @param[in] n         maximum number of frames to read
  * @return              The number of received frames.
  *
  * @xclass
  */
-#define sioAsyncReadX(siop, size, buffer) sio_lld_read(siop, size, buffer)
+#define sioAsyncReadX(siop, buffer, n) sio_lld_read(siop, buffer, n)
 
 /**
  * @brief   Writes data into the TX FIFO.
@@ -444,13 +444,13 @@ struct hal_sio_driver {
  *          be called from the @p txnf_cb callback handler.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] size      maximum number of frames to read
- * @param[out] buffer   buffer containing the data to be transmitted
+ * @param[in] buffer    buffer containing the data to be transmitted
+ * @param[in] n         maximum number of frames to read
  * @return              The number of transmitted frames.
  *
  * @xclass
  */
-#define sioAsyncWriteX(siop, size, buffer) sio_lld_write(siop, size, buffer)
+#define sioAsyncWriteX(siop, buffer, n) sio_lld_write(siop, buffer, n)
 
 /**
  * @brief   Control operation on a serial port.

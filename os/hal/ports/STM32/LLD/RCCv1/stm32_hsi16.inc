@@ -45,6 +45,11 @@
 #error "STM32_HSI16_ENABLED not defined in mcuconf.h"
 #endif
 
+/* Special case where HSI16 is not the default clock.*/
+#if !defined(STM32_RCC_HSI16_IS_DEFAULT) || defined(__DOXYGEN__)
+#define STM32_RCC_HSI16_IS_DEFAULT  TRUE
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -70,6 +75,7 @@ __STATIC_INLINE void hsi16_disable(void) {
   RCC->CR &= ~RCC_CR_HSION;
 }
 
+#if STM32_RCC_HSI16_IS_DEFAULT == TRUE
 __STATIC_INLINE void hsi16_reset(void) {
 
   /* Making sure HSI is active and ready.*/
@@ -81,6 +87,7 @@ __STATIC_INLINE void hsi16_reset(void) {
     /* Wait until HSI is selected.*/
   }
 }
+#endif
 
 __STATIC_INLINE void hsi16_init(void) {
 

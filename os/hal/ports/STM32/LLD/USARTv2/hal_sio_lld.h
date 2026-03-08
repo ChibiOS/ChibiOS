@@ -121,7 +121,7 @@
 #endif
 
 /**
- * @brief   SIO driver 8 enable switch.
+ * @brief   LP SIO driver 1 enable switch.
  * @details If set to @p TRUE the support for LPUART1 is included.
  * @note    The default is @p FALSE.
  */

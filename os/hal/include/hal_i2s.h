@@ -182,7 +182,7 @@ struct hal_i2s_config {
  * @note    This macro is meant to be used in the low level drivers
  *          implementation only.
  *
- * @param[in] i2sp      pointer to the @p I2CDriver object
+ * @param[in] i2sp      pointer to the @p I2SDriver object
  *
  * @notapi
  */
@@ -201,7 +201,7 @@ struct hal_i2s_config {
  * @note    This macro is meant to be used in the low level drivers
  *          implementation only.
  *
- * @param[in] i2sp      pointer to the @p I2CDriver object
+ * @param[in] i2sp      pointer to the @p I2SDriver object
  *
  * @notapi
  */

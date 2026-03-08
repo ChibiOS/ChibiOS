@@ -102,24 +102,24 @@ typedef struct {
  *          of this type is platform-dependent.
  */
 #define PAL_LINE(port, pad)                                                 \
-  ((ioline_t)((uint32_t)(port)) | ((uint32_t)(pad)))
+  ((ioline_t)((uintptr_t)(port)) | ((uintptr_t)(pad)))
 
 /**
  * @brief   Decodes a port identifier from a line identifier.
  */
 #define PAL_PORT(line)                                                      \
-  ((sim_vio_port_t *)(((uint32_t)(line)) & 0xFFFFFFF0U))
+  ((sim_vio_port_t *)((uintptr_t)(line) & ~(uintptr_t)0xFU))
 
 /**
  * @brief   Decodes a pad identifier from a line identifier.
  */
 #define PAL_PAD(line)                                                       \
-  ((uint32_t)((uint32_t)(line) & 0x0000000FU))
+  ((iopadid_t)((uintptr_t)(line) & (uintptr_t)0xFU))
 
 /**
  * @brief   Value identifying an invalid line.
  */
-#define PAL_NOLINE                      0U
+#define PAL_NOLINE                      ((ioline_t)0)
 /** @} */
 
 /**
@@ -135,7 +135,7 @@ typedef uint32_t iomode_t;
 /**
  * @brief   Type of an I/O line.
  */
-typedef uint32_t ioline_t;
+typedef uintptr_t ioline_t;
 
 /**
  * @brief   Port Identifier.

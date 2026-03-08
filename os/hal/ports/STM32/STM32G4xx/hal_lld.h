@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    STM32G4xx/hal_lld.h
- * @brief   STM32G4xx HAL subsystem low level driver header.
+ * @file    STM32G4xx_ALT/hal_lld.h
+ * @brief   STM32G4xx ALT HAL subsystem low level driver header.
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - STM32_LSECLK.
@@ -86,7 +86,7 @@
 /** @} */
 
 /**
- * @name   Clock points names
+ * @name   Clock points indexes and names
  * @{
  */
 #define CLK_HSI16               0U
@@ -103,6 +103,12 @@
 #define CLK_PCLK2TIM            11U
 #define CLK_MCO                 12U
 #define CLK_ARRAY_SIZE          13U
+
+#define CLK_POINT_NAMES                                                     \
+  {                                                                         \
+    "HSI16", "HSI48", "HSE", "SYSCLK", "PLLP", "PLLQ", "PLLR", "HCLK",      \
+    "PCLK1", "PCLK1TIM", "PCLK2", "PCLK2TIM", "MCO"                         \
+  }
 /** @} */
 
 /**
@@ -757,7 +763,7 @@
 #elif defined(STM32G473xx) && !defined(STM32G473_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G473_MCUCONF not defined"
 
-#elif defined(STM32G483xx) && !defined(STM32G473_MCUCONF)
+#elif defined(STM32G483xx) && !defined(STM32G483_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G483_MCUCONF not defined"
 
 #elif defined(STM32G474xx) && !defined(STM32G474_MCUCONF)
@@ -774,216 +780,8 @@
 
 #endif
 
-/**
- * @name    System Limits for VOS range 1 with boost
- * @{
- */
-#define STM32_BOOST_SYSCLK_MAX          170000000
-#define STM32_BOOST_HSECLK_MAX          48000000
-#define STM32_BOOST_HSECLK_BYP_MAX      48000000
-#define STM32_BOOST_HSECLK_MIN          8000000
-#define STM32_BOOST_HSECLK_BYP_MIN      8000000
-#define STM32_BOOST_LSECLK_MAX          32768
-#define STM32_BOOST_LSECLK_BYP_MAX      1000000
-#define STM32_BOOST_LSECLK_MIN          32768
-#define STM32_BOOST_LSECLK_BYP_MIN      32768
-#define STM32_BOOST_PLLIN_MAX           16000000
-#define STM32_BOOST_PLLIN_MIN           2660000
-#define STM32_BOOST_PLLVCO_MAX          344000000
-#define STM32_BOOST_PLLVCO_MIN          96000000
-#define STM32_BOOST_PLLP_MAX            170000000
-#define STM32_BOOST_PLLP_MIN            2064500
-#define STM32_BOOST_PLLQ_MAX            170000000
-#define STM32_BOOST_PLLQ_MIN            8000000
-#define STM32_BOOST_PLLR_MAX            170000000
-#define STM32_BOOST_PLLR_MIN            8000000
-#define STM32_BOOST_PCLK1_MAX           170000000
-#define STM32_BOOST_PCLK2_MAX           170000000
-#define STM32_BOOST_ADCCLK_MAX          60000000
-
-#define STM32_BOOST_0WS_THRESHOLD       34000000
-#define STM32_BOOST_1WS_THRESHOLD       68000000
-#define STM32_BOOST_2WS_THRESHOLD       102000000
-#define STM32_BOOST_3WS_THRESHOLD       136000000
-#define STM32_BOOST_4WS_THRESHOLD       170000000
-/** @} */
-
-/**
- * @name    System Limits for VOS range 1 without boost
- * @{
- */
-#define STM32_VOS1_SYSCLK_MAX           150000000
-#define STM32_VOS1_HSECLK_MAX           48000000
-#define STM32_VOS1_HSECLK_BYP_MAX       48000000
-#define STM32_VOS1_HSECLK_MIN           8000000
-#define STM32_VOS1_HSECLK_BYP_MIN       8000000
-#define STM32_VOS1_LSECLK_MAX           32768
-#define STM32_VOS1_LSECLK_BYP_MAX       1000000
-#define STM32_VOS1_LSECLK_MIN           32768
-#define STM32_VOS1_LSECLK_BYP_MIN       32768
-#define STM32_VOS1_PLLIN_MAX            16000000
-#define STM32_VOS1_PLLIN_MIN            2660000
-#define STM32_VOS1_PLLVCO_MAX           344000000
-#define STM32_VOS1_PLLVCO_MIN           96000000
-#define STM32_VOS1_PLLP_MAX             150000000
-#define STM32_VOS1_PLLP_MIN             2064500
-#define STM32_VOS1_PLLQ_MAX             150000000
-#define STM32_VOS1_PLLQ_MIN             8000000
-#define STM32_VOS1_PLLR_MAX             150000000
-#define STM32_VOS1_PLLR_MIN             8000000
-#define STM32_VOS1_PCLK1_MAX            150000000
-#define STM32_VOS1_PCLK2_MAX            150000000
-#define STM32_VOS1_ADCCLK_MAX           60000000
-
-#define STM32_VOS1_0WS_THRESHOLD        30000000
-#define STM32_VOS1_1WS_THRESHOLD        60000000
-#define STM32_VOS1_2WS_THRESHOLD        90000000
-#define STM32_VOS1_3WS_THRESHOLD        120000000
-#define STM32_VOS1_4WS_THRESHOLD        150000000
-/** @} */
-
-/**
- * @name    System Limits for VOS range 2
- * @{
- */
-#define STM32_VOS2_SYSCLK_MAX           26000000
-#define STM32_VOS2_HSECLK_MAX           26000000
-#define STM32_VOS2_HSECLK_BYP_MAX       26000000
-#define STM32_VOS2_HSECLK_MIN           8000000
-#define STM32_VOS2_HSECLK_BYP_MIN       8000000
-#define STM32_VOS2_LSECLK_MAX           32768
-#define STM32_VOS2_LSECLK_BYP_MAX       1000000
-#define STM32_VOS2_LSECLK_MIN           32768
-#define STM32_VOS2_LSECLK_BYP_MIN       32768
-#define STM32_VOS2_PLLIN_MAX            16000000
-#define STM32_VOS2_PLLIN_MIN            2660000
-#define STM32_VOS2_PLLVCO_MAX           128000000
-#define STM32_VOS2_PLLVCO_MIN           96000000
-#define STM32_VOS2_PLLP_MAX             26000000
-#define STM32_VOS2_PLLP_MIN             2064500
-#define STM32_VOS2_PLLQ_MAX             26000000
-#define STM32_VOS2_PLLQ_MIN             8000000
-#define STM32_VOS2_PLLR_MAX             26000000
-#define STM32_VOS2_PLLR_MIN             8000000
-#define STM32_VOS2_PCLK1_MAX            26000000
-#define STM32_VOS2_PCLK2_MAX            26000000
-#define STM32_VOS2_ADCCLK_MAX           26000000
-
-#define STM32_VOS2_0WS_THRESHOLD        12000000
-#define STM32_VOS2_1WS_THRESHOLD        24000000
-#define STM32_VOS2_2WS_THRESHOLD        26000000
-#define STM32_VOS2_3WS_THRESHOLD        0
-#define STM32_VOS2_4WS_THRESHOLD        0
-/** @} */
-
-/* Voltage related limits.*/
-#if (STM32_VOS == STM32_VOS_RANGE1) || defined(__DOXYGEN__)
-#if STM32_PWR_BOOST || defined(__DOXYGEN__)
-#define STM32_SYSCLK_MAX                STM32_BOOST_SYSCLK_MAX
-#define STM32_HSECLK_MAX                STM32_BOOST_HSECLK_MAX
-#define STM32_HSECLK_BYP_MAX            STM32_BOOST_HSECLK_BYP_MAX
-#define STM32_HSECLK_MIN                STM32_BOOST_HSECLK_MIN
-#define STM32_HSECLK_BYP_MIN            STM32_BOOST_HSECLK_BYP_MIN
-#define STM32_LSECLK_MAX                STM32_BOOST_LSECLK_MAX
-#define STM32_LSECLK_BYP_MAX            STM32_BOOST_LSECLK_BYP_MAX
-#define STM32_LSECLK_MIN                STM32_BOOST_LSECLK_MIN
-#define STM32_LSECLK_BYP_MIN            STM32_BOOST_LSECLK_BYP_MIN
-#define STM32_PLLIN_MAX                 STM32_BOOST_PLLIN_MAX
-#define STM32_PLLIN_MIN                 STM32_BOOST_PLLIN_MIN
-#define STM32_PLLVCO_MAX                STM32_BOOST_PLLVCO_MAX
-#define STM32_PLLVCO_MIN                STM32_BOOST_PLLVCO_MIN
-#define STM32_PLLP_MAX                  STM32_BOOST_PLLP_MAX
-#define STM32_PLLP_MIN                  STM32_BOOST_PLLP_MIN
-#define STM32_PLLQ_MAX                  STM32_BOOST_PLLQ_MAX
-#define STM32_PLLQ_MIN                  STM32_BOOST_PLLQ_MIN
-#define STM32_PLLR_MAX                  STM32_BOOST_PLLR_MAX
-#define STM32_PLLR_MIN                  STM32_BOOST_PLLR_MIN
-#define STM32_PCLK1_MAX                 STM32_BOOST_PCLK1_MAX
-#define STM32_PCLK2_MAX                 STM32_BOOST_PCLK2_MAX
-#define STM32_ADCCLK_MAX                STM32_BOOST_ADCCLK_MAX
-
-#define STM32_0WS_THRESHOLD             STM32_BOOST_0WS_THRESHOLD
-#define STM32_1WS_THRESHOLD             STM32_BOOST_1WS_THRESHOLD
-#define STM32_2WS_THRESHOLD             STM32_BOOST_2WS_THRESHOLD
-#define STM32_3WS_THRESHOLD             STM32_BOOST_3WS_THRESHOLD
-#define STM32_4WS_THRESHOLD             STM32_BOOST_4WS_THRESHOLD
-#define STM32_5WS_THRESHOLD             STM32_BOOST_5WS_THRESHOLD
-#define STM32_6WS_THRESHOLD             STM32_BOOST_6WS_THRESHOLD
-#define STM32_7WS_THRESHOLD             STM32_BOOST_7WS_THRESHOLD
-#define STM32_8WS_THRESHOLD             STM32_BOOST_8WS_THRESHOLD
-
-#else /* !STM32_PWR_BOOST */
-#define STM32_SYSCLK_MAX                STM32_VOS1_SYSCLK_MAX
-#define STM32_HSECLK_MAX                STM32_VOS1_HSECLK_MAX
-#define STM32_HSECLK_BYP_MAX            STM32_VOS1_HSECLK_BYP_MAX
-#define STM32_HSECLK_MIN                STM32_VOS1_HSECLK_MIN
-#define STM32_HSECLK_BYP_MIN            STM32_VOS1_HSECLK_BYP_MIN
-#define STM32_LSECLK_MAX                STM32_VOS1_LSECLK_MAX
-#define STM32_LSECLK_BYP_MAX            STM32_VOS1_LSECLK_BYP_MAX
-#define STM32_LSECLK_MIN                STM32_VOS1_LSECLK_MIN
-#define STM32_LSECLK_BYP_MIN            STM32_VOS1_LSECLK_BYP_MIN
-#define STM32_PLLIN_MAX                 STM32_VOS1_PLLIN_MAX
-#define STM32_PLLIN_MIN                 STM32_VOS1_PLLIN_MIN
-#define STM32_PLLVCO_MAX                STM32_VOS1_PLLVCO_MAX
-#define STM32_PLLVCO_MIN                STM32_VOS1_PLLVCO_MIN
-#define STM32_PLLP_MAX                  STM32_VOS1_PLLP_MAX
-#define STM32_PLLP_MIN                  STM32_VOS1_PLLP_MIN
-#define STM32_PLLQ_MAX                  STM32_VOS1_PLLQ_MAX
-#define STM32_PLLQ_MIN                  STM32_VOS1_PLLQ_MIN
-#define STM32_PLLR_MAX                  STM32_VOS1_PLLR_MAX
-#define STM32_PLLR_MIN                  STM32_VOS1_PLLR_MIN
-#define STM32_PCLK1_MAX                 STM32_VOS1_PCLK1_MAX
-#define STM32_PCLK2_MAX                 STM32_VOS1_PCLK2_MAX
-#define STM32_ADCCLK_MAX                STM32_VOS1_ADCCLK_MAX
-
-#define STM32_0WS_THRESHOLD             STM32_VOS1_0WS_THRESHOLD
-#define STM32_1WS_THRESHOLD             STM32_VOS1_1WS_THRESHOLD
-#define STM32_2WS_THRESHOLD             STM32_VOS1_2WS_THRESHOLD
-#define STM32_3WS_THRESHOLD             STM32_VOS1_3WS_THRESHOLD
-#define STM32_4WS_THRESHOLD             STM32_VOS1_4WS_THRESHOLD
-#define STM32_5WS_THRESHOLD             STM32_VOS1_5WS_THRESHOLD
-#define STM32_6WS_THRESHOLD             STM32_VOS1_6WS_THRESHOLD
-#define STM32_7WS_THRESHOLD             STM32_VOS1_7WS_THRESHOLD
-#define STM32_8WS_THRESHOLD             STM32_VOS1_8WS_THRESHOLD
-#endif /* !STM32_PWR_BOOST */
-
-#elif STM32_VOS == STM32_VOS_RANGE2
-#define STM32_SYSCLK_MAX                STM32_VOS2_SYSCLK_MAX
-#define STM32_HSECLK_MAX                STM32_VOS2_HSECLK_MAX
-#define STM32_HSECLK_BYP_MAX            STM32_VOS2_HSECLK_BYP_MAX
-#define STM32_HSECLK_MIN                STM32_VOS2_HSECLK_MIN
-#define STM32_HSECLK_BYP_MIN            STM32_VOS2_HSECLK_BYP_MIN
-#define STM32_LSECLK_MAX                STM32_VOS2_LSECLK_MAX
-#define STM32_LSECLK_BYP_MAX            STM32_VOS2_LSECLK_BYP_MAX
-#define STM32_LSECLK_MIN                STM32_VOS2_LSECLK_MIN
-#define STM32_LSECLK_BYP_MIN            STM32_VOS2_LSECLK_BYP_MIN
-#define STM32_PLLIN_MAX                 STM32_VOS2_PLLIN_MAX
-#define STM32_PLLIN_MIN                 STM32_VOS2_PLLIN_MIN
-#define STM32_PLLVCO_MAX                STM32_VOS2_PLLVCO_MAX
-#define STM32_PLLVCO_MIN                STM32_VOS2_PLLVCO_MIN
-#define STM32_PLLP_MAX                  STM32_VOS2_PLLP_MAX
-#define STM32_PLLP_MIN                  STM32_VOS2_PLLP_MIN
-#define STM32_PLLQ_MAX                  STM32_VOS2_PLLQ_MAX
-#define STM32_PLLQ_MIN                  STM32_VOS2_PLLQ_MIN
-#define STM32_PLLR_MAX                  STM32_VOS2_PLLR_MAX
-#define STM32_PLLR_MIN                  STM32_VOS2_PLLR_MIN
-#define STM32_PCLK1_MAX                 STM32_VOS2_PCLK1_MAX
-#define STM32_PCLK2_MAX                 STM32_VOS2_PCLK2_MAX
-#define STM32_ADCCLK_MAX                STM32_VOS2_ADCCLK_MAX
-
-#define STM32_0WS_THRESHOLD             STM32_VOS2_0WS_THRESHOLD
-#define STM32_1WS_THRESHOLD             STM32_VOS2_1WS_THRESHOLD
-#define STM32_2WS_THRESHOLD             STM32_VOS2_2WS_THRESHOLD
-#define STM32_3WS_THRESHOLD             STM32_VOS2_3WS_THRESHOLD
-#define STM32_4WS_THRESHOLD             STM32_VOS2_4WS_THRESHOLD
-#define STM32_5WS_THRESHOLD             STM32_VOS2_5WS_THRESHOLD
-#define STM32_6WS_THRESHOLD             STM32_VOS2_6WS_THRESHOLD
-#define STM32_7WS_THRESHOLD             STM32_VOS2_7WS_THRESHOLD
-#define STM32_8WS_THRESHOLD             STM32_VOS2_8WS_THRESHOLD
-
-#else
-#error "invalid STM32_VOS value specified"
-#endif
+/* Device limits.*/
+#include "stm32_limits.h"
 
 /* Clock handlers.*/
 #include "stm32_lse.inc"
@@ -1460,7 +1258,7 @@
   #define STM32_I2C2CLK             STM32_HSI16CLK
 
 #else
-  #error "invalid source selected for I2C1 clock"
+  #error "invalid source selected for I2C2 clock"
 #endif
 
 /**
@@ -1539,8 +1337,8 @@
 #if (STM32_I2S23SEL == STM32_I2S23SEL_SYSCLK) || defined(__DOXYGEN__)
   #define STM32_I2S23CLK            hal_lld_get_clock_point(CLK_SYSCLK)
 
-#elif STM32_I2S23SEL == STM32_I2S23SEL_PLLPCLK
-  #define STM32_I2S23CLK            hal_lld_get_clock_point(CLK_PLLPCLK)
+#elif STM32_I2S23SEL == STM32_I2S23SEL_PLLQCLK
+  #define STM32_I2S23CLK            hal_lld_get_clock_point(CLK_PLLQCLK)
 
 #elif STM32_I2S23SEL == STM32_I2S23SEL_HSI16
   #define STM32_I2S23CLK            STM32_HSI16CLK
@@ -1549,7 +1347,7 @@
   #define STM32_I2S23CLK            0 /* Unknown, would require a board value */
 
 #else
-  #error "invalid source selected for SAI1 clock"
+  #error "invalid source selected for I2S23 clock"
 #endif
 
 /**
@@ -1686,7 +1484,6 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
  * @brief   Type of a clock configuration structure.
  */
@@ -1700,11 +1497,27 @@ typedef struct {
   uint32_t          flash_acr;
   uint32_t          rcc_crrcr;
 } halclkcfg_t;
-#endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
+
+/**
+ * @brief   Type of a timeout counter.
+ */
+typedef uint32_t halcnt_t;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Real time counter frequency exported to the safety module.
+ * @note    The counter is the internal DWT cycles counter so it runs at
+ *          the same frequency of CPU.
+ */
+#define HAL_LLD_GET_CNT_FREQUENCY()         SystemCoreClock
+
+/**
+ * @brief   Real time counter value exported to the safety module.
+ */
+#define HAL_LLD_GET_CNT_VALUE()             (DWT->CYCCNT)
 
 #if !defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
 /**
@@ -1718,16 +1531,19 @@ typedef struct {
  * @notapi
  */
 #define hal_lld_get_clock_point(clkpt)                                      \
-  ((clkpt) == CLK_SYSCLK   ? STM32_SYSCLK        :                          \
-   (clkpt) == CLK_PLLPCLK  ? STM32_PLL_P_CLKOUT  :                          \
-   (clkpt) == CLK_PLLQCLK  ? STM32_PLL_Q_CLKOUT  :                          \
-   (clkpt) == CLK_PLLRCLK  ? STM32_PLL_R_CLKOUT  :                          \
-   (clkpt) == CLK_HCLK     ? STM32_HCLK          :                          \
-   (clkpt) == CLK_PCLK1    ? STM32_PCLK1         :                          \
-   (clkpt) == CLK_PCLK1TIM ? STM32_TIMP1CLK      :                          \
-   (clkpt) == CLK_PCLK2    ? STM32_PCLK2         :                          \
-   (clkpt) == CLK_PCLK2TIM ? STM32_TIMP2CLK      :                          \
-   (clkpt) == CLK_MCO      ? STM32_MCOCLK        :                          \
+  ((clkpt) == CLK_HSI16     ? STM32_HSI16CLK        :                       \
+   (clkpt) == CLK_HSI48     ? STM32_HSI48CLK        :                       \
+   (clkpt) == CLK_HSE       ? STM32_HSECLK          :                       \
+   (clkpt) == CLK_SYSCLK    ? STM32_SYSCLK          :                       \
+   (clkpt) == CLK_PLLPCLK   ? STM32_PLL_P_CLKOUT    :                       \
+   (clkpt) == CLK_PLLQCLK   ? STM32_PLL_Q_CLKOUT    :                       \
+   (clkpt) == CLK_PLLRCLK   ? STM32_PLL_R_CLKOUT    :                       \
+   (clkpt) == CLK_HCLK      ? STM32_HCLK            :                       \
+   (clkpt) == CLK_PCLK1     ? STM32_PCLK1           :                       \
+   (clkpt) == CLK_PCLK1TIM  ? STM32_TIMP1CLK        :                       \
+   (clkpt) == CLK_PCLK2     ? STM32_PCLK2           :                       \
+   (clkpt) == CLK_PCLK2TIM  ? STM32_TIMP2CLK        :                       \
+   (clkpt) == CLK_MCO       ? STM32_MCOCLK          :                        \
    0U)
 #endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 

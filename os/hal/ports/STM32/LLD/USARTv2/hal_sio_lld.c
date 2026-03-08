@@ -601,7 +601,7 @@ sioevents_t sio_lld_get_events(SIODriver *siop) {
  * @param[in] buffer        pointer to the buffer for read frames
  * @param[in] n             maximum number of frames to be read
  * @return                  The number of frames copied from the buffer.
- * @retval 0                if the TX FIFO is full.
+ * @retval 0                if the RX FIFO is empty.
  */
 size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
   size_t rd;
@@ -786,7 +786,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
     /* If there are no errors then we check for the other RX-related
        status flags.*/
     else {
-      /* Idle RX flag.*/
+      /* Idle RX flag. Note: At start the USART will produce an IDLE interrupt.*/
       if ((isr & USART_ISR_IDLE) != 0U) {
 
         /* Interrupt source disabled.*/

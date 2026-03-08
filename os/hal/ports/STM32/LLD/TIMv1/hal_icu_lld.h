@@ -802,6 +802,16 @@ struct ICUDriver {
 #define icu_lld_are_notifications_enabled(icup)                             \
   (bool)(((icup)->tim->DIER & STM32_TIM_DIER_IRQ_MASK) != 0)
 
+/**
+ * @brief   Returns the TIM associated with an ICU.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ * @return              The TIM reference.
+ *
+ * @notapi
+ */
+#define icu_lld_get_timer(icup) ((icup)->tim)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

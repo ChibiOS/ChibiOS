@@ -155,6 +155,13 @@
 #endif
 
 /**
+ * @brief   Number of extra cores.
+ */
+#if !defined(CRT0_EXTRA_CORES_NUMBER) || defined(__DOXYGEN__)
+#define CRT0_EXTRA_CORES_NUMBER             0
+#endif
+
+/**
  * @brief   FPU FPCCR register initialization value.
  * @note    Only used if @p CRT0_INIT_FPU is equal to @p TRUE.
  */
@@ -371,5 +378,123 @@ _crt0_entry:
                 b       __default_exit
 
 #endif /* !defined(__DOXYGEN__) */
+
+                .macro  CRT0_EXTRA_CORE_ENTRY core
+                .align  2
+                .thumb_func
+                .global _crt0_c\core\()_entry
+_crt0_c\core\()_entry:
+                /* Interrupts are globally masked initially.*/
+                cpsid   i
+
+#if CRT0_FORCE_MSP_INIT == TRUE
+                /* MSP stack pointers initialization.*/
+                ldr     r0, =__c\core\()_main_stack_end__
+                msr     MSP, r0
+#endif
+
+                /* PSP stack pointers initialization.*/
+                ldr     r0, =__c\core\()_process_stack_end__
+                msr     PSP, r0
+
+#if CRT0_VTOR_INIT == TRUE
+                /* Initial VTOR position enforced.*/
+                ldr     r0, =_vectors
+                ldr     r1, =SCB_VTOR
+                str     r0, [r1]
+#endif
+
+#if CRT0_INIT_FPU == TRUE
+                /* FPU FPCCR initialization.*/
+                movw    r0, #CRT0_FPCCR_INIT & 0xFFFF
+                movt    r0, #CRT0_FPCCR_INIT >> 16
+                movw    r1, #SCB_FPCCR & 0xFFFF
+                movt    r1, #SCB_FPCCR >> 16
+                str     r0, [r1]
+                dsb
+                isb
+
+                /* CPACR initialization.*/
+                movw    r0, #CRT0_CPACR_INIT & 0xFFFF
+                movt    r0, #CRT0_CPACR_INIT >> 16
+                movw    r1, #SCB_CPACR & 0xFFFF
+                movt    r1, #SCB_CPACR >> 16
+                str     r0, [r1]
+                dsb
+                isb
+
+                /* FPU FPSCR initially cleared.*/
+                mov     r0, #0
+                vmsr    FPSCR, r0
+
+                /* FPU FPDSCR initially cleared.*/
+                movw    r1, #SCB_FPDSCR & 0xFFFF
+                movt    r1, #SCB_FPDSCR >> 16
+                str     r0, [r1]
+#endif
+
+                /* CONTROL register initialization as configured.*/
+                movs    r0, #CRT0_CONTROL_INIT
+                msr     CONTROL, r0
+                isb
+
+#if CRT0_INIT_CORE == TRUE
+                /* Core initialization.*/
+                bl      __c\core\()_cpu_init
+#endif
+
+                /* Early initialization.*/
+                bl      __c\core\()_early_init
+
+#if CRT0_INIT_STACKS == TRUE
+                ldr     r0, =CRT0_STACKS_FILL_PATTERN
+                /* Main Stack initialization. Note, it assumes that the
+                   stack size is a multiple of 4 so the linker file must
+                   ensure this.*/
+                ldr     r1, =__c\core\()_main_stack_base__
+                ldr     r2, =__c\core\()_main_stack_end__
+.Lc\core\()msloop\@:
+                cmp     r1, r2
+                itt     lo
+                strlo   r0, [r1], #4
+                blo     .Lc\core\()msloop\@
+
+                /* Process Stack initialization. Note, it assumes that the
+                   stack size is a multiple of 4 so the linker file must
+                   ensure this.*/
+                ldr     r1, =__c\core\()_process_stack_base__
+                ldr     r2, =__c\core\()_process_stack_end__
+.Lc\core\()psloop\@:
+                cmp     r1, r2
+                itt     lo
+                strlo   r0, [r1], #4
+                blo     .Lc\core\()psloop\@
+#endif
+
+                /* Late initialization.*/
+                bl      __c\core\()_late_init
+
+                /* Main program invocation, r0 contains the returned value.*/
+                bl      c\core\()_main
+
+                /* Branching to the defined exit handler.*/
+                b       __c\core\()_default_exit
+                .endm
+
+#if CRT0_EXTRA_CORES_NUMBER > 0
+                CRT0_EXTRA_CORE_ENTRY 1
+#endif
+
+#if CRT0_EXTRA_CORES_NUMBER > 1
+                CRT0_EXTRA_CORE_ENTRY 2
+#endif
+
+#if CRT0_EXTRA_CORES_NUMBER > 2
+                CRT0_EXTRA_CORE_ENTRY 3
+#endif
+
+#if CRT0_EXTRA_CORES_NUMBER > 3
+#error "unsupported number of extra cores"
+#endif
 
 /** @} */

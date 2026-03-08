@@ -376,7 +376,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_CRYPTO == TRUE */
+#endif /* HAL_USE_CRY == TRUE */
 
 #endif /* HAL_CRYPTO_H */
 

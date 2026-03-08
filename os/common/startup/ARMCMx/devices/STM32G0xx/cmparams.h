@@ -41,7 +41,7 @@
 /**
  * @brief   Number of bits in priority masks.
  */
-#define CORTEX_PRIORITY_BITS    2
+#define CORTEX_PRIORITY_BITS    2U
 
 /* If the device type is not externally defined, for example from the Makefile,
    then a file named board.h is included. This file must contain a device

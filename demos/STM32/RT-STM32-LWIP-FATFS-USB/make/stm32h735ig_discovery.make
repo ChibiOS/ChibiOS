@@ -130,7 +130,6 @@ LDSCRIPT= $(STARTUPLD)/STM32H723xG_ITCM64k_AXI_NC.ld
 # setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
-       $(CHIBIOS)/os/various/evtimer.c \
        $(CONFDIR)/portab.c \
        main.c
 

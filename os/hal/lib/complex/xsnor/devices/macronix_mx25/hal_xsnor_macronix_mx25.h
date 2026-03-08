@@ -75,7 +75,7 @@
 
 /**
  * @brief       Delays insertion.
- * @details     If enabled this options inserts delays into the flash waiting
+ * @details     If enabled this option inserts delays into the flash waiting
  *              routines releasing some extra CPU time for threads with lower
  *              priority, this may slow down the driver a bit however.
  */

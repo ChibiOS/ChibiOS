@@ -47,6 +47,19 @@
   STM32_DMA_GETCHANNEL(STM32_SDC_SDMMC2_DMA_STREAM,                         \
                        STM32_SDC_SDMMC2_DMA_CHN)
 
+/*
+ * Despite allegedly being reserved, the start bit error 9 was evidently
+ * inherited from SDIOv1 and will sometimes be asserted on error, so we need to
+ * detect it to avoid a forever wait for a transaction to complete.
+ */
+#if !defined(SDMMC_STA_STBITERR)
+#define SDMMC_STA_STBITERR      (0x1UL << 9U)
+#endif
+
+#if !defined(SDMMC_MASK_STBITERRIE)
+#define SDMMC_MASK_STBITERRIE   (0x1UL << 9U)
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -169,6 +182,7 @@ static bool sdc_lld_prepare_read_bytes(SDCDriver *sdcp,
   sdcp->sdmmc->ICR   = SDMMC_ICR_ALL_FLAGS;
   sdcp->sdmmc->MASK  = SDMMC_MASK_DCRCFAILIE |
                        SDMMC_MASK_DTIMEOUTIE |
+                       SDMMC_MASK_STBITERRIE |
                        SDMMC_MASK_RXOVERRIE |
                        SDMMC_MASK_DATAENDIE;
   sdcp->sdmmc->DLEN  = bytes;
@@ -284,21 +298,30 @@ static bool sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
     osalThreadSuspendS(&sdcp->thread);
   }
 
-  /* Stopping operations, waiting for transfer completion at DMA level, then
-     the stream is disabled and cleared.*/
-  dmaWaitCompletion(sdcp->dma);
-  sdcp->sdmmc->MASK  = 0U;
-  sdcp->sdmmc->DCTRL = 0U;
+  /* Mask has now been set to zero by interrupt handler. */
+  osalSysUnlock();
 
+  /* Data transfer not complete, let error cleanup stop DMA.*/
   if ((sdcp->sdmmc->STA & SDMMC_STA_DATAEND) == 0U) {
-    osalSysUnlock();
     return HAL_FAILED;
   }
 
+  /* RXOVERR may be late, wait for RX FIFO to not have data (or be disabled).*/
+  while ((sdcp->sdmmc->STA & SDMMC_STA_RXDAVL) != 0U)
+    ;
+
+  /* RX data overflow, let error cleanup stop DMA.*/
+  if ((sdcp->sdmmc->STA & SDMMC_STA_RXOVERR) != 0U) {
+    return HAL_FAILED;
+  }
+
+  /* Waiting for transfer completion at DMA level, then the stream is disabled
+   and cleared.*/
+  dmaWaitCompletion(sdcp->dma);
+  sdcp->sdmmc->DCTRL = 0U;
+
   /* Clearing status.*/
   sdcp->sdmmc->ICR = SDMMC_ICR_ALL_FLAGS;
-
-  osalSysUnlock();
 
   /* Finalize transaction.*/
   if (n > 1U)
@@ -330,8 +353,8 @@ static void sdc_lld_collect_errors(SDCDriver *sdcp, uint32_t sta) {
     errors |= SDC_TX_UNDERRUN;
   if (sta & SDMMC_STA_RXOVERR)
     errors |= SDC_RX_OVERRUN;
-/*  if (sta & SDMMC_STA_STBITERR)
-    errors |= SDC_STARTBIT_ERROR;*/
+  if (sta & SDMMC_STA_STBITERR)
+    errors |= SDC_STARTBIT_ERROR;
 
   sdcp->errors |= errors;
 }
@@ -847,6 +870,7 @@ bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
   sdcp->sdmmc->ICR   = SDMMC_ICR_ALL_FLAGS;
   sdcp->sdmmc->MASK  = SDMMC_MASK_DCRCFAILIE |
                        SDMMC_MASK_DTIMEOUTIE |
+                       SDMMC_MASK_STBITERRIE |
                        SDMMC_MASK_RXOVERRIE |
                        SDMMC_MASK_DATAENDIE;
   sdcp->sdmmc->DLEN  = blocks * MMCSD_BLOCK_SIZE;
@@ -908,6 +932,7 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
   sdcp->sdmmc->ICR   = SDMMC_ICR_ALL_FLAGS;
   sdcp->sdmmc->MASK  = SDMMC_MASK_DCRCFAILIE |
                        SDMMC_MASK_DTIMEOUTIE |
+                       SDMMC_MASK_STBITERRIE |
                        SDMMC_MASK_TXUNDERRIE |
                        SDMMC_MASK_DATAENDIE;
   sdcp->sdmmc->DLEN  = blocks * MMCSD_BLOCK_SIZE;

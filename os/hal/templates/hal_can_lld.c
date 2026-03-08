@@ -250,7 +250,7 @@ void can_lld_wakeup(CANDriver *canp) {
   (void)canp;
 
 }
-#endif /* CAN_USE_SLEEP_MOD == TRUEE */
+#endif /* CAN_USE_SLEEP_MODE == TRUE */
 
 #endif /* HAL_USE_CAN == TRUE */
 

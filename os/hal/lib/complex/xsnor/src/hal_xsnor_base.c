@@ -185,6 +185,11 @@ static flash_error_t __xsnor_fls_start_erase_all_impl(void *ip) {
   /* Actual erase implementation.*/
   err = xsnor_device_start_erase_all(self);
 
+  /* Restore ready state on failure.*/
+  if (err != FLASH_NO_ERROR) {
+    self->state = FLASH_READY;
+  }
+
   /* Bus released.*/
   __xsnor_bus_release(self);
 
@@ -220,6 +225,11 @@ static flash_error_t __xsnor_fls_start_erase_sector_impl(void *ip,
 
   /* Actual erase implementation.*/
   err = xsnor_device_start_erase_sector(self, sector);
+
+  /* Restore ready state on failure.*/
+  if (err != FLASH_NO_ERROR) {
+    self->state = FLASH_READY;
+  }
 
   /* Bus released.*/
   __xsnor_bus_release(self);
@@ -856,7 +866,7 @@ void __xsnor_bus_cmd_addr_dummy_receive(void *ip, uint32_t cmd,
  */
 flash_error_t xsnorStart(void *ip, const xsnor_config_t *config) {
   hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
-  flash_error_t err;
+  flash_error_t err = FLASH_NO_ERROR;
 
   osalDbgCheck((self != NULL) && (config != NULL));
   osalDbgAssert(self->state != FLASH_UNINIT, "invalid state");

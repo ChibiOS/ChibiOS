@@ -185,7 +185,7 @@ extern "C" {
   void sduDataTransmitted(USBDriver *usbp, usbep_t ep);
   void sduDataReceived(USBDriver *usbp, usbep_t ep);
   void sduInterruptTransmitted(USBDriver *usbp, usbep_t ep);
-  msg_t sduControl(USBDriver *usbp, unsigned int operation, void *arg);
+  msg_t sduControl(SerialUSBDriver *sdup, unsigned int operation, void *arg);
 #ifdef __cplusplus
 }
 #endif

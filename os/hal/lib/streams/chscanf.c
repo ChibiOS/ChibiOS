@@ -116,6 +116,7 @@ int chvscanf(BaseBufferedStream *chp, const char *fmt, va_list ap)
   int   n = 0;
   void* buf;
   bool  is_long, is_signed, is_positive;
+  bool  has_digit;
   long  vall, digit;
 #if CHSCANF_USE_FLOAT
   long   exp;
@@ -208,6 +209,7 @@ int chvscanf(BaseBufferedStream *chp, const char *fmt, va_list ap)
     is_positive = true;
     is_signed   = true;
     base        = 10;
+    has_digit   = false;
 
     switch (f) {
 
@@ -524,6 +526,7 @@ int chvscanf(BaseBufferedStream *chp, const char *fmt, va_list ap)
 
         } else {
           base = 8;
+          has_digit = true;
         }
       }
       break;
@@ -578,6 +581,8 @@ int chvscanf(BaseBufferedStream *chp, const char *fmt, va_list ap)
             return n;
           }
           c = streamGet(chp);
+        } else {
+          has_digit = true;
         }
       }
       break;
@@ -629,18 +634,21 @@ int chvscanf(BaseBufferedStream *chp, const char *fmt, va_list ap)
 
     vall = 0UL;
 
-    /* If we don't have at least one additional eligible character, it's a matching failure */
-    if (sym_to_val(c, base) == -1) {
-      break;
-    }
-
-    while (width--) {
-      digit = sym_to_val(c, base);
-      if (digit == -1) {
+    /* If we don't have at least one eligible character, it's a matching failure. */
+    digit = sym_to_val(c, base);
+    if (digit == -1) {
+      if (!has_digit) {
         break;
       }
-      vall = (vall * base) + digit;
-      c    = streamGet(chp);
+    } else {
+      while (width--) {
+        digit = sym_to_val(c, base);
+        if (digit == -1) {
+          break;
+        }
+        vall = (vall * base) + digit;
+        c    = streamGet(chp);
+      }
     }
 
     if (!is_positive) {
@@ -776,16 +784,17 @@ int chsnscanf(char *str, size_t size, const char *fmt, ...)
 int chvsnscanf(char *str, size_t size, const char *fmt, va_list ap)
 {
   MemoryStream   ms;
-  size_t         size_wo_nul;
+  size_t         eos;
 
-  if (size > 0)
-    size_wo_nul = size - 1;
-  else
-    size_wo_nul = 0;
+  eos = 0;
+  if (size > 0) {
+    while ((eos < size) && (str[eos] != '\0')) {
+      eos++;
+    }
+  }
 
-  /* Memory stream object to be used as a string writer, reserving one
-     byte for the final zero. */
-  msObjectInit(&ms, (uint8_t*)str, size_wo_nul, 0);
+  /* Memory stream object to be used as a string reader. */
+  msObjectInit(&ms, (uint8_t *)str, size, eos);
 
   /* Performing the scan operation using the common code and
      return number of receiving arguments successfully assigned. */

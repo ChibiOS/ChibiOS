@@ -252,10 +252,10 @@
  * @name    RCC_CCIPR2 register bits definitions
  * @{
  */
-#define STM32_I2C4SEL_MASK      (3 << 0)    /**< I2C1SEL mask.              */
-#define STM32_I2C4SEL_PCLK1     (0 << 0)    /**< I2C1 source is PCLK1.      */
-#define STM32_I2C4SEL_SYSCLK    (1 << 0)    /**< I2C1 source is SYSCLK.     */
-#define STM32_I2C4SEL_HSI16     (2 << 0)    /**< I2C1 source is HSI16.      */
+#define STM32_I2C4SEL_MASK      (3 << 0)    /**< I2C4SEL mask.              */
+#define STM32_I2C4SEL_PCLK1     (0 << 0)    /**< I2C4 source is PCLK1.      */
+#define STM32_I2C4SEL_SYSCLK    (1 << 0)    /**< I2C4 source is SYSCLK.     */
+#define STM32_I2C4SEL_HSI16     (2 << 0)    /**< I2C4 source is HSI16.      */
 /** @} */
 
 /**
@@ -814,7 +814,7 @@
 /**
  * @brief   Minimum PLLs input clock frequency.
  */
-#define STM32_PLLIN_MIN             4000000
+#define STM32_PLLIN_MIN             3995000 /*Tolerance for MSIPLL real frequency.*/
 
 /**
  * @brief   Maximum VCO clock frequency at current voltage setting.
@@ -824,7 +824,7 @@
 /**
  * @brief   Minimum VCO clock frequency at current voltage setting.
  */
-#define STM32_PLLVCO_MIN            64000000
+#define STM32_PLLVCO_MIN            63950000 /*Tolerance for MSIPLL real frequency.*/
 
 /**
  * @brief   Maximum PLL-P output clock frequency.
@@ -893,7 +893,7 @@
 #define STM32_LSECLK_MIN            32768
 #define STM32_LSECLK_BYP_MIN        32768
 #define STM32_PLLIN_MAX             16000000
-#define STM32_PLLIN_MIN             4000000
+#define STM32_PLLIN_MIN             3995000 /*Tolerance for MSIPLL real frequency.*/
 #define STM32_PLLVCO_MAX            128000000
 #define STM32_PLLVCO_MIN            64000000
 #define STM32_PLLP_MAX              26000000

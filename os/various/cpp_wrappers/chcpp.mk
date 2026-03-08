@@ -1,5 +1,5 @@
 # C++ wrapper files.
-CHCPPSRC   = $(CHIBIOS)/os/various/syscalls.c
+CHCPPSRC   =
 
 CHCPPSRCPP = $(CHIBIOS)/os/various/cpp_wrappers/ch.cpp
 

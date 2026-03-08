@@ -68,6 +68,7 @@ void pwm_lld_init(void) {
 #if PLATFORM_PWM_USE_PWM1 == TRUE
   /* Driver initialization.*/
   pwmObjectInit(&PWMD1);
+  PWMD1.channels = PWM_CHANNELS;
 #endif
 }
 

@@ -37,7 +37,7 @@
 #define Q_TIMEOUT       MSG_TIMEOUT /**< @brief Timeout condition.          */
 #define Q_RESET         MSG_RESET   /**< @brief Queue has been reset.       */
 #define Q_EMPTY         MSG_TIMEOUT /**< @brief Queue empty.                */
-#define Q_FULL          MSG_TIMEOUT /**< @brief Queue full,                 */
+#define Q_FULL          MSG_TIMEOUT /**< @brief Queue full.                 */
 /** @} */
 
 /*===========================================================================*/

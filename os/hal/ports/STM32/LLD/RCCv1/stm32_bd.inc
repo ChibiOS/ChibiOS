@@ -59,7 +59,7 @@ __STATIC_INLINE void bd_init(void) {
 #endif
 
   /* Selectors.*/
-  bdcr &= ~(STM32_RTCSEL_MASK | STM32_LSCOSEL_MASK);
+  bdcr &= ~(RCC_BDCR_RTCSEL_Msk | RCC_BDCR_LSCOSEL_Msk);
   bdcr |= STM32_RTCSEL | STM32_LSCOSEL;
 
   /* Final settings.*/
@@ -74,7 +74,7 @@ __STATIC_INLINE void bd_init(void) {
 __STATIC_INLINE void bd_reset(void) {
 
   /* Reset BKP domain if different clock source selected.*/
-  if ((RCC->BDCR & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
+  if ((RCC->BDCR & RCC_BDCR_RTCSEL_Msk) != STM32_RTCSEL) {
     /* Backup domain reset.*/
 #if defined(RCC_BDCR_BDRST)
     RCC->BDCR = RCC_BDCR_BDRST;

@@ -837,7 +837,7 @@
 #define STM32_VOS1_PLLIN_MAX        16000000U
 #define STM32_VOS1_PLLIN_MIN        2660000U
 #define STM32_VOS1_PLLVCO_MAX       344000000U
-#define STM32_VOS1_PLLVCO_MIN       96000000U
+#define STM32_VOS1_PLLVCO_MIN       95950000U /*Tolerance for MSIPLL real frequency.*/
 #define STM32_VOS1_PLLP_MAX         48000000U
 #define STM32_VOS1_PLLP_MIN         3000000U
 #define STM32_VOS1_PLLQ_MAX         48000000U
@@ -864,7 +864,7 @@
 #define STM32_VOS2_PLLIN_MAX        16000000U
 #define STM32_VOS2_PLLIN_MIN        2660000U
 #define STM32_VOS2_PLLVCO_MAX       128000000U
-#define STM32_VOS2_PLLVCO_MIN       96000000U
+#define STM32_VOS2_PLLVCO_MIN       95950000U /*Tolerance for MSIPLL real frequency.*/
 #define STM32_VOS2_PLLP_MAX         16000000U
 #define STM32_VOS2_PLLP_MIN         3000000U
 #define STM32_VOS2_PLLQ_MAX         12000000U
@@ -1225,7 +1225,7 @@
  */
 #if ((STM32_PLLM_VALUE >= 1) && (STM32_PLLM_VALUE <= 8)) ||                 \
     defined(__DOXYGEN__)
-#define STM32_PLLM                  ((STM32_PLLM_VALUE - 1) << 4)
+#define STM32_PLLM                  ((STM32_PLLM_VALUE - 1) << RCC_PLLCFGR_PLLM_Pos)
 #else
 #error "invalid STM32_PLLM_VALUE value specified"
 #endif

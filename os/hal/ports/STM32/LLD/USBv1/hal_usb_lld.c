@@ -271,13 +271,17 @@ static void usb_packet_write_from_buffer(usbep_t ep,
   }
 #endif /* STM32_USB_USE_FAST_COPY */
 
-  while (i > 0) {
+  while (i >= 2) {
     uint32_t w;
 
     w  = *buf++;
     w |= *buf++ << 8;
     *pmap++ = (stm32_usb_pma_t)w;
     i -= 2;
+  }
+
+  if (i != 0) {
+    *pmap++ = (stm32_usb_pma_t)(*buf);
   }
 }
 
@@ -861,7 +865,7 @@ void usb_lld_clear_out(USBDriver *usbp, usbep_t ep) {
   /* Makes sure to not put to NAK an endpoint that is already
      transferring.*/
   if ((STM32_USB->EPR[ep] & EPR_STAT_RX_MASK) != EPR_STAT_RX_VALID) {
-    EPR_SET_STAT_TX(ep, EPR_STAT_RX_NAK);
+    EPR_SET_STAT_RX(ep, EPR_STAT_RX_NAK);
   }
 }
 

@@ -29,6 +29,10 @@
 
 #include "hal_flash.h"
 
+#if defined(MFS_USE_MFSCONF)
+#include "mfsconf.h"
+#endif
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -52,6 +56,13 @@
  */
 #if !defined(MFS_CFG_MAX_RECORDS) || defined(__DOXYGEN__)
 #define MFS_CFG_MAX_RECORDS                 32
+#endif
+
+/**
+ * @brief   Maximum record size in the managed storage.
+ */
+#if !defined(MFS_CFG_MAX_RECORD_SIZE) || defined(__DOXYGEN__)
+#define MFS_CFG_MAX_RECORD_SIZE             16384
 #endif
 
 /**
@@ -106,13 +117,24 @@
 #if !defined(MFS_CFG_TRANSACTION_MAX) || defined(__DOXYGEN__)
 #define MFS_CFG_TRANSACTION_MAX             16
 #endif
+
+/**
+ * @brief   Enables mutual exclusion on flash accesses.
+ * @details Mutual exclusion on flash is required when multiple threads are
+ *          accessing different flash areas through multiple MFS instances
+ *          or different modules.
+ * @note    Requires exclusive access support in the associated flash driver.
+ */
+#if !defined(MFS_USE_FLASH_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define MFS_USE_FLASH_MUTUAL_EXCLUSION      FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if MFS_CFG_MAX_RECORDS < 0
+#if (MFS_CFG_MAX_RECORDS < 0) || (MFS_CFG_MAX_RECORDS > 65535)
 #error "invalid MFS_CFG_MAX_RECORDS value"
 #endif
 
@@ -384,7 +406,7 @@ typedef struct {
   /**
    * @brief   Maximum offset for the transaction.
    */
-  flash_offset_t            tr_limit_offet;
+  flash_offset_t            tr_limit_offset;
   /**
    * @brief   Number of buffered operations in current transaction.
    */
@@ -452,4 +474,3 @@ extern "C" {
 #endif /* HAL_MFS_H */
 
 /** @} */
-

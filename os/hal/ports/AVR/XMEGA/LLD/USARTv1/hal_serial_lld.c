@@ -429,8 +429,11 @@ OSAL_IRQ_HANDLER(USARTC0_RXC_vect) {
   OSAL_IRQ_PROLOGUE();
 
   status = USARTC0.STATUS;
-  if (status & (USART_FERR_bm | USART_PERR_bm | USART_BUFOVF_bm));
+
+  if (status & (USART_FERR_bm | USART_PERR_bm | USART_BUFOVF_bm)) {
     set_error(&SD1, status);
+  }
+
   osalSysLockFromISR();
   sdIncomingDataI(&SD1, USARTC0.DATA);
   osalSysUnlockFromISR();

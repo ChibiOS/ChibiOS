@@ -2,16 +2,22 @@
 # Multi-project makefile rules
 #
 
+SUB_MAKES := $(sort $(wildcard make/*.make))
+
 all:
-	@echo
-	@echo === Building for STM32C031C6-Nucleo144 =============================
-	+@make --no-print-directory -f make/stm32c031c6_nucleo64.make all
-	@echo ====================================================================
+	@for m in $(SUB_MAKES); do \
+		echo; \
+		echo "=== Building $$m ==="; \
+		$(MAKE) --no-print-directory -f $$m all || exit $$?; \
+		echo; \
+	done
 	@echo
 
 clean:
-	@echo
-	+@make --no-print-directory -f make/stm32c031c6_nucleo64.make clean
-	@echo
+	@for m in $(SUB_MAKES); do \
+		echo "=== Cleaning $$m ==="; \
+		$(MAKE) --no-print-directory -f $$m clean || exit $$?; \
+		echo; \
+	done
 #
 ##############################################################################

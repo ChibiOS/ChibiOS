@@ -202,7 +202,7 @@ typedef SIOConfig BufferedSIOConfig;
  *
  * @iclass
  */
-#define bsioReadI(bsiop, b, n) iqReadI(&(bsiop)->iqueue, b, n, TIME_INFINITE)
+#define bsioReadI(bsiop, b, n) iqReadI(&(bsiop)->iqueue, b, n)
 
 /**
  * @brief   Direct blocking read from a @p BufferedSIODriver.

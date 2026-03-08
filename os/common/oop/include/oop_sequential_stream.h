@@ -92,7 +92,7 @@
 
 /**
  * @interface   sequential_stream_i
- * @extends     base_interface_i.
+ * @extends     base_interface_i
  *
  * @brief       Sequential data streams interface.
  * @details     This module define an interface for generic sequential data
@@ -165,9 +165,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    sequential_stream_i
- * @public
- *
  * @brief       Sequential Stream write.
  * @details     This function writes data from a buffer to a stream.
  *
@@ -186,9 +183,6 @@ static inline size_t stmWrite(void *ip, const uint8_t *bp, size_t n) {
 }
 
 /**
- * @memberof    sequential_stream_i
- * @public
- *
  * @brief       Sequential Stream read.
  * @details     This function reads data from a stream into a buffer.
  *
@@ -207,9 +201,6 @@ static inline size_t stmRead(void *ip, uint8_t *bp, size_t n) {
 }
 
 /**
- * @memberof    sequential_stream_i
- * @public
- *
  * @brief       Sequential Stream blocking byte write.
  * @details     This function writes a byte value to a stream. If the stream is
  *              not ready to accept data then the calling thread is suspended.
@@ -228,9 +219,6 @@ static inline int stmPut(void *ip, uint8_t b) {
 }
 
 /**
- * @memberof    sequential_stream_i
- * @public
- *
  * @brief       Sequential Stream blocking byte read.
  * @details     This function reads a byte value from a stream. If the data is
  *              not available then the calling thread is suspended.
@@ -247,9 +235,6 @@ static inline int stmGet(void *ip) {
 }
 
 /**
- * @memberof    sequential_stream_i
- * @public
- *
  * @brief       Pushes back a byte into the stream.
  * @details     The specified byte is pushed back into the stream.
  * @note        Implementing classes may have limited push-back buffer capacity

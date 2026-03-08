@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    hal_buffered_serial.h
+ * @file    hal_buffered_serial.c
  * @brief   Buffered Serial Driver code.
  *
  * @addtogroup HAL_BUFFERED_SERIAL

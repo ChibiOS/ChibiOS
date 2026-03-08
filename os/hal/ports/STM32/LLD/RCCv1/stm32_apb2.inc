@@ -26,25 +26,58 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#if defined(RCC_CFGR_PPRE2_Pos)
-#define STM32_PPRE2_POS         RCC_CFGR_PPRE2_Pos
+/**
+ * @name    PPRE2 field bits definitions (legacy)
+ * @{
+ */
+#if defined(RCC_CFGR_PPRE2_Pos) || defined(__DOXYGEN__)
+#define STM32_PPRE2_POS                     RCC_CFGR_PPRE2_Pos
+#define STM32_PPRE2_MASK                    RCC_CFGR_PPRE2_Msk
+
 #elif defined(RCC_CFGR2_PPRE2_Pos)
-#define STM32_PPRE2_POS         RCC_CFGR2_PPRE2_Pos
+#define STM32_PPRE2_POS                     RCC_CFGR2_PPRE2_Pos
+#define STM32_PPRE2_MASK                    RCC_CFGR2_PPRE2_Msk
+
 #else
 #error "unknown register name"
 #endif
 
+#define STM32_PPRE2_FIELD(n)                ((n) << STM32_PPRE2_POS)
+#define STM32_PPRE2_DIV1                    STM32_PPRE2_FIELD(0U)
+#define STM32_PPRE2_DIV2                    STM32_PPRE2_FIELD(4U)
+#define STM32_PPRE2_DIV4                    STM32_PPRE2_FIELD(5U)
+#define STM32_PPRE2_DIV8                    STM32_PPRE2_FIELD(6U)
+#define STM32_PPRE2_DIV16                   STM32_PPRE2_FIELD(7U)
+/** @} */
+
+
 /**
- * @name    PPRE2 field bits definitions
+ * @name    PPRE2 field helpers
  * @{
  */
-#define STM32_PPRE2_MASK        (7U << STM32_PPRE2_POS)
-#define STM32_PPRE2_FIELD(n)    ((n) << STM32_PPRE2_POS)
-#define STM32_PPRE2_DIV1        STM32_PPRE2_FIELD(0U)
-#define STM32_PPRE2_DIV2        STM32_PPRE2_FIELD(4U)
-#define STM32_PPRE2_DIV4        STM32_PPRE2_FIELD(5U)
-#define STM32_PPRE2_DIV8        STM32_PPRE2_FIELD(6U)
-#define STM32_PPRE2_DIV16       STM32_PPRE2_FIELD(7U)
+#if defined(RCC_CFGR_PPRE2_Pos) || defined(__DOXYGEN__)
+#define RCC_CFGR_PPRE2_FIELD(n)             ((n) << RCC_CFGR_PPRE2_Pos)
+#if !defined(RCC_CFGR_PPRE2_DIV1)
+#define RCC_CFGR_PPRE2_DIV1                 RCC_CFGR_PPRE2_FIELD(0U)
+#define RCC_CFGR_PPRE2_DIV2                 RCC_CFGR_PPRE2_FIELD(4U)
+#define RCC_CFGR_PPRE2_DIV4                 RCC_CFGR_PPRE2_FIELD(5U)
+#define RCC_CFGR_PPRE2_DIV8                 RCC_CFGR_PPRE2_FIELD(6U)
+#define RCC_CFGR_PPRE2_DIV16                RCC_CFGR_PPRE2_FIELD(7U)
+#endif
+
+#elif defined(RCC_CFGR2_PPRE2_Pos)
+#define RCC_CFGR2_PPRE2_FIELD(n)            ((n) << RCC_CFGR2_PPRE2_Pos)
+#if !defined(RCC_CFGR2_PPRE2_DIV1)
+#define RCC_CFGR2_PPRE2_DIV1                RCC_CFGR2_PPRE2_FIELD(0U)
+#define RCC_CFGR2_PPRE2_DIV2                RCC_CFGR2_PPRE2_FIELD(4U)
+#define RCC_CFGR2_PPRE2_DIV4                RCC_CFGR2_PPRE2_FIELD(5U)
+#define RCC_CFGR2_PPRE2_DIV8                RCC_CFGR2_PPRE2_FIELD(6U)
+#define RCC_CFGR2_PPRE2_DIV16               RCC_CFGR2_PPRE2_FIELD(7U)
+#endif
+
+#else
+#error "unknown register name"
+#endif
 /** @} */
 
 /*===========================================================================*/

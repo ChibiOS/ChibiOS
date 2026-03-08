@@ -34,6 +34,22 @@
  * @{
  */
 
+/* DBGMCU helpers.*/
+#define STM32_DBGMCU_TIM2_STOP()            DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_TIM2_STOP
+#define STM32_DBGMCU_TIM3_STOP()            DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_TIM3_STOP
+#define STM32_DBGMCU_TIM4_STOP()            DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_TIM4_STOP
+#define STM32_DBGMCU_TIM5_STOP()            DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_TIM5_STOP
+#define STM32_DBGMCU_TIM6_STOP()            DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_TIM6_STOP
+#define STM32_DBGMCU_TIM7_STOP()            DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_TIM7_STOP
+#define STM32_DBGMCU_TIM12_STOP()           DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_TIM12_STOP
+#define STM32_DBGMCU_TIM13_STOP()           DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_TIM13_STOP
+#define STM32_DBGMCU_TIM14_STOP()           DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_TIM14_STOP
+#define STM32_DBGMCU_TIM18_STOP()           DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_TIM18_STOP
+#define STM32_DBGMCU_TIM15_STOP()           DBGMCU->APB2FZ |= DBGMCU_APB2_FZ_DBG_TIM15_STOP
+#define STM32_DBGMCU_TIM16_STOP()           DBGMCU->APB2FZ |= DBGMCU_APB2_FZ_DBG_TIM16_STOP
+#define STM32_DBGMCU_TIM17_STOP()           DBGMCU->APB2FZ |= DBGMCU_APB2_FZ_DBG_TIM17_STOP
+#define STM32_DBGMCU_TIM19_STOP()           DBGMCU->APB2FZ |= DBGMCU_APB2_FZ_DBG_TIM19_STOP
+
 /*===========================================================================*/
 /* Common.                                                                   */
 /*===========================================================================*/

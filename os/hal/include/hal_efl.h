@@ -36,7 +36,8 @@
 /*===========================================================================*/
 
 /**
- * @brief   Enables the @p eflAcquireUse() and @p eflReleaseUse() APIs.
+ * @brief   Enables the @p flashAcquireExclusive() and
+ *          @p flashReleaseExclusive() APIs.
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(EFL_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
@@ -54,7 +55,7 @@
 /**
  * @extends BaseFlash
  *
- * @brief   Type of external flash driver class.
+ * @brief   Type of embedded flash driver class.
  */
 typedef struct hal_efl_driver EFlashDriver;
 

@@ -35,10 +35,6 @@ ifeq ($(USE_LDOPT),)
   USE_LDOPT = --defsym=__main_thread_stack_base__=0,--defsym=__main_thread_stack_end__=0
 endif
 
-# Linker extra options here.
-ifeq ($(USE_LDOPT),)
-  USE_LDOPT = --defsym=__main_thread_stack_base__=0,--defsym=__main_thread_stack_end__=0
-endif
 
 # Enable this if you want to see the full log while compiling.
 ifeq ($(USE_VERBOSE_COMPILE),)
@@ -49,6 +45,12 @@ endif
 # modules not used in the current configuration.
 ifeq ($(USE_SMART_BUILD),)
   USE_SMART_BUILD = yes
+endif
+
+# If enabled, this option avoid to build the generic Flash Driver class.
+# This class use 32 bits pointers that generate some warning at AVR compilation process.
+ifeq ($(EXCLUDE_FLASH),)
+  EXCLUDE_FLASH = yes
 endif
 
 # If enable, this option arase the counter cycle after device programming.

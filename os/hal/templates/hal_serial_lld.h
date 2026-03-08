@@ -60,7 +60,7 @@
 /**
  * @brief   PLATFORM Serial Driver configuration structure.
  * @details An instance of this structure must be passed to @p sdStart()
- *          in order to configure and start a serial driver operations.
+ *          in order to configure and start a serial driver.
  * @note    This structure content is architecture dependent, each driver
  *          implementation defines its own version and the custom static
  *          initializers.

@@ -316,11 +316,11 @@ msg_t i2cSlaveMatchAddress(I2CDriver *i2cp, i2caddr_t addr) {
 
   osalDbgCheck((i2cp != NULL) && (addr != 0x00));
 
-  chSysLock();
+  osalSysLock();
 
   msg_t result = i2c_lld_match_address(i2cp, addr);
 
-  chSysUnlock();
+  osalSysUnlock();
 
   return result;
 }

@@ -40,7 +40,7 @@
  * @{
  */
 /**
- * @brief   Callback support int the driver.
+ * @brief   Callback support in the driver.
  */
 #define RTC_SUPPORTS_CALLBACKS      TRUE
 

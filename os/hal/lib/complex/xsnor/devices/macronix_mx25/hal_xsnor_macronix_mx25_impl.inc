@@ -369,6 +369,11 @@ static flash_error_t mx25_poll_status(hal_xsnor_macronix_mx25_c *self) {
   return FLASH_NO_ERROR;
 }
 
+static inline bool mx25_spi_4bytes(const hal_xsnor_macronix_mx25_c *self) {
+
+  return (self->descriptor.attributes & FLASH_ATTR_SPI_4BYTES_ADDR_HINT) != 0U;
+}
+
 #if (XSNOR_USE_WSPI == TRUE) || defined(__DOXYGEN__)
 static void mx25_reset_memory(hal_xsnor_macronix_mx25_c *self) {
 
@@ -391,7 +396,7 @@ static void mx25_reset_memory(hal_xsnor_macronix_mx25_c *self) {
   wspiCommand(self->config->bus.wspi.drv, &cmd_reset_memory_spi);
 
   /* The device requires at least 10uS to recover after a reset, it could
-     need up to 100mS in cause a reset occurred during a chip erase, 50uS
+     need up to 100mS in case a reset occurred during a chip erase, 50uS
      covers most cases.*/
   osalThreadSleepMicroseconds(50);
 }
@@ -705,6 +710,13 @@ flash_error_t __mx25_init_impl(void *ip) {
   self->descriptor.size = (uint32_t)(1U << ((size_t)config->buffers->databuf[2] & 0x1FU));
   self->descriptor.sectors_count = self->descriptor.size / self->descriptor.sectors_size;
 
+  if (self->descriptor.size > 0x01000000U) {
+    self->descriptor.attributes |= FLASH_ATTR_SPI_4BYTES_ADDR_HINT;
+  }
+  else {
+    self->descriptor.attributes &= ~FLASH_ATTR_SPI_4BYTES_ADDR_HINT;
+  }
+
   return FLASH_NO_ERROR;
 }
 
@@ -725,7 +737,9 @@ flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
   /* Command depends on bus mode.*/
   switch (self->config->bus_type) {
   case XSNOR_BUS_MODE_SPI:
-    __xsnor_bus_cmd_addr_dummy_receive(self, CMD_SPI_FAST_READ4B,
+    __xsnor_bus_cmd_addr_dummy_receive(self,
+                                       mx25_spi_4bytes(self) ?
+                                       CMD_SPI_FAST_READ4B : CMD_SPI_FAST_READ3B,
                                        offset, 8U,   /* Always 8 dummies. */
                                        n, rp);
     break;
@@ -780,7 +794,10 @@ flash_error_t __mx25_program_impl(void *ip, flash_offset_t offset, size_t n,
       __xsnor_bus_cmd(self, CMD_SPI_WREN);
 
       /* Page program command.*/
-      __xsnor_bus_cmd_addr_send(self, CMD_SPI_PP4B, offset, chunk, pp);
+      __xsnor_bus_cmd_addr_send(self,
+                                mx25_spi_4bytes(self) ?
+                                CMD_SPI_PP4B : CMD_SPI_PP3B,
+                                offset, chunk, pp);
       break;
     case XSNOR_BUS_MODE_WSPI_8LINES:
       /* Enabling write operation.*/
@@ -864,10 +881,16 @@ flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector) {
 
     /* Sector erase command.*/
     if ((self->config->options & MX25_OPT_USE_SUBSECTORS) == 0U) {
-      __xsnor_bus_cmd_addr(self, CMD_SPI_BE4B, offset);
+      __xsnor_bus_cmd_addr(self,
+                           mx25_spi_4bytes(self) ?
+                           CMD_SPI_BE4B : CMD_SPI_BE3B,
+                           offset);
     }
     else {
-      __xsnor_bus_cmd_addr(self, CMD_SPI_SE4B, offset);
+      __xsnor_bus_cmd_addr(self,
+                           mx25_spi_4bytes(self) ?
+                           CMD_SPI_SE4B : CMD_SPI_SE3B,
+                           offset);
     }
     break;
   case XSNOR_BUS_MODE_WSPI_8LINES:
@@ -1093,4 +1116,3 @@ const struct hal_xsnor_macronix_mx25_vmt __hal_xsnor_macronix_mx25_vmt = {
 };
 
 /** @} */
-

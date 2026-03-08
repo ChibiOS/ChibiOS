@@ -27,7 +27,7 @@
 /*===========================================================================*/
 
 /*
- * Setup for STMicroelectronics STM32 Nucleo64-G474RE board.
+ * Setup for Raspberry Pi Pico board.
  */
 
 /*

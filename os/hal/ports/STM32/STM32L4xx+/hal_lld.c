@@ -519,7 +519,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     sysclk = 0U;
   }
 
-  if (sysclk > slp->sysclk_max) {
+  if ((sysclk == 0U) || (sysclk > slp->sysclk_max)) {
     return true;
   }
 
@@ -782,7 +782,7 @@ void stm32_clock_init(void) {
 
   /* RTC APB clock enable.*/
 #if (HAL_USE_RTC == TRUE) && defined(RCC_APB1ENR1_RTCAPBEN)
-  rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, true)
+  rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, true);
 #endif
 
   /* Static PWR configurations.*/
@@ -846,7 +846,7 @@ void stm32_clock_init(void) {
 
   /* RTC APB clock enable.*/
 #if (HAL_USE_RTC == TRUE) && defined(RCC_APB1ENR1_RTCAPBEN)
-  rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, true)
+  rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, true);
 #endif
 
   /* Static PWR configurations.*/

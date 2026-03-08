@@ -179,48 +179,6 @@
 #endif
 
 /**
- * @brief   SPI1 interrupt priority level setting.
- */
-#if !defined(STM32_SPI_SPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI1_IRQ_PRIORITY         10
-#endif
-
-/**
- * @brief   SPI2 interrupt priority level setting.
- */
-#if !defined(STM32_SPI_SPI2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI2_IRQ_PRIORITY         10
-#endif
-
-/**
- * @brief   SPI3 interrupt priority level setting.
- */
-#if !defined(STM32_SPI_SPI3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI3_IRQ_PRIORITY         10
-#endif
-
-/**
- * @brief   SPI4 interrupt priority level setting.
- */
-#if !defined(STM32_SPI_SPI4_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI4_IRQ_PRIORITY         10
-#endif
-
-/**
- * @brief   SPI5 interrupt priority level setting.
- */
-#if !defined(STM32_SPI_SPI5_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI5_IRQ_PRIORITY         10
-#endif
-
-/**
- * @brief   SPI6 interrupt priority level setting.
- */
-#if !defined(STM32_SPI_SPI6_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SPI_SPI6_IRQ_PRIORITY         10
-#endif
-
-/**
  * @brief   SPI1 GPDMA priority (0..3|lowest..highest).
  * @note    The priority level is used for both the TX and RX GPDMA channels but
  *          because of the channels ordering the RX channel has always priority
@@ -299,33 +257,7 @@
 #error "STM32_HAS_SPIx not defined in registry"
 #endif
 
-#if (STM32_SPI_USE_SPI1 && !defined(STM32_SPI1_HANDLER)) ||                 \
-    (STM32_SPI_USE_SPI2 && !defined(STM32_SPI2_HANDLER)) ||                 \
-    (STM32_SPI_USE_SPI3 && !defined(STM32_SPI3_HANDLER)) ||                 \
-    (STM32_SPI_USE_SPI4 && !defined(STM32_SPI4_HANDLER)) ||                 \
-    (STM32_SPI_USE_SPI5 && !defined(STM32_SPI5_HANDLER)) ||                 \
-    (STM32_SPI_USE_SPI6 && !defined(STM32_SPI6_HANDLER))
-#error "STM32_SPIx_HANDLER not defined in registry"
-#endif
-
-#if (STM32_SPI_USE_SPI1 && !defined(STM32_SPI1_NUMBER)) ||                  \
-    (STM32_SPI_USE_SPI2 && !defined(STM32_SPI2_NUMBER)) ||                  \
-    (STM32_SPI_USE_SPI3 && !defined(STM32_SPI3_NUMBER)) ||                  \
-    (STM32_SPI_USE_SPI4 && !defined(STM32_SPI4_NUMBER)) ||                  \
-    (STM32_SPI_USE_SPI5 && !defined(STM32_SPI5_NUMBER)) ||                  \
-    (STM32_SPI_USE_SPI6 && !defined(STM32_SPI6_NUMBER))
-#error "STM32_SPIx_NUMBER not defined in registry"
-#endif
-
-#if (STM32_SPI_USE_SPI1 && !defined(STM32_SPI1_FULL_FEATURE)) ||            \
-    (STM32_SPI_USE_SPI2 && !defined(STM32_SPI2_FULL_FEATURE)) ||            \
-    (STM32_SPI_USE_SPI3 && !defined(STM32_SPI3_FULL_FEATURE)) ||            \
-    (STM32_SPI_USE_SPI4 && !defined(STM32_SPI4_FULL_FEATURE)) ||            \
-    (STM32_SPI_USE_SPI5 && !defined(STM32_SPI5_FULL_FEATURE)) ||            \
-    (STM32_SPI_USE_SPI6 && !defined(STM32_SPI6_FULL_FEATURE))
-#error "STM32_SPI4_FULL_FEATURE not defined in registry"
-#endif
-
+/* IP instances check.*/
 #if STM32_SPI_USE_SPI1 && !STM32_HAS_SPI1
 #error "SPI1 not present in the selected device"
 #endif
@@ -355,34 +287,52 @@
 #error "SPI driver activated but no SPI peripheral assigned"
 #endif
 
-#if STM32_SPI_USE_SPI1 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI1_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to SPI1"
+#if STM32_SPI_USE_SPI1
+#if defined(STM32_SPI1_IS_USED)
+#error "SPID1 requires SPI1 but it is already used"
+#else
+#define STM32_SPI1_IS_USED
+#endif
 #endif
 
-#if STM32_SPI_USE_SPI2 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI2_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to SPI2"
+#if STM32_SPI_USE_SPI2
+#if defined(STM32_SPI2_IS_USED)
+#error "SPID2 requires SPI2 but it is already used"
+#else
+#define STM32_SPI2_IS_USED
+#endif
 #endif
 
-#if STM32_SPI_USE_SPI3 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI3_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to SPI3"
+#if STM32_SPI_USE_SPI3
+#if defined(STM32_SPI3_IS_USED)
+#error "SPID3 requires SPI3 but it is already used"
+#else
+#define STM32_SPI3_IS_USED
+#endif
 #endif
 
-#if STM32_SPI_USE_SPI4 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI4_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to SPI4"
+#if STM32_SPI_USE_SPI4
+#if defined(STM32_SPI4_IS_USED)
+#error "SPID4 requires SPI4 but it is already used"
+#else
+#define STM32_SPI4_IS_USED
+#endif
 #endif
 
-#if STM32_SPI_USE_SPI5 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI5_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to SPI5"
+#if STM32_SPI_USE_SPI5
+#if defined(STM32_SPI5_IS_USED)
+#error "SPID5 requires SPI5 but it is already used"
+#else
+#define STM32_SPI5_IS_USED
+#endif
 #endif
 
-#if STM32_SPI_USE_SPI6 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI6_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to SPI6"
+#if STM32_SPI_USE_SPI6
+#if defined(STM32_SPI6_IS_USED)
+#error "SPID6 requires SPI6 but it is already used"
+#else
+#define STM32_SPI6_IS_USED
+#endif
 #endif
 
 /* Check on the presence of the GPDMA channels settings in mcuconf.h.*/
@@ -634,6 +584,7 @@ extern "C" {
   msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf);
   msg_t spi_lld_stop_transfer(SPIDriver *spip, size_t *sizep);
   uint32_t spi_lld_polled_exchange(SPIDriver *spip, uint32_t frame);
+  void spi_lld_serve_interrupt(SPIDriver *spip);
 #ifdef __cplusplus
 }
 #endif

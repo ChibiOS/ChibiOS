@@ -556,7 +556,9 @@ void mmcStop(MMCDriver *mmcp) {
   osalDbgAssert((mmcp->state == BLK_STOP) || (mmcp->state == BLK_ACTIVE),
                 "invalid state");
 
-  spiStop(mmcp->config->spip);
+  if (mmcp->config != NULL) {
+    spiStop(mmcp->config->spip);
+  }
 
   mmcp->config = NULL;
   mmcp->state  = BLK_STOP;

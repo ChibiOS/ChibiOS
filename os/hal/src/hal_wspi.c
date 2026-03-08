@@ -198,7 +198,7 @@ void wspiStartSend(WSPIDriver *wspip, const wspi_command_t *cmdp,
  *
  * @param[in] wspip     pointer to the @p WSPIDriver object
  * @param[in] cmdp      pointer to the command descriptor
- * @param[in] n         number of bytes to send
+ * @param[in] n         number of bytes to receive
  * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @api
@@ -300,7 +300,7 @@ bool wspiSend(WSPIDriver *wspip, const wspi_command_t *cmdp,
  *
  * @param[in] wspip     pointer to the @p WSPIDriver object
  * @param[in] cmdp      pointer to the command descriptor
- * @param[in] n         number of bytes to send
+ * @param[in] n         number of bytes to receive
  * @param[out] rxbuf    the pointer to the receive buffer
  * @return              The operation status.
  * @retval false        if the operation succeeded.

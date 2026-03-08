@@ -69,7 +69,7 @@ void dacObjectInit(DACDriver *dacp) {
 
   dacp->state = DAC_STOP;
   dacp->config = NULL;
-#if DAC_USE_WAIT
+#if (DAC_USE_SYNCHRONIZATION == TRUE)
   dacp->thread = NULL;
 #endif
 #if DAC_USE_MUTUAL_EXCLUSION
@@ -124,9 +124,7 @@ msg_t dacStart(DACDriver *dacp, const DACConfig *config) {
 }
 
 /**
- * @brief Deactivates the DAC peripheral.
- * @note  Deactivating the peripheral also enforces a release of the slave
- *        select line.
+ * @brief   Deactivates the DAC peripheral.
  *
  * @param[in] dacp      pointer to the @p DACDriver object
  *
@@ -352,6 +350,7 @@ msg_t dacConvert(DACDriver *dacp,
 
   msg = dacStartConversionI(dacp, grpp, samples, depth);
   if (msg != HAL_RET_SUCCESS) {
+    osalSysUnlock();
     return msg;
   }
   msg = osalThreadSuspendS(&dacp->thread);

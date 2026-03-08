@@ -52,7 +52,7 @@
 /**
  * @brief   HAL version string.
  */
-#define CH_HAL_VERSION          "9.0.0"
+#define CH_HAL_VERSION          "9.1.0"
 
 /**
  * @brief   HAL version major number.
@@ -62,7 +62,7 @@
 /**
  * @brief   HAL version minor number.
  */
-#define CH_HAL_MINOR            0
+#define CH_HAL_MINOR            1
 
 /**
  * @brief   HAL version patch number.
@@ -136,7 +136,7 @@
 #error "invalid configuration file"
 #endif
 
-#if !defined(_CHIBIOS_HAL_CONF_VER_9_0_)
+#if !defined(_CHIBIOS_HAL_CONF_VER_9_1_)
 #error "obsolete or unknown configuration file"
 #endif
 
@@ -286,7 +286,7 @@ static inline halfreq_t halClockGetPointX(halclkpt_t clkpt) {
 /**
  * @brief   Switches to a different clock configuration
  *
- * @param[in] ccp       pointer to clock a @p halclkcfg_t structure
+ * @param[in] ccp       pointer to a @p halclkcfg_t structure
  * @return              The clock switch result.
  * @retval false        if the clock switch succeeded
  * @retval true         if the clock switch failed
@@ -314,6 +314,7 @@ static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
 #include "hal_flash.h"
 
 /* Shared headers.*/
+#include "hal_safety.h"
 #include "hal_buffers.h"
 #include "hal_queues.h"
 #include "hal_buffered_serial.h"

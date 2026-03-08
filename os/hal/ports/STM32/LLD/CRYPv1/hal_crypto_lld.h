@@ -226,8 +226,8 @@
 #define CRY_LLD_SUPPORTS_AES_ECB            TRUE
 #define CRY_LLD_SUPPORTS_AES_CBC            TRUE
 #define CRY_LLD_SUPPORTS_AES_CFB            FALSE
-#define CRY_LLD_SUPPORTS_AES_CTR            TRUE
-#define CRY_LLD_SUPPORTS_AES_GCM            TRUE
+#define CRY_LLD_SUPPORTS_AES_CTR            FALSE
+#define CRY_LLD_SUPPORTS_AES_GCM            FALSE
 #define CRY_LLD_SUPPORTS_DES                TRUE
 #define CRY_LLD_SUPPORTS_DES_ECB            TRUE
 #define CRY_LLD_SUPPORTS_DES_CBC            TRUE

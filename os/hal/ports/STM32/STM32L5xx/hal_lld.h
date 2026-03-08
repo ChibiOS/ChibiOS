@@ -666,7 +666,7 @@
 /**
  * @brief   Minimum VCO clock frequency at current voltage setting.
  */
-#define STM32_PLLVCO_MIN            64000000
+#define STM32_PLLVCO_MIN            63950000 /*Tolerance for MSIPLL real frequency.*/
 
 /**
  * @brief   Maximum PLL-P output clock frequency.
@@ -739,7 +739,7 @@
 #define STM32_PLLIN_MAX             16000000
 #define STM32_PLLIN_MIN             2660000
 #define STM32_PLLVCO_MAX            344000000
-#define STM32_PLLVCO_MIN            64000000
+#define STM32_PLLVCO_MIN            63950000 /*Tolerance for MSIPLL real frequency.*/
 #define STM32_PLLP_MAX              110000000
 #define STM32_PLLP_MIN              2064500
 #define STM32_PLLQ_MAX              110000000
@@ -770,7 +770,7 @@
 #define STM32_PLLIN_MAX             16000000
 #define STM32_PLLIN_MIN             2660000
 #define STM32_PLLVCO_MAX            128000000
-#define STM32_PLLVCO_MIN            64000000
+#define STM32_PLLVCO_MIN            63950000 /*Tolerance for MSIPLL real frequency.*/
 #define STM32_PLLP_MAX              26000000
 #define STM32_PLLP_MIN              2064500
 #define STM32_PLLQ_MAX              26000000

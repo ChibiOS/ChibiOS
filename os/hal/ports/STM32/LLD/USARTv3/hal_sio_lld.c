@@ -30,6 +30,11 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+/* Bits not present on all implementations.*/
+#if !defined(USART_CR3_WUFIE)
+#define USART_CR3_WUFIE                     0U
+#endif
+
 #define USART_CR1_CFG_FORBIDDEN             (USART_CR1_RXFFIE           |   \
                                              USART_CR1_TXFEIE           |   \
                                              USART_CR1_FIFOEN           |   \
@@ -148,7 +153,7 @@ SIODriver LPSIOD1;
 /**
  * @brief   Driver default configuration.
  * @note    In this implementation it is: 38400-8-N-1, RX and TX FIFO
- *          thresholds set to 50%.
+ *          thresholds set tx-non-full and rx-non-empty.
  */
 static const SIOConfig default_config = {
   .baud  = SIO_DEFAULT_BITRATE,
@@ -163,18 +168,27 @@ static const SIOConfig default_config = {
 /*===========================================================================*/
 
 __STATIC_INLINE void usart_enable_rx_irq(SIODriver *siop) {
+  uint32_t cr1;
 
+  cr1 = siop->usart->CR1;
   if ((siop->enabled & SIO_EV_RXNOTEMPY) != 0U) {
+#if STM32_USART_MIXED == TRUE
+    if (!siop->has_fifo) {
+      cr1 |= USART_CR1_RXNEIE_RXFNEIE;
+    }
+    else
+#endif
     if ((siop->config->cr3 & USART_CR3_RXFTCFG_Msk) == USART_CR3_RXFTCFG_NONEMPTY) {
-      siop->usart->CR1 |= USART_CR1_RXNEIE_RXFNEIE;
+      cr1 |= USART_CR1_RXNEIE_RXFNEIE;
     }
     else {
       siop->usart->CR3 |= USART_CR3_RXFTIE;
     }
   }
   if ((siop->enabled & SIO_EV_RXIDLE) != 0U) {
-    siop->usart->CR1 |= USART_CR1_IDLEIE;
+    cr1 |= USART_CR1_IDLEIE;
   }
+  siop->usart->CR1 = cr1;
 }
 
 __STATIC_INLINE void usart_enable_rx_errors_irq(SIODriver *siop) {
@@ -193,7 +207,18 @@ __STATIC_INLINE void usart_enable_rx_errors_irq(SIODriver *siop) {
 __STATIC_INLINE void usart_enable_tx_irq(SIODriver *siop) {
 
   if ((siop->enabled & SIO_EV_TXNOTFULL) != 0U) {
-    siop->usart->CR3 |= USART_CR3_TXFTIE;
+#if STM32_USART_MIXED == TRUE
+    if (!siop->has_fifo) {
+      siop->usart->CR1 |= USART_CR1_TXEIE_TXFNFIE;
+    }
+    else
+#endif
+    if ((siop->config->cr3 & USART_CR3_TXFTCFG_Msk) == USART_CR3_TXFTCFG_NONFULL) {
+      siop->usart->CR1 |= USART_CR1_TXEIE_TXFNFIE;
+    }
+    else {
+      siop->usart->CR3 |= USART_CR3_TXFTIE;
+    }
   }
 }
 
@@ -214,7 +239,7 @@ __STATIC_INLINE void usart_init(SIODriver *siop) {
   USART_TypeDef *u = siop->usart;
   uint32_t presc, brr, clock, cr3;
 
-  /*Clock input frequency, it could be dynamic.*/
+  /* Clock input frequency, it could be dynamic.*/
   if (false) {
   }
 #if STM32_SIO_USE_USART1 == TRUE
@@ -306,14 +331,29 @@ __STATIC_INLINE void usart_init(SIODriver *siop) {
     osalDbgAssert(brr < 0x10000, "invalid BRR value");
   }
 
-  /* Setting up USART, FIFO mode enforced.*/
+  /* Setting up USART, FIFO mode enforced but ignored in devices without FIFO.*/
   u->CR1   = (siop->config->cr1 & ~USART_CR1_CFG_FORBIDDEN) | USART_CR1_FIFOEN;
   u->CR2   = siop->config->cr2 & ~USART_CR2_CFG_FORBIDDEN;
   cr3      = siop->config->cr3 & ~USART_CR3_CFG_FORBIDDEN;
+
+  /* Checking special cases where single character mode are specified as
+     FIFO thresholds.*/
   if ((siop->config->cr3 & USART_CR3_RXFTCFG_Msk) == USART_CR3_RXFTCFG_NONEMPTY) {
-  /* If single character mode specified by config mask off threshold setting.*/
+    /* If single character mode specified by config mask off threshold setting.*/
     cr3 &= ~USART_CR3_RXFTCFG_Msk;
   }
+  if ((siop->config->cr3 & USART_CR3_TXFTCFG_Msk) == USART_CR3_TXFTCFG_NONFULL) {
+    /* If single character mode specified by config mask off threshold setting.*/
+    cr3 &= ~USART_CR3_TXFTCFG_Msk;
+  }
+#if STM32_USART_MIXED == TRUE
+  if (!siop->has_fifo) {
+    /* TODO: check if those fields are simply ignored in devices without FIFO,
+       this code could be removed.*/
+    cr3 &= ~(USART_CR3_RXFTCFG_Msk | USART_CR3_TXFTCFG_Msk |
+             USART_CR3_RXFTIE | USART_CR3_TXFTIE);
+  }
+#endif
   u->CR3   = cr3;
   u->PRESC = siop->config->presc;
   u->BRR   = brr;
@@ -342,46 +382,79 @@ void sio_lld_init(void) {
 #if STM32_SIO_USE_USART1 == TRUE
   sioObjectInit(&SIOD1);
   SIOD1.usart       = USART1;
+#if STM32_USART_MIXED == TRUE
+  SIOD1.has_fifo    = (bool)(STM32_USART1_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_USART2 == TRUE
   sioObjectInit(&SIOD2);
   SIOD2.usart       = USART2;
+#if STM32_USART_MIXED == TRUE
+  SIOD2.has_fifo    = (bool)(STM32_USART2_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_USART3 == TRUE
   sioObjectInit(&SIOD3);
   SIOD3.usart       = USART3;
+#if STM32_USART_MIXED == TRUE
+  SIOD3.has_fifo    = (bool)(STM32_USART3_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_UART4 == TRUE
   sioObjectInit(&SIOD4);
   SIOD4.usart       = UART4;
+#if STM32_USART_MIXED == TRUE
+  SIOD4.has_fifo    = (bool)(STM32_UART4_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_UART5 == TRUE
   sioObjectInit(&SIOD5);
   SIOD5.usart       = UART5;
+#if STM32_USART_MIXED == TRUE
+  SIOD5.has_fifo    = (bool)(STM32_UART5_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_USART6 == TRUE
   sioObjectInit(&SIOD6);
   SIOD6.usart       = USART6;
+#if STM32_USART_MIXED == TRUE
+  SIOD6.has_fifo    = (bool)(STM32_USART6_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_UART7 == TRUE
   sioObjectInit(&SIOD7);
   SIOD7.usart       = UART7;
+#if STM32_USART_MIXED == TRUE
+  SIOD7.has_fifo    = (bool)(STM32_UART7_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_UART8 == TRUE
   sioObjectInit(&SIOD8);
   SIOD8.usart       = UART8;
+#if STM32_USART_MIXED == TRUE
+  SIOD8.has_fifo    = (bool)(STM32_UART8_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_UART9 == TRUE
   sioObjectInit(&SIOD9);
   SIOD9.usart       = UART9;
+#if STM32_USART_MIXED == TRUE
+  SIOD9.has_fifo    = (bool)(STM32_UART9_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_USART10 == TRUE
   sioObjectInit(&SIOD10);
   SIOD10.usart      = USART10;
+#if STM32_USART_MIXED == TRUE
+  SIOD10.has_fifo   = (bool)(STM32_USART10_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_LPUART1 == TRUE
   sioObjectInit(&LPSIOD1);
   LPSIOD1.usart     = LPUART1;
+#if STM32_USART_MIXED == TRUE
+  LPSIOD1.has_fifo  = true;
+#endif
 #endif
 }
 
@@ -579,7 +652,9 @@ void sio_lld_stop(SIODriver *siop) {
 void sio_lld_update_enable_flags(SIODriver *siop) {
   uint32_t cr1, cr2, cr3;
 
-  cr1 = siop->usart->CR1 & ~(USART_CR1_IDLEIE | USART_CR1_TCIE | USART_CR1_PEIE);
+  cr1 = siop->usart->CR1 & ~(USART_CR1_TXEIE_TXFNFIE | USART_CR1_RXNEIE_RXFNEIE |
+                             USART_CR1_IDLEIE | USART_CR1_TCIE |
+                             USART_CR1_PEIE);
   cr2 = siop->usart->CR2 & ~(USART_CR2_LBDIE);
   cr3 = siop->usart->CR3 & ~(USART_CR3_RXFTIE | USART_CR3_TXFTIE | USART_CR3_EIE);
 
@@ -587,7 +662,6 @@ void sio_lld_update_enable_flags(SIODriver *siop) {
          __sio_reloc_field(siop->enabled, SIO_EV_TXDONE,     SIO_EV_TXDONE_POS,     USART_CR1_TCIE_Pos)   |
          __sio_reloc_field(siop->enabled, SIO_EV_PARITY_ERR, SIO_EV_PARITY_ERR_POS, USART_CR1_PEIE_Pos);
   cr2 |= __sio_reloc_field(siop->enabled, SIO_EV_RXBREAK,    SIO_EV_RXBREAK_POS,    USART_CR2_LBDIE_Pos);
-  cr3 |= __sio_reloc_field(siop->enabled, SIO_EV_TXNOTFULL,  SIO_EV_TXNOTFULL_POS,  USART_CR3_TXFTIE_Pos);
 
   /* The following 3 are grouped.*/
   if ((siop->enabled & (SIO_EV_FRAMING_ERR |
@@ -596,15 +670,32 @@ void sio_lld_update_enable_flags(SIODriver *siop) {
     cr3 |= USART_CR3_EIE;
   }
 
-  /* Special case when RX FIFO threshold is set to 1/8, it does not work well
-     when the FIFO size is greater than 8 because one single character does
-     not trigger an interrupt. Using RXNE interrupt in that case.*/
-  if ((siop->config->cr3 & USART_CR3_RXFTCFG_Msk) == USART_CR3_RXFTCFG_NONEMPTY) {
-    cr1 |= __sio_reloc_field(siop->enabled, SIO_EV_RXNOTEMPY,  SIO_EV_RXNOTEMPY_POS,  USART_CR1_RXNEIE_RXFNEIE_Pos);
+#if STM32_USART_MIXED == TRUE
+  /* Managing the case with basic and full USARTs.*/
+  if (siop->has_fifo) {
+#endif
+    /* Special case when TX FIFO threshold is set "non full".*/
+    if ((siop->config->cr3 & USART_CR3_TXFTCFG_Msk) == USART_CR3_TXFTCFG_NONFULL) {
+      cr1 |= __sio_reloc_field(siop->enabled, SIO_EV_TXNOTFULL, SIO_EV_TXNOTFULL_POS, USART_CR1_TXEIE_TXFNFIE_Pos);
+    }
+    else {
+      cr3 |= __sio_reloc_field(siop->enabled, SIO_EV_TXNOTFULL, SIO_EV_TXNOTFULL_POS, USART_CR3_TXFTIE_Pos);
+    }
+
+    /* Special case when RX FIFO threshold is set "non-empty".*/
+    if ((siop->config->cr3 & USART_CR3_RXFTCFG_Msk) == USART_CR3_RXFTCFG_NONEMPTY) {
+      cr1 |= __sio_reloc_field(siop->enabled, SIO_EV_RXNOTEMPY, SIO_EV_RXNOTEMPY_POS, USART_CR1_RXNEIE_RXFNEIE_Pos);
+    }
+    else {
+      cr3 |= __sio_reloc_field(siop->enabled, SIO_EV_RXNOTEMPY, SIO_EV_RXNOTEMPY_POS, USART_CR3_RXFTIE_Pos);
+    }
+#if STM32_USART_MIXED == TRUE
   }
   else {
-    cr3 |= __sio_reloc_field(siop->enabled, SIO_EV_RXNOTEMPY,  SIO_EV_RXNOTEMPY_POS,  USART_CR3_RXFTIE_Pos);
+    cr1 |= __sio_reloc_field(siop->enabled, SIO_EV_TXNOTFULL, SIO_EV_TXNOTFULL_POS, USART_CR1_TXEIE_TXFNFIE_Pos);
+    cr1 |= __sio_reloc_field(siop->enabled, SIO_EV_RXNOTEMPY, SIO_EV_RXNOTEMPY_POS, USART_CR1_RXNEIE_RXFNEIE_Pos);
   }
+#endif
 
   /* Setting up the operation.*/
   siop->usart->CR1 = cr1;
@@ -661,9 +752,9 @@ sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
            some scientist decided to use different positions for some
            of them.*/
   isr = siop->usart->ISR & (SIO_LLD_ISR_RX_ERRORS |
-                            USART_ISR_RXNE        |
+                            USART_ISR_RXNE_RXFNE  |
                             USART_ISR_IDLE        |
-                            USART_ISR_TXE         |
+                            USART_ISR_TXE_TXFNF   |
                             USART_ISR_TC);
 
   /* Clearing captured events.*/
@@ -675,11 +766,11 @@ sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
   usart_enable_rx_errors_irq(siop);
 
   /* Translating the status flags in SIO events.*/
-  events = __sio_reloc_field(isr, USART_ISR_RXNE_Msk,  USART_ISR_RXNE_Pos,  SIO_EV_RXNOTEMPY_POS)  |
-           __sio_reloc_field(isr, USART_ISR_TXE_Msk,   USART_ISR_TXE_Pos,   SIO_EV_TXNOTFULL_POS)  |
-           __sio_reloc_field(isr, USART_ISR_TC_Msk,    USART_ISR_TC_Pos,    SIO_EV_TXDONE_POS)     |
-           __sio_reloc_field(isr, USART_ISR_IONFP_Msk, USART_ISR_IONFP_Pos, SIO_EV_ALL_ERRORS_POS) |
-           __sio_reloc_field(isr, USART_ISR_LBDF_Msk,  USART_ISR_LBDF_Pos,  SIO_EV_RXBREAK_POS);
+  events = __sio_reloc_field(isr, USART_ISR_RXNE_RXFNE_Msk, USART_ISR_RXNE_RXFNE_Pos,   SIO_EV_RXNOTEMPY_POS)  |
+           __sio_reloc_field(isr, USART_ISR_TXE_TXFNF_Msk,  USART_ISR_TXE_TXFNF_Pos,    SIO_EV_TXNOTFULL_POS)  |
+           __sio_reloc_field(isr, USART_ISR_TC_Msk,         USART_ISR_TC_Pos,           SIO_EV_TXDONE_POS)     |
+           __sio_reloc_field(isr, USART_ISR_IONFP_Msk,      USART_ISR_IONFP_Pos,        SIO_EV_ALL_ERRORS_POS) |
+           __sio_reloc_field(isr, USART_ISR_LBDF_Msk,       USART_ISR_LBDF_Pos,         SIO_EV_RXBREAK_POS);
 
   return events;
 }
@@ -698,25 +789,25 @@ sioevents_t sio_lld_get_events(SIODriver *siop) {
 
   /* Getting all ISR flags.*/
   isr = siop->usart->ISR & (SIO_LLD_ISR_RX_ERRORS |
-                            USART_ISR_RXNE        |
+                            USART_ISR_RXNE_RXFNE  |
                             USART_ISR_IDLE        |
-                            USART_ISR_TXE         |
+                            USART_ISR_TXE_TXFNF   |
                             USART_ISR_TC);
 
   /* Translating the status flags in SIO events.*/
-  events = __sio_reloc_field(isr, USART_ISR_RXNE_Msk,  USART_ISR_RXNE_Pos,  SIO_EV_RXNOTEMPY_POS)  |
-           __sio_reloc_field(isr, USART_ISR_TXE_Msk,   USART_ISR_TXE_Pos,   SIO_EV_TXNOTFULL_POS)  |
-           __sio_reloc_field(isr, USART_ISR_TC_Msk,    USART_ISR_TC_Pos,    SIO_EV_TXDONE_POS)     |
-           __sio_reloc_field(isr, USART_ISR_IONFP_Msk, USART_ISR_IONFP_Pos, SIO_EV_ALL_ERRORS_POS) |
-           __sio_reloc_field(isr, USART_ISR_LBDF_Msk,  USART_ISR_LBDF_Pos,  SIO_EV_RXBREAK_POS);
+  events = __sio_reloc_field(isr, USART_ISR_RXNE_RXFNE_Msk, USART_ISR_RXNE_RXFNE_Pos,   SIO_EV_RXNOTEMPY_POS)  |
+           __sio_reloc_field(isr, USART_ISR_TXE_TXFNF_Msk,  USART_ISR_TXE_TXFNF_Pos,    SIO_EV_TXNOTFULL_POS)  |
+           __sio_reloc_field(isr, USART_ISR_TC_Msk,         USART_ISR_TC_Pos,           SIO_EV_TXDONE_POS)     |
+           __sio_reloc_field(isr, USART_ISR_IONFP_Msk,      USART_ISR_IONFP_Pos,        SIO_EV_ALL_ERRORS_POS) |
+           __sio_reloc_field(isr, USART_ISR_LBDF_Msk,       USART_ISR_LBDF_Pos,         SIO_EV_RXBREAK_POS);
 
   return events;
 }
 
 /**
  * @brief   Reads data from the RX FIFO.
- * @details The function is not blocking, it reads frames until exhausted
- *          without waiting.
+ * @details The function is not blocking, it writes frames until there
+ *          is space available without waiting.
  *
  * @param[in] siop          pointer to an @p SIODriver structure
  * @param[in] buffer        pointer to the buffer for read frames
@@ -874,13 +965,16 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
 
   /* Calculating the mask of status bits that should be processed according
      to the state of the various CRx registers.*/
-  isrmask = __sio_reloc_field(cr1, USART_CR1_IDLEIE, USART_CR1_IDLEIE_Pos, USART_ISR_IDLE_Pos) |
-            __sio_reloc_field(cr1, USART_CR1_RXNEIE_RXFNEIE, USART_CR1_RXNEIE_RXFNEIE_Pos, USART_ISR_RXNE_RXFNE_Pos) |
-            __sio_reloc_field(cr1, USART_CR1_TCIE,   USART_CR1_TCIE_Pos,   USART_ISR_TC_Pos)   |
-            __sio_reloc_field(cr1, USART_CR1_PEIE,   USART_CR1_PEIE_Pos,   USART_ISR_PE_Pos)   |
-            __sio_reloc_field(cr2, USART_CR2_LBDIE,  USART_CR2_LBDIE_Pos,  USART_ISR_LBDF_Pos) |
-            __sio_reloc_field(cr3, USART_CR3_RXFTIE, USART_CR3_RXFTIE_Pos, USART_ISR_RXNE_Pos) |
-            __sio_reloc_field(cr3, USART_CR3_TXFTIE, USART_CR3_TXFTIE_Pos, USART_ISR_TXE_Pos);
+  isrmask = __sio_reloc_field(cr1, USART_CR1_TXEIE_TXFNFIE,     USART_CR1_TXEIE_TXFNFIE_Pos,    USART_ISR_TXE_TXFNF_Pos)  |
+            __sio_reloc_field(cr1, USART_CR1_RXNEIE_RXFNEIE,    USART_CR1_RXNEIE_RXFNEIE_Pos,   USART_ISR_RXNE_RXFNE_Pos) |
+             /* NOTE: ORE interrupt also enabled by USART_CR1_RXNEIE_RXFNEIE, not just USART_CR3_EIE.*/
+            __sio_reloc_field(cr1, USART_CR1_RXNEIE_RXFNEIE,    USART_CR1_RXNEIE_RXFNEIE_Pos,   USART_ISR_ORE_Pos)  |
+            __sio_reloc_field(cr1, USART_CR1_IDLEIE,            USART_CR1_IDLEIE_Pos,           USART_ISR_IDLE_Pos) |
+            __sio_reloc_field(cr1, USART_CR1_TCIE,              USART_CR1_TCIE_Pos,             USART_ISR_TC_Pos)   |
+            __sio_reloc_field(cr1, USART_CR1_PEIE,              USART_CR1_PEIE_Pos,             USART_ISR_PE_Pos)   |
+            __sio_reloc_field(cr2, USART_CR2_LBDIE,             USART_CR2_LBDIE_Pos,            USART_ISR_LBDF_Pos) |
+            __sio_reloc_field(cr3, USART_CR3_RXFTIE,            USART_CR3_RXFTIE_Pos,           USART_ISR_RXNE_RXFNE_Pos) |
+            __sio_reloc_field(cr3, USART_CR3_TXFTIE,            USART_CR3_TXFTIE_Pos,           USART_ISR_TXE_TXFNF_Pos);
   if ((cr3 & USART_CR3_EIE) != 0U) {
     isrmask |= USART_ISR_NE | USART_ISR_FE | USART_ISR_ORE;
   }
@@ -889,8 +983,13 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   isr = u->ISR & isrmask;
   if (isr != 0U) {
 
-    /* Error flags handled as a group.*/
+    /* Error flags handled as a group.
+       NOTE: LBDF is mapped here too, so RX paths stay quiescent until the
+             application clears errors.*/
     if ((isr & SIO_LLD_ISR_RX_ERRORS) != 0U) {
+      /* NOTE: We could get here because various causes: PEIE, EIE, LBDIE and
+               RXFNEIE. Because RXFNEIE we can get here even when the
+               application has not enabled errors notifications.*/
 #if SIO_USE_SYNCHRONIZATION
       /* The idle flag is forcibly cleared when an RX error event is
          detected.*/
@@ -898,12 +997,14 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
 #endif
 
       /* All RX-related interrupt sources disabled.*/
-      cr1 &= ~(USART_CR1_PEIE | USART_CR1_IDLEIE);
+      cr1 &= ~(USART_CR1_PEIE | USART_CR1_RXNEIE_RXFNEIE | USART_CR1_IDLEIE);
       cr2 &= ~(USART_CR2_LBDIE);
       cr3 &= ~(USART_CR3_EIE | USART_CR3_RXFTIE);
 
-      /* Waiting thread woken, if any.*/
-      __sio_wakeup_errors(siop);
+      /* Notifying the application only if it is interested in errors.*/
+      if ((siop->enabled & SIO_EV_ALL_ERRORS) != (sioevents_t)0) {
+        __sio_wakeup_errors(siop);
+      }
     }
     /* If there are no errors then we check for the other RX-related
        status flags.*/
@@ -918,20 +1019,26 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
            This is required where a USART FIFO threshold set at minimum may be
            greater than one character thus a threshold interrupt will not be
            triggered at the next character. Any configuration setting other
-           than non-empty will be handled according the specified threshold.*/
-        if ((siop->config->cr3 & USART_CR3_RXFTCFG_Msk) == USART_CR3_RXFTCFG_NONEMPTY) {
-          cr1 |= USART_CR1_RXNEIE_RXFNEIE;
-        }
-        else {
-          cr3 |= USART_CR3_RXFTIE;
+           than non-empty will be handled according the specified threshold.
+           Only enable if RXNOTEMPTY events are enabled. */
+        if ((siop->enabled & SIO_EV_RXNOTEMPY) != 0U) {
+          if ((siop->config->cr3 & USART_CR3_RXFTCFG_Msk) == USART_CR3_RXFTCFG_NONEMPTY) {
+            cr1 |= USART_CR1_RXNEIE_RXFNEIE;
+          }
+          else {
+            cr3 |= USART_CR3_RXFTIE;
+          }
         }
 
         /* Waiting thread woken, if any.*/
         __sio_wakeup_rxidle(siop);
       }
 
-      /* RX FIFO is non-empty.*/
-      if ((isr & USART_ISR_RXNE) != 0U) {
+      /* RX FIFO is non-empty.
+         NOTE: Checking this flag instead of USART_ISR_RXFT because we want
+         to greedily empty the RX FIFO, this could prevent more interrupts
+         later. Additionally, this is valid for both full and basic USARTs.*/
+      if ((isr & USART_ISR_RXNE_RXFNE) != 0U) {
 
 #if SIO_USE_SYNCHRONIZATION
         /* The idle flag is forcibly cleared when an RX data event is
@@ -939,7 +1046,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
         u->ICR = USART_ICR_IDLECF;
 #endif
 
-        /* Interrupt source disabled.*/
+        /* Both possible interrupt sources disabled.*/
         cr3 &= ~USART_CR3_RXFTIE;
         cr1 &= ~USART_CR1_RXNEIE_RXFNEIE;
 
@@ -948,11 +1055,15 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
       }
     }
 
-    /* TX FIFO is below threshold.*/
-    if ((isr & USART_ISR_TXE) != 0U) {
+    /* TX FIFO is non-full.
+       NOTE: Checking this flag instead of USART_ISR_TXFT because we want
+       to greedily fill the TX FIFO, this could prevent more interrupts
+       later. Additionally, this is valid for both full and basic USARTs.*/
+    if ((isr & USART_ISR_TXE_TXFNF) != 0U) {
 
-      /* Interrupt source disabled.*/
+      /* Both possible interrupt sources disabled.*/
       cr3 &= ~USART_CR3_TXFTIE;
+      cr1 &= ~USART_CR1_TXEIE_TXFNFIE;
 
       /* Waiting thread woken, if any.*/
       __sio_wakeup_tx(siop);

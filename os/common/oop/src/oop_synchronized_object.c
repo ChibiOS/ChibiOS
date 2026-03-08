@@ -62,9 +62,6 @@
  * @{
  */
 /**
- * @memberof    synchronized_object_c
- * @protected
- *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
@@ -92,9 +89,6 @@ void *__so_objinit_impl(void *ip, const void *vmt) {
 }
 
 /**
- * @memberof    synchronized_object_c
- * @protected
- *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *
@@ -117,9 +111,6 @@ void __so_dispose_impl(void *ip) {
  * @{
  */
 /**
- * @memberof    synchronized_object_c
- * @public
- *
  * @brief       Object lock.
  *
  * @param[in,out] ip            Pointer to a @p synchronized_object_c instance.
@@ -137,9 +128,6 @@ void soLock(void *ip) {
 }
 
 /**
- * @memberof    synchronized_object_c
- * @public
- *
  * @brief       Object unlock.
  *
  * @param[in,out] ip            Pointer to a @p synchronized_object_c instance.

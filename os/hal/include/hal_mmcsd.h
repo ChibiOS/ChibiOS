@@ -179,7 +179,7 @@
 #define MMCSD_CSD_10_VDD_W_CURR_MAX_SLICE       52U, 50U
 #define MMCSD_CSD_10_VDD_W_CURR_MIN_SLICE       55U, 53U
 #define MMCSD_CSD_10_VDD_R_CURR_MAX_SLICE       58U, 56U
-#define MMCSD_CSD_10_VDD_R_CURR_MIX_SLICE       61U, 59U
+#define MMCSD_CSD_10_VDD_R_CURR_MIN_SLICE       61U, 59U
 #define MMCSD_CSD_10_C_SIZE_SLICE               73U, 62U
 #define MMCSD_CSD_10_DSR_IMP_SLICE              MMCSD_CSD_20_DSR_IMP_SLICE
 #define MMCSD_CSD_10_READ_BLK_MISALIGN_SLICE    MMCSD_CSD_20_READ_BLK_MISALIGN_SLICE
@@ -273,7 +273,7 @@ struct MMCSDBlockDeviceVMT {
 /**
  * @extends BaseBlockDevice
  *
- * @brief   MCC/SD block device class.
+ * @brief   MMC/SD block device class.
  * @details This class represents a, block-accessible, MMC/SD device.
  */
 typedef struct {
@@ -488,7 +488,7 @@ extern "C" {
 }
 #endif
 
-#endif /* HAL_USE_MMC_SPI == TRUE || HAL_USE_MMC_SDC == TRUE */
+#endif /* (HAL_USE_MMC_SPI == TRUE) || (HAL_USE_SDC == TRUE) */
 
 #endif /* HAL_MMCSD_H */
 

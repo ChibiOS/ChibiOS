@@ -178,7 +178,10 @@ struct PWMDriver {
  *
  * @notapi
  */
-#define pwm_lld_change_period(pwmp, period)
+#define pwm_lld_change_period(pwmp, period) do {                            \
+  (void)(pwmp);                                                             \
+  (void)(period);                                                           \
+} while (false)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

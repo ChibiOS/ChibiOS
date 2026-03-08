@@ -6,4 +6,5 @@ else
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/USBv2/hal_usb_lld.c
 endif
 
-PLATFORMINC += $(CHIBIOS)/os/hal/ports/STM32/LLD/USBv2
+PLATFORMINC += $(CHIBIOS)/os/hal/ports/STM32/LLD/USB \
+               $(CHIBIOS)/os/hal/ports/STM32/LLD/USBv2

@@ -215,7 +215,7 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
     return FLASH_BUSY_ERASING;
   }
 
-  /* FLASH_PGM state while the operation is performed.*/
+  /* FLASH_ERASE state while the operation is performed.*/
   devp->state = FLASH_PGM;
 
   /* IMPLEMENT */
@@ -252,7 +252,7 @@ flash_error_t efl_lld_start_erase_all(void *instance) {
     return FLASH_BUSY_ERASING;
   }
 
-  /* FLASH_PGM state while the operation is performed.*/
+  /* FLASH_ERASE state while the operation is performed.*/
   devp->state = FLASH_ERASE;
 
   /* IMPLEMENT */

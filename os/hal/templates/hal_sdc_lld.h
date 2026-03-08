@@ -40,8 +40,8 @@
  * @{
  */
 /**
- * @brief   PWMD1 driver enable switch.
- * @details If set to @p TRUE the support for PWM1 is included.
+ * @brief   SDCD1 driver enable switch.
+ * @details If set to @p TRUE the support for SDC1 is included.
  * @note    The default is @p FALSE.
  */
 #if !defined(PLATFORM_SDC_USE_SDC1) || defined(__DOXYGEN__)
