@@ -201,7 +201,7 @@ void osalThreadSleep(systime_t time) {
  * @sclass
  */
 msg_t osalThreadSuspendS(thread_reference_t *trp) {
-  staitc thread_t self;
+  static thread_t self;
 
   osalDbgCheck(trp != NULL);
   osalDbgAssert(*trp == NULL, "not NULL");
