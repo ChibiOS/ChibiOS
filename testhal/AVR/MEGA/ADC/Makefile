@@ -30,6 +30,11 @@ ifeq ($(USE_CPPOPT),)
   USE_CPPOPT =
 endif
 
+# Linker extra options here.
+ifeq ($(USE_LDOPT),)
+  USE_LDOPT = --defsym=__main_thread_stack_base__=0,--defsym=__main_thread_stack_end__=0
+endif
+
 # Enable this if you want to see the full log while compiling.
 ifeq ($(USE_VERBOSE_COMPILE),)
   USE_VERBOSE_COMPILE = no
@@ -39,6 +44,12 @@ endif
 # modules not used in the current configuration.
 ifeq ($(USE_SMART_BUILD),)
   USE_SMART_BUILD = yes
+endif
+
+# If enabled, this option avoid to build the generic Flash Driver class.
+# This class use 32 bits pointers that generate some warning at AVR compilation process.
+ifeq ($(EXCLUDE_FLASH),)
+  EXCLUDE_FLASH = yes
 endif
 
 # If enable, this option arase the counter cycle after device programming.
@@ -84,6 +95,9 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../../..
+CONFDIR  := ./cfg
+BUILDDIR := ./build
+DEPDIR   := ./.dep
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
@@ -109,7 +123,7 @@ CSRC =  $(ALLCSRC) \
 CPPSRC = $(ALLCPPSRC)
 
 # Header files here.
-INCDIR =  $(ALLINC)
+INCDIR =  $(ALLINC) $(CONFDIR)
 
 #
 # Project, sources and paths.

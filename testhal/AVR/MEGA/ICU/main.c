@@ -91,7 +91,7 @@ int main(void) {
 
   static ICUConfig icu3cfg = {
     ICU_INPUT_ACTIVE_HIGH,
-    0, /* bogus frequency */
+    0, /* Bogus frequency */
     width_cb,
     period_cb,
     overflow_cb,

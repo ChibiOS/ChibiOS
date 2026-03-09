@@ -67,11 +67,17 @@ int main(void) {
    */
   while (TRUE) {
     chprintf(chp, "Watchdog reset by software.\r\n");
-    wdgReset(&WDTD1); // TODO: Rebuild whit this line commented.
-                      // It will shows you if the board is rebooted
-                      // by the watchdog.
+    wdgReset(&WDTD1); /* TODO: Rebuild whit this line commented.      */
+                      /* It will shows you if the board is rebooted.  */
+                      /* By the watchdog.                             */
     palTogglePad(IOPORT5, PORTE_LED);
-    chThdSleepMilliseconds(500); // Use for example 2 second of delay to see if the watchdog reset the board every second.
+
+    /*
+     * Use for example 2 second of delay to see if the watchdog reset the
+     * board every second.
+     */
+    chThdSleepMilliseconds(500);
   }
+
   return 0;
 }

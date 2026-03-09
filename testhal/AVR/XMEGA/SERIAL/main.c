@@ -71,7 +71,7 @@ int main(void) {
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-  while(TRUE) {
+  while (TRUE) {
     chprintf(chp, "Hello world %i.\r\n", cpt++);
     chThdSleepMilliseconds(100);
   }

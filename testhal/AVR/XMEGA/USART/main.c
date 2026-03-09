@@ -82,7 +82,7 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   while (TRUE) {
-    uartStartSend(&USART1D,14, (const uint8_t *)"Hello world!\r\n");
+    uartStartSend(&USART1D, 14, (const uint8_t *)"Hello world!\r\n");
     chThdSleepMilliseconds(2000);
   }
 }
