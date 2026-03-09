@@ -43,6 +43,7 @@
  * Shared code.
  ****************************************************************************/
 
+#if CH_PORT_SUPPORTS_RECURSIVE_LOCKS == TRUE
 /* Timer callback for testing system functions in ISR context.*/
 static void vtcb(virtual_timer_t *vtp, void *p) {
   syssts_t sts;
@@ -60,6 +61,7 @@ static void vtcb(virtual_timer_t *vtp, void *p) {
   chSysRestoreStatusX(sts);
   chSysUnlockFromISR();
 }
+#endif
 
 /****************************************************************************
  * Test cases.
