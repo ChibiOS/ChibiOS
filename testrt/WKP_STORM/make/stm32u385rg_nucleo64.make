@@ -71,7 +71,7 @@ endif
 
 # FPU-related options.
 ifeq ($(USE_FPU_OPT),)
-  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) -mfpu=fpv4-sp-d16
+  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) -mfpu=fpv5-sp-d16
 endif
 
 #
@@ -90,18 +90,18 @@ MCU  = cortex-m33
 
 # Imported source files and paths.
 CHIBIOS  := ../..
-CONFDIR  := ./cfg/stm32l552ze_nucleo144_alt
-BUILDDIR := ./build/stm32l552ze_nucleo144_alt
-DEPDIR   := ./.dep/stm32l552ze_nucleo144_alt
+CONFDIR  := ./cfg/stm32u385rg_nucleo64
+BUILDDIR := ./build/stm32u385rg_nucleo64
+DEPDIR   := ./.dep/stm32u385rg_nucleo64
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
-include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32l5xx.mk
+include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32u3xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32L5xx/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_NUCLEO144_L552ZE/board.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32U3xx/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_U385RG_Q/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
@@ -114,13 +114,14 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 #include $(CHIBIOS)/test/oslib/oslib_test.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 
-# Define linker script file here.
-LDSCRIPT= $(STARTUPLD)/STM32L552xE_TZ.ld
+# Define linker script file here
+LDSCRIPT= $(STARTUPLD)/STM32U385xG.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
+       $(CONFDIR)/portab.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global

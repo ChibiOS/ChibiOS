@@ -1,7 +1,3 @@
-/** @} */
-
-
-
 /*
     ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 

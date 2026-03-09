@@ -62,6 +62,21 @@ static uint32_t vtcus;
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+static void rnddly(void) {
+#if VT_STORM_CFG_RANDOMIZE != FALSE
+   /* Pseudo-random delay.*/
+   {
+     static volatile unsigned x = 0;
+     unsigned r;
+
+     r = rand() & 15;
+     while (r--) {
+       x++;
+     }
+   }
+#endif
+}
+
 static void watchdog_cb(virtual_timer_t *vtp, void *p) {
 
   (void)vtp;
@@ -90,18 +105,7 @@ static void sweeper0_cb(virtual_timer_t *vtp, void *p) {
   (void)p;
 
   chSysLockFromISR();
-#if VT_STORM_CFG_RANDOMIZE != FALSE
-   /* Pseudo-random delay.*/
-   {
-     static volatile unsigned x = 0;
-     unsigned r;
-
-     r = rand() & 15;
-     while (r--) {
-       x++;
-     }
-   }
-#endif
+  rnddly();
   chVTSetI(&wrapper, (sysinterval_t)-1, wrapper_cb, NULL);
   chVTSetI(vtp, delay, sweeper0_cb, NULL);
   chSysUnlockFromISR();
@@ -112,18 +116,7 @@ static void sweeperm1_cb(virtual_timer_t *vtp, void *p) {
   (void)p;
 
   chSysLockFromISR();
-#if VT_STORM_CFG_RANDOMIZE != FALSE
-   /* Pseudo-random delay.*/
-   {
-     static volatile unsigned x = 0;
-     unsigned r;
-
-     r = rand() & 15;
-     while (r--) {
-       x++;
-     }
-   }
-#endif
+  rnddly();
   chVTSetI(vtp, delay - 1, sweeperm1_cb, NULL);
   chSysUnlockFromISR();
 }
@@ -133,18 +126,7 @@ static void sweeperp1_cb(virtual_timer_t *vtp, void *p) {
   (void)p;
 
   chSysLockFromISR();
-#if VT_STORM_CFG_RANDOMIZE != FALSE
-   /* Pseudo-random delay.*/
-   {
-     static volatile unsigned x = 0;
-     unsigned r;
-
-     r = rand() & 15;
-     while (r--) {
-       x++;
-     }
-   }
-#endif
+  rnddly();
   chVTSetI(vtp, delay + 1, sweeperp1_cb, NULL);
   chSysUnlockFromISR();
 }
@@ -154,18 +136,7 @@ static void sweeperm3_cb(virtual_timer_t *vtp, void *p) {
   (void)p;
 
   chSysLockFromISR();
-#if VT_STORM_CFG_RANDOMIZE != FALSE
-   /* Pseudo-random delay.*/
-   {
-     static volatile unsigned x = 0;
-     unsigned r;
-
-     r = rand() & 15;
-     while (r--) {
-       x++;
-     }
-   }
-#endif
+  rnddly();
   chVTSetI(vtp, delay - 3, sweeperm3_cb, NULL);
   chSysUnlockFromISR();
 }
@@ -175,18 +146,7 @@ static void sweeperp3_cb(virtual_timer_t *vtp, void *p) {
   (void)p;
 
   chSysLockFromISR();
-#if VT_STORM_CFG_RANDOMIZE != FALSE
-   /* Pseudo-random delay.*/
-   {
-     static volatile unsigned x = 0;
-     unsigned r;
-
-     r = rand() & 15;
-     while (r--) {
-       x++;
-     }
-   }
-#endif
+  rnddly();
   chVTSetI(vtp, delay + 3, sweeperp3_cb, NULL);
   chSysUnlockFromISR();
 }
@@ -195,22 +155,9 @@ static void continuous_cb(virtual_timer_t *vtp, void *p) {
 
   (void)vtp;
   (void)p;
+
   vtcus++;
-
-#if VT_STORM_CFG_RANDOMIZE != FALSE
-   /* Pseudo-random delay.*/
-   {
-     static volatile unsigned x = 0;
-     unsigned r;
-
-     chSysLockFromISR();
-     r = rand() & 15;
-     chSysUnlockFromISR();
-     while (r--) {
-       x++;
-     }
-   }
-#endif
+  rnddly();
 }
 
 static void guard_cb(virtual_timer_t *vtp, void *p) {
@@ -294,6 +241,9 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
     vtcus = 0;
 
     delay = TIME_MS2I(5);
+    if (delay < (sysinterval_t)VT_STORM_CFG_MIN_DELAY) {
+      delay = (sysinterval_t)VT_STORM_CFG_MIN_DELAY;
+    }
     saturated = false;
     warning   = false;
     do {
@@ -308,8 +258,8 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       chVTSetI(&sweeperp1, delay + 1, sweeperp1_cb, NULL);
       chVTSetI(&sweeperm3, delay - 3, sweeperm3_cb, NULL);
       chVTSetI(&sweeperp3, delay + 3, sweeperp3_cb, NULL);
-      chVTSetI(&wrapper, (sysinterval_t) - 1, wrapper_cb, NULL);
-      chVTSetContinuousI(&continuous, TIME_US2I(50), continuous_cb, NULL);
+      chVTSetI(&wrapper, (sysinterval_t)-1, wrapper_cb, NULL);
+      chVTSetContinuousI(&continuous, periodic, continuous_cb, NULL);
       chVTSetI(&guard0, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM / 2), guard_cb, NULL);
       chVTSetI(&guard1, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM - 1), guard_cb, NULL);
       chVTSetI(&guard2, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM + 1), guard_cb, NULL);
@@ -371,7 +321,8 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
     } while (delay >= (sysinterval_t)VT_STORM_CFG_MIN_DELAY);
 
     if (warning) {
-      chprintf(cfg->out, "\r\nRFCU warning detected", TIME_I2US(delay), delay);
+      chprintf(cfg->out, "\r\nRFCU warning detected at %u uS %u ticks",
+               TIME_I2US(delay), delay);
     }
     else {
       chprintf(cfg->out, "\r\nNo warnings");
@@ -394,20 +345,7 @@ void vt_storm_gpt1_cb(GPTDriver *gptp) {
 
   (void)gptp;
 
-#if VT_STORM_CFG_RANDOMIZE != FALSE
-   /* Pseudo-random delay.*/
-   {
-     static volatile unsigned x = 0;
-     unsigned r;
-
-     chSysLockFromISR();
-     r = rand() & 31;
-     chSysUnlockFromISR();
-     while (r--) {
-       x++;
-     }
-   }
-#endif
+  rnddly();
 }
 
 /**
@@ -417,20 +355,7 @@ void vt_storm_gpt2_cb(GPTDriver *gptp) {
 
   (void)gptp;
 
-#if VT_STORM_CFG_RANDOMIZE != FALSE
-   /* Pseudo-random delay.*/
-   {
-     static volatile unsigned x = 0;
-     unsigned r;
-
-     chSysLockFromISR();
-     r = rand() & 31;
-     chSysUnlockFromISR();
-     while (r--) {
-       x++;
-     }
-   }
-#endif
+  rnddly();
 }
 #endif
 
