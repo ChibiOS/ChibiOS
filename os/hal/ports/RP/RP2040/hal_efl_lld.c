@@ -919,13 +919,12 @@ flash_error_t efl_lld_verify_erase(void *instance, flash_sector_t sector) {
  */
 void efl_lld_read_unique_id(EFlashDriver *eflp, uint8_t *uid) {
   uint8_t rx[4U + RP_FLASH_UNIQUE_ID_SIZE];
-  syssts_t sts;
 
   osalDbgCheck((eflp != NULL) && (uid != NULL));
 
-  sts = osalSysGetStatusAndLockX();
+  osalSysLock();
   rp_flash_read_uid_full(eflp, rx, sizeof(rx));
-  osalSysRestoreStatusX(sts);
+  osalSysUnlock();
 
   memcpy(uid, rx + 4U, RP_FLASH_UNIQUE_ID_SIZE);
 }
