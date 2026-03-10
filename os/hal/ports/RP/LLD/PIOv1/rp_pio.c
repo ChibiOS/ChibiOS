@@ -92,7 +92,7 @@ static struct {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static void serve_pio_irq(uint32_t blockidx, __IO uint32_t *ints_reg) {
+static void serve_pio_irq(uint32_t blockidx, __I uint32_t *ints_reg) {
   uint32_t ints;
 
   ints = *ints_reg;
