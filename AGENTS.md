@@ -17,3 +17,4 @@
 
 ## Repository
 - Repository is subversion, ignore .svn directory, do not use git commands.
+- Ask for confirmation before touching non-versioned files.
