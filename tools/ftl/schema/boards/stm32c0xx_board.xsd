@@ -99,9 +99,6 @@
       <xs:element name="GPIOD" type="STM32GPIOv2PortType"
         maxOccurs="1" minOccurs="1">
       </xs:element>
-      <xs:element name="GPIOE" type="STM32GPIOv2PortType"
-        maxOccurs="1" minOccurs="1">
-      </xs:element>
       <xs:element name="GPIOF" type="STM32GPIOv2PortType"
         maxOccurs="1" minOccurs="1">
       </xs:element>
