@@ -29,7 +29,7 @@
 #define CHCONF_H
 
 #define _CHIBIOS_RT_CONF_
-#define _CHIBIOS_RT_CONF_VER_8_0_
+#define _CHIBIOS_RT_CONF_VER_7_0_
 
 /*===========================================================================*/
 /**
@@ -49,19 +49,6 @@
 #define CH_CFG_SMP_MODE                     FALSE
 #endif
 
-/**
- * @brief   Kernel hardening level.
- * @details This option is the level of functional-safety checks enabled
- *          in the kerkel. The meaning is:
- *          - 0: No checks, maximum performance.
- *          - 1: Reasonable checks.
- *          - 2: All checks.
- *          .
- */
-#if !defined(CH_CFG_HARDENING_LEVEL)
-#define CH_CFG_HARDENING_LEVEL              0
-#endif
-
 /** @} */
 
 /*===========================================================================*/
@@ -74,8 +61,6 @@
 /**
  * @brief   System time counter resolution.
  * @note    Allowed values are 16, 32 or 64 bits.
- * @note    In tick-less mode this value must match the physical system tick
- *          timer counter width.
  */
 #if !defined(CH_CFG_ST_RESOLUTION)
 #define CH_CFG_ST_RESOLUTION                16
@@ -85,8 +70,6 @@
  * @brief   System tick frequency.
  * @details Frequency of the system timer that drives the system ticks. This
  *          setting also defines the system tick time unit.
- * @note    This must be a frequency that is obtainable from the system tick
- *          timer frequency.
  */
 #if !defined(CH_CFG_ST_FREQUENCY)
 #define CH_CFG_ST_FREQUENCY                 14545
@@ -375,16 +358,6 @@
  */
 #if !defined(CH_CFG_USE_MAILBOXES)
 #define CH_CFG_USE_MAILBOXES                TRUE
-#endif
-
-/**
- * @brief   Memory checks APIs.
- * @details If enabled then the memory checks APIs are included in the kernel.
- *
- * @note    The default is @p TRUE.
- */
-#if !defined(CH_CFG_USE_MEMCHECKS)
-#define CH_CFG_USE_MEMCHECKS                TRUE
 #endif
 
 /**
@@ -695,9 +668,9 @@
  * @details User initialization code added to the @p chSysInit() function
  *          just before interrupts are enabled globally.
  */
-#define CH_CFG_SYSTEM_INIT_HOOK() do {                                      \
+#define CH_CFG_SYSTEM_INIT_HOOK() {                                         \
   /* Add system initialization code here.*/                                 \
-} while (false)
+}
 
 /**
  * @brief   OS instance structure extension.
@@ -711,9 +684,9 @@
  *
  * @param[in] oip       pointer to the @p os_instance_t structure
  */
-#define CH_CFG_OS_INSTANCE_INIT_HOOK(oip) do {                              \
+#define CH_CFG_OS_INSTANCE_INIT_HOOK(oip) {                                 \
   /* Add OS instance initialization code here.*/                            \
-} while (false)
+}
 
 /**
  * @brief   Threads descriptor structure extension.
@@ -731,9 +704,9 @@
  *
  * @param[in] tp        pointer to the @p thread_t structure
  */
-#define CH_CFG_THREAD_INIT_HOOK(tp) do {                                    \
+#define CH_CFG_THREAD_INIT_HOOK(tp) {                                       \
   /* Add threads initialization code here.*/                                \
-} while (false)
+}
 
 /**
  * @brief   Threads finalization hook.
@@ -741,9 +714,9 @@
  *
  * @param[in] tp        pointer to the @p thread_t structure
  */
-#define CH_CFG_THREAD_EXIT_HOOK(tp) do {                                    \
+#define CH_CFG_THREAD_EXIT_HOOK(tp) {                                       \
   /* Add threads finalization code here.*/                                  \
-} while (false)
+}
 
 /**
  * @brief   Context switch hook.
@@ -752,23 +725,23 @@
  * @param[in] ntp       thread being switched in
  * @param[in] otp       thread being switched out
  */
-#define CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp) do {                           \
+#define CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp) {                              \
   /* Context switch code here.*/                                            \
-} while (false)
+}
 
 /**
  * @brief   ISR enter hook.
  */
-#define CH_CFG_IRQ_PROLOGUE_HOOK() do {                                     \
+#define CH_CFG_IRQ_PROLOGUE_HOOK() {                                        \
   /* IRQ prologue code here.*/                                              \
-} while (false)
+}
 
 /**
  * @brief   ISR exit hook.
  */
-#define CH_CFG_IRQ_EPILOGUE_HOOK() do {                                     \
+#define CH_CFG_IRQ_EPILOGUE_HOOK() {                                        \
   /* IRQ epilogue code here.*/                                              \
-} while (false)
+}
 
 /**
  * @brief   Idle thread enter hook.
@@ -776,9 +749,9 @@
  *          should be invoked from here.
  * @note    This macro can be used to activate a power saving mode.
  */
-#define CH_CFG_IDLE_ENTER_HOOK() do {                                       \
+#define CH_CFG_IDLE_ENTER_HOOK() {                                          \
   /* Idle-enter code here.*/                                                \
-} while (false)
+}
 
 /**
  * @brief   Idle thread leave hook.
@@ -786,62 +759,52 @@
  *          should be invoked from here.
  * @note    This macro can be used to deactivate a power saving mode.
  */
-#define CH_CFG_IDLE_LEAVE_HOOK() do {                                       \
+#define CH_CFG_IDLE_LEAVE_HOOK() {                                          \
   /* Idle-leave code here.*/                                                \
-} while (false)
+}
 
 /**
  * @brief   Idle Loop hook.
  * @details This hook is continuously invoked by the idle thread loop.
  */
-#define CH_CFG_IDLE_LOOP_HOOK() do {                                        \
+#define CH_CFG_IDLE_LOOP_HOOK() {                                           \
   /* Idle loop code here.*/                                                 \
-} while (false)
+}
 
 /**
  * @brief   System tick event hook.
  * @details This hook is invoked in the system tick handler immediately
  *          after processing the virtual timers queue.
  */
-#define CH_CFG_SYSTEM_TICK_HOOK() do {                                      \
+#define CH_CFG_SYSTEM_TICK_HOOK() {                                         \
   /* System tick event code here.*/                                         \
-} while (false)
+}
 
 /**
  * @brief   System halt hook.
  * @details This hook is invoked in case to a system halting error before
  *          the system is halted.
  */
-#define CH_CFG_SYSTEM_HALT_HOOK(reason) do {                                \
+#define CH_CFG_SYSTEM_HALT_HOOK(reason) {                                   \
   /* System halt code here.*/                                               \
-} while (false)
+}
 
 /**
  * @brief   Trace hook.
  * @details This hook is invoked each time a new record is written in the
  *          trace buffer.
  */
-#define CH_CFG_TRACE_HOOK(tep) do {                                         \
+#define CH_CFG_TRACE_HOOK(tep) {                                            \
   /* Trace code here.*/                                                     \
-} while (false)
+}
 
 /**
  * @brief   Runtime Faults Collection Unit hook.
  * @details This hook is invoked each time new faults are collected and stored.
  */
-#define CH_CFG_RUNTIME_FAULTS_HOOK(mask) do {                               \
+#define CH_CFG_RUNTIME_FAULTS_HOOK(mask) {                                  \
   /* Faults handling code here.*/                                           \
-} while (false)
-
-/**
- * @brief   Safety checks hook.
- * @details This hook is invoked when there is a safety violation and the
- *          system is going to stop.
- */
-#define CH_CFG_SAFETY_CHECK_HOOK(l, f) do {                                 \
-  /* Safety handling code here.*/                                           \
-  chSysHalt(f);                                                             \
-} while (false)
+}
 
 /** @} */
 
