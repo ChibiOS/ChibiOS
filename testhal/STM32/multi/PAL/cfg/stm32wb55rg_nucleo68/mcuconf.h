@@ -61,7 +61,6 @@
 #define STM32_PPRE2                         STM32_PPRE2_DIV1
 #define STM32_C2HPRE                        STM32_C2HPRE_DIV2
 #define STM32_SHDHPRE                       STM32_SHDHPRE_DIV1
-#define STM32_RFCSSSEL                      STM32_RFCSSSEL_HSE
 #define STM32_STOPWUCK                      STM32_STOPWUCK_MSI
 #define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
 #define STM32_MCOPRE                        STM32_MCOPRE_DIV1
