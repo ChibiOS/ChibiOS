@@ -39,9 +39,16 @@
 #define HALCONF_H
 
 #define _CHIBIOS_HAL_CONF_
-#define _CHIBIOS_HAL_CONF_VER_9_0_
+#define _CHIBIOS_HAL_CONF_VER_9_1_
 
 #include "mcuconf.h"
+
+/**
+ * @brief   Enables the HAL safety subsystem.
+ */
+#if !defined(HAL_USE_SAFETY) || defined(__DOXYGEN__)
+#define HAL_USE_SAFETY                      ${doc.HAL_USE_SAFETY!"FALSE"}
+#endif
 
 /**
  * @brief   Enables the PAL subsystem.
