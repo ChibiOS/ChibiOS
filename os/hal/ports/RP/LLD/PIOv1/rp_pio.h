@@ -30,6 +30,18 @@
 /*===========================================================================*/
 
 /**
+ * @name    PIO GPIO function select values
+ * @{
+ */
+#define RP_PIO_FUNCSEL_PIO0             6U
+#define RP_PIO_FUNCSEL_PIO1             7U
+#if RP_HAS_PIO2 == TRUE
+#define RP_PIO_FUNCSEL_PIO2             8U
+#endif
+#define RP_PIO_FUNCSEL_NULL             31U
+/** @} */
+
+/**
  * @name    PIO resource constants
  * @{
  */
@@ -546,6 +558,90 @@ __STATIC_INLINE void pioSmDisableInterruptX(const rp_pio_sm_t *smp,
 
   smp->block->pio->CLR.IRQ0_INTE = mask;
   smp->block->pio->CLR.IRQ1_INTE = mask;
+}
+
+/**
+ * @brief   Writes a word to the TX FIFO, blocking while full.
+ *
+ * @param[in] smp       pointer to a rp_pio_sm_t structure
+ * @param[in] data      word to write
+ *
+ * @special
+ */
+__STATIC_INLINE void pioSmPut(const rp_pio_sm_t *smp, uint32_t data) {
+
+  while (pioSmIsTxFullX(smp))
+    ;
+  pioSmPutX(smp, data);
+}
+
+/**
+ * @brief   Reads a word from the RX FIFO, blocking while empty.
+ *
+ * @param[in] smp       pointer to a rp_pio_sm_t structure
+ * @return              The word read from the FIFO.
+ *
+ * @special
+ */
+__STATIC_INLINE uint32_t pioSmGet(const rp_pio_sm_t *smp) {
+
+  while (pioSmIsRxEmptyX(smp))
+    ;
+  return pioSmGetX(smp);
+}
+
+/**
+ * @brief   Routes a GPIO pin to the PIO block that owns this state machine.
+ * @details Sets IO_BANK0 FUNCSEL for the given pin to PIO0, PIO1, or PIO2
+ *          based on the block index of the state machine.
+ *
+ * @param[in] smp       pointer to a rp_pio_sm_t structure
+ * @param[in] gpio      GPIO pin number
+ *
+ * @special
+ */
+__STATIC_INLINE void pioSmSetPinFunctionX(const rp_pio_sm_t *smp,
+                                           uint32_t gpio) {
+  static const uint32_t funcsel[] = {
+    RP_PIO_FUNCSEL_PIO0,
+    RP_PIO_FUNCSEL_PIO1,
+#if RP_HAS_PIO2 == TRUE
+    RP_PIO_FUNCSEL_PIO2,
+#endif
+  };
+
+  IO_BANK0->GPIO[gpio].CTRL = funcsel[smp->block->pioidx];
+}
+
+/**
+ * @brief   Sets the program counter of a state machine.
+ * @details Executes a JMP instruction to the given address.
+ *
+ * @param[in] smp       pointer to a rp_pio_sm_t structure
+ * @param[in] addr      target instruction address (0..31)
+ *
+ * @special
+ */
+__STATIC_INLINE void pioSmSetPCX(const rp_pio_sm_t *smp, uint32_t addr) {
+  pioSmExecX(smp, (uint16_t)(addr & 0x1FU));
+}
+
+/**
+ * @brief   Sets the clock divider from a target frequency.
+ * @details Computes the integer and fractional divider from the system
+ *          clock frequency and the desired PIO clock rate.
+ *
+ * @param[in] smp       pointer to a rp_pio_sm_t structure
+ * @param[in] freq_hz   desired PIO clock frequency in Hz
+ *
+ * @special
+ */
+__STATIC_INLINE void pioSmSetFrequencyX(const rp_pio_sm_t *smp, uint32_t freq_hz) {
+  uint32_t div_fp8 = ((uint64_t)RP_CLK_SYS_FREQ << 8) / freq_hz;
+  uint32_t int_part = div_fp8 >> 8;
+  uint32_t frac_part = div_fp8 & 0xFFU;
+
+  pioSmSetClkdivX(smp, PIO_SM_CLKDIV(int_part, frac_part));
 }
 
 #endif /* RP_PIO_H */
