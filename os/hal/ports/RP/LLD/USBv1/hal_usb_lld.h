@@ -17,6 +17,9 @@
 /**
  * @file    hal_usb_lld.h
  * @brief   RP USB subsystem low level driver header.
+ * @note    This driver is based on the RP2040 USB LLD originally created by
+ *          @hanya and @xyzz with significant improvements by @KarlK90. It has
+ *          been updated for the RP2350 and to fix a few defects and errata.
  *
  * @addtogroup USB
  * @{

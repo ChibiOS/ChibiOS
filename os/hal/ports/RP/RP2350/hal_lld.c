@@ -17,6 +17,8 @@
 /**
  * @file    RP2350/hal_lld.c
  * @brief   RP2350 HAL subsystem low level driver source.
+ * @note    The Core 1 launch sequence follows the multicore launch protocol
+ *          documented in RP2350 Datasheet 3.5 "Multicore Launch".
  *
  * @addtogroup HAL
  * @{

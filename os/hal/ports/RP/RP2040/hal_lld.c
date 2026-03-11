@@ -17,6 +17,9 @@
 /**
  * @file    RP2040/hal_lld.c
  * @brief   RP2040 HAL subsystem low level driver source.
+ * @note    The Core 1 launch sequence follows the multicore launch protocol
+ *          documented in RP2040 Datasheet 2.8.2 "Launching Code On
+ *          Processor Core 1".
  *
  * @addtogroup HAL
  * @{
