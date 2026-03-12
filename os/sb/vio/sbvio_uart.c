@@ -265,7 +265,12 @@ void sb_fastc_vio_uart(sb_class_t *sbp, struct port_extctx *ectxp) {
       break;
     }
   case SB_VUART_CTL:
-    /* falls through */
+    {
+      ectxp->r0 = (uint32_t)sioControlX(unitp->siop,
+                                        (unsigned int)ectxp->r1,
+                                        (void *)ectxp->r2);
+      break;
+    }
   default:
     /* Silently ignored.*/
     break;

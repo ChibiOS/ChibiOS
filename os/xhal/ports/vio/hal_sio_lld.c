@@ -78,6 +78,15 @@ static inline uint32_t __sio_vuart_selcfg(uint32_t nvuart, uint32_t ncfg,
   return (uint32_t)r0;
 }
 
+CC_FORCE_INLINE
+static inline uint32_t __sio_vuart_ctl(uint32_t nvuart,
+                                       unsigned int operation,
+                                       void *arg) {
+
+  __syscall3r(97, VIO_CALL(SB_VUART_CTL, nvuart), operation, arg);
+  return (uint32_t)r0;
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -470,10 +479,12 @@ void sio_lld_put(hal_sio_driver_c *siop, uint_fast16_t data) {
  */
 msg_t sio_lld_control(hal_sio_driver_c *siop, unsigned int operation, void *arg) {
 
-  __syscall3r(97, VIO_CALL(SB_VUART_CTL, siop->nvuart), operation, arg);
-  osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
+  uint32_t ret;
 
-  return (msg_t)r0;
+  ret = __sio_vuart_ctl(siop->nvuart, operation, arg);
+  osalDbgAssert(ret != (uint32_t)-1, "unexpected failure");
+
+  return (msg_t)ret;
 }
 
 /**
