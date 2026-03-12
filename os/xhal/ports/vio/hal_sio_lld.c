@@ -203,11 +203,14 @@ void sio_lld_stop(hal_sio_driver_c *siop) {
 }
 
 /**
- * @brief   SIO configuration.
+ * @brief   Applies an explicit SIO configuration.
+ * @note    The VIO port does not accept arbitrary sandbox-provided
+ *          configurations. Only host-approved predefined configurations
+ *          selected using @p drvSelectCfgX() are supported.
  *
  * @param[in] siop      pointer to the @p hal_sio_driver_c object
  * @param[in] config    pointer to the @p hal_sio_config_t structure
- * @return              A pointer to the current configuration structure.
+ * @return              Always @p NULL in the VIO port.
  *
  * @notapi
  */
@@ -216,11 +219,14 @@ const hal_sio_config_t *sio_lld_setcfg(hal_sio_driver_c *siop, const hal_sio_con
   (void)siop;
   (void)config;
 
+  /* Explicit configurations are intentionally rejected in this port. */
   return NULL;
 }
 
 /**
- * @brief       Selects one of the pre-defined SIO configurations.
+ * @brief       Selects one of the host-defined SIO configurations.
+ * @note        The selected configuration is mirrored locally in
+ *              @p siop->cfgbuf after host-side validation and selection.
  *
  * @param[in] siop      pointer to the @p hal_sio_driver_c object
  * @param[in] cfgnum    driver configuration number

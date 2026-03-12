@@ -103,6 +103,9 @@
 
 /**
  * @brief   Low level fields of the SIO configuration structure.
+ * @note    In the VIO port configuration changes are limited to selecting
+ *          one of the host-defined configurations, explicit @p setcfg
+ *          requests are intentionally unsupported.
  */
 #define sio_lld_config_fields
 
