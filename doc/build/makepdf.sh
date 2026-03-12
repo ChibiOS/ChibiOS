@@ -1,5 +1,5 @@
 #!/bin/bash
-export CHVERSION=21.11.4
+export CHVERSION=21.11.5
 
 function makeclean() {
   rm *.log 2> /dev/null

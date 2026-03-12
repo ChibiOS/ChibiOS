@@ -190,3 +190,11 @@
  *
  * @ingroup IO
  */
+
+/**
+ * @defgroup HAL_SAFETY Safety Subsystem
+ * @brief   HAL Safety Module
+ *
+ * @ingroup IO
+ */
+

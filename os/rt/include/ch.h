@@ -62,7 +62,7 @@
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         5
+#define CH_KERNEL_PATCH         6
 /** @} */
 
 /**
