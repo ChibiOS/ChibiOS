@@ -129,14 +129,15 @@ typedef uint32_t iopadid_t;
  * @name    Generic port identifiers.
  * @{
  */
-#define IOPORT1         VPIO0
-#define IOPORT2         VPIO1
-#define IOPORT3         VPIO2
-#define IOPORT4         VPIO3
-#define IOPORT5         VPIO4
-#define IOPORT6         VPIO5
-#define IOPORT7         VPIO6
-#define IOPORT8         VPIO7
+#define VIO_PORT(n)      ((ioportid_t)(n))
+#define IOPORT1         VIO_PORT(0U)
+#define IOPORT2         VIO_PORT(1U)
+#define IOPORT3         VIO_PORT(2U)
+#define IOPORT4         VIO_PORT(3U)
+#define IOPORT5         VIO_PORT(4U)
+#define IOPORT6         VIO_PORT(5U)
+#define IOPORT7         VIO_PORT(6U)
+#define IOPORT8         VIO_PORT(7U)
 /** @} */
 
 /*===========================================================================*/

@@ -145,7 +145,7 @@ static THD_FUNCTION(thd1_func, arg) {
 
   chRegSetThreadName("blinker");
   while (true) {
-    palTogglePad(0, 0);
+    palTogglePad(IOPORT1, 0);
     chThdSleepMilliseconds(500);
   }
 }
