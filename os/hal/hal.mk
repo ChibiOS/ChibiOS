@@ -97,6 +97,7 @@ HALSRC += $(CHIBIOS)/os/hal/src/hal_wspi.c
 endif
 else
 HALSRC = $(CHIBIOS)/os/hal/src/hal.c \
+         $(CHIBIOS)/os/hal/src/hal_safety.c \
          $(CHIBIOS)/os/hal/src/hal_st.c \
          $(CHIBIOS)/os/hal/src/hal_buffers.c \
          $(CHIBIOS)/os/hal/src/hal_queues.c \
