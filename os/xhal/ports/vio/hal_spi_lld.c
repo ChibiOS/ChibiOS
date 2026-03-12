@@ -128,7 +128,7 @@ OSAL_IRQ_HANDLER(MK_VECTOR(VIO_VSPI1_IRQ)) {
 
 #if VIO_SPI_USE_VSPI2 || defined(__DOXYGEN__)
 #if !defined(VIO_VSPI2_SUPPRESS_ISR)
-OSAL_IRQ_HANDLER(MK_VECTOR(VIO_VPIO2_IRQ)) {
+OSAL_IRQ_HANDLER(MK_VECTOR(VIO_VSPI2_IRQ)) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -221,7 +221,7 @@ void spi_lld_stop(hal_spi_driver_c *spip) {
     osalDbgAssert(false, "invalid SIO instance");
   }
 
-  osalDbgAssert(msg = HAL_RET_SUCCESS, "unexpected failure");
+  osalDbgAssert(msg == HAL_RET_SUCCESS, "unexpected failure");
 }
 
 /**
@@ -404,11 +404,20 @@ msg_t spi_lld_stop_transfer(hal_spi_driver_c *spip, size_t *sizep) {
  * @return              The received data frame from the SPI bus.
  */
 uint16_t spi_lld_polled_exchange(hal_spi_driver_c *spip, uint16_t frame) {
+  uint16_t rxframe = 0U;
 
+#if SPI_USE_SYNCHRONIZATION == TRUE
+  msg_t msg;
+
+  msg = spiExchange(spip, 1U, &frame, &rxframe);
+  osalDbgAssert(msg == HAL_RET_SUCCESS, "unexpected failure");
+#else
   (void)spip;
   (void)frame;
+  osalDbgAssert(false, "SPI_USE_SYNCHRONIZATION required");
+#endif
 
-  return 0;
+  return rxframe;
 }
 
 #endif /* HAL_USE_SPI */

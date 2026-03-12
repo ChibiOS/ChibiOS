@@ -199,8 +199,8 @@ void sb_sysc_vio_spi(sb_class_t *sbp, struct port_extctx *ectxp) {
     {
       msg_t msg;
       size_t n = (size_t)ectxp->r1;
-      void *rxbuf = (void *)ectxp->r2;
-      const void *txbuf = (const void *)ectxp->r3;
+      const void *txbuf = (const void *)ectxp->r2;
+      void *rxbuf = (void *)ectxp->r3;
       size_t bufsize;
 
       if (n == 0U) {

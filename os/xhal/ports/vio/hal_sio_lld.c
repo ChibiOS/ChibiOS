@@ -190,7 +190,7 @@ void sio_lld_stop(hal_sio_driver_c *siop) {
     osalDbgAssert(false, "invalid SIO instance");
   }
 
-  osalDbgAssert(msg = HAL_RET_SUCCESS, "unexpected failure");
+  osalDbgAssert(msg == HAL_RET_SUCCESS, "unexpected failure");
 }
 
 /**
