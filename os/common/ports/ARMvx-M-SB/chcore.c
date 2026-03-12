@@ -51,6 +51,7 @@
 /*===========================================================================*/
 
 
+#if PORT_USE_LOCAL_SYSTICK == TRUE
 CH_IRQ_HANDLER(__sb_vector0) {
 
   CH_IRQ_PROLOGUE();
@@ -61,6 +62,7 @@ CH_IRQ_HANDLER(__sb_vector0) {
 
   CH_IRQ_EPILOGUE();
 }
+#endif /* PORT_USE_LOCAL_SYSTICK == TRUE */
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -80,9 +82,11 @@ void port_init(os_instance_t *oip) {
   /* Starting in a known IRQ configuration.*/
   port_disable();
 
+#if PORT_USE_LOCAL_SYSTICK == TRUE
   /* Enabling alarm VRQ.*/
   __sb_vrq_seten(1U << 0);
   sbSetAlarm(sbGetFrequency() / CH_CFG_ST_FREQUENCY, true);
+#endif
 }
 
 /** @} */

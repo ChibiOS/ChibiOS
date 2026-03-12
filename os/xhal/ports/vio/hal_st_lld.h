@@ -40,10 +40,11 @@
  * @{
  */
 /**
- * @brief   SysTick timer IRQ priority.
+ * @brief   VRQ vector used for the local periodic systick.
+ * @note    This must match the host-side sandbox alarm VRQ selection.
  */
-#if !defined(STM32_ST_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ST_VRQ_VECTOR                 0
+#if !defined(VIO_ST_VRQ_VECTOR) || defined(__DOXYGEN__)
+#define VIO_ST_VRQ_VECTOR                 0
 #endif
 /** @} */
 
@@ -63,6 +64,10 @@
 
 #error "invalid OSAL_ST_MODE"
 
+#endif
+
+#if (PORT_USE_LOCAL_SYSTICK == FALSE) && ((VIO_ST_VRQ_VECTOR < 0) || (VIO_ST_VRQ_VECTOR > 31))
+#error "invalid VIO_ST_VRQ_VECTOR setting"
 #endif
 
 /*===========================================================================*/

@@ -42,6 +42,10 @@
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+#if (PORT_USE_LOCAL_SYSTICK == FALSE) && (OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC)
+static sysinterval_t st_alarm_interval;
+#endif
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -55,14 +59,18 @@
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(xxxxx) {
+#if (PORT_USE_LOCAL_SYSTICK == FALSE) && (OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC)
+OSAL_IRQ_HANDLER(MK_VECTOR(VIO_ST_VRQ_VECTOR)) {
 
   OSAL_IRQ_PROLOGUE();
 
-//  st_lld_serve_interrupt();
+  osalSysLockFromISR();
+  osalOsTimerHandlerI();
+  osalSysUnlockFromISR();
 
   OSAL_IRQ_EPILOGUE();
 }
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -75,6 +83,13 @@ OSAL_IRQ_HANDLER(xxxxx) {
  */
 void st_lld_init(void) {
 
+#if (PORT_USE_LOCAL_SYSTICK == FALSE) && (OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC)
+  st_alarm_interval = sbGetFrequency() / OSAL_ST_FREQUENCY;
+
+  /* The ST layer owns the alarm VRQ when the port-local systick is disabled. */
+  __sb_vrq_seten(1U << VIO_ST_VRQ_VECTOR);
+  sbSetAlarm(st_alarm_interval, true);
+#endif
 }
 
 #endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */
