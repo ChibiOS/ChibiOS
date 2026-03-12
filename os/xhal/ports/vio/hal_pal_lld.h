@@ -222,6 +222,19 @@ typedef uint32_t iopadid_t;
  */
 #define pal_lld_toggleport(port, bits) __pal_lld_toggleport(port, bits)
 
+/**
+ * @brief   Programs a group mode.
+ *
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask
+ * @param[in] offset    group bit offset within the port
+ * @param[in] mode      group mode
+ *
+ * @notapi
+ */
+#define pal_lld_setgroupmode(port, mask, offset, mode)                      \
+  __pal_lld_setgroupmode(port, mask, offset, mode)
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -266,6 +279,15 @@ __attribute__((always_inline))
 static inline void __pal_lld_toggleport(ioportid_t port, uint32_t bits) {
 
   __syscall2r(96, VIO_CALL(SB_VGPIO_TOGGLE, port), bits);
+}
+
+__attribute__((always_inline))
+static inline void __pal_lld_setgroupmode(ioportid_t port,
+                                          ioportmask_t mask,
+                                          uint32_t offset,
+                                          iomode_t mode) {
+
+  __syscall4r(96, VIO_CALL(SB_VGPIO_SETMODE, port), mask, offset, mode);
 }
 
 #endif /* HAL_USE_PAL == TRUE */
