@@ -169,8 +169,11 @@
 
 /**
  * @brief   EFL1 driver identifier.
+ * @note    EFLD1.ssi is statically initialized to allow use before hal init
  */
-EFlashDriver EFLD1;
+EFlashDriver EFLD1 = {
+  .ssi = (volatile uint32_t *)RP_SSI_BASE
+};
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
@@ -606,7 +609,6 @@ void efl_lld_init(void) {
 
   /* Driver initialization. */
   eflObjectInit(&EFLD1);
-  EFLD1.ssi = (volatile uint32_t *)RP_SSI_BASE;
 }
 
 /**
