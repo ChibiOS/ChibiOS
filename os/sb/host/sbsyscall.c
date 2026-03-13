@@ -903,10 +903,17 @@ static void sb_undef_handler(sb_class_t *sbp, struct port_extctx *ectxp) {
 /*===========================================================================*/
 
 void __sb_abort(msg_t msg) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
+
+  (void)sbp; /* Could be unused.*/
+
+#if SB_CFG_ENABLE_VRQ == TRUE
+  chVTResetI(&sbp->vrq.alarm_vt);
+#endif
 
 #if SB_CFG_ENABLE_VFS == TRUE
   chSysUnlock();
-  __sb_io_cleanup((sb_class_t *)chThdGetSelfX()->object);
+  __sb_io_cleanup(sbp);
   chSysLock();
 #endif
 
