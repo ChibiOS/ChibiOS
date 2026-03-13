@@ -104,10 +104,6 @@
 #error "SB_CFG_ENABLE_VRQ not defined in sbconf.h"
 #endif
 
-#if !defined(SB_CFG_ALARM_VRQ) || defined(__DOXYGEN__)
-#error "SB_CFG_ALARM_VRQ not defined in sbconf.h"
-#endif
-
 #if !defined(SB_CFG_ENABLE_VIO) || defined(__DOXYGEN__)
 #error "SB_CFG_ENABLE_VIO not defined in sbconf.h"
 #endif
@@ -184,10 +180,6 @@
 
 #if (SB_CFG_NUM_REGIONS < 1) || (SB_CFG_NUM_REGIONS > 4)
 #error "invalid SB_CFG_NUM_REGIONS value"
-#endif
-
-#if (SB_CFG_ALARM_VRQ < 0) || (SB_CFG_ALARM_VRQ > 31)
-#error "invalid SB_CFG_ALARM_VRQ value"
 #endif
 
 #if (PORT_SWITCHED_REGIONS_NUMBER > 0) &&                                  \

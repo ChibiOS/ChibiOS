@@ -63,13 +63,6 @@
 #endif
 
 /**
- * @brief   Virtual IRQ to be used for alarm.
- */
-#if !defined(SB_CFG_ALARM_VRQ) || defined(__DOXYGEN__)
-#define SB_CFG_ALARM_VRQ                    ${doc.SB_CFG_ALARM_VRQ!"0"}
-#endif
-
-/**
  * @brief   Enables support for sandbox virtualized I/O.
  */
 #if !defined(SB_CFG_ENABLE_VIO) || defined(__DOXYGEN__)

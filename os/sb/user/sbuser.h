@@ -885,8 +885,7 @@ static inline void sbSleepMicroseconds(time_usecs_t usecs) {
 
 /**
  * @brief   Sets an alarm.
- * @note    On alarm a VRQ is triggered, the VRQ number is hard-coded in the
- *          sandbox configuration, default is zero.
+ * @note    On alarm a VRQ is triggered on vector @p SB_VRQ_ALARM.
  *
  * @param[in] interval  the interval in system ticks
  * @param[in] reload    specifies a periodic alarm

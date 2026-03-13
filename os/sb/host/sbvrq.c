@@ -168,7 +168,7 @@ static void delay_cb(virtual_timer_t *vtp, void *arg) {
 
   (void)vtp;
 
-  sbVRQTriggerFromISR(sbp, SB_CFG_ALARM_VRQ);
+  sbVRQTriggerFromISR(sbp, SB_VRQ_ALARM);
 }
 
 /*===========================================================================*/

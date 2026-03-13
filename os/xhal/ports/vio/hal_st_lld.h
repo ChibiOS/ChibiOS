@@ -27,6 +27,8 @@
 #ifndef HAL_ST_LLD_H
 #define HAL_ST_LLD_H
 
+#include "sbsysc.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -39,13 +41,6 @@
  * @name    Configuration options
  * @{
  */
-/**
- * @brief   VRQ vector used for the local periodic systick.
- * @note    This must match the host-side sandbox alarm VRQ selection.
- */
-#if !defined(VIO_ST_VRQ_VECTOR) || defined(__DOXYGEN__)
-#define VIO_ST_VRQ_VECTOR                 0
-#endif
 /** @} */
 
 /*===========================================================================*/
@@ -66,8 +61,8 @@
 
 #endif
 
-#if (PORT_USE_LOCAL_SYSTICK == FALSE) && ((VIO_ST_VRQ_VECTOR < 0) || (VIO_ST_VRQ_VECTOR > 31))
-#error "invalid VIO_ST_VRQ_VECTOR setting"
+#if (PORT_USE_LOCAL_SYSTICK == FALSE) && ((SB_VRQ_ALARM < 0) || (SB_VRQ_ALARM > 31))
+#error "invalid SB_VRQ_ALARM value"
 #endif
 
 /*===========================================================================*/

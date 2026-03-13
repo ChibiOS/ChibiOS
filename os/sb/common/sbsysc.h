@@ -32,6 +32,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Standard VRQ for alarm.
+ */
+#define SB_VRQ_ALARM            0
+
+/**
  * @name    Fastcall codes
  * @{
  */

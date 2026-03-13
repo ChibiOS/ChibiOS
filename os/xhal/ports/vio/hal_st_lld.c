@@ -60,7 +60,7 @@ static sysinterval_t st_alarm_interval;
  * @isr
  */
 #if (PORT_USE_LOCAL_SYSTICK == FALSE) && (OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC)
-OSAL_IRQ_HANDLER(MK_VECTOR(VIO_ST_VRQ_VECTOR)) {
+OSAL_IRQ_HANDLER(MK_VECTOR(SB_VRQ_ALARM)) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -87,7 +87,7 @@ void st_lld_init(void) {
   st_alarm_interval = sbGetFrequency() / OSAL_ST_FREQUENCY;
 
   /* The ST layer owns the alarm VRQ when the port-local systick is disabled. */
-  __sb_vrq_seten(1U << VIO_ST_VRQ_VECTOR);
+  __sb_vrq_seten(1U << SB_VRQ_ALARM);
   sbSetAlarm(st_alarm_interval, true);
 #endif
 }
