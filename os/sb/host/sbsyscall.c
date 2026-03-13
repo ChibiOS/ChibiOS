@@ -983,7 +983,7 @@ void __port_do_syscall_return(void) {
 #else
   __set_PSP((uint32_t)ectxp);
 #if PORT_SAVE_PSPLIM
-  __set_PSPLIM(sbp->u_psplim);
+  __set_PSPLIM((uint32_t)sbp->u_data->base);
 #endif
 #endif
 }
