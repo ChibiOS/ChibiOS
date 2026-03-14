@@ -269,6 +269,8 @@ void adcStopConversionI(ADCDriver *adcp) {
  *          channels number configured into the conversion group and N is the
  *          buffer depth. The samples are sequentially written into the buffer
  *          with no gaps.
+ * @note    If the configured callback starts another conversion before this
+ *          function returns then the behavior is undefined.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  * @param[in] grpp      pointer to a @p ADCConversionGroup object

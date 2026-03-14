@@ -554,6 +554,8 @@ msg_t spiSynchronize(SPIDriver *spip, sysinterval_t timeout) {
  *          idle words on the SPI bus and ignores the received data.
  * @pre     In order to use this function the option @p SPI_USE_SYNCHRONIZATION
  *          must be enabled.
+ * @note    If the configured callback starts another transfer before this
+ *          function returns then the behavior is undefined.
  *
  * @param[in] spip              pointer to the @p SPIDriver object
  * @param[in] n                 number of words to be ignored
@@ -587,6 +589,8 @@ msg_t spiIgnore(SPIDriver *spip, size_t n) {
  *          must be enabled.
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
+ * @note    If the configured callback starts another transfer before this
+ *          function returns then the behavior is undefined.
  *
  * @param[in] spip              pointer to the @p SPIDriver object
  * @param[in] n                 number of words to be exchanged
@@ -622,6 +626,8 @@ msg_t spiExchange(SPIDriver *spip, size_t n,
  *          must be enabled.
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
+ * @note    If the configured callback starts another transfer before this
+ *          function returns then the behavior is undefined.
  *
  * @param[in] spip              pointer to the @p SPIDriver object
  * @param[in] n                 number of words to send
@@ -655,6 +661,8 @@ msg_t spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
  *          must be enabled.
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
+ * @note    If the configured callback starts another transfer before this
+ *          function returns then the behavior is undefined.
  *
  * @param[in] spip              pointer to the @p SPIDriver object
  * @param[in] n                 number of words to receive

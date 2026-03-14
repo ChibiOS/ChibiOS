@@ -371,6 +371,8 @@ size_t uartStopReceiveI(UARTDriver *uartp) {
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  * @note    This function implements a software timeout, it does not use
  *          any underlying HW timeout mechanism.
+ * @note    If the configured callback starts another transmission before this
+ *          function returns then the behavior is undefined.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in,out] np    number of data frames to transmit, on exit the number
@@ -416,6 +418,8 @@ msg_t uartSendTimeout(UARTDriver *uartp, size_t *np,
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  * @note    This function implements a software timeout, it does not use
  *          any underlying HW timeout mechanism.
+ * @note    If the configured callback starts another transmission before this
+ *          function returns then the behavior is undefined.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in,out] np    number of data frames to transmit, on exit the number
@@ -461,6 +465,8 @@ msg_t uartSendFullTimeout(UARTDriver *uartp, size_t *np,
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  * @note    This function implements a software timeout, it does not use
  *          any underlying HW timeout mechanism.
+ * @note    If the configured callback starts another receive operation before
+ *          this function returns then the behavior is undefined.
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in,out] np    number of data frames to receive, on exit the number

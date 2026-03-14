@@ -210,6 +210,8 @@ msg_t dacStartConversion(DACDriver *dacp,
  * @details Starts an asynchronous conversion operation.
  * @post    The callbacks associated to the conversion group will be invoked
  *          on buffer complete and error events.
+ * @note    DAC conversions are circular/streaming operations, a new
+ *          conversion can only be started after stopping the current one.
  * @note    The buffer is organized as a matrix of M*N elements where M is the
  *          channels number configured into the conversion group and N is the
  *          buffer depth. The samples are sequentially organised in the buffer
@@ -235,7 +237,6 @@ msg_t dacStartConversionI(DACDriver *dacp,
   osalDbgCheck((dacp != NULL) && (grpp != NULL) && (samples != NULL) &&
                ((depth == 1U) || ((depth & 1U) == 0U)));
   osalDbgAssert((dacp->state == DAC_READY) ||
-                (dacp->state == DAC_COMPLETE) ||
                 (dacp->state == DAC_ERROR),
                 "not ready");
 
@@ -337,6 +338,8 @@ void dacStopConversionI(DACDriver *dacp) {
  *                      @p dacStopConversion() or @p dacStopConversionI().
  * @retval MSG_TIMEOUT  The conversion has been stopped because an hardware
  *                      error.
+ * @note    Starting a follow-on conversion from the callback before this
+ *          function returns is undefined behavior.
  *
  * @api
  */
@@ -363,6 +366,8 @@ msg_t dacConvert(DACDriver *dacp,
 /**
  * @brief   Synchronize to a conversion completion.
  * @note    This function can only be called by a single thread at time.
+ * @note    Starting a follow-on conversion from the callback before this
+ *          function returns is undefined behavior.
  *
  * @param[in] dacp             pointer to the @p DACDriver object
  * @param[in] timeout          wait timeout
