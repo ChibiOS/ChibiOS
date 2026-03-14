@@ -193,7 +193,8 @@ static msg_t area_is_intersecting(elf_load_context_t *ctxp,
 
   /* Scanning allocated sections.*/
   for (esip = &ctxp->allocated[0]; esip < ctxp->next; esip++) {
-    if (chMemIsAreaIntersectingX(&esip->area, map)) {
+    if (chMemIsAreaIntersectingX(&esip->area, map) ||
+        chMemIsAreaIntersectingX(map, &esip->area)) {
       return true;
     }
   }
@@ -201,10 +202,49 @@ static msg_t area_is_intersecting(elf_load_context_t *ctxp,
   return false;
 }
 
+static msg_t build_mapped_area(const memory_area_t *map,
+                               uint32_t offset,
+                               uint32_t size,
+                               memory_area_t *dstp) {
+  uintptr_t base = (uintptr_t)map->base;
+
+  if ((uintptr_t)offset > (UINTPTR_MAX - base)) {
+    return CH_RET_ENOEXEC;
+  }
+
+  dstp->base = (void *)(base + (uintptr_t)offset);
+  dstp->size = (size_t)size;
+
+  if (!chMemIsAreaWithinX(map, dstp)) {
+    return CH_RET_ENOMEM;
+  }
+
+  return CH_RET_SUCCESS;
+}
+
+static msg_t build_mapped_address(const memory_area_t *map,
+                                  uint32_t offset,
+                                  size_t size,
+                                  uintptr_t *addressp) {
+  uintptr_t base = (uintptr_t)map->base;
+
+  if ((uintptr_t)offset > (UINTPTR_MAX - base)) {
+    return CH_RET_ENOEXEC;
+  }
+
+  *addressp = base + (uintptr_t)offset;
+  if (!chMemIsSpaceWithinX(map, (const void *)*addressp, size)) {
+    return CH_RET_ENOMEM;
+  }
+
+  return CH_RET_SUCCESS;
+}
+
 static msg_t allocate_section(elf_load_context_t *ctxp,
                               elf_secnum_t section,
                               const elf32_section_header_t *shp) {
   elf_section_info_t *esip;
+  msg_t ret;
 
   /* Checking if there is space in the sections table.*/
   if (ctxp->next >= &ctxp->allocated[SB_CFG_ELF_MAX_ALLOCATED]) {
@@ -213,14 +253,11 @@ static msg_t allocate_section(elf_load_context_t *ctxp,
 
   /* Adding an entry for this section.*/
   esip = ctxp->next;
-  esip->section   = section;
-  esip->area.base = ctxp->map->base + (size_t)shp->sh_addr;
-  esip->area.size = (size_t)shp->sh_size;
+  esip->section = section;
 
   /* Checking if the section can fit into the destination memory area.*/
-  if (!chMemIsAreaWithinX(ctxp->map, &esip->area)) {
-    return CH_RET_ENOMEM;
-  }
+  ret = build_mapped_area(ctxp->map, shp->sh_addr, shp->sh_size, &esip->area);
+  CH_RETURN_ON_ERROR(ret);
 
   /* Checking if this section is overlapping some other allocated section.*/
   if (area_is_intersecting(ctxp, &esip->area)) {
@@ -245,14 +282,11 @@ static msg_t allocate_load_section(elf_load_context_t *ctxp,
 
   /* Adding an entry for this section.*/
   esip = ctxp->next;
-  esip->section   = section;
-  esip->area.base = ctxp->map->base + (size_t)shp->sh_addr;
-  esip->area.size = (size_t)shp->sh_size;
+  esip->section = section;
 
   /* Checking if the section can fit into the destination memory area.*/
-  if (!chMemIsAreaWithinX(ctxp->map, &esip->area)) {
-    return CH_RET_ENOMEM;
-  }
+  ret = build_mapped_area(ctxp->map, shp->sh_addr, shp->sh_size, &esip->area);
+  CH_RETURN_ON_ERROR(ret);
 
   /* Checking if this section is overlapping some other allocated section.*/
   if (area_is_intersecting(ctxp, &esip->area)) {
@@ -311,10 +345,14 @@ static void set_const16(uint32_t address, uint32_t val16) {
 static msg_t reloc_entry(elf_load_context_t *ctxp,
                          elf_section_info_t *esip,
                          elf32_rel_t *rp) {
-  uint32_t relocation_address, offset;
+  uintptr_t relocation_address;
+  uint32_t offset;
+  msg_t ret;
 
   /* Relocation point address.*/
-  relocation_address = (uint32_t)ctxp->map->base + rp->r_offset;
+  ret = build_mapped_address(ctxp->map, rp->r_offset, sizeof (uint32_t),
+                             &relocation_address);
+  CH_RETURN_ON_ERROR(ret);
   if (!chMemIsSpaceWithinX(&esip->area,
                            (const void *)relocation_address,
                            sizeof (uint32_t))) {
@@ -324,9 +362,15 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
   /* Handling the various relocation point types.*/
   switch (ELF32_R_TYPE(ELF32_R_TYPE(rp->r_info))) {
   case R_ARM_ABS32:
+    if (!MEM_IS_ALIGNED((const void *)relocation_address, sizeof (uint32_t))) {
+      return CH_RET_ENOEXEC;
+    }
     *((uint32_t *)relocation_address) += (uint32_t)ctxp->map->base;
     break;
   case R_ARM_THM_MOVW_ABS_NC:
+    if (!MEM_IS_ALIGNED((const void *)relocation_address, sizeof (uint16_t))) {
+      return CH_RET_ENOEXEC;
+    }
     /* Checking for consecutive "movw" relocations without a "movt", we
        consider this an error.*/
     if (ctxp->rel_movw_found) {
@@ -347,6 +391,9 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
 
     /* Checking if both instructions referred to the same symbol.*/
     if (ctxp->rel_movw_symbol != ELF32_R_SYM(rp->r_info)) {
+      return CH_RET_ENOEXEC;
+    }
+    if (!MEM_IS_ALIGNED((const void *)relocation_address, sizeof (uint16_t))) {
       return CH_RET_ENOEXEC;
     }
 
