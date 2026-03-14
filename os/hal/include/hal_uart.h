@@ -97,8 +97,7 @@ typedef enum {
  */
 typedef enum {
   UART_TX_IDLE = 0,                 /**< Not transmitting.                  */
-  UART_TX_ACTIVE = 1,               /**< Transmitting.                      */
-  UART_TX_COMPLETE = 2              /**< Buffer complete.                   */
+  UART_TX_ACTIVE = 1                /**< Transmitting.                      */
 } uarttxstate_t;
 
 /**
@@ -106,8 +105,7 @@ typedef enum {
  */
 typedef enum {
   UART_RX_IDLE = 0,                 /**< Not receiving.                     */
-  UART_RX_ACTIVE = 1,               /**< Receiving.                         */
-  UART_RX_COMPLETE = 2              /**< Buffer complete.                   */
+  UART_RX_ACTIVE = 1                /**< Receiving.                         */
 } uartrxstate_t;
 
 #include "hal_uart_lld.h"
@@ -241,12 +239,9 @@ typedef enum {
  * @notapi
  */
 #define _uart_tx1_isr_code(uartp) {                                         \
-  (uartp)->txstate = UART_TX_COMPLETE;                                      \
+  (uartp)->txstate = UART_TX_IDLE;                                          \
   if ((uartp)->config->txend1_cb != NULL) {                                 \
     (uartp)->config->txend1_cb(uartp);                                      \
-  }                                                                         \
-  if ((uartp)->txstate == UART_TX_COMPLETE) {                               \
-    (uartp)->txstate = UART_TX_IDLE;                                        \
   }                                                                         \
   _uart_wakeup_tx1_isr(uartp);                                              \
 }
@@ -287,13 +282,10 @@ typedef enum {
  * @notapi
  */
 #define _uart_rx_complete_isr_code(uartp) {                                 \
-  (uartp)->rxstate = UART_RX_COMPLETE;                                      \
+  (uartp)->rxstate = UART_RX_IDLE;                                          \
+  uart_enter_rx_idle_loop(uartp);                                           \
   if ((uartp)->config->rxend_cb != NULL) {                                  \
     (uartp)->config->rxend_cb(uartp);                                       \
-  }                                                                         \
-  if ((uartp)->rxstate == UART_RX_COMPLETE) {                               \
-    (uartp)->rxstate = UART_RX_IDLE;                                        \
-    uart_enter_rx_idle_loop(uartp);                                         \
   }                                                                         \
   _uart_wakeup_rx_complete_isr(uartp);                                      \
 }

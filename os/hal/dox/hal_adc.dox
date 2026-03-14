@@ -41,8 +41,6 @@
     ready [label="ADC_READY\nClock Enabled"];
     active [label="ADC_ACTIVE\nConverting"];
     error [label="ADC_ERROR\nError"];
-    complete [label="ADC_COMPLETE\nComplete"];
-
     uninit -> stop [label="\n adcInit()", constraint=false];
     stop -> ready [label="\nadcStart()"];
     ready -> ready [label="\nadcStart()\nadcStopConversion()"];
@@ -50,11 +48,9 @@
     stop -> stop [label="\nadcStop()"];
     ready -> active [label="\nadcStartConversion() (async)\nadcConvert() (sync)"];
     active -> ready [label="\nadcStopConversion()\nsync return"];
-    active -> active [label="\nasync callback (half buffer, circular)\nasync callback (full buffer)\n>acg_endcb<"];
-    active -> complete [label="\n\nasync callback (full buffer)\n>end_cb<"];
+    active -> active [label="\nasync callback (half buffer, circular)\nasync callback (full buffer, circular)\n>end_cb<"];
+    active -> ready [label="\nasync callback (full buffer, linear)\n>end_cb<"];
     active -> error [label="\n\nasync callback (error)\n>error_cb<"];
-    complete -> active [label="\nadcStartConversionI()\nthen\ncallback return"];
-    complete -> ready [label="\ncallback return"];
     error -> active [label="\nadcStartConversionI()\nthen\ncallback return"];
     error -> ready [label="\ncallback return"];
   }
@@ -72,8 +68,6 @@
     ready [label="ADC_READY\nClock Enabled"];
     active [label="ADC_ACTIVE\nConverting"];
     error [label="ADC_ERROR\nError"];
-    complete [label="ADC_COMPLETE\nComplete"];
-
     uninit -> stop [label="\n adcInit()", constraint=false];
     stop -> ready [label="\nadcStart()"];
     ready -> ready [label="\nadcStart()\nadcStopConversion()"];
@@ -81,11 +75,9 @@
     stop -> stop [label="\nadcStop()"];
     ready -> active [label="\nadcStartConversion() (async)\nadcConvert() (sync)"];
     active -> ready [label="\nadcStopConversion()\nsync return"];
-    active -> active [label="\nasync callback (half buffer, circular)\nasync callback (full buffer)\n>acg_endcb<"];
-    active -> complete [label="\n\nasync callback (full buffer)\n>end_cb<"];
+    active -> active [label="\nasync callback (half buffer, circular)\nasync callback (full buffer, circular)\n>end_cb<"];
+    active -> ready [label="\nasync callback (full buffer, linear)\n>end_cb<"];
     active -> error [label="\n\nasync callback (error)\n>error_cb<"];
-    complete -> active [label="\nadcStartConversionI()\nthen\ncallback return"];
-    complete -> ready [label="\ncallback return"];
     error -> active [label="\nadcStartConversionI()\nthen\ncallback return"];
     error -> ready [label="\ncallback return"];
   }

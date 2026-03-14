@@ -75,7 +75,7 @@ typedef enum {
   DAC_STOP = 1,                     /**< Stopped.                           */
   DAC_READY = 2,                    /**< Ready.                             */
   DAC_ACTIVE = 3,                   /**< Exchanging data.                   */
-  DAC_COMPLETE = 4,                 /**< Asynchronous operation complete.   */
+  DAC_COMPLETE = 4,                 /**< Circular full buffer callback.     */
   DAC_ERROR = 5                     /**< Error.                             */
 } dacstate_t;
 
@@ -124,6 +124,11 @@ struct hal_dac_conversion_group {
   uint32_t                  num_channels;
   /**
    * @brief   Operation complete callback or @p NULL.
+   * @note    This callback is invoked from ISR context on half buffer and
+   *          full buffer events during the ongoing circular conversion. The
+   *          driver state is @p DAC_ACTIVE on half buffer callbacks and
+   *          @p DAC_COMPLETE on full buffer callbacks. Starting a new
+   *          conversion from this callback is not supported.
    */
   daccallback_t             end_cb;
   /**
@@ -196,6 +201,8 @@ struct hal_dac_driver {
 /**
  * @brief   Buffer state.
  * @note    This function is meant to be called from the DAC callback only.
+ * @note    This function is meaningful for circular conversion callbacks
+ *          only.
  *
  * @param[in] dacp      pointer to the @p DACDriver object
  * @return              The buffer state.
@@ -212,7 +219,7 @@ struct hal_dac_driver {
 /**
  * @brief   Waits for operation completion.
  * @details This function waits for the driver to complete the current
- *          operation.
+ *          conversion cycle.
  * @pre     An operation must be running while the function is invoked.
  * @note    No more than one thread can wait on a DAC driver using
  *          this function.
@@ -298,6 +305,8 @@ struct hal_dac_driver {
  * @details This code handles the portable part of the ISR code:
  *          - Callback invocation.
  *          - Driver state transitions.
+ * @details The @p DAC_COMPLETE state is used only as a transient full buffer
+ *          callback marker during the ongoing circular conversion.
  *          .
  * @note    This macro is meant to be used in the low level drivers
  *          implementation only.

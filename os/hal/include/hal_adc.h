@@ -102,6 +102,7 @@ typedef struct hal_adc_configuration_group ADCConversionGroup;
 
 /**
  * @brief   Type of an ADC notification callback.
+ * @details The callback is invoked from ISR context.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object triggering the
  *                      callback
@@ -136,6 +137,13 @@ struct hal_adc_configuration_group {
   adc_channels_num_t        num_channels;
   /**
    * @brief   Callback function associated to the group or @p NULL.
+   * @details In linear mode the callback is invoked after the driver returns
+   *          to the @p ADC_READY state, this allows chaining another
+   *          conversion using I-Class APIs. In circular mode the callback is
+   *          invoked in either @p ADC_ACTIVE state (half buffer) or
+   *          @p ADC_COMPLETE state (full buffer).
+   * @note    If a synchronous API is waiting for completion then starting a
+   *          follow-on conversion from this callback is undefined.
    */
   adccallback_t             end_cb;
   /**
@@ -208,6 +216,9 @@ struct hal_adc_driver {
 /**
  * @brief   Buffer state.
  * @note    This function is meant to be called from the ADC callback only.
+ * @note    This state is only meaningful for circular conversions, where it
+ *          is used to distinguish the full buffer callback from the half
+ *          buffer callback.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  * @return              The buffer state.
@@ -324,12 +335,12 @@ struct hal_adc_driver {
   }                                                                         \
   else {                                                                    \
     /* End conversion.*/                                                    \
+    const ADCConversionGroup *grpp = (adcp)->grpp;                          \
     adc_lld_stop_conversion(adcp);                                          \
     if ((adcp)->grpp->end_cb != NULL) {                                     \
-      (adcp)->state = ADC_COMPLETE;                                         \
+      (adcp)->state = ADC_READY;                                            \
       (adcp)->grpp->end_cb(adcp);                                           \
-      if ((adcp)->state == ADC_COMPLETE) {                                  \
-        (adcp)->state = ADC_READY;                                          \
+      if (((adcp)->state == ADC_READY) && ((adcp)->grpp == grpp)) {         \
         (adcp)->grpp = NULL;                                                \
       }                                                                     \
     }                                                                       \
