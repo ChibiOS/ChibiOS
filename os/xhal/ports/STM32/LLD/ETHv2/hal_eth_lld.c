@@ -431,7 +431,7 @@ const hal_eth_config_t *eth_lld_selcfg(hal_eth_driver_c *ethp,
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
  * @return                      The receive handle.
- * @retval NULL                 If a received frame is not available.
+ * @retval 0                    If a received frame is not available.
  *
  * @notapi
  */
@@ -440,20 +440,21 @@ eth_receive_handle_t eth_lld_get_receive_handle(hal_eth_driver_c *ethp) {
   /* Iterates through received frames until a valid one is found, invalid
      frames are discarded.*/
   while ((ethp->rdp->rdes3 & STM32_RDES3_OWN) == 0U) {
+    stm32_eth_rx_descriptor_t *rdp = ethp->rdp;
 
     /* Is it a valid frame?*/
     if (true &&
 #if STM32_ETH_IP_CHECKSUM_OFFLOAD
-        ((ethp->rdp->rdes1 & (STM32_RDES1_IPHE | STM32_RDES1_IPCE)) == 0U) &&
+        ((rdp->rdes1 & (STM32_RDES1_IPHE | STM32_RDES1_IPCE)) == 0U) &&
 #endif
-        ((ethp->rdp->rdes2 & STM32_RDES2_DAF) == 0U) &&
-        ((ethp->rdp->rdes3 & STM32_RDES3_ES) == 0U) &&
-        ((ethp->rdp->rdes3 & STM32_RDES3_FD) != 0U) &&
-        ((ethp->rdp->rdes3 & STM32_RDES3_LD)) != 0U) {
+        ((rdp->rdes2 & STM32_RDES2_DAF) == 0U) &&
+        ((rdp->rdes3 & STM32_RDES3_ES) == 0U) &&
+        ((rdp->rdes3 & STM32_RDES3_FD) != 0U) &&
+        ((rdp->rdes3 & STM32_RDES3_LD) != 0U)) {
 
       /* Found a valid one.*/
-      ethp->rdp->offset = 0U;
-      ethp->rdp->size   = (ethp->rdp->rdes3 & STM32_RDES3_PL_MASK) - 2U; /* Lose CRC.*/
+      rdp->offset = 0U;
+      rdp->size   = (rdp->rdes3 & STM32_RDES3_PL_MASK) - 2U; /* Lose CRC.*/
 
       /* Reposition in ring.*/
       ethp->rdp++;
@@ -461,11 +462,11 @@ eth_receive_handle_t eth_lld_get_receive_handle(hal_eth_driver_c *ethp) {
         ethp->rdp = &__eth_private_rd[0];
       }
 
-      return (eth_receive_handle_t)ethp->rdp;
+      return (eth_receive_handle_t)(uintptr_t)rdp;
     }
 
     /* Invalid frame found, purging.*/
-    ethp->rdp->rdes3 = STM32_RDES3_OWN | STM32_RDES3_IOC | STM32_RDES3_BUF1V;
+    rdp->rdes3 = STM32_RDES3_OWN | STM32_RDES3_IOC | STM32_RDES3_BUF1V;
 
     /* On next descriptor.*/
     ethp->rdp++;
@@ -474,7 +475,7 @@ eth_receive_handle_t eth_lld_get_receive_handle(hal_eth_driver_c *ethp) {
     }
   }
 
-  return NULL;
+  return (eth_receive_handle_t)0U;
 }
 
 /**
@@ -482,7 +483,7 @@ eth_receive_handle_t eth_lld_get_receive_handle(hal_eth_driver_c *ethp) {
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
  * @return                      The transmit handle.
- * @retval NULL                 If an empty transmit frame is not available.
+ * @retval 0                    If an empty transmit frame is not available.
  *
  * @notapi
  */
@@ -490,14 +491,14 @@ eth_transmit_handle_t eth_lld_get_transmit_handle(hal_eth_driver_c *ethp) {
   stm32_eth_tx_descriptor_t *tdp = ethp->tdp;
 
   if (!ethp->link_up) {
-    return NULL;
+    return (eth_transmit_handle_t)0U;
   }
 
   /* Ensure that descriptor isn't owned by the Ethernet DMA or locked by
      another thread.*/
   if (((tdp->tdes3 & STM32_TDES3_OWN) != 0U) ||
       (tdp->tdes1 != 0U)) {
-    return NULL;
+    return (eth_transmit_handle_t)0U;
   }
 
   /* Marks the current descriptor as locked.*/
@@ -513,7 +514,7 @@ eth_transmit_handle_t eth_lld_get_transmit_handle(hal_eth_driver_c *ethp) {
     ethp->tdp = &__eth_private_td[0];
   }
 
-  return (eth_transmit_handle_t)tdp;
+  return (eth_transmit_handle_t)(uintptr_t)tdp;
 }
 
 /**
@@ -526,7 +527,7 @@ eth_transmit_handle_t eth_lld_get_transmit_handle(hal_eth_driver_c *ethp) {
  */
 void eth_lld_release_receive_handle(hal_eth_driver_c *ethp,
                                     eth_receive_handle_t rxh) {
-  stm32_eth_rx_descriptor_t *rdp = (stm32_eth_rx_descriptor_t *)rxh;
+  stm32_eth_rx_descriptor_t *rdp = (stm32_eth_rx_descriptor_t *)(uintptr_t)rxh;
 
   (void)ethp;
 
@@ -550,7 +551,7 @@ void eth_lld_release_receive_handle(hal_eth_driver_c *ethp,
  */
 void eth_lld_release_transmit_handle(hal_eth_driver_c *ethp,
                                      eth_transmit_handle_t txh) {
-  stm32_eth_tx_descriptor_t *tdp = (stm32_eth_tx_descriptor_t *)txh;
+  stm32_eth_tx_descriptor_t *tdp = (stm32_eth_tx_descriptor_t *)(uintptr_t)txh;
 
   (void)ethp;
 
@@ -674,8 +675,8 @@ uint8_t *eth_lld_get_transmit_buffer(hal_eth_driver_c *ethp,
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
  * @return                      The link status,
- * @retval false                If the link is active.
- * @retval true                 If the link is down.
+ * @retval true                 If the link is active.
+ * @retval false                If the link is down.
  *
  * @notapi
  */
@@ -683,7 +684,7 @@ bool eth_lld_poll_link_status(hal_eth_driver_c *ethp) {
 
   (void)ethp;
 
-  return true;
+  return false;
 }
 
 #endif /* HAL_USE_ETH */

@@ -58,7 +58,7 @@
 /**
  * @brief       Support for ETH user configurations.
  * @note        When enabled the user must provide a variable named @p
- *              sio_configurations of type @p sio_configurations_t.
+ *              eth_configurations of type @p eth_configurations_t.
  */
 #if !defined(ETH_USE_CONFIGURATIONS) || defined(__DOXYGEN__)
 #define ETH_USE_CONFIGURATIONS              FALSE
@@ -91,7 +91,7 @@
 /**
  * @brief       Return a pointer to the configuration structure.
  *
- * @param         ip            Pointer to the @p hal_sio_driver_c object.
+ * @param         ip            Pointer to the @p hal_eth_driver_c object.
  * @return                      A pointer to the configuration structure.
  *
  * @notapi
@@ -102,7 +102,7 @@
 /**
  * @brief       Retrieves a configuration field.
  *
- * @param         ip            Pointer to the @p hal_sio_driver_c object.
+ * @param         ip            Pointer to the @p hal_eth_driver_c object.
  * @param         field         Configuration field to be retrieved.
  * @return                      The field value.
  *
@@ -116,14 +116,14 @@
 /*===========================================================================*/
 
 /**
- * @brief       Type of a receive handle.
+ * @brief       Type of an opaque receive handle token.
  */
-typedef void * eth_receive_handle_t;
+typedef uintptr_t eth_receive_handle_t;
 
 /**
- * @brief       Type of a transmit handle.
+ * @brief       Type of an opaque transmit handle token.
  */
-typedef void * eth_transmit_handle_t;
+typedef uintptr_t eth_transmit_handle_t;
 
 /**
  * @brief       Type of structure representing a ETH driver.
@@ -341,7 +341,7 @@ static inline hal_eth_driver_c *ethObjectInit(hal_eth_driver_c *self) {
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
  * @return                      The receive handle.
- * @retval NULL                 If a received frame is not available.
+ * @retval 0                    If a received frame is not available.
  *
  * @iclass
  */
@@ -357,7 +357,7 @@ static inline eth_receive_handle_t ethGetReceiveHandleI(void *ip) {
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
  * @return                      The transmit handle.
- * @retval NULL                 If an empty transmit frame is not available.
+ * @retval 0                    If an empty transmit frame is not available.
  *
  * @iclass
  */

@@ -21,7 +21,7 @@
         <brief>Support for ETH user configurations.</brief>
         <note>When enabled the user must provide a variable named
           @p
-          sio_configurations of type @p sio_configurations_t.
+          eth_configurations of type @p eth_configurations_t.
         </note>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
@@ -29,7 +29,7 @@
     <macros>
       <macro name="__eth_getconf">
         <brief>Return a pointer to the configuration structure.</brief>
-        <param name="ip">Pointer to the @p hal_sio_driver_c object.
+        <param name="ip">Pointer to the @p hal_eth_driver_c object.
         </param>
         <return>A pointer to the configuration structure.</return>
         <notapi />
@@ -37,7 +37,7 @@
       </macro>
       <macro name="__eth_getfield">
         <brief>Retrieves a configuration field.</brief>
-        <param name="ip">Pointer to the @p hal_sio_driver_c object.
+        <param name="ip">Pointer to the @p hal_eth_driver_c object.
         </param>
         <param name="field">Configuration field to be retrieved.</param>
         <return>The field value.</return>
@@ -47,12 +47,12 @@
     </macros>
     <types>
       <typedef name="eth_receive_handle_t">
-        <brief>Type of a receive handle.</brief>
-        <basetype ctype="void *" />
+        <brief>Type of an opaque receive handle token.</brief>
+        <basetype ctype="uintptr_t" />
       </typedef>
       <typedef name="eth_transmit_handle_t">
-        <brief>Type of a transmit handle.</brief>
-        <basetype ctype="void *" />
+        <brief>Type of an opaque transmit handle token.</brief>
+        <basetype ctype="uintptr_t" />
       </typedef>
       <typedef name="hal_eth_driver_c">
         <brief>Type of structure representing a ETH driver.</brief>
@@ -135,7 +135,7 @@ eth_lld_driver_fields;]]></verbatim>
             <implementation><![CDATA[
 #if ETH_USE_SYNCHRONIZATION == TRUE
 osalThreadQueueObjectInit(&self->txqueue);
-osalThreadQueueObjectInit(&self->txqueue);
+osalThreadQueueObjectInit(&self->rxqueue);
 #endif
 
 #if ETH_USE_EVENTS == TRUE
@@ -156,8 +156,8 @@ ETH_DRIVER_EXT_INIT_HOOK(self);
             <method name="ethPollLinkStatus" ctype="bool">
               <brief><![CDATA[Returns the link status.]]></brief>
               <return><![CDATA[The link status,]]></return>
-              <retval value="false"><![CDATA[If the link is active.]]></retval>
-              <retval value="true"><![CDATA[If the link is down or the driver is not
+              <retval value="true"><![CDATA[If the link is active.]]></retval>
+              <retval value="false"><![CDATA[If the link is down or the driver is not
                 in active state.]]></retval>
               <api />
               <implementation><![CDATA[
@@ -166,7 +166,7 @@ if (drvGetStateX(self) == HAL_DRV_STATE_ACTIVE) {
   return eth_lld_poll_link_status(self);
 }
 
-return true;]]></implementation>
+return false;]]></implementation>
             </method>
             <condition check="ETH_USE_SYNCHRONIZATION == TRUE">
               <method name="ethWaitReceiveHandle"
@@ -176,7 +176,7 @@ return true;]]></implementation>
                   dir="in"><![CDATA[Receive
                   timeout.]]></param>
                 <return><![CDATA[A receive handle.]]></return>
-                <retval value="NULL"><![CDATA[If a received frame is not available
+                <retval value="0"><![CDATA[If a received frame is not available
                   within the specified timeout.]]></retval>
                 <implementation><![CDATA[
 eth_receive_handle_t rxh;
@@ -186,10 +186,10 @@ osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");
 
 osalSysLock();
 
-while (((rxh = ethGetReceiveHandleI(self)) == NULL)) {
+while ((rxh = ethGetReceiveHandleI(self)) == (eth_receive_handle_t)0U) {
   msg_t msg = osalThreadEnqueueTimeoutS(&self->rxqueue, timeout);
   if (msg == MSG_TIMEOUT) {
-    rxh = NULL;
+    rxh = (eth_receive_handle_t)0U;
     break;
   }
 }
@@ -205,7 +205,7 @@ return rxh;]]></implementation>
                   dir="in"><![CDATA[Transmit
                   timeout.]]></param>
                 <return><![CDATA[A transmit handle.]]></return>
-                <retval value="NULL"><![CDATA[If a transmit frame is not available
+                <retval value="0"><![CDATA[If a transmit frame is not available
                   within the specified timeout.]]></retval>
                 <implementation><![CDATA[
 eth_transmit_handle_t txh;
@@ -215,10 +215,10 @@ osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");
 
 osalSysLock();
 
-while (((txh = ethGetTransmitHandleI(self)) == NULL)) {
+while ((txh = ethGetTransmitHandleI(self)) == (eth_transmit_handle_t)0U) {
   msg_t msg = osalThreadEnqueueTimeoutS(&self->txqueue, timeout);
   if (msg == MSG_TIMEOUT) {
-    txh = NULL;
+    txh = (eth_transmit_handle_t)0U;
     break;
   }
 }
@@ -234,7 +234,7 @@ return txh;]]></implementation>
               ctype="eth_receive_handle_t">
               <brief><![CDATA[Queries for a received frame handle.]]></brief>
               <return><![CDATA[The receive handle.]]></return>
-              <retval value="NULL">If a received frame is not available.
+              <retval value="0">If a received frame is not available.
               </retval>
               <iclass />
               <implementation><![CDATA[
@@ -245,7 +245,7 @@ return eth_lld_get_receive_handle(self);]]></implementation>
               ctype="eth_transmit_handle_t">
               <brief><![CDATA[Queries for a transmit frame handle.]]></brief>
               <return><![CDATA[The transmit handle.]]></return>
-              <retval value="NULL">If an empty transmit frame is not
+              <retval value="0">If an empty transmit frame is not
                 available.
               </retval>
               <iclass />

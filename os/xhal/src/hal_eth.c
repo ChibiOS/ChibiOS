@@ -93,7 +93,7 @@ void *__eth_objinit_impl(void *ip, const void *vmt) {
   /* Initialization code.*/
 #if ETH_USE_SYNCHRONIZATION == TRUE
   osalThreadQueueObjectInit(&self->txqueue);
-  osalThreadQueueObjectInit(&self->txqueue);
+  osalThreadQueueObjectInit(&self->rxqueue);
 #endif
 
 #if ETH_USE_EVENTS == TRUE
@@ -197,8 +197,8 @@ const struct hal_eth_driver_vmt __hal_eth_driver_vmt = {
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
  * @return                      The link status,
- * @retval false                If the link is active.
- * @retval true                 If the link is down or the driver is not in
+ * @retval true                 If the link is active.
+ * @retval false                If the link is down or the driver is not in
  *                              active state.
  *
  * @api
@@ -210,7 +210,7 @@ bool ethPollLinkStatus(void *ip) {
     return eth_lld_poll_link_status(self);
   }
 
-  return true;
+  return false;
 }
 
 #if (ETH_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
@@ -220,7 +220,7 @@ bool ethPollLinkStatus(void *ip) {
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
  * @param[in]     timeout       Receive timeout.
  * @return                      A receive handle.
- * @retval NULL                 If a received frame is not available within the
+ * @retval 0                    If a received frame is not available within the
  *                              specified timeout.
  */
 eth_receive_handle_t ethWaitReceiveHandle(void *ip, sysinterval_t timeout) {
@@ -232,10 +232,10 @@ eth_receive_handle_t ethWaitReceiveHandle(void *ip, sysinterval_t timeout) {
 
   osalSysLock();
 
-  while (((rxh = ethGetReceiveHandleI(self)) == NULL)) {
+  while ((rxh = ethGetReceiveHandleI(self)) == (eth_receive_handle_t)0U) {
     msg_t msg = osalThreadEnqueueTimeoutS(&self->rxqueue, timeout);
     if (msg == MSG_TIMEOUT) {
-      rxh = NULL;
+      rxh = (eth_receive_handle_t)0U;
       break;
     }
   }
@@ -251,7 +251,7 @@ eth_receive_handle_t ethWaitReceiveHandle(void *ip, sysinterval_t timeout) {
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
  * @param[in]     timeout       Transmit timeout.
  * @return                      A transmit handle.
- * @retval NULL                 If a transmit frame is not available within the
+ * @retval 0                    If a transmit frame is not available within the
  *                              specified timeout.
  */
 eth_transmit_handle_t ethWaitTransmitHandle(void *ip, sysinterval_t timeout) {
@@ -263,10 +263,10 @@ eth_transmit_handle_t ethWaitTransmitHandle(void *ip, sysinterval_t timeout) {
 
   osalSysLock();
 
-  while (((txh = ethGetTransmitHandleI(self)) == NULL)) {
+  while ((txh = ethGetTransmitHandleI(self)) == (eth_transmit_handle_t)0U) {
     msg_t msg = osalThreadEnqueueTimeoutS(&self->txqueue, timeout);
     if (msg == MSG_TIMEOUT) {
-      txh = NULL;
+      txh = (eth_transmit_handle_t)0U;
       break;
     }
   }
