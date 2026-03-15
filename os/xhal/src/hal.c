@@ -67,6 +67,9 @@ void halInit(void) {
 #if (HAL_USE_PAL == TRUE) || defined(__DOXYGEN__)
   palInit();
 #endif
+#if (HAL_USE_ETH == TRUE) || defined(__DOXYGEN__)
+  ethInit();
+#endif
 #if 0
 #if (HAL_USE_ADC == TRUE) || defined(__DOXYGEN__)
   adcInit();
@@ -94,9 +97,6 @@ void halInit(void) {
 #endif
 #if (HAL_USE_ICU == TRUE) || defined(__DOXYGEN__)
   icuInit();
-#endif
-#if (HAL_USE_MAC == TRUE) || defined(__DOXYGEN__)
-  macInit();
 #endif
 #if (HAL_USE_PWM == TRUE) || defined(__DOXYGEN__)
   pwmInit();
