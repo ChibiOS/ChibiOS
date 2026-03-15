@@ -166,7 +166,19 @@
 #endif
 
 /**
- * @brief   ETHD1 interrupt priority level setting.
+ * @brief   PHY detection timeout.
+ * @details Timeout for PHY address detection, the scan for a PHY is performed
+ *          the specified number of times before invoking the failure handler.
+ *          This setting applies only if the PHY address is not explicitly
+ *          set in the board header file using @p BOARD_PHY_ADDRESS. A zero
+ *          value disables the timeout and a single search is performed.
+ */
+#if !defined(STM32_ETH_PHY_TIMEOUT) || defined(__DOXYGEN__)
+#define STM32_ETH_PHY_TIMEOUT               100
+#endif
+
+/**
+ * @brief   Default MAC address.
  */
 #if !defined(STM32_ETH_ETH1_DEFAULT_MAC_ADDRESS) || defined(__DOXYGEN__)
 #define STM32_ETH_ETH1_DEFAULT_MAC_ADDRESS  {0xAA, 0x55, 0x13, 0x37, 0x01, 0x10}
@@ -187,6 +199,13 @@
 #endif
 
 /**
+ * @brief   ETHD1 interrupt priority level setting.
+ */
+#if !defined(STM32_ETH_ETH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ETH_ETH1_IRQ_PRIORITY         13
+#endif
+
+/**
  * @brief   IP checksum offload.
  * @details The following modes are available:
  *          - 0 Function disabled.
@@ -201,6 +220,13 @@
  */
 #if !defined(STM32_ETH_IP_CHECKSUM_OFFLOAD) || defined(__DOXYGEN__)
 #define STM32_ETH_IP_CHECKSUM_OFFLOAD       0
+#endif
+
+/**
+ * @brief   Link connection type.
+ */
+#if !defined(STM32_ETH_PHY_LINK_TYPE) || defined(__DOXYGEN__)
+#define STM32_ETH_PHY_LINK_TYPE             MAC_LINK_DYNAMIC
 #endif
 /** @} */
 

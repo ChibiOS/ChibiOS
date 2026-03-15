@@ -8,6 +8,16 @@
     <import>hal_cb_driver.xml</import>
   </imports>
   <public>
+    <definitions_early>
+      <group description="ETH event flags">
+        <define name="ETH_FLAGS_TX" value="(1U &lt;&lt; 0)">
+          <brief>Frame transmitted event flag.</brief>
+        </define>
+        <define name="ETH_FLAGS_RX" value="(1U &lt;&lt; 1)">
+          <brief>Frame received event flag.</brief>
+        </define>
+      </group>
+    </definitions_early>
     <configs>
       <config name="ETH_USE_SYNCHRONIZATION" default="TRUE">
         <brief>Support for thread synchronization API.</brief>
@@ -158,11 +168,11 @@ ETH_DRIVER_EXT_INIT_HOOK(self);
               <return><![CDATA[The link status,]]></return>
               <retval value="true"><![CDATA[If the link is active.]]></retval>
               <retval value="false"><![CDATA[If the link is down or the driver is not
-                in active state.]]></retval>
+                ready.]]></retval>
               <api />
               <implementation><![CDATA[
 
-if (drvGetStateX(self) == HAL_DRV_STATE_ACTIVE) {
+if (drvGetStateX(self) == HAL_DRV_STATE_READY) {
   return eth_lld_poll_link_status(self);
 }
 
@@ -182,7 +192,7 @@ return false;]]></implementation>
 eth_receive_handle_t rxh;
 
 osalDbgCheck(self != NULL);
-osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");
+osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_READY, "not ready");
 
 osalSysLock();
 
@@ -211,7 +221,7 @@ return rxh;]]></implementation>
 eth_transmit_handle_t txh;
 
 osalDbgCheck(self != NULL);
-osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");
+osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_READY, "not ready");
 
 osalSysLock();
 

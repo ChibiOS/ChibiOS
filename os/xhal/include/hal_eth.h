@@ -33,6 +33,21 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    ETH event flags
+ * @{
+ */
+/**
+ * @brief       Frame transmitted event flag.
+ */
+#define ETH_FLAGS_TX                        (1U << 0)
+
+/**
+ * @brief       Frame received event flag.
+ */
+#define ETH_FLAGS_RX                        (1U << 1)
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/

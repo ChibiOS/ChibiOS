@@ -198,15 +198,14 @@ const struct hal_eth_driver_vmt __hal_eth_driver_vmt = {
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
  * @return                      The link status,
  * @retval true                 If the link is active.
- * @retval false                If the link is down or the driver is not in
- *                              active state.
+ * @retval false                If the link is down or the driver is not ready.
  *
  * @api
  */
 bool ethPollLinkStatus(void *ip) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
 
-  if (drvGetStateX(self) == HAL_DRV_STATE_ACTIVE) {
+  if (drvGetStateX(self) == HAL_DRV_STATE_READY) {
     return eth_lld_poll_link_status(self);
   }
 
@@ -228,7 +227,7 @@ eth_receive_handle_t ethWaitReceiveHandle(void *ip, sysinterval_t timeout) {
   eth_receive_handle_t rxh;
 
   osalDbgCheck(self != NULL);
-  osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");
+  osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_READY, "not ready");
 
   osalSysLock();
 
@@ -259,7 +258,7 @@ eth_transmit_handle_t ethWaitTransmitHandle(void *ip, sysinterval_t timeout) {
   eth_transmit_handle_t txh;
 
   osalDbgCheck(self != NULL);
-  osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");
+  osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_READY, "not ready");
 
   osalSysLock();
 
