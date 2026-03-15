@@ -262,10 +262,10 @@ extern "C" {
  * @param[in] statbuf   pointer to a @p stat structure
  * @return              Operation result.
  */
-static inline int sbStat(const char *pathname, struct stat *statbuf) {
+static inline msg_t sbStat(const char *pathname, struct stat *statbuf) {
 
   __syscall3r(128, SB_POSIX_STAT, pathname, statbuf);
-  return (int)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -275,10 +275,10 @@ static inline int sbStat(const char *pathname, struct stat *statbuf) {
  * @param[in] flags     open mode
  * @return              The file descriptor or an error.
  */
-static inline int sbOpen(const char *pathname, int flags) {
+static inline msg_t sbOpen(const char *pathname, int flags) {
 
   __syscall3r(128, SB_POSIX_OPEN, pathname, flags);
-  return (int)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -287,10 +287,10 @@ static inline int sbOpen(const char *pathname, int flags) {
  * @param[in] fd        file descriptor
  * @return              Operation result.
  */
-static inline int sbClose(int fd) {
+static inline msg_t sbClose(int fd) {
 
   __syscall2r(128, SB_POSIX_CLOSE, fd);
-  return (int)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -299,10 +299,10 @@ static inline int sbClose(int fd) {
  * @param[in] fd        file descriptor
  * @return              Operation result.
  */
-static inline int sbDup(int fd) {
+static inline msg_t sbDup(int fd) {
 
   __syscall2r(128, SB_POSIX_DUP, fd);
-  return (int)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -312,10 +312,10 @@ static inline int sbDup(int fd) {
  * @param[in] newfd     new file descriptor
  * @return              Operation result.
  */
-static inline int sbDup2(int oldfd, int newfd) {
+static inline msg_t sbDup2(int oldfd, int newfd) {
 
   __syscall3r(128, SB_POSIX_DUP, oldfd, newfd);
-  return (int)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -325,10 +325,10 @@ static inline int sbDup2(int oldfd, int newfd) {
  * @param[in] statbuf   pointer to a @p stat structure
  * @return              Operation result.
  */
-static inline int sbFstat(int fd, struct stat *statbuf) {
+static inline msg_t sbFstat(int fd, struct stat *statbuf) {
 
   __syscall3r(128, SB_POSIX_FSTAT, fd, statbuf);
-  return (off_t)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -339,10 +339,10 @@ static inline int sbFstat(int fd, struct stat *statbuf) {
  * @param[in] count     number of bytes
  * @return              The number of bytes really transferred or an error.
  */
-static inline ssize_t sbRead(int fd, void *buf, size_t count) {
+static inline msg_t sbRead(int fd, void *buf, size_t count) {
 
   __syscall4r(128, SB_POSIX_READ, fd, buf, count);
-  return (ssize_t)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -353,10 +353,10 @@ static inline ssize_t sbRead(int fd, void *buf, size_t count) {
  * @param[in] count     number of bytes
  * @return              The number of bytes really transferred or an error.
  */
-static inline ssize_t sbWrite(int fd, const void *buf, size_t count) {
+static inline msg_t sbWrite(int fd, const void *buf, size_t count) {
 
   __syscall4r(128, SB_POSIX_WRITE, fd, buf, count);
-  return (ssize_t)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -367,10 +367,10 @@ static inline ssize_t sbWrite(int fd, const void *buf, size_t count) {
  * @param[in] whence    operation mode
  * @return              Operation result.
  */
-static inline off_t sbSeek(int fd, off_t offset, int whence) {
+static inline msg_t sbSeek(int fd, off_t offset, int whence) {
 
   __syscall4r(128, SB_POSIX_LSEEK, fd, offset, whence);
-  return (off_t)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -380,10 +380,10 @@ static inline off_t sbSeek(int fd, off_t offset, int whence) {
  * @param[in] count     number of bytes
  * @return              The number of bytes really transferred or an error.
  */
-static inline ssize_t sbGetdents(int fd, void *buf, size_t count) {
+static inline msg_t sbGetdents(int fd, void *buf, size_t count) {
 
   __syscall4r(128, SB_POSIX_GETDENTS, fd, buf, count);
-  return (ssize_t)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -392,10 +392,10 @@ static inline ssize_t sbGetdents(int fd, void *buf, size_t count) {
  * @param[in] path      new current path
  * @return              Operation result.
  */
-static inline int sbChdir(const char *path) {
+static inline msg_t sbChdir(const char *path) {
 
   __syscall2r(128, SB_POSIX_CHDIR, path);
-  return (int)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -405,10 +405,10 @@ static inline int sbChdir(const char *path) {
  * @param[in] size      path buffer size
  * @return              Operation result.
  */
-static inline int sbGetcwd(char *buf, size_t size) {
+static inline msg_t sbGetcwd(char *buf, size_t size) {
 
   __syscall3r(128, SB_POSIX_GETCWD, buf, size);
-  return (int)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -417,10 +417,10 @@ static inline int sbGetcwd(char *buf, size_t size) {
  * @param[in] path      file to be unlinked
  * @return              Operation result.
  */
-static inline int sbUnlink(const char *path) {
+static inline msg_t sbUnlink(const char *path) {
 
   __syscall2r(128, SB_POSIX_UNLINK, path);
-  return (int)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -430,10 +430,10 @@ static inline int sbUnlink(const char *path) {
  * @param[in] newpath   new path to the file or directory
  * @return              Operation result.
  */
-static inline int sbRename(const char *oldpath, const char *newpath) {
+static inline msg_t sbRename(const char *oldpath, const char *newpath) {
 
   __syscall3r(128, SB_POSIX_RENAME, oldpath, newpath);
-  return (int)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -443,10 +443,10 @@ static inline int sbRename(const char *oldpath, const char *newpath) {
  * @param[in] mode      directory creation mode
  * @return              Operation result.
  */
-static inline int sbMkdir(const char *path, mode_t mode) {
+static inline msg_t sbMkdir(const char *path, mode_t mode) {
 
   __syscall3r(128, SB_POSIX_MKDIR, path, mode);
-  return (int)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -455,10 +455,10 @@ static inline int sbMkdir(const char *path, mode_t mode) {
  * @param[in] path      directory to be removed
  * @return              Operation result.
  */
-static inline int sbRmdir(const char *path) {
+static inline msg_t sbRmdir(const char *path) {
 
   __syscall2r(128, SB_POSIX_RMDIR, path);
-  return (int)r0;
+  return (msg_t)r0;
 }
 
 /**
@@ -652,10 +652,10 @@ static inline uint32_t sbEventBroadcastFlags(eventflags_t flags) {
  *
  * @api
  */
-static inline int sbLoadElf(const char *fname, uint8_t *buf, size_t size) {
+static inline msg_t sbLoadElf(const char *fname, uint8_t *buf, size_t size) {
 
   __syscall3r(138, fname, buf, size);
-  return (uint32_t)r0;
+  return (msg_t)r0;
 
 }
 

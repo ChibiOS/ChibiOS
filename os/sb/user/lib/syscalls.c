@@ -31,7 +31,7 @@ uint8_t *__sbrk_next = &__heap_base__;
 
 __attribute__((used))
 int _open_r(struct _reent *r, const char *p, int oflag, int mode) {
-  int err;
+  msg_t err;
 
   (void)mode;
 
@@ -41,12 +41,12 @@ int _open_r(struct _reent *r, const char *p, int oflag, int mode) {
     return -1;
   }
 
-  return err;
+  return (int)err;
 }
 
 __attribute__((used))
 int _close_r(struct _reent *r, int file) {
-  int err;
+  msg_t err;
 
   err = sbClose(file);
   if (CH_RET_IS_ERROR(err)) {
@@ -59,7 +59,7 @@ int _close_r(struct _reent *r, int file) {
 
 __attribute__((used))
 int _write_r(struct _reent *r, int file, char *ptr, int len) {
-  int err;
+  msg_t err;
 
   err = sbWrite(file, (const void *)ptr, (size_t)len);
   if (CH_RET_IS_ERROR(err)) {
@@ -72,7 +72,7 @@ int _write_r(struct _reent *r, int file, char *ptr, int len) {
 
 __attribute__((used))
 int _read_r(struct _reent *r, int file, char *ptr, int len) {
-  int err;
+  msg_t err;
 
   err = sbRead(file, (void *)ptr, (size_t)len);
   if (CH_RET_IS_ERROR(err)) {
@@ -85,7 +85,7 @@ int _read_r(struct _reent *r, int file, char *ptr, int len) {
 
 __attribute__((used))
 int _lseek_r(struct _reent *r, int file, int ptr, int dir) {
-  int err;
+  msg_t err;
 
   err = sbSeek(file, ptr, dir);
   if (CH_RET_IS_ERROR(err)) {
@@ -98,7 +98,7 @@ int _lseek_r(struct _reent *r, int file, int ptr, int dir) {
 
 __attribute__((used))
 int _fstat_r(struct _reent *r, int file, struct stat *pstat) {
-  int err;
+  msg_t err;
 
   err = sbFstat(file, pstat);
   if (CH_RET_IS_ERROR(err)) {
@@ -111,7 +111,7 @@ int _fstat_r(struct _reent *r, int file, struct stat *pstat) {
 
 __attribute__((used))
 int _stat_r(struct _reent *r, const char *file, struct stat *pstat) {
-  int err;
+  msg_t err;
 
   err = sbStat(file, pstat);
   if (CH_RET_IS_ERROR(err)) {
@@ -124,7 +124,7 @@ int _stat_r(struct _reent *r, const char *file, struct stat *pstat) {
 
 __attribute__((used))
 int _isatty_r(struct _reent *r, int fd) {
-  int err;
+  msg_t err;
   struct stat s;
 
   err = sbFstat(fd, &s);
@@ -177,7 +177,7 @@ int _getpid(void) {
 /* Additional functions not part of newlib.*/
 
 int _getdents_r(struct _reent *r, int fd, void *dp, int count) {
-  ssize_t n;
+  msg_t n;
 
   n = sbGetdents(fd, dp, count);
   if (CH_RET_IS_ERROR(n)) {
@@ -185,11 +185,11 @@ int _getdents_r(struct _reent *r, int fd, void *dp, int count) {
     return -1;
   }
 
-  return n;
+  return (int)n;
 }
 
 int _chdir_r(struct _reent *r, const char *path) {
-  int err;
+  msg_t err;
 
   err = sbChdir(path);
   if (CH_RET_IS_ERROR(err)) {
@@ -201,7 +201,7 @@ int _chdir_r(struct _reent *r, const char *path) {
 }
 
 char *_getcwd_r(struct _reent *r, char *buf, size_t size) {
-  int err;
+  msg_t err;
 
   err = sbGetcwd(buf, size);
   if (CH_RET_IS_ERROR(err)) {
@@ -213,7 +213,7 @@ char *_getcwd_r(struct _reent *r, char *buf, size_t size) {
 }
 
 int _unlink_r(struct _reent *r, const char *path) {
-  int err;
+  msg_t err;
 
   err = sbUnlink(path);
   if (CH_RET_IS_ERROR(err)) {
@@ -227,7 +227,7 @@ int _unlink_r(struct _reent *r, const char *path) {
 int _rename_r(struct _reent *r,
               const char *oldpath,
               const char *newpath) {
-  int err;
+  msg_t err;
 
   err = sbRename(oldpath, newpath);
   if (CH_RET_IS_ERROR(err)) {
@@ -239,7 +239,7 @@ int _rename_r(struct _reent *r,
 }
 
 int _mkdir_r(struct _reent *r, const char *path, mode_t mode) {
-  int err;
+  msg_t err;
 
   err = sbMkdir(path, mode);
   if (CH_RET_IS_ERROR(err)) {
@@ -251,7 +251,7 @@ int _mkdir_r(struct _reent *r, const char *path, mode_t mode) {
 }
 
 int _rmdir_r(struct _reent *r, const char *path) {
-  int err;
+  msg_t err;
 
   err = sbRmdir(path);
   if (CH_RET_IS_ERROR(err)) {
