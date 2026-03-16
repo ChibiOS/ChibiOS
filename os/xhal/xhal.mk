@@ -38,8 +38,11 @@ XHALSRC += $(CHIBIOS)/os/xhal/src/hal_spi.c
 endif
 else
 XHALSRC = $(CHIBIOS)/os/xhal/src/hal.c \
+          $(CHIBIOS)/os/xhal/src/hal_safety.c \
           $(CHIBIOS)/os/xhal/src/hal_base_driver.c \
+          $(CHIBIOS)/os/xhal/src/hal_cb_driver.c \
           $(CHIBIOS)/os/xhal/src/hal_st.c \
+          $(CHIBIOS)/os/xhal/src/hal_buffered_serial.c \
           $(CHIBIOS)/os/xhal/src/hal_queues.c \
           $(CHIBIOS)/os/xhal/src/hal_eth.c \
           $(CHIBIOS)/os/xhal/src/hal_pal.c \

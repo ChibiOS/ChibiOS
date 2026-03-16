@@ -248,30 +248,24 @@
 
 /**
  * @brief   Type of an STM32 Ethernet receive descriptor.
- * @note    The structure contains custom fields rdes4 and rdes5 used by
- *          the driver.
+ * @note    This structure must match the hardware descriptor layout.
  */
 typedef struct {
   volatile uint32_t         rdes0;
   volatile uint32_t         rdes1;
   volatile uint32_t         rdes2;
   volatile uint32_t         rdes3;
-  volatile uint32_t         offset;
-  volatile uint32_t         size;
 } stm32_eth_rx_descriptor_t;
 
 /**
  * @brief   Type of an STM32 Ethernet transmit descriptor.
- * @note    The structure contains custom fields tdes4 and tdes5 used by
- *          the driver.
+ * @note    This structure must match the hardware descriptor layout.
  */
 typedef struct {
   volatile uint32_t         tdes0;
   volatile uint32_t         tdes1;
   volatile uint32_t         tdes2;
   volatile uint32_t         tdes3;
-  volatile uint32_t         offset;
-  volatile uint32_t         size;
 } stm32_eth_tx_descriptor_t;
 
 /*===========================================================================*/

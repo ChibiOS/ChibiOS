@@ -82,6 +82,177 @@
 #define PERIODIC_TIMER_ID       1
 #define FRAME_RECEIVED_ID       2
 
+static net_addr_mode_t addressMode;
+static ip4_addr_t ip, gateway, netmask;
+static struct netif thisif;
+
+#if defined(__CHIBIOS_XHAL_CONF__)
+
+#if (HAL_USE_ETH != TRUE)
+#error "lwipthread requires HAL_USE_ETH in XHAL mode"
+#endif
+
+#if (ETH_USE_SYNCHRONIZATION != TRUE)
+#error "lwipthread requires ETH_USE_SYNCHRONIZATION in XHAL mode"
+#endif
+
+#if (ETH_USE_EVENTS != TRUE)
+#error "lwipthread requires ETH_USE_EVENTS in XHAL mode"
+#endif
+
+typedef eth_receive_handle_t lwip_receive_handle_t;
+typedef eth_transmit_handle_t lwip_transmit_handle_t;
+
+static msg_t lwip_lld_start(void) {
+  static const hal_eth_config_t lwip_eth_config = {
+    .mac_address = thisif.hwaddr,
+    .regs = {
+      .dmamr = 0U,
+      .dmasbmr = 0U
+    }
+  };
+  msg_t msg;
+
+  msg = drvSetCfgX(&ETHD1, &lwip_eth_config);
+  if (msg != HAL_RET_SUCCESS) {
+    return msg;
+  }
+
+  return drvStart(&ETHD1);
+}
+
+static msg_t lwip_wait_transmit_handle(lwip_transmit_handle_t *txhp) {
+  *txhp = ethWaitTransmitHandle(&ETHD1, TIME_MS2I(LWIP_SEND_TIMEOUT));
+
+  return (*txhp != (lwip_transmit_handle_t)0U) ? MSG_OK : MSG_TIMEOUT;
+}
+
+static size_t lwip_write_transmit_handle(lwip_transmit_handle_t *txhp,
+                                         const uint8_t *bp,
+                                         size_t size) {
+
+  return ethWriteTransmitHandle(&ETHD1, *txhp, bp, size);
+}
+
+static void lwip_release_transmit_handle(lwip_transmit_handle_t *txhp) {
+
+  ethReleaseTransmitHandle(&ETHD1, *txhp);
+}
+
+static msg_t lwip_wait_receive_handle(lwip_receive_handle_t *rxhp) {
+  *rxhp = ethWaitReceiveHandle(&ETHD1, TIME_IMMEDIATE);
+
+  return (*rxhp != (lwip_receive_handle_t)0U) ? MSG_OK : MSG_TIMEOUT;
+}
+
+static size_t lwip_read_receive_handle(lwip_receive_handle_t *rxhp,
+                                       uint8_t *bp,
+                                       size_t size) {
+
+  return ethReadReceiveHandle(&ETHD1, *rxhp, bp, size);
+}
+
+static size_t lwip_receive_size(lwip_receive_handle_t *rxhp) {
+  size_t size;
+
+  (void)ethGetReceiveBufferX(&ETHD1, *rxhp, &size);
+
+  return size;
+}
+
+static void lwip_release_receive_handle(lwip_receive_handle_t *rxhp) {
+
+  ethReleaseReceiveHandle(&ETHD1, *rxhp);
+}
+
+static event_source_t *lwip_get_event_source(void) {
+
+  return &ETHD1.es;
+}
+
+static eventflags_t lwip_get_receive_event_flag(void) {
+
+  return ETH_FLAGS_RX;
+}
+
+static bool lwip_poll_link_status(void) {
+
+  return ethPollLinkStatus(&ETHD1);
+}
+
+#else /* !defined(__CHIBIOS_XHAL_CONF__) */
+
+typedef MACReceiveDescriptor lwip_receive_handle_t;
+typedef MACTransmitDescriptor lwip_transmit_handle_t;
+
+static msg_t lwip_lld_start(void) {
+  static const MACConfig mac_config = {thisif.hwaddr};
+
+  macStart(&ETHD1, &mac_config);
+
+  return HAL_RET_SUCCESS;
+}
+
+static msg_t lwip_wait_transmit_handle(lwip_transmit_handle_t *txhp) {
+
+  return macWaitTransmitDescriptor(&ETHD1, txhp, TIME_MS2I(LWIP_SEND_TIMEOUT));
+}
+
+static size_t lwip_write_transmit_handle(lwip_transmit_handle_t *txhp,
+                                         const uint8_t *bp,
+                                         size_t size) {
+
+  macWriteTransmitDescriptor(txhp, (uint8_t *)bp, size);
+
+  return size;
+}
+
+static void lwip_release_transmit_handle(lwip_transmit_handle_t *txhp) {
+
+  macReleaseTransmitDescriptorX(txhp);
+}
+
+static msg_t lwip_wait_receive_handle(lwip_receive_handle_t *rxhp) {
+
+  return macWaitReceiveDescriptor(&ETHD1, rxhp, TIME_IMMEDIATE);
+}
+
+static size_t lwip_read_receive_handle(lwip_receive_handle_t *rxhp,
+                                       uint8_t *bp,
+                                       size_t size) {
+
+  macReadReceiveDescriptor(rxhp, bp, size);
+
+  return size;
+}
+
+static size_t lwip_receive_size(lwip_receive_handle_t *rxhp) {
+
+  return rxhp->size;
+}
+
+static void lwip_release_receive_handle(lwip_receive_handle_t *rxhp) {
+
+  macReleaseReceiveDescriptorX(rxhp);
+}
+
+static event_source_t *lwip_get_event_source(void) {
+
+  return macGetEventSource(&ETHD1);
+}
+
+static eventflags_t lwip_get_receive_event_flag(void) {
+
+  return MAC_FLAGS_RX;
+}
+
+static bool lwip_poll_link_status(void) {
+
+  return macPollLinkStatus(&ETHD1);
+}
+
+#endif /* defined(__CHIBIOS_XHAL_CONF__) */
+
 /*
  * Suspension point for initialization procedure.
  */
@@ -126,10 +297,10 @@ static void low_level_init(struct netif *netif) {
  */
 static err_t low_level_output(struct netif *netif, struct pbuf *p) {
   struct pbuf *q;
-  MACTransmitDescriptor td;
+  lwip_transmit_handle_t txh;
 
   (void)netif;
-  if (macWaitTransmitDescriptor(&ETHD1, &td, TIME_MS2I(LWIP_SEND_TIMEOUT)) != MSG_OK)
+  if (lwip_wait_transmit_handle(&txh) != MSG_OK)
     return ERR_TIMEOUT;
 
 #if ETH_PAD_SIZE
@@ -137,9 +308,20 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p) {
 #endif
 
   /* Iterates through the pbuf chain. */
-  for(q = p; q != NULL; q = q->next)
-    macWriteTransmitDescriptor(&td, (uint8_t *)q->payload, (size_t)q->len);
-  macReleaseTransmitDescriptorX(&td);
+  for (q = p; q != NULL; q = q->next) {
+    size_t n = lwip_write_transmit_handle(&txh, (const uint8_t *)q->payload,
+                                          (size_t)q->len);
+    if (n != (size_t)q->len) {
+      lwip_release_transmit_handle(&txh);
+#if ETH_PAD_SIZE
+      pbuf_header(p, ETH_PAD_SIZE);      /* reclaim the padding word */
+#endif
+      LINK_STATS_INC(link.drop);
+      MIB2_STATS_NETIF_INC(netif, ifoutdiscards);
+      return ERR_BUF;
+    }
+  }
+  lwip_release_transmit_handle(&txh);
 
   MIB2_STATS_NETIF_ADD(netif, ifoutoctets, p->tot_len);
   if (((u8_t*)p->payload)[0] & 1) {
@@ -171,7 +353,7 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p) {
  *         NULL on memory error
  */
 static bool low_level_input(struct netif *netif, struct pbuf **pbuf) {
-  MACReceiveDescriptor rd;
+  lwip_receive_handle_t rxh;
   struct pbuf *q;
   u16_t len;
 
@@ -179,10 +361,10 @@ static bool low_level_input(struct netif *netif, struct pbuf **pbuf) {
 
   osalDbgAssert(pbuf != NULL, "invalid null pointer");
 
-  if (macWaitReceiveDescriptor(&ETHD1, &rd, TIME_IMMEDIATE) != MSG_OK)
+  if (lwip_wait_receive_handle(&rxh) != MSG_OK)
     return false;
 
-  len = (u16_t)rd.size;
+  len = (u16_t)lwip_receive_size(&rxh);
 
 #if ETH_PAD_SIZE
   len += ETH_PAD_SIZE;        /* allow room for Ethernet padding */
@@ -197,9 +379,11 @@ static bool low_level_input(struct netif *netif, struct pbuf **pbuf) {
 #endif
 
     /* Iterates through the pbuf chain. */
-    for(q = *pbuf; q != NULL; q = q->next)
-      macReadReceiveDescriptor(&rd, (uint8_t *)q->payload, (size_t)q->len);
-    macReleaseReceiveDescriptorX(&rd);
+    for (q = *pbuf; q != NULL; q = q->next) {
+      (void)lwip_read_receive_handle(&rxh, (uint8_t *)q->payload,
+                                     (size_t)q->len);
+    }
+    lwip_release_receive_handle(&rxh);
 
     MIB2_STATS_NETIF_ADD(netif, ifinoctets, (*pbuf)->tot_len);
 
@@ -219,7 +403,7 @@ static bool low_level_input(struct netif *netif, struct pbuf **pbuf) {
     LINK_STATS_INC(link.recv);
   }
   else {
-    macReleaseReceiveDescriptorX(&rd);     // Drop packet
+    lwip_release_receive_handle(&rxh);     /* Drop packet. */
     LINK_STATS_INC(link.memerr);
     LINK_STATS_INC(link.drop);
     MIB2_STATS_NETIF_INC(netif, ifindiscards);
@@ -266,10 +450,6 @@ static err_t ethernetif_init(struct netif *netif) {
   return ERR_OK;
 }
 
-static net_addr_mode_t addressMode;
-static ip4_addr_t ip, gateway, netmask;
-static struct netif thisif;
-
 void lwipDefaultLinkUpCB(void *p)
 {
   struct netif *ifc = (struct netif*) p;
@@ -307,7 +487,6 @@ void lwipDefaultLinkDownCB(void *p)
 static THD_FUNCTION(lwip_thread, p) {
   event_timer_t evt;
   event_listener_t el0, el1;
-  static const MACConfig mac_config = {thisif.hwaddr};
   err_t result;
   tcpip_callback_fn link_up_cb = NULL;
   tcpip_callback_fn link_down_cb = NULL;
@@ -366,7 +545,10 @@ static THD_FUNCTION(lwip_thread, p) {
     thisif.hostname = LWIP_NETIF_HOSTNAME_STRING;
 #endif
 
-  macStart(&ETHD1, &mac_config);
+  if (lwip_lld_start() != HAL_RET_SUCCESS) {
+    chThdSleepMilliseconds(1000);
+    osalSysHalt("ethernet start error");
+  }
 
   MIB2_INIT_NETIF(&thisif, snmp_ifType_ethernet_csmacd, 0);
 
@@ -385,8 +567,8 @@ static THD_FUNCTION(lwip_thread, p) {
   evtObjectInit(&evt, LWIP_LINK_POLL_INTERVAL);
   evtStart(&evt);
   chEvtRegisterMask(&evt.et_es, &el0, PERIODIC_TIMER_ID);
-  chEvtRegisterMaskWithFlags(macGetEventSource(&ETHD1), &el1,
-                                               FRAME_RECEIVED_ID, MAC_FLAGS_RX);
+  chEvtRegisterMaskWithFlags(lwip_get_event_source(), &el1,
+                             FRAME_RECEIVED_ID, lwip_get_receive_event_flag());
   chEvtAddEvents(PERIODIC_TIMER_ID | FRAME_RECEIVED_ID);
 
   /* Resumes the caller and goes to the final priority.*/
@@ -396,7 +578,7 @@ static THD_FUNCTION(lwip_thread, p) {
   while (true) {
     eventmask_t mask = chEvtWaitAny(ALL_EVENTS);
     if (mask & PERIODIC_TIMER_ID) {
-      bool current_link_status = macPollLinkStatus(&ETHD1);
+      bool current_link_status = lwip_poll_link_status();
       if (current_link_status != netif_is_link_up(&thisif)) {
         if (current_link_status) {
           tcpip_callback_with_block((tcpip_callback_fn) netif_set_link_up,
