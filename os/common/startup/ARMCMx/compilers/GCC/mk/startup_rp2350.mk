@@ -9,6 +9,7 @@ STARTUPINC = $(CHIBIOS)/os/common/portability/GCC \
              $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC \
              $(CHIBIOS)/os/common/startup/ARMCMx/devices/RP2350 \
              $(CHIBIOS)/os/common/ext/ARM/CMSIS/Core/Include \
+             $(CHIBIOS)/os/common/ext/RP \
              $(CHIBIOS)/os/common/ext/RP/RP2350
 
 STARTUPLD  = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/ld
