@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="oop_random_stream" descr="Random Stream Interface" editcode="false">
+  <brief>Random data streams interface.</brief>
+  <imports>
+    <import>oop_sequential_stream.xml</import>
+  </imports>
+  <public>
+    <includes>
+      <include style="regular">oop_random_stream.h</include>
+    </includes>
+    <definitions_early>
+      <group description="Seek modes">
+        <define name="RSTM_SEEK_SET" value="0" >
+          <brief>The file offset is set to offset bytes.</brief>
+        </define>
+        <define name="RSTM_SEEK_CUR" value="1">
+          <brief>The file offset is set to its current location plus offset
+            bytes.</brief>
+        </define>
+        <define name="RSTM_SEEK_END" value="2">
+          <brief>The file offset is set to the size of the file plus offset
+            bytes.</brief>
+        </define>
+      </group>
+    </definitions_early>
+    <types>
+      <interface name="random_stream" namespace="rstm"
+        ancestorname="sequential_stream" descr="random stream">
+        <brief>Random data streams interface.</brief>
+        <details>
+          <![CDATA[This module define an interface for generic random data
+                   streams.]]>
+          <br />
+          <![CDATA[This interface is meant to be implemented in classes
+                   requiring file-like capability.]]>
+        </details>
+        <consts>
+        </consts>
+        <methods>
+          <method name="rstmSeek" shortname="seek"
+            ctype="uint32_t">
+            <brief>Random Stream seek.</brief>
+            <details>This function changes the function read/write offset.
+            </details>
+            <param name="offset" ctype="uint32_t" dir="in">The file offset.</param>
+            <param name="whence" ctype="int" dir="in">Seek mode.</param>
+            <return><![CDATA[Upon successful completion, lseek() returns the
+              resulting offset location as measured in bytes from the beginning
+              of the file.]]></return>
+          </method>
+        </methods>
+      </interface>
+    </types>
+  </public>
+  <private>
+  </private>
+</module>
