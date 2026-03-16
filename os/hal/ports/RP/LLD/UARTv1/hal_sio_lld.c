@@ -542,6 +542,9 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
     /* Idle RX event.*/
     if ((mis & UART_UARTMIS_RTMIS) != 0U) {
 
+      /* Explicitly clear RTRIS to prevent race on reentry */
+      u->UARTICR = UART_UARTICR_RTIC;
+
       /* Called once then the interrupt source is disabled.*/
        imsc &= ~UART_UARTIMSC_RTIM;
 
