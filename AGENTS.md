@@ -11,6 +11,8 @@
 - Keep functions `static` unless they are part of the public HAL API.
 - Regenerate formatting by hand; clang-format is not used on this port—mirror the surrounding code style.
 - General rule: line endings must be LF, except for externally provided files (non-ChibiOS copyright).
+- In ChibiOS, API suffix semantics are critical and must drive design decisions: no suffix = thread context, `X` = any context, `S` = system-locked context, `I` = interrupt/system-locked context. Semantic compatibility comes before implementation convenience; never place calls in fastcall/ISR paths unless their suffix contract explicitly allows it.
+- While debugging new code, prefer enabling assertions, parameter checks, and the state checker in `chconf.h`. In ChibiOS, contract violations often halt early with those options enabled, which is desirable for catching context and state misuse quickly.
 
 ## Build & Test Hygiene
 - Clean projects after test builds unless otherwise specified.

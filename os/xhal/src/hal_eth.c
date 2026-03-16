@@ -231,7 +231,7 @@ eth_receive_handle_t ethWaitReceiveHandle(void *ip, sysinterval_t timeout) {
 
   osalSysLock();
 
-  while ((rxh = ethGetReceiveHandleI(self)) == (eth_receive_handle_t)0U) {
+  while ((rxh = ethGetReceiveHandleX(self)) == (eth_receive_handle_t)0U) {
     msg_t msg = osalThreadEnqueueTimeoutS(&self->rxqueue, timeout);
     if (msg == MSG_TIMEOUT) {
       rxh = (eth_receive_handle_t)0U;
@@ -262,7 +262,7 @@ eth_transmit_handle_t ethWaitTransmitHandle(void *ip, sysinterval_t timeout) {
 
   osalSysLock();
 
-  while ((txh = ethGetTransmitHandleI(self)) == (eth_transmit_handle_t)0U) {
+  while ((txh = ethGetTransmitHandleX(self)) == (eth_transmit_handle_t)0U) {
     msg_t msg = osalThreadEnqueueTimeoutS(&self->txqueue, timeout);
     if (msg == MSG_TIMEOUT) {
       txh = (eth_transmit_handle_t)0U;

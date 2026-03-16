@@ -358,10 +358,10 @@ static inline hal_eth_driver_c *ethObjectInit(hal_eth_driver_c *self) {
  * @return                      The receive handle.
  * @retval 0                    If a received frame is not available.
  *
- * @iclass
+ * @xclass
  */
 CC_FORCE_INLINE
-static inline eth_receive_handle_t ethGetReceiveHandleI(void *ip) {
+static inline eth_receive_handle_t ethGetReceiveHandleX(void *ip) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
 
   return eth_lld_get_receive_handle(self);
@@ -374,10 +374,10 @@ static inline eth_receive_handle_t ethGetReceiveHandleI(void *ip) {
  * @return                      The transmit handle.
  * @retval 0                    If an empty transmit frame is not available.
  *
- * @iclass
+ * @xclass
  */
 CC_FORCE_INLINE
-static inline eth_transmit_handle_t ethGetTransmitHandleI(void *ip) {
+static inline eth_transmit_handle_t ethGetTransmitHandleX(void *ip) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
 
   return eth_lld_get_transmit_handle(self);

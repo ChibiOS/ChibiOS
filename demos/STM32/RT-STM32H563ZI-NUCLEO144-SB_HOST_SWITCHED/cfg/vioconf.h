@@ -31,6 +31,13 @@
 #define __CHIBIOS_VIO_CONF_VER_1_0__
 
 /**
+ * @brief   Enables the Virtual ETH support.
+ */
+#if !defined(VIO_CFG_ENABLE_ETH) || defined(__DOXYGEN__)
+#define VIO_CFG_ENABLE_ETH                  FALSE
+#endif
+
+/**
  * @brief   Enables the Virtual GPIO support.
  */
 #if !defined(VIO_CFG_ENABLE_GPIO) || defined(__DOXYGEN__)

@@ -196,7 +196,7 @@ osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_READY, "not ready");
 
 osalSysLock();
 
-while ((rxh = ethGetReceiveHandleI(self)) == (eth_receive_handle_t)0U) {
+while ((rxh = ethGetReceiveHandleX(self)) == (eth_receive_handle_t)0U) {
   msg_t msg = osalThreadEnqueueTimeoutS(&self->rxqueue, timeout);
   if (msg == MSG_TIMEOUT) {
     rxh = (eth_receive_handle_t)0U;
@@ -225,7 +225,7 @@ osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_READY, "not ready");
 
 osalSysLock();
 
-while ((txh = ethGetTransmitHandleI(self)) == (eth_transmit_handle_t)0U) {
+while ((txh = ethGetTransmitHandleX(self)) == (eth_transmit_handle_t)0U) {
   msg_t msg = osalThreadEnqueueTimeoutS(&self->txqueue, timeout);
   if (msg == MSG_TIMEOUT) {
     txh = (eth_transmit_handle_t)0U;
@@ -240,25 +240,25 @@ return txh;]]></implementation>
             </condition>
           </regular>
           <inline>
-            <method name="ethGetReceiveHandleI"
+            <method name="ethGetReceiveHandleX"
               ctype="eth_receive_handle_t">
               <brief><![CDATA[Queries for a received frame handle.]]></brief>
               <return><![CDATA[The receive handle.]]></return>
               <retval value="0">If a received frame is not available.
               </retval>
-              <iclass />
+              <xclass />
               <implementation><![CDATA[
 
 return eth_lld_get_receive_handle(self);]]></implementation>
             </method>
-            <method name="ethGetTransmitHandleI"
+            <method name="ethGetTransmitHandleX"
               ctype="eth_transmit_handle_t">
               <brief><![CDATA[Queries for a transmit frame handle.]]></brief>
               <return><![CDATA[The transmit handle.]]></return>
               <retval value="0">If an empty transmit frame is not
                 available.
               </retval>
-              <iclass />
+              <xclass />
               <implementation><![CDATA[
 
 return eth_lld_get_transmit_handle(self);]]></implementation>
