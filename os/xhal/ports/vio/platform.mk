@@ -2,6 +2,7 @@
 PLATFORMSRC := $(CHIBIOS)/os/xhal/ports/vio/hal_lld.c \
                $(CHIBIOS)/os/xhal/ports/vio/hal_st_lld.c \
                $(CHIBIOS)/os/xhal/ports/vio/hal_pal_lld.c \
+               $(CHIBIOS)/os/xhal/ports/vio/hal_eth_lld.c \
                $(CHIBIOS)/os/xhal/ports/vio/hal_sio_lld.c \
                $(CHIBIOS)/os/xhal/ports/vio/hal_spi_lld.c
 

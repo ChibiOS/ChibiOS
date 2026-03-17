@@ -76,34 +76,12 @@ typedef struct vio_eth_config {
 } vio_eth_config_t;
 
 /**
- * @brief   Type of a VIO ETH receive slot.
- */
-typedef struct vio_eth_rx_slot {
-  eth_receive_handle_t    handle;
-  uint16_t                generation;
-  uint16_t                reserved;
-} vio_eth_rx_slot_t;
-
-/**
- * @brief   Type of a VIO ETH transmit slot.
- */
-typedef struct vio_eth_tx_slot {
-  eth_transmit_handle_t   handle;
-  uint16_t                generation;
-  uint16_t                reserved;
-} vio_eth_tx_slot_t;
-
-/**
  * @brief   Type of a VIO ETH unit representation.
  */
 typedef struct vio_eth_unit {
   hal_eth_driver_c        *ethp;
   sb_class_t              *vrqsb;
   sb_vrqnum_t             vrqn;
-  uint32_t                rxslots_num;
-  vio_eth_rx_slot_t       *rxslots;
-  uint32_t                txslots_num;
-  vio_eth_tx_slot_t       *txslots;
 } vio_eth_unit_t;
 
 /**

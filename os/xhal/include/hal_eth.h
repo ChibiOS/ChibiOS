@@ -384,6 +384,38 @@ static inline eth_transmit_handle_t ethGetTransmitHandleX(void *ip) {
 }
 
 /**
+ * @brief       Checks a receive handle validity.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @param[in]     rxh           Receive handle.
+ * @return                      The receive handle validity.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline bool ethIsRXHandleValidX(void *ip, eth_receive_handle_t rxh) {
+  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
+
+  return eth_lld_is_receive_handle_valid(self, rxh);
+}
+
+/**
+ * @brief       Checks a transmit handle validity.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @param[in]     txh           Transmit handle.
+ * @return                      The transmit handle validity.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline bool ethIsTXHandleValidX(void *ip, eth_transmit_handle_t txh) {
+  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
+
+  return eth_lld_is_transmit_handle_valid(self, txh);
+}
+
+/**
  * @brief       Releases a received frame.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.

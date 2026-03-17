@@ -315,6 +315,10 @@ extern "C" {
                                          unsigned cfgnum);
   eth_receive_handle_t eth_lld_get_receive_handle(hal_eth_driver_c *ethp);
   eth_transmit_handle_t eth_lld_get_transmit_handle(hal_eth_driver_c *ethp);
+  bool eth_lld_is_receive_handle_valid(hal_eth_driver_c *ethp,
+                                       eth_receive_handle_t rxh);
+  bool eth_lld_is_transmit_handle_valid(hal_eth_driver_c *ethp,
+                                        eth_transmit_handle_t txh);
   void eth_lld_release_receive_handle(hal_eth_driver_c *ethp,
                                       eth_receive_handle_t rxh);
   void eth_lld_release_transmit_handle(hal_eth_driver_c *ethp,

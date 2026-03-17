@@ -147,6 +147,30 @@ static inline unsigned txdesc_index(const stm32_eth_tx_descriptor_t *tdp) {
   return (unsigned)(tdp - &__eth_private_td[0]);
 }
 
+static bool rxdesc_is_valid(eth_receive_handle_t rxh) {
+  uintptr_t base = (uintptr_t)&__eth_private_rd[0];
+  uintptr_t limit = (uintptr_t)&__eth_private_rd[STM32_ETH_RECEIVE_BUFFERS];
+  uintptr_t addr = (uintptr_t)rxh;
+
+  if ((addr < base) || (addr >= limit)) {
+    return false;
+  }
+
+  return ((addr - base) % sizeof (stm32_eth_rx_descriptor_t)) == 0U;
+}
+
+static bool txdesc_is_valid(eth_transmit_handle_t txh) {
+  uintptr_t base = (uintptr_t)&__eth_private_td[0];
+  uintptr_t limit = (uintptr_t)&__eth_private_td[STM32_ETH_TRANSMIT_BUFFERS];
+  uintptr_t addr = (uintptr_t)txh;
+
+  if ((addr < base) || (addr >= limit)) {
+    return false;
+  }
+
+  return ((addr - base) % sizeof (stm32_eth_tx_descriptor_t)) == 0U;
+}
+
 void mii_write(hal_eth_driver_c *ethp, uint32_t reg, uint32_t value) {
 
   ETH->MACMDIODR = value;
@@ -633,6 +657,40 @@ eth_transmit_handle_t eth_lld_get_transmit_handle(hal_eth_driver_c *ethp) {
   }
 
   return (eth_transmit_handle_t)0U;
+}
+
+/**
+ * @brief       Checks a receive handle validity.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @param[in]     rxh           Receive handle.
+ * @return                      The receive handle validity.
+ *
+ * @notapi
+ */
+bool eth_lld_is_receive_handle_valid(hal_eth_driver_c *ethp,
+                                     eth_receive_handle_t rxh) {
+
+  (void)ethp;
+
+  return rxdesc_is_valid(rxh);
+}
+
+/**
+ * @brief       Checks a transmit handle validity.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @param[in]     txh           Transmit handle.
+ * @return                      The transmit handle validity.
+ *
+ * @notapi
+ */
+bool eth_lld_is_transmit_handle_valid(hal_eth_driver_c *ethp,
+                                      eth_transmit_handle_t txh) {
+
+  (void)ethp;
+
+  return txdesc_is_valid(txh);
 }
 
 /**

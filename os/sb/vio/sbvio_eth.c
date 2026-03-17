@@ -31,184 +31,17 @@
 #if (VIO_CFG_ENABLE_ETH == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
-/* Module local definitions.                                                 */
-/*===========================================================================*/
-
-#define VETH_TOKEN_SHIFT      16U
-#define VETH_TOKEN_SLOT_MASK  0xFFFFU
-
-/*===========================================================================*/
-/* Module exported variables.                                                */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Module local types.                                                       */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Module local variables.                                                   */
-/*===========================================================================*/
-
-/*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
-
-static uint16_t veth_next_generation(uint16_t generation) {
-
-  generation++;
-  if (generation == 0U) {
-    generation = 1U;
-  }
-
-  return generation;
-}
 
 static bool veth_validate_unit(const vio_eth_unit_t *unitp) {
 
   if ((unitp->ethp == NULL) ||
-      (unitp->vrqsb == NULL) ||
-      (unitp->rxslots == NULL) ||
-      (unitp->txslots == NULL) ||
-      (unitp->rxslots_num == 0U) ||
-      (unitp->txslots_num == 0U) ||
-      (unitp->rxslots_num > VETH_TOKEN_SLOT_MASK) ||
-      (unitp->txslots_num > VETH_TOKEN_SLOT_MASK)) {
+      (unitp->vrqsb == NULL)) {
     return false;
   }
 
   return true;
-}
-
-static void veth_reset_rxslots(const vio_eth_unit_t *unitp) {
-  uint32_t i;
-
-  for (i = 0U; i < unitp->rxslots_num; i++) {
-    unitp->rxslots[i].handle = (eth_receive_handle_t)0U;
-    unitp->rxslots[i].generation =
-      veth_next_generation(unitp->rxslots[i].generation);
-  }
-}
-
-static void veth_reset_txslots(const vio_eth_unit_t *unitp) {
-  uint32_t i;
-
-  for (i = 0U; i < unitp->txslots_num; i++) {
-    unitp->txslots[i].handle = (eth_transmit_handle_t)0U;
-    unitp->txslots[i].generation =
-      veth_next_generation(unitp->txslots[i].generation);
-  }
-}
-
-static void veth_reset_slots(const vio_eth_unit_t *unitp) {
-
-  veth_reset_rxslots(unitp);
-  veth_reset_txslots(unitp);
-}
-
-static uint32_t veth_make_token(uint32_t index, uint16_t generation) {
-
-  return (uint32_t)(((uint32_t)generation << VETH_TOKEN_SHIFT) |
-                    ((index + 1U) & VETH_TOKEN_SLOT_MASK));
-}
-
-static int32_t veth_find_free_rxslot(const vio_eth_unit_t *unitp) {
-  uint32_t i;
-
-  for (i = 0U; i < unitp->rxslots_num; i++) {
-    if (unitp->rxslots[i].handle == (eth_receive_handle_t)0U) {
-      return (int32_t)i;
-    }
-  }
-
-  return -1;
-}
-
-static int32_t veth_find_free_txslot(const vio_eth_unit_t *unitp) {
-  uint32_t i;
-
-  for (i = 0U; i < unitp->txslots_num; i++) {
-    if (unitp->txslots[i].handle == (eth_transmit_handle_t)0U) {
-      return (int32_t)i;
-    }
-  }
-
-  return -1;
-}
-
-static vio_eth_rx_slot_t *veth_decode_rxslot(const vio_eth_unit_t *unitp,
-                                             uint32_t token) {
-  uint32_t slot;
-  uint16_t generation;
-
-  if (token == 0U) {
-    return NULL;
-  }
-
-  slot = (token & VETH_TOKEN_SLOT_MASK);
-  if (slot == 0U) {
-    return NULL;
-  }
-  slot--;
-
-  if (slot >= unitp->rxslots_num) {
-    return NULL;
-  }
-
-  generation = (uint16_t)(token >> VETH_TOKEN_SHIFT);
-  if (generation == 0U) {
-    return NULL;
-  }
-
-  if ((unitp->rxslots[slot].handle == (eth_receive_handle_t)0U) ||
-      (unitp->rxslots[slot].generation != generation)) {
-    return NULL;
-  }
-
-  return &unitp->rxslots[slot];
-}
-
-static vio_eth_tx_slot_t *veth_decode_txslot(const vio_eth_unit_t *unitp,
-                                             uint32_t token) {
-  uint32_t slot;
-  uint16_t generation;
-
-  if (token == 0U) {
-    return NULL;
-  }
-
-  slot = (token & VETH_TOKEN_SLOT_MASK);
-  if (slot == 0U) {
-    return NULL;
-  }
-  slot--;
-
-  if (slot >= unitp->txslots_num) {
-    return NULL;
-  }
-
-  generation = (uint16_t)(token >> VETH_TOKEN_SHIFT);
-  if (generation == 0U) {
-    return NULL;
-  }
-
-  if ((unitp->txslots[slot].handle == (eth_transmit_handle_t)0U) ||
-      (unitp->txslots[slot].generation != generation)) {
-    return NULL;
-  }
-
-  return &unitp->txslots[slot];
-}
-
-static void veth_release_rxslot(vio_eth_rx_slot_t *slotp) {
-
-  slotp->handle = (eth_receive_handle_t)0U;
-  slotp->generation = veth_next_generation(slotp->generation);
-}
-
-static void veth_release_txslot(vio_eth_tx_slot_t *slotp) {
-
-  slotp->handle = (eth_transmit_handle_t)0U;
-  slotp->generation = veth_next_generation(slotp->generation);
 }
 
 static void veth_cb(void *ip) {
@@ -255,8 +88,6 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
       {
         msg_t msg;
 
-        veth_reset_slots(unitp);
-
         drvSetArgumentX(unitp->ethp, (void *)unitp);
 
         msg = drvStart(unitp->ethp);
@@ -270,7 +101,6 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
     case SB_VETH_DEINIT:
       {
         drvSetCallbackX(unitp->ethp, NULL);
-        veth_reset_slots(unitp);
         drvStop(unitp->ethp);
 
         ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
@@ -322,7 +152,7 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
       }
     case SB_VETH_RXREAD:
       {
-        vio_eth_rx_slot_t *slotp;
+        eth_receive_handle_t rxh = (eth_receive_handle_t)ectxp->r1;
         uint8_t *buffer = (uint8_t *)ectxp->r2;
         size_t n = (size_t)ectxp->r3;
 
@@ -336,19 +166,18 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
           break;
         }
 
-        slotp = veth_decode_rxslot(unitp, ectxp->r1);
-        if (slotp == NULL) {
+        if (!ethIsRXHandleValidX(unitp->ethp, rxh)) {
           ectxp->r0 = (uint32_t)CH_RET_EINVAL;
           break;
         }
 
-        ectxp->r0 = (uint32_t)ethReadReceiveHandle(unitp->ethp, slotp->handle,
+        ectxp->r0 = (uint32_t)ethReadReceiveHandle(unitp->ethp, rxh,
                                                    buffer, n);
         break;
       }
     case SB_VETH_TXWRITE:
       {
-        vio_eth_tx_slot_t *slotp;
+        eth_transmit_handle_t txh = (eth_transmit_handle_t)ectxp->r1;
         const uint8_t *buffer = (const uint8_t *)ectxp->r2;
         size_t n = (size_t)ectxp->r3;
 
@@ -362,54 +191,48 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
           break;
         }
 
-        slotp = veth_decode_txslot(unitp, ectxp->r1);
-        if (slotp == NULL) {
+        if (!ethIsTXHandleValidX(unitp->ethp, txh)) {
           ectxp->r0 = (uint32_t)CH_RET_EINVAL;
           break;
         }
 
-        ectxp->r0 = (uint32_t)ethWriteTransmitHandle(unitp->ethp,
-                                                     slotp->handle,
+        ectxp->r0 = (uint32_t)ethWriteTransmitHandle(unitp->ethp, txh,
                                                      buffer, n);
         break;
       }
     case SB_VETH_RXREL:
       {
-        vio_eth_rx_slot_t *slotp;
+        eth_receive_handle_t rxh = (eth_receive_handle_t)ectxp->r1;
 
         if (drvGetStateX(unitp->ethp) != HAL_DRV_STATE_READY) {
           ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
           break;
         }
 
-        slotp = veth_decode_rxslot(unitp, ectxp->r1);
-        if (slotp == NULL) {
+        if (!ethIsRXHandleValidX(unitp->ethp, rxh)) {
           ectxp->r0 = (uint32_t)CH_RET_EINVAL;
           break;
         }
 
-        ethReleaseReceiveHandle(unitp->ethp, slotp->handle);
-        veth_release_rxslot(slotp);
+        ethReleaseReceiveHandle(unitp->ethp, rxh);
         ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
         break;
       }
     case SB_VETH_TXREL:
       {
-        vio_eth_tx_slot_t *slotp;
+        eth_transmit_handle_t txh = (eth_transmit_handle_t)ectxp->r1;
 
         if (drvGetStateX(unitp->ethp) != HAL_DRV_STATE_READY) {
           ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
           break;
         }
 
-        slotp = veth_decode_txslot(unitp, ectxp->r1);
-        if (slotp == NULL) {
+        if (!ethIsTXHandleValidX(unitp->ethp, txh)) {
           ectxp->r0 = (uint32_t)CH_RET_EINVAL;
           break;
         }
 
-        ethReleaseTransmitHandle(unitp->ethp, slotp->handle);
-        veth_release_txslot(slotp);
+        ethReleaseTransmitHandle(unitp->ethp, txh);
         ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
         break;
       }
@@ -446,58 +269,22 @@ void sb_fastc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
     switch (sub) {
     case SB_VETH_RXGET:
       {
-        int32_t slot;
-        eth_receive_handle_t handle;
-
         if (drvGetStateX(unitp->ethp) != HAL_DRV_STATE_READY) {
           ectxp->r0 = (uint32_t)0U;
           return;
         }
 
-        slot = veth_find_free_rxslot(unitp);
-        if (slot < 0) {
-          ectxp->r0 = (uint32_t)0U;
-          return;
-        }
-
-        handle = ethGetReceiveHandleX(unitp->ethp);
-
-        if (handle == (eth_receive_handle_t)0U) {
-          ectxp->r0 = (uint32_t)0U;
-          return;
-        }
-
-        unitp->rxslots[slot].handle = handle;
-        ectxp->r0 = veth_make_token((uint32_t)slot,
-                                    unitp->rxslots[slot].generation);
+        ectxp->r0 = (uint32_t)ethGetReceiveHandleX(unitp->ethp);
         return;
       }
     case SB_VETH_TXGET:
       {
-        int32_t slot;
-        eth_transmit_handle_t handle;
-
         if (drvGetStateX(unitp->ethp) != HAL_DRV_STATE_READY) {
           ectxp->r0 = (uint32_t)0U;
           return;
         }
 
-        slot = veth_find_free_txslot(unitp);
-        if (slot < 0) {
-          ectxp->r0 = (uint32_t)0U;
-          return;
-        }
-
-        handle = ethGetTransmitHandleX(unitp->ethp);
-
-        if (handle == (eth_transmit_handle_t)0U) {
-          ectxp->r0 = (uint32_t)0U;
-          return;
-        }
-
-        unitp->txslots[slot].handle = handle;
-        ectxp->r0 = veth_make_token((uint32_t)slot,
-                                    unitp->txslots[slot].generation);
+        ectxp->r0 = (uint32_t)ethGetTransmitHandleX(unitp->ethp);
         return;
       }
     default:

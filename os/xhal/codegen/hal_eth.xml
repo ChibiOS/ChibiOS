@@ -263,6 +263,28 @@ return eth_lld_get_receive_handle(self);]]></implementation>
 
 return eth_lld_get_transmit_handle(self);]]></implementation>
             </method>
+            <method name="ethIsRXHandleValidX"
+              ctype="bool">
+              <brief><![CDATA[Checks a receive handle validity.]]></brief>
+              <param name="rxh" ctype="eth_receive_handle_t"
+                dir="in"><![CDATA[Receive handle.]]></param>
+              <return><![CDATA[The receive handle validity.]]></return>
+              <xclass />
+              <implementation><![CDATA[
+
+return eth_lld_is_receive_handle_valid(self, rxh);]]></implementation>
+            </method>
+            <method name="ethIsTXHandleValidX"
+              ctype="bool">
+              <brief><![CDATA[Checks a transmit handle validity.]]></brief>
+              <param name="txh" ctype="eth_transmit_handle_t"
+                dir="in"><![CDATA[Transmit handle.]]></param>
+              <return><![CDATA[The transmit handle validity.]]></return>
+              <xclass />
+              <implementation><![CDATA[
+
+return eth_lld_is_transmit_handle_valid(self, txh);]]></implementation>
+            </method>
             <method name="ethReleaseReceiveHandle" ctype="void">
               <brief><![CDATA[Releases a received frame.]]></brief>
               <param name="rxh" ctype="eth_receive_handle_t"
