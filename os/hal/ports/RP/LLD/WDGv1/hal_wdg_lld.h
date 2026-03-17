@@ -62,7 +62,7 @@ typedef struct {
    * @brief   Configuration of the WATCHDOG LOAD register.
    * @details See the RP2040 data sheet for details.
    */
-  uint32_t    				rlr;
+  uint32_t                  rlr;
 } WDGConfig;
 
 /**
