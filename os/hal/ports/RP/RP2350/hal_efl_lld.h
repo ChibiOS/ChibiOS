@@ -129,7 +129,11 @@
  */
 #define efl_lld_driver_fields                                               \
   /* Pointer to QMI registers. */                                           \
-  volatile uint32_t           *qmi;
+  volatile uint32_t           *qmi;                                         \
+  /* Saved XIP configuration registers. */                                  \
+  uint32_t                    xip_timing;                                   \
+  uint32_t                    xip_rfmt;                                     \
+  uint32_t                    xip_rcmd;
 
 /**
  * @brief   Low level fields of the embedded flash configuration structure.

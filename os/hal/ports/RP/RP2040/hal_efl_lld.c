@@ -340,6 +340,12 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
   unsigned i;
   volatile unsigned delay;
 
+  /* Save current XIP configuration before modifying. */
+  eflp->xip_ctrlr0 = ssi[SSI_CTRLR0 / 4U];
+  eflp->xip_ctrlr1 = ssi[SSI_CTRLR1 / 4U];
+  eflp->xip_spi_ctrlr0 = ssi[SSI_SPI_CTRLR0 / 4U];
+  eflp->xip_baudr = ssi[SSI_BAUDR / 4U];
+
   /* Wait for any pending work.*/
   while ((ssi[SSI_SR / 4U] & SSI_SR_BUSY) != 0U) {
   }
@@ -427,8 +433,9 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
 /**
  * @brief   Enter XIP mode
  * @note    This function MUST be in RAM.
- * @note    This configures standard SPI XIP mode using 03h read command.
- *          This works with all flash chips.
+ * @note    Restores the XIP configuration that was saved when exit_xip
+ *          was called, preserving whatever mode the bootrom configured
+ *          (e.g. QSPI fast read).
  *
  * @param[in] eflp      pointer to the EFlashDriver object
  */
@@ -440,12 +447,12 @@ RAMFUNC static void rp_flash_enter_xip(EFlashDriver *eflp) {
   /* Reset CS control to normal */
   *ioqspi_ss_ctrl = 0U;
 
-  /* Default XIP SPI configuration */
+  /* Restore saved XIP configuration. */
   ssi[SSI_SSIENR / 4U] = 0U;
-  ssi[SSI_BAUDR / 4U] = SSI_BAUDR_DEFAULT;
-  ssi[SSI_CTRLR0 / 4U] = SSI_CTRLR0_XIP;
-  ssi[SSI_CTRLR1 / 4U] = 0U;
-  ssi[SSI_SPI_CTRLR0 / 4U] = SSI_SPI_CTRLR0_XIP;
+  ssi[SSI_BAUDR / 4U] = eflp->xip_baudr;
+  ssi[SSI_CTRLR0 / 4U] = eflp->xip_ctrlr0;
+  ssi[SSI_CTRLR1 / 4U] = eflp->xip_ctrlr1;
+  ssi[SSI_SPI_CTRLR0 / 4U] = eflp->xip_spi_ctrlr0;
   ssi[SSI_SER / 4U] = 1U;
   ssi[SSI_SSIENR / 4U] = 1U;
 

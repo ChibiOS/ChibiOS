@@ -314,6 +314,11 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
   unsigned i;
   volatile unsigned delay;
 
+  /* Save current XIP configuration before switching to direct mode. */
+  eflp->xip_timing = qmi[QMI_M0_TIMING / 4U];
+  eflp->xip_rfmt = qmi[QMI_M0_RFMT / 4U];
+  eflp->xip_rcmd = qmi[QMI_M0_RCMD / 4U];
+
   /* Wait for any pending work.*/
   while ((qmi[QMI_DIRECT_CSR / 4U] & QMI_DIRECT_CSR_BUSY) != 0U) {
   }
@@ -400,8 +405,9 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
 /**
  * @brief   Enter XIP mode
  * @note    This function MUST be in RAM.
- * @note    This configures standard SPI XIP mode using 03h read command.
- *          This works with all flash chips.
+ * @note    Restores the XIP configuration that was saved when exit_xip
+ *          was called, preserving whatever mode the bootrom configured
+ *          (e.g. QSPI fast read).
  *
  * @param[in] eflp      pointer to the EFlashDriver object
  */
@@ -412,12 +418,11 @@ RAMFUNC static void rp_flash_enter_xip(EFlashDriver *eflp) {
   while ((qmi[QMI_DIRECT_CSR / 4U] & QMI_DIRECT_CSR_BUSY) != 0U) {
   }
 
-  /* Default XIP SPI configuration */
+  /* Disable direct mode and restore saved XIP configuration. */
   qmi[QMI_DIRECT_CSR / 4U] = 0U;
-  qmi[QMI_M0_TIMING / 4U] = (1U << 30) |    /* COOLDOWN=1 */
-                            (4U << 0);       /* CLKDIV=4 */
-  qmi[QMI_M0_RFMT / 4U] = (1U << 12);        /* PREFIX_LEN=8 bits */
-  qmi[QMI_M0_RCMD / 4U] = 0x03U;             /* Read command 0x03 */
+  qmi[QMI_M0_TIMING / 4U] = eflp->xip_timing;
+  qmi[QMI_M0_RFMT / 4U] = eflp->xip_rfmt;
+  qmi[QMI_M0_RCMD / 4U] = eflp->xip_rcmd;
 
   rp_flash_invalidate_cache();
 }
