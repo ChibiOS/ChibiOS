@@ -177,6 +177,7 @@ __STATIC_INLINE systime_t st_lld_get_counter(void) {
  * @brief   Starts the alarm.
  * @note    Makes sure that no spurious alarms are triggered after
  *          this call.
+ * @note    Uses atomic SET/CLR registers for dual-core safe INTE access.
  *
  * @param[in] abstime   the time to be set for the first alarm
  *
@@ -186,17 +187,22 @@ __STATIC_INLINE void st_lld_start_alarm(systime_t abstime) {
 
   TIMER0->ALARM[0]       = (uint32_t)abstime;
   TIMER0->INTR           = (1U << 0);
-  TIMER0->INTE          |= (1U << 0);
+  TIMER0->SET.INTE       = (1U << 0);
+  /* Re-arm if abstime already past to avoid ~71 min wait for counter wrap. */
+  if ((int32_t)(abstime - TIMER0->TIMERAWL) <= 0) {
+    TIMER0->ALARM[0]     = TIMER0->TIMERAWL + 2U;
+  }
 }
 
 /**
  * @brief   Stops the alarm interrupt.
+ * @note    Uses atomic CLR register for dual-core safe INTE access.
  *
  * @notapi
  */
 __STATIC_INLINE void st_lld_stop_alarm(void) {
 
-  TIMER0->INTE          &= ~(1U << 0);
+  TIMER0->CLR.INTE       = (1U << 0);
 }
 
 /**
@@ -252,10 +258,13 @@ __STATIC_INLINE bool st_lld_is_alarm_active(void) {
  */
 __STATIC_INLINE void st_lld_start_alarm_n(unsigned alarm, systime_t abstime) {
 
-
   TIMER0->ALARM[alarm]   = (uint32_t)abstime;
   TIMER0->INTR           = (1U << alarm);
-  TIMER0->INTE          |= (1U << alarm);
+  TIMER0->SET.INTE       = (1U << alarm);
+  /* Re-arm if abstime already past to avoid ~71 min wait for counter wrap. */
+  if ((int32_t)(abstime - TIMER0->TIMERAWL) <= 0) {
+    TIMER0->ALARM[alarm] = TIMER0->TIMERAWL + 2U;
+  }
 }
 
 /**
@@ -269,7 +278,7 @@ __STATIC_INLINE void st_lld_start_alarm_n(unsigned alarm, systime_t abstime) {
  */
 __STATIC_INLINE void st_lld_stop_alarm_n(unsigned alarm) {
 
-  TIMER0->INTE          &= ~(1U << alarm);
+  TIMER0->CLR.INTE       = (1U << alarm);
 }
 
 /**
