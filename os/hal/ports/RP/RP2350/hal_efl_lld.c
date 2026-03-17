@@ -114,7 +114,8 @@
 #define FLASHCMD_READ_STATUS                0x05U
 #define FLASHCMD_PAGE_PROGRAM               0x02U
 #define FLASHCMD_SECTOR_ERASE               0x20U
-#define FLASHCMD_BLOCK_ERASE                0xD8U
+#define FLASHCMD_BLOCK_ERASE_32K            0x52U
+#define FLASHCMD_BLOCK_ERASE_64K            0xD8U
 #define FLASHCMD_READ_UNIQUE_ID             0x4BU
 /** @} */
 
@@ -472,14 +473,15 @@ RAMFUNC static void rp_flash_program_page(EFlashDriver *eflp, uint32_t offset,
 }
 
 /**
- * @brief   Erase a sector of flash (internal command only).
+ * @brief   Send an erase command to flash.
  * @note    This function MUST be in RAM.
  *
  * @param[in] eflp      pointer to the EFlashDriver object
- * @param[in] offset    flash offset (must be sector-aligned)
+ * @param[in] cmd       JEDEC erase command byte
+ * @param[in] offset    flash offset (must be aligned to erase unit)
  */
-RAMFUNC static void rp_flash_erase_sector_cmd(EFlashDriver *eflp,
-                                              uint32_t offset) {
+RAMFUNC static void rp_flash_erase_cmd(EFlashDriver *eflp, uint8_t cmd,
+                                        uint32_t offset) {
   uint8_t addr[3];
 
   /* Send write enable. */
@@ -490,68 +492,33 @@ RAMFUNC static void rp_flash_erase_sector_cmd(EFlashDriver *eflp,
   addr[1] = (uint8_t)(offset >> 8);
   addr[2] = (uint8_t)offset;
 
-  /* Send sector erase command with address. */
-  rp_flash_do_cmd(eflp, FLASHCMD_SECTOR_ERASE, addr, NULL, 3U);
+  /* Send erase command with address. */
+  rp_flash_do_cmd(eflp, cmd, addr, NULL, 3U);
 }
 
 /**
- * @brief   Complete sector erase operation (runs entirely in RAM).
+ * @brief   Complete erase operation (runs entirely in RAM).
  * @note    This function MUST be in RAM. It handles the entire sequence
  *          from exit XIP to enter XIP so no flash code executes while
  *          XIP is disabled.
  *
  * @param[in] eflp      pointer to the EFlashDriver object
- * @param[in] offset    flash offset (must be sector-aligned)
+ * @param[in] cmd       JEDEC erase command byte
+ * @param[in] offset    flash offset (must be aligned to erase unit)
  */
-RAMFUNC static void rp_flash_erase_sector_full(EFlashDriver *eflp,
-                                               uint32_t offset) {
+RAMFUNC static void rp_flash_erase_full(EFlashDriver *eflp, uint8_t cmd,
+                                         uint32_t offset) {
 
   /* Exit XIP mode. */
   rp_flash_exit_xip(eflp);
 
   /* Send erase command. */
-  rp_flash_erase_sector_cmd(eflp, offset);
+  rp_flash_erase_cmd(eflp, cmd, offset);
 
   /* Wait for erase to complete. */
   rp_flash_wait_ready(eflp);
 
   /* Re-enter XIP mode. */
-  rp_flash_enter_xip(eflp);
-}
-
-/**
- * @brief   Erase a 64KB block of flash (internal command only).
- * @note    This function MUST be in RAM.
- *
- * @param[in] eflp      pointer to the EFlashDriver object
- * @param[in] offset    flash offset (must be 64KB-aligned)
- */
-RAMFUNC static void rp_flash_erase_block_cmd(EFlashDriver *eflp,
-                                              uint32_t offset) {
-  uint8_t addr[3];
-
-  rp_flash_write_enable(eflp);
-
-  addr[0] = (uint8_t)(offset >> 16);
-  addr[1] = (uint8_t)(offset >> 8);
-  addr[2] = (uint8_t)offset;
-
-  rp_flash_do_cmd(eflp, FLASHCMD_BLOCK_ERASE, addr, NULL, 3U);
-}
-
-/**
- * @brief   Complete 64KB block erase operation (runs entirely in RAM).
- * @note    This function MUST be in RAM.
- *
- * @param[in] eflp      pointer to the EFlashDriver object
- * @param[in] offset    flash offset (must be 64KB-aligned)
- */
-RAMFUNC static void rp_flash_erase_block_full(EFlashDriver *eflp,
-                                               uint32_t offset) {
-
-  rp_flash_exit_xip(eflp);
-  rp_flash_erase_block_cmd(eflp, offset);
-  rp_flash_wait_ready(eflp);
   rp_flash_enter_xip(eflp);
 }
 
@@ -824,7 +791,7 @@ flash_error_t efl_lld_start_erase_sector(void *instance,
   sts = osalSysGetStatusAndLockX();
 
   /* Perform the entire erase sequence in RAM. */
-  rp_flash_erase_sector_full(devp, offset);
+  rp_flash_erase_full(devp, FLASHCMD_SECTOR_ERASE, offset);
 
   /* Restore system state. */
   osalSysRestoreStatusX(sts);
@@ -836,23 +803,28 @@ flash_error_t efl_lld_start_erase_sector(void *instance,
 }
 
 /**
- * @brief   Starts a 64KB block erase operation.
+ * @brief   Starts a block erase operation.
  *
- * @param[in] instance  pointer to a @p EFlashDriver instance
- * @param[in] block     block number to be erased
- * @return              An error code.
+ * @param[in] instance    pointer to a @p EFlashDriver instance
+ * @param[in] cmd         JEDEC erase command byte
+ * @param[in] erase_size  erase unit size in bytes
+ * @param[in] block       block number to be erased
+ * @return                An error code.
  * @retval FLASH_NO_ERROR           if the block erase completed.
  * @retval FLASH_BUSY_ERASING       if there is an erase operation in progress.
  *
  * @notapi
  */
-flash_error_t efl_lld_start_erase_block(void *instance, uint32_t block) {
+flash_error_t efl_lld_start_erase_block(void *instance,
+                                        uint8_t cmd,
+                                        uint32_t erase_size,
+                                        uint32_t block) {
   EFlashDriver *devp = (EFlashDriver *)instance;
   flash_offset_t offset;
   syssts_t sts;
 
   osalDbgCheck(instance != NULL);
-  osalDbgCheck(block < RP_FLASH_BLOCKS_COUNT);
+  osalDbgCheck(block < (RP_FLASH_SIZE / erase_size));
   osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
                 "invalid state");
 
@@ -861,10 +833,11 @@ flash_error_t efl_lld_start_erase_block(void *instance, uint32_t block) {
   }
 
   devp->state = FLASH_ERASE;
-  offset = block * RP_FLASH_BLOCK_SIZE;
+
+  offset = block * erase_size;
 
   sts = osalSysGetStatusAndLockX();
-  rp_flash_erase_block_full(devp, offset);
+  rp_flash_erase_full(devp, cmd, offset);
   osalSysRestoreStatusX(sts);
 
   devp->state = FLASH_READY;
