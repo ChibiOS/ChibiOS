@@ -145,6 +145,7 @@
 #define FLASHCMD_READ_STATUS                0x05U
 #define FLASHCMD_PAGE_PROGRAM               0x02U
 #define FLASHCMD_SECTOR_ERASE               0x20U
+#define FLASHCMD_BLOCK_ERASE                0xD8U
 #define FLASHCMD_READ_UNIQUE_ID             0x4BU
 /** @} */
 
@@ -544,6 +545,42 @@ RAMFUNC static void rp_flash_erase_sector_full(EFlashDriver *eflp,
 }
 
 /**
+ * @brief   Erase a 64KB block of flash (internal command only).
+ * @note    This function MUST be in RAM.
+ *
+ * @param[in] eflp      pointer to the EFlashDriver object
+ * @param[in] offset    flash offset (must be 64KB-aligned)
+ */
+RAMFUNC static void rp_flash_erase_block_cmd(EFlashDriver *eflp,
+                                              uint32_t offset) {
+  uint8_t addr[3];
+
+  rp_flash_write_enable(eflp);
+
+  addr[0] = (uint8_t)(offset >> 16);
+  addr[1] = (uint8_t)(offset >> 8);
+  addr[2] = (uint8_t)offset;
+
+  rp_flash_do_cmd(eflp, FLASHCMD_BLOCK_ERASE, addr, NULL, 3U);
+}
+
+/**
+ * @brief   Complete 64KB block erase operation (runs entirely in RAM).
+ * @note    This function MUST be in RAM.
+ *
+ * @param[in] eflp      pointer to the EFlashDriver object
+ * @param[in] offset    flash offset (must be 64KB-aligned)
+ */
+RAMFUNC static void rp_flash_erase_block_full(EFlashDriver *eflp,
+                                               uint32_t offset) {
+
+  rp_flash_exit_xip(eflp);
+  rp_flash_erase_block_cmd(eflp, offset);
+  rp_flash_wait_ready(eflp);
+  rp_flash_enter_xip(eflp);
+}
+
+/**
  * @brief   Single-page program operation that runs entirely in RAM.
  * @note    This function MUST be in RAM. It handles the entire sequence
  *          from exit XIP to enter XIP so no flash code executes while
@@ -818,6 +855,43 @@ flash_error_t efl_lld_start_erase_sector(void *instance,
   osalSysRestoreStatusX(sts);
 
   /* Back to ready state. */
+  devp->state = FLASH_READY;
+
+  return FLASH_NO_ERROR;
+}
+
+/**
+ * @brief   Starts a 64KB block erase operation.
+ *
+ * @param[in] instance  pointer to a @p EFlashDriver instance
+ * @param[in] block     block number to be erased
+ * @return              An error code.
+ * @retval FLASH_NO_ERROR           if the block erase completed.
+ * @retval FLASH_BUSY_ERASING       if there is an erase operation in progress.
+ *
+ * @notapi
+ */
+flash_error_t efl_lld_start_erase_block(void *instance, uint32_t block) {
+  EFlashDriver *devp = (EFlashDriver *)instance;
+  flash_offset_t offset;
+  syssts_t sts;
+
+  osalDbgCheck(instance != NULL);
+  osalDbgCheck(block < RP_FLASH_BLOCKS_COUNT);
+  osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
+                "invalid state");
+
+  if (devp->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  devp->state = FLASH_ERASE;
+  offset = block * RP_FLASH_BLOCK_SIZE;
+
+  sts = osalSysGetStatusAndLockX();
+  rp_flash_erase_block_full(devp, offset);
+  osalSysRestoreStatusX(sts);
+
   devp->state = FLASH_READY;
 
   return FLASH_NO_ERROR;

@@ -42,6 +42,11 @@
 #define RP_FLASH_SECTOR_SIZE                4096U
 
 /**
+ * @brief   Flash block size (64KB erase unit).
+ */
+#define RP_FLASH_BLOCK_SIZE                 65536U
+
+/**
  * @brief   XIP base address.
  */
 #define RP_FLASH_BASE                       0x10000000U
@@ -106,6 +111,11 @@
  */
 #define RP_FLASH_SECTORS_COUNT              (RP_FLASH_SIZE / RP_FLASH_SECTOR_SIZE)
 
+/**
+ * @brief   Number of 64KB blocks in flash.
+ */
+#define RP_FLASH_BLOCKS_COUNT               (RP_FLASH_SIZE / RP_FLASH_BLOCK_SIZE)
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -150,6 +160,7 @@ extern "C" {
   flash_error_t efl_lld_start_erase_all(void *instance);
   flash_error_t efl_lld_start_erase_sector(void *instance,
                                            flash_sector_t sector);
+  flash_error_t efl_lld_start_erase_block(void *instance, uint32_t block);
   flash_error_t efl_lld_query_erase(void *instance, uint32_t *wait_time);
   flash_error_t efl_lld_verify_erase(void *instance, flash_sector_t sector);
   void efl_lld_read_unique_id(EFlashDriver *eflp, uint8_t *uid);
