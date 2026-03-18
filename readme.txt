@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 21.11.5 ***
+- FIX: Fixed priority inheritance through prioritized message queues
+       (bug #1301).
 - FIX: Fixed  chMsgSend missing rdymsg assignment causes spurious NULL return
        from chMsgWaitTimeoutS (bug #1300).
 - FIX: Fixed problem with queues counter in NIL (bug #1299).

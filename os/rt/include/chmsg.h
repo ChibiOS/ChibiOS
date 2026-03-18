@@ -190,7 +190,7 @@ static inline msg_t chMsgGet(thread_t *tp) {
 
   chDbgAssert(tp->state == CH_STATE_SNDMSG, "invalid state");
 
-  return tp->u.sentmsg;
+  return tp->sentmsg;
 }
 
 /**

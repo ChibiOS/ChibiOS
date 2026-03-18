@@ -176,9 +176,7 @@ void chMtxLockS(mutex_t *mp) {
           continue;
 #if (CH_CFG_USE_CONDVARS == TRUE) ||                                        \
     ((CH_CFG_USE_SEMAPHORES == TRUE) &&                                     \
-     (CH_CFG_USE_SEMAPHORES_PRIORITY == TRUE)) ||                           \
-    ((CH_CFG_USE_MESSAGES == TRUE) &&                                       \
-     (CH_CFG_USE_MESSAGES_PRIORITY == TRUE))
+     (CH_CFG_USE_SEMAPHORES_PRIORITY == TRUE))
 #if CH_CFG_USE_CONDVARS == TRUE
         case CH_STATE_WTCOND:
 #endif
@@ -186,11 +184,16 @@ void chMtxLockS(mutex_t *mp) {
     (CH_CFG_USE_SEMAPHORES_PRIORITY == TRUE)
         case CH_STATE_WTSEM:
 #endif
-#if (CH_CFG_USE_MESSAGES == TRUE) && (CH_CFG_USE_MESSAGES_PRIORITY == TRUE)
-        case CH_STATE_SNDMSGQ:
-#endif
           /* Re-enqueues tp with its new priority on the queue.*/
           ch_sch_prio_insert(&tp->u.wtmtxp->queue,
+                             ch_queue_dequeue(&tp->hdr.queue));
+          break;
+#endif
+#if (CH_CFG_USE_MESSAGES == TRUE) &&                                        \
+    (CH_CFG_USE_MESSAGES_PRIORITY == TRUE)
+        case CH_STATE_SNDMSGQ:
+          /* Re-enqueues tp using the receiver message queue back-pointer. */
+          ch_sch_prio_insert((ch_queue_t *)tp->u.wtobjp,
                              ch_queue_dequeue(&tp->hdr.queue));
           break;
 #endif
