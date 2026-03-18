@@ -216,6 +216,12 @@ void sbVRQTriggerS(sb_class_t *sbp, sb_vrqnum_t nvrq) {
   chDbgCheck(nvrq < vrq_num);
   chDbgAssert(sbp->thread.owner == currcore, "different core");
 
+  /* Late producers can still target a sandbox object during teardown or
+     restart windows, those VRQs must be ignored once the thread is dead.*/
+  if (chThdTerminatedX(&sbp->thread)) {
+    return;
+  }
+
   /* Adding VRQ mask to the pending mask.*/
   sbp->vrq.wtmask |= (sb_vrqmask_t)(1U << nvrq);
 
@@ -274,6 +280,12 @@ void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq) {
 
   chDbgCheck(nvrq < vrq_num);
   chDbgAssert(sbp->thread.owner == currcore, "different core");
+
+  /* Late producers can still target a sandbox object during teardown or
+     restart windows, those VRQs must be ignored once the thread is dead.*/
+  if (chThdTerminatedX(&sbp->thread)) {
+    return;
+  }
 
   /* Adding VRQ mask to the pending mask.*/
   sbp->vrq.wtmask |= (sb_vrqmask_t)(1U << nvrq);
