@@ -73,6 +73,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 21.11.5 ***
+- FIX: Fixed problem with queues counter in NIL (bug #1299).
+
 *** 21.11.4 ***
 - FIX: Fixed problem with CH_PORT_SUPPORTS_RECURSIVE_LOCKS in NIL (bug #1298).
 
