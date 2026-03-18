@@ -42,9 +42,9 @@
 /*===========================================================================*/
 
 /**
- * @brief   Dispatcher return code in case of a @p JOB_NUL has been received.
+ * @brief   Dispatcher return code in case of a @p JOB_NULL has been received.
  */
-#define MSG_JOB_NULL    ((msg_t)-2)
+#define MSG_JOB_NULL    ((msg_t)-3)
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -140,7 +140,7 @@ static inline void chJobObjectInit(jobs_queue_t *jqp,
                                    job_descriptor_t *jobsbuf,
                                    msg_t *msgbuf) {
 
-  chDbgCheck((jobsn > 0U) && (jobsbuf != NULL) && (msgbuf != NULL));
+  chDbgCheck((jqp != NULL) && (jobsn > 0U) && (jobsbuf != NULL) && (msgbuf != NULL));
 
   chGuardedPoolObjectInit(&jqp->free, sizeof (job_descriptor_t));
   chGuardedPoolLoadArray(&jqp->free, (void *)jobsbuf, jobsn);
@@ -228,6 +228,8 @@ static inline job_descriptor_t *chJobGetTimeout(jobs_queue_t *jqp,
 static inline void chJobPostI(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
 
+  chDbgCheck(jp != NULL);
+
   msg = chMBPostI(&jqp->mbx, (msg_t)jp);
   chDbgAssert(msg == MSG_OK, "post failed");
 }
@@ -243,6 +245,8 @@ static inline void chJobPostI(jobs_queue_t *jqp, job_descriptor_t *jp) {
  */
 static inline void chJobPostS(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
+
+  chDbgCheck(jp != NULL);
 
   msg = chMBPostTimeoutS(&jqp->mbx, (msg_t)jp, TIME_IMMEDIATE);
   chDbgAssert(msg == MSG_OK, "post failed");
@@ -260,6 +264,8 @@ static inline void chJobPostS(jobs_queue_t *jqp, job_descriptor_t *jp) {
 static inline void chJobPost(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
 
+  chDbgCheck(jp != NULL);
+
   msg = chMBPostTimeout(&jqp->mbx, (msg_t)jp, TIME_IMMEDIATE);
   chDbgAssert(msg == MSG_OK, "post failed");
 }
@@ -275,6 +281,8 @@ static inline void chJobPost(jobs_queue_t *jqp, job_descriptor_t *jp) {
  */
 static inline void chJobPostAheadI(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
+
+  chDbgCheck(jp != NULL);
 
   msg = chMBPostAheadI(&jqp->mbx, (msg_t)jp);
   chDbgAssert(msg == MSG_OK, "post failed");
@@ -292,6 +300,8 @@ static inline void chJobPostAheadI(jobs_queue_t *jqp, job_descriptor_t *jp) {
 static inline void chJobPostAheadS(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
 
+  chDbgCheck(jp != NULL);
+
   msg = chMBPostAheadTimeoutS(&jqp->mbx, (msg_t)jp, TIME_IMMEDIATE);
   chDbgAssert(msg == MSG_OK, "post failed");
 }
@@ -307,6 +317,8 @@ static inline void chJobPostAheadS(jobs_queue_t *jqp, job_descriptor_t *jp) {
  */
 static inline void chJobPostAhead(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
+
+  chDbgCheck(jp != NULL);
 
   msg = chMBPostAheadTimeout(&jqp->mbx, (msg_t)jp, TIME_IMMEDIATE);
   chDbgAssert(msg == MSG_OK, "post failed");
