@@ -189,6 +189,10 @@ include $(RULESPATH)/rules.mk
 # Custom rules
 #
 
+.DEFAULT_GOAL := makelib
+
+makelib: lib header
+
 header:
 	@echo Merging headers
 	@$(CC) -I./dummy $(IINCDIR) -D$(DEVICE) $(DEFS) -nostdinc -include cmparams.h -include _delimiter.h -fdirectives-only -dD -E -P ../../../os/rt/include/ch.h -o tmpch1.h
