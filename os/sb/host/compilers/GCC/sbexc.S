@@ -120,12 +120,12 @@ UsageFault_Handler:
 #if PORT_SAVE_PSPLIM
                 msr         PSPLIM, r1
 #endif
-#if CORTEX_USE_FPU /* TODO */
+#if CORTEX_USE_FPU
                 sub.w       r0, r0, #104
 #else
                 sub.w       r0, r0, #32
-                msr         PSP, r0
 #endif
+                msr         PSP, r0
 
                 /* Forcing return on exit syscall code with PSR
                    value as exit message.*/
