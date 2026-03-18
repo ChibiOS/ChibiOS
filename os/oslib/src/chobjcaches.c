@@ -42,7 +42,7 @@
  *          - <b>Release Object</b>: Releases an object to the cache handling
  *            the media update, if required.
  *          .
- * @pre     In order to use the pipes APIs the @p CH_CFG_USE_OBJ_CACHES
+ * @pre     In order to use the objects caches APIs the @p CH_CFG_USE_OBJ_CACHES
  *          option must be enabled in @p chconf.h.
  * @note    Compatible with RT and NIL.
  *
@@ -255,6 +255,7 @@ void chCacheObjectInit(objects_cache_t *ocp,
   ocp->hashn            = hashn;
   ocp->hashp            = hashp;
   ocp->objn             = objn;
+  ocp->objsz            = objsz;
   ocp->objvp            = objvp;
   ocp->readf            = readf;
   ocp->writef           = writef;
