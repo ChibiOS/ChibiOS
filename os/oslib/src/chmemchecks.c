@@ -104,9 +104,9 @@ size_t chMemIsStringWithinX(const memory_area_t *map,
                             const char *s,
                             size_t max) {
   const char *base = (const char *)map->base;
-  const char *end  = (const char *)base + map->size - (size_t)1;
 
-  if (s >= base) {
+  if ((map->size > (size_t)0) && (s >= base)) {
+    const char *end = (const char *)base + map->size - (size_t)1;
     size_t n;
 
     n = (size_t)0;
@@ -130,7 +130,8 @@ size_t chMemIsStringWithinX(const memory_area_t *map,
  * @param[in] pp        zero-terminated pointers array to be checked
  * @param[in] max       maximum expected size of the pointers array inclusive
  *                      of the final zero
- * @return              The pointers array size inclusive of the final zero.
+ * @return              The pointers array size in bytes inclusive of the
+ *                      final @p NULL pointer.
  * @retval 0            if the pointers array check failed.
  *
  * @xclass
@@ -139,9 +140,9 @@ size_t chMemIsPointersArrayWithinX(const memory_area_t *map,
                                    const void *pp[],
                                    size_t max) {
   const void **base = (const void **)(void *)map->base;
-  const void **end  = (const void **)(void *)(map->base + map->size - sizeof (void *));
 
-  if (pp >= base) {
+  if ((map->size >= sizeof (void *)) && (pp >= base)) {
+    const void **end = (const void **)(void *)(map->base + map->size - sizeof (void *));
     size_t n;
 
     n = (size_t)0;

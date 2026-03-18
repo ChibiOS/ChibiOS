@@ -109,22 +109,37 @@ void __core_init(void) {
  * @iclass
  */
 void *chCoreAllocFromBaseI(size_t size, unsigned align, size_t offset) {
-  uint8_t *p, *next;
+  uintptr_t base, top, p, next;
 
   chDbgCheckClassI();
   chDbgCheck(MEM_IS_VALID_ALIGNMENT(align));
 
-  p = (uint8_t *)MEM_ALIGN_NEXT(ch_memcore.basemem + offset, align);
-  next = p + size;
+  /*lint -save -e9033 [10.8] Required cast operations.*/
+  base = (uintptr_t)ch_memcore.basemem;
+  top  = (uintptr_t)ch_memcore.topmem;
+  /*lint -restore*/
 
-  /* Considering also the case where there is numeric overflow.*/
-  if ((next > ch_memcore.topmem) || (next < ch_memcore.basemem)) {
+  /* Integer-space pre-check: offset alone must fit in available space to
+     avoid forming an out-of-range value before the alignment step.*/
+  if (offset > (top - base)) {
     return NULL;
   }
 
-  ch_memcore.basemem = next;
+  /* All remaining arithmetic stays in integer space; no pointer is formed
+     until the bounds are verified.*/
+  p    = MEM_ALIGN_NEXT(base + offset, align);
+  next = p + size;
 
-  return p;
+  /* Considering also the case where there is numeric overflow.*/
+  if ((next > top) || (next < base)) {
+    return NULL;
+  }
+
+  /*lint -save -e9033 [10.8] Required cast operations.*/
+  ch_memcore.basemem = (uint8_t *)next;
+  /*lint -restore*/
+
+  return (void *)p;
 }
 
 /**
@@ -142,22 +157,37 @@ void *chCoreAllocFromBaseI(size_t size, unsigned align, size_t offset) {
  * @iclass
  */
 void *chCoreAllocFromTopI(size_t size, unsigned align, size_t offset) {
-  uint8_t *p, *prev;
+  uintptr_t base, top, p, prev;
 
   chDbgCheckClassI();
   chDbgCheck(MEM_IS_VALID_ALIGNMENT(align));
 
-  p = (uint8_t *)MEM_ALIGN_PREV(ch_memcore.topmem - size, align);
-  prev = p - offset;
+  /*lint -save -e9033 [10.8] Required cast operations.*/
+  base = (uintptr_t)ch_memcore.basemem;
+  top  = (uintptr_t)ch_memcore.topmem;
+  /*lint -restore*/
 
-  /* Considering also the case where there is numeric overflow.*/
-  if ((prev < ch_memcore.basemem) || (prev > ch_memcore.topmem)) {
+  /* Integer-space pre-check: size alone must fit in available space to
+     avoid forming an out-of-range value before the alignment step.*/
+  if (size > (top - base)) {
     return NULL;
   }
 
-  ch_memcore.topmem = prev;
+  /* All remaining arithmetic stays in integer space; no pointer is formed
+     until the bounds are verified.*/
+  p    = MEM_ALIGN_PREV(top - size, align);
+  prev = p - offset;
 
-  return p;
+  /* Considering also the case where there is numeric overflow.*/
+  if ((prev < base) || (prev > top)) {
+    return NULL;
+  }
+
+  /*lint -save -e9033 [10.8] Required cast operations.*/
+  ch_memcore.topmem = (uint8_t *)prev;
+  /*lint -restore*/
+
+  return (void *)p;
 }
 
 /**

@@ -149,7 +149,7 @@ void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
   else {
     adjsize = size - adjsize;
   }
-  /*lint restore*/
+  /*lint -restore*/
 
   /* Initializing the heap header.*/
   heapp->provider = NULL;
@@ -240,8 +240,15 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
     align = CH_HEAP_ALIGNMENT;
   }
 
-  /* Size is converted in number of elementary allocation units.*/
-  pages = MEM_ALIGN_NEXT(size, CH_HEAP_ALIGNMENT) / CH_HEAP_ALIGNMENT;
+  /* Size is converted in number of elementary allocation units, checking
+     for overflow in the alignment rounding.*/
+  {
+    size_t asize = MEM_ALIGN_NEXT(size, CH_HEAP_ALIGNMENT);
+    if (asize < size) {
+      return NULL;
+    }
+    pages = asize / CH_HEAP_ALIGNMENT;
+  }
 
   /* Taking heap mutex.*/
   H_LOCK(heapp);
@@ -394,8 +401,6 @@ void chHeapFree(void *p) {
 
   /* Releasing heap mutex.*/
   H_UNLOCK(heapp);
-
-  return;
 }
 
 /**
