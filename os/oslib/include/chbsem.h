@@ -80,9 +80,9 @@ typedef struct ch_binary_semaphore {
 /*===========================================================================*/
 
 /**
- * @brief   Data part of a static semaphore initializer.
- * @details This macro should be used when statically initializing a semaphore
- *          that is part of a bigger structure.
+ * @brief   Data part of a static binary semaphore initializer.
+ * @details This macro should be used when statically initializing a binary
+ *          semaphore that is part of a bigger structure.
  *
  * @param[in] name      the name of the semaphore variable
  * @param[in] taken     the semaphore initial state
@@ -91,9 +91,9 @@ typedef struct ch_binary_semaphore {
   {__SEMAPHORE_DATA(name.sem, ((taken) ? 0 : 1))}
 
 /**
- * @brief   Static semaphore initializer.
- * @details Statically initialized semaphores require no explicit
- *          initialization using @p chBSemInit().
+ * @brief   Static binary semaphore initializer.
+ * @details Statically initialized binary semaphores require no explicit
+ *          initialization using @p chBSemObjectInit().
  *
  * @param[in] name      the name of the semaphore variable
  * @param[in] taken     the semaphore initial state
