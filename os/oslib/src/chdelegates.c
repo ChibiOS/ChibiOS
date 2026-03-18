@@ -26,7 +26,7 @@
  *          encapsulating a library not designed for threading into a
  *          delegate thread. Other threads have access to the library without
  *          having to worry about mutual exclusion.
- * @pre     In order to use the pipes APIs the @p CH_CFG_USE_DELEGATES
+ * @pre     In order to use the delegates APIs the @p CH_CFG_USE_DELEGATES
  *          option must be enabled in @p chconf.h.
  * @note    Compatible with RT and NIL.
  *
