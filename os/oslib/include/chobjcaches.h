@@ -205,10 +205,6 @@ struct objects_cache {
    */
   oc_lru_element_t      list;
   /**
-   * @brief   Semaphore for cache access.
-   */
-  semaphore_t           cache_sem;
-  /**
    * @brief   Semaphore for LRU access.
    */
   semaphore_t           lru_sem;

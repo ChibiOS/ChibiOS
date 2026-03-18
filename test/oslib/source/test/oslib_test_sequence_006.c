@@ -107,6 +107,7 @@ static bool obj_write(objects_cache_t *ocp,
  *   initialization.
  * - [6.1.5] Checking cached objects.
  * - [6.1.6] Checking non-cached objects.
+ * - [6.1.7] Repeated cached hits followed by a miss.
  * .
  */
 
@@ -234,6 +235,49 @@ static void oslib_test_006_001_execute(void) {
     test_assert_sequence("", "unexpected tokens");
   }
   test_end_step(6);
+
+  /* [6.1.7] Repeated cached hits followed by a miss.*/
+  test_set_step(7);
+  {
+    bool error;
+    uint32_t i;
+
+    {
+      oc_object_t *objp = chCacheGetObject(&cache1, NULL, NUM_OBJECTS);
+
+      test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) != 0U, "in sync");
+
+      error = chCacheReadObject(&cache1, objp, false);
+
+      test_assert(error == false, "returned error");
+      test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) == 0U, "not in sync");
+
+      chCacheReleaseObject(&cache1, objp);
+    }
+
+    test_assert_sequence("e", "unexpected tokens");
+
+    for (i = 0; i < 16U; i++) {
+      oc_object_t *objp = chCacheGetObject(&cache1, NULL, NUM_OBJECTS);
+
+      test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
+      test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) == 0U, "not in sync");
+
+      chCacheReleaseObject(&cache1, objp);
+    }
+
+    {
+      oc_object_t *objp = chCacheGetObject(&cache1, NULL, 0U);
+
+      test_assert((objp->obj_flags & OC_FLAG_INHASH) != 0U, "not in hash");
+      test_assert((objp->obj_flags & OC_FLAG_NOTSYNC) != 0U, "in sync");
+
+      chCacheReleaseObject(&cache1, objp);
+    }
+
+    test_assert_sequence("", "unexpected tokens");
+  }
+  test_end_step(7);
 }
 
 static const testcase_t oslib_test_006_001 = {
