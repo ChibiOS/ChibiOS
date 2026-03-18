@@ -87,7 +87,8 @@ msg_t chMsgSend(thread_t *tp, msg_t msg) {
   chDbgCheck(tp != NULL);
 
   chSysLock();
-  currtp->u.sentmsg = msg;
+  currtp->sentmsg = msg;
+  currtp->u.wtobjp = (void *)&tp->msgqueue;
   __ch_msg_insert(&tp->msgqueue, currtp);
   if (tp->state == CH_STATE_WTMSG) {
     tp->u.rdymsg = MSG_OK;
