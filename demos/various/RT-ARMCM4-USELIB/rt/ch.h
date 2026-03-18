@@ -25,11 +25,11 @@
 
 #define CH_H 
 #define __CHIBIOS_RT__ 
-#define CH_KERNEL_STABLE 0
-#define CH_KERNEL_VERSION "7.0.0"
+#define CH_KERNEL_STABLE 1
+#define CH_KERNEL_VERSION "7.0.6"
 #define CH_KERNEL_MAJOR 7
 #define CH_KERNEL_MINOR 0
-#define CH_KERNEL_PATCH 0
+#define CH_KERNEL_PATCH 6
 #define FALSE 0
 #define TRUE 1
 #define CHLICENSE_H 
@@ -48,12 +48,12 @@
 #define CH_LICENSE_PARTNER 7
 #define CHVERSION_H 
 #define __CHIBIOS__ 
-#define CH_VERSION_STABLE 0
-#define CH_VERSION "2012.1.0"
-#define CH_VERSION_YEAR 12
-#define CH_VERSION_MONTH 1
-#define CH_VERSION_PATCH 0
-#define CH_VERSION_NICKNAME "Lasagna"
+#define CH_VERSION_STABLE 1
+#define CH_VERSION "2021.11.5"
+#define CH_VERSION_YEAR 21
+#define CH_VERSION_MONTH 11
+#define CH_VERSION_PATCH 5
+#define CH_VERSION_NICKNAME "Agropoli"
 #define CH_VERSION_DATE (((CH_VERSION_YEAR + 2000) * 100) + CH_VERSION_MONTH)
 #define CHCUSTOMER_H 
 #define CH_CUSTOMER_ID_STRING "Santa, North Pole"
@@ -170,6 +170,8 @@
 #define CC_FORCE_INLINE __attribute__((always_inline))
 #define CC_NO_RETURN __attribute__((noreturn))
 #define CC_ROMCONST const
+#define CC_LIKELY(x) __builtin_expect(!!(x), 1)
+#define CC_UNLIKELY(x) __builtin_expect(!!(x), 0)
 #define PORT_ARCH_SIZEOF_DATA_PTR 4
 #define PORT_ARCH_SIZEOF_CODE_PTR 4
 #define PORT_ARCH_REGISTERS_WIDTH 32
@@ -182,7 +184,10 @@ typedef uint64_t port_stkalign_t;
 #define ROMCONST CC_ROMCONST
 #define NOINLINE CC_NO_INLINE
 #define ALIGNED_VAR(n) CC_ALIGN_DATA(n)
+#define PACKED_VAR CC_PACK
 #define SIZEOF_PTR PORT_ARCH_SIZEOF_DATA_PTR
+#define PORT_LIKELY(x) CC_LIKELY(x)
+#define PORT_UNLIKELY(x) CC_UNLIKELY(x)
 typedef port_rtcnt_t rtcnt_t;
 typedef port_rttime_t rttime_t;
 typedef port_syssts_t syssts_t;
@@ -203,6 +208,10 @@ typedef struct ch_thread thread_t;
 typedef struct ch_os_instance os_instance_t;
 #define __CH_STRINGIFY(a) #a
 #define __CH_OFFSETOF(st,m) ((size_t)((char *)&((st *)0)->m - (char *)0))
+#define __CH_USED(x) (void)(x)
+#define likely(x) PORT_LIKELY(x)
+#define unlikely(x) PORT_UNLIKELY(x)
+#define threadref(p) ((thread_t *)(void *)(p))
   void chSysHalt(const char *reason);
 #define CHRFCU_H 
 #define CH_RFCU_VT_INSUFFICIENT_DELTA 1U
@@ -233,8 +242,8 @@ typedef struct ch_system_debug {
 #define __dbg_check_leave_isr() 
 #define chDbgCheckClassI() 
 #define chDbgCheckClassS() 
-#define chDbgCheck(c) do { if (CH_DBG_ENABLE_CHECKS != FALSE) { if (!(c)) { chSysHalt(__func__); } } } while (false)
-#define chDbgAssert(c,r) do { if (CH_DBG_ENABLE_ASSERTS != FALSE) { if (!(c)) { chSysHalt(__func__); } } } while (false)
+#define chDbgCheck(c) do { if (CH_DBG_ENABLE_CHECKS != FALSE) { if (unlikely(!(c))) { chSysHalt(__func__); } } } while (false)
+#define chDbgAssert(c,r) do { if (CH_DBG_ENABLE_ASSERTS != FALSE) { if (unlikely(!(c))) { chSysHalt(__func__); } } } while (false)
 static inline void __dbg_object_init(system_debug_t *sdp) {
   sdp->panic_msg = NULL;
 }
@@ -255,7 +264,7 @@ typedef uint64_t time_conv_t;
 #define TIME_US2I(usecs) ((sysinterval_t)((((time_conv_t)(usecs) * (time_conv_t)CH_CFG_ST_FREQUENCY) + (time_conv_t)999999) / (time_conv_t)1000000))
 #define TIME_I2S(interval) (time_secs_t)(((time_conv_t)(interval) + (time_conv_t)CH_CFG_ST_FREQUENCY - (time_conv_t)1) / (time_conv_t)CH_CFG_ST_FREQUENCY)
 #define TIME_I2MS(interval) (time_msecs_t)((((time_conv_t)(interval) * (time_conv_t)1000) + (time_conv_t)CH_CFG_ST_FREQUENCY - (time_conv_t)1) / (time_conv_t)CH_CFG_ST_FREQUENCY)
-#define TIME_I2US(interval) (time_msecs_t)((((time_conv_t)(interval) * (time_conv_t)1000000) + (time_conv_t)CH_CFG_ST_FREQUENCY - (time_conv_t)1) / (time_conv_t)CH_CFG_ST_FREQUENCY)
+#define TIME_I2US(interval) (time_usecs_t)((((time_conv_t)(interval) * (time_conv_t)1000000) + (time_conv_t)CH_CFG_ST_FREQUENCY - (time_conv_t)1) / (time_conv_t)CH_CFG_ST_FREQUENCY)
 static inline sysinterval_t chTimeS2I(time_secs_t secs) {
   time_conv_t ticks;
   ticks = (time_conv_t)secs * (time_conv_t)CH_CFG_ST_FREQUENCY;
@@ -427,7 +436,7 @@ static inline ch_priority_queue_t *ch_pqueue_insert_behind(ch_priority_queue_t *
                                                            ch_priority_queue_t *p) {
   do {
     pqp = pqp->next;
-  } while (pqp->prio >= p->prio);
+  } while (unlikely(pqp->prio >= p->prio));
   p->next = pqp;
   p->prev = pqp->prev;
   p->prev->next = p;
@@ -438,7 +447,7 @@ static inline ch_priority_queue_t *ch_pqueue_insert_ahead(ch_priority_queue_t *p
                                                           ch_priority_queue_t *p) {
   do {
     pqp = pqp->next;
-  } while (pqp->prio > p->prio);
+  } while (unlikely(pqp->prio > p->prio));
   p->next = pqp;
   p->prev = pqp->prev;
   p->prev->next = p;
@@ -487,7 +496,7 @@ static inline void ch_dlist_insert(ch_delta_list_t *dlhp,
                                    sysinterval_t delta) {
   ch_delta_list_t *dlp;
   dlp = dlhp->next;
-  while (dlp->delta < delta) {
+  while (likely(dlp->delta < delta)) {
     chDbgAssert(dlp != dlep, "element already in list");
     delta -= dlp->delta;
     dlp = dlp->next;
@@ -631,20 +640,20 @@ static inline ch_delta_list_t *ch_dlist_dequeue(ch_delta_list_t *dlp) {
 #define PORT_COMPILER_NAME "GCC " __VERSION__
 #define CORTEX_BASEPRI_DISABLED 0U
 #define CORTEX_PRIORITY_LEVELS (1U << CORTEX_PRIORITY_BITS)
-#define CORTEX_MINIMUM_PRIORITY (CORTEX_PRIORITY_LEVELS - 1)
+#define CORTEX_MINIMUM_PRIORITY (CORTEX_PRIORITY_LEVELS - 1U)
 #define CORTEX_MAXIMUM_PRIORITY 0U
+#define CORTEX_PRIORITY_SVCALL (CORTEX_MAXIMUM_PRIORITY + CORTEX_FAST_PRIORITIES)
 #define CORTEX_PRIORITY_PENDSV CORTEX_MAX_KERNEL_PRIORITY
-#define CORTEX_PRIO_MASK(n) ((n) << (8U - (unsigned)CORTEX_PRIORITY_BITS))
+#define CORTEX_PRIO_MASK(n) ((n) << (8 - CORTEX_PRIORITY_BITS))
 #define PORT_USE_SYSCALL FALSE
 #define PORT_SWITCHED_REGIONS_NUMBER 0
 #define PORT_ENABLE_GUARD_PAGES FALSE
 #define PORT_USE_GUARD_MPU_REGION MPU_REGION_7
-#define PORT_IDLE_THREAD_STACK_SIZE 16
+#define PORT_IDLE_THREAD_STACK_SIZE 64
 #define PORT_INT_REQUIRED_STACK 64
-#define PORT_USE_ALT_TIMER FALSE
 #define CORTEX_ENABLE_WFI_IDLE FALSE
+#define CORTEX_FAST_PRIORITIES 2U
 #define CORTEX_SIMPLIFIED_PRIORITY FALSE
-#define CORTEX_PRIORITY_SVCALL (CORTEX_MAXIMUM_PRIORITY + 1U)
 #define CORTEX_PRIGROUP_INIT (7 - CORTEX_PRIORITY_BITS)
 #define PORT_SUPPORTS_RT TRUE
 #define PORT_NATURAL_ALIGN sizeof (void *)
@@ -656,6 +665,7 @@ static inline ch_delta_list_t *ch_dlist_dequeue(ch_delta_list_t *dlp) {
             #define PORT_CORE_VARIANT_NAME "Cortex-M4"
   #define PORT_INFO "Advanced kernel mode"
   #define CORTEX_MAX_KERNEL_PRIORITY (CORTEX_PRIORITY_SVCALL + 1U)
+  #define CORTEX_MIN_KERNEL_PRIORITY (CORTEX_PRIORITY_LEVELS - 1U)
   #define CORTEX_BASEPRI_KERNEL CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
   #define PORT_GUARD_PAGE_SIZE 0U
 struct port_extctx {
@@ -683,11 +693,11 @@ struct port_context {
   struct port_intctx *sp;
 };
 #define PORT_IRQ_IS_VALID_PRIORITY(n) (((n) >= 0U) && ((n) < CORTEX_PRIORITY_LEVELS))
-#define PORT_IRQ_IS_VALID_KERNEL_PRIORITY(n) (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) < CORTEX_PRIORITY_LEVELS))
+#define PORT_IRQ_IS_VALID_KERNEL_PRIORITY(n) (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) <= CORTEX_MIN_KERNEL_PRIORITY))
 #define PORT_THD_FUNCTION(tname,arg) void tname(void *arg)
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp,wtop)
   #define __PORT_SETUP_CONTEXT_MPU(tp)
-#define PORT_SETUP_CONTEXT(tp,wbase,wtop,pf,arg) do { (tp)->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) - sizeof (struct port_intctx)); (tp)->ctx.sp->r4 = (uint32_t)(pf); (tp)->ctx.sp->r5 = (uint32_t)(arg); (tp)->ctx.sp->lr = (uint32_t)__port_thread_start; __PORT_SETUP_CONTEXT_MPU(tp); __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop); } while (0)
+#define PORT_SETUP_CONTEXT(tp,wbase,wtop,pf,arg) do { (tp)->ctx.sp = (struct port_intctx *)(void *) ((uint8_t *)(wtop) - sizeof (struct port_intctx)); (tp)->ctx.sp->r4 = (uint32_t)(pf); (tp)->ctx.sp->r5 = (uint32_t)(arg); (tp)->ctx.sp->lr = (uint32_t)__port_thread_start; __PORT_SETUP_CONTEXT_MPU(tp); __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop); } while (false)
 #define PORT_WA_CTX_SIZE (sizeof (struct port_intctx) + sizeof (struct port_extctx) + sizeof (struct port_extctx))
 #define PORT_WA_SIZE(n) ((size_t)PORT_GUARD_PAGE_SIZE + (size_t)PORT_WA_CTX_SIZE + (size_t)(n) + (size_t)PORT_INT_REQUIRED_STACK)
   #define PORT_WORKING_AREA(s,n) stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
@@ -696,18 +706,20 @@ struct port_context {
   #define PORT_IRQ_HANDLER(id) void id(void)
   #define PORT_FAST_IRQ_HANDLER(id) void id(void)
   #define port_switch(ntp,otp) __port_switch(ntp, otp)
+#define port_get_lock_status() __port_get_irq_status()
+#define port_is_locked(sts) !__port_irq_enabled(sts)
   void port_init(os_instance_t *oip);
   void __port_irq_epilogue(void);
   void __port_switch(thread_t *ntp, thread_t *otp);
   void __port_thread_start(void);
   void __port_switch_from_isr(void);
   void __port_exit_from_isr(void);
-__STATIC_FORCEINLINE syssts_t port_get_irq_status(void) {
+__STATIC_FORCEINLINE syssts_t __port_get_irq_status(void) {
   syssts_t sts;
   sts = (syssts_t)__get_BASEPRI();
   return sts;
 }
-__STATIC_FORCEINLINE bool port_irq_enabled(syssts_t sts) {
+__STATIC_FORCEINLINE bool __port_irq_enabled(syssts_t sts) {
   return sts == (syssts_t)CORTEX_BASEPRI_DISABLED;
 }
 __STATIC_FORCEINLINE bool port_is_isr_context(void) {
@@ -742,6 +754,7 @@ __STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
   return DWT->CYCCNT;
 }
 #define PORT_CORES_NUMBER 1
+#define CH_PORT_SUPPORTS_RECURSIVE_LOCKS TRUE
 #define CHTM_H 
 #define TM_CALIBRATION_LOOP 4U
 typedef struct {
@@ -825,13 +838,13 @@ struct ch_thread {
     msg_t exitcode;
     void *wtobjp;
     thread_reference_t *wttrp;
-    msg_t sentmsg;
     struct ch_semaphore *wtsemp;
     struct ch_mutex *wtmtxp;
     eventmask_t ewmask;
   } u;
   ch_list_t waiting;
   ch_queue_t msgqueue;
+  msg_t sentmsg;
   eventmask_t epending;
   struct ch_mutex *mtxlist;
   tprio_t realprio;
@@ -871,7 +884,9 @@ typedef struct ch_system {
 #define CH_INTEGRITY_VTLIST 2U
 #define CH_INTEGRITY_REGISTRY 4U
 #define CH_INTEGRITY_PORT 8U
-            #define currcore (&ch0)
+#define CH_SYS_CORE0_MEMORY 
+#define CH_SYS_CORE1_MEMORY 
+      #define currcore (&ch0)
 #define CH_IRQ_IS_VALID_PRIORITY(prio) PORT_IRQ_IS_VALID_PRIORITY(prio)
 #define CH_IRQ_IS_VALID_KERNEL_PRIORITY(prio) PORT_IRQ_IS_VALID_KERNEL_PRIORITY(prio)
 #define CH_IRQ_PROLOGUE() PORT_IRQ_PROLOGUE(); CH_CFG_IRQ_PROLOGUE_HOOK(); __stats_increase_irq(); __trace_isr_enter(__func__); __dbg_check_enter_isr()
@@ -891,6 +906,7 @@ extern const os_instance_config_t ch_core0_cfg;
 extern os_instance_t ch0;
   void chSysWaitSystemState(system_state_t state);
   void chSysInit(void);
+  thread_t *chSysGetIdleThreadX(void);
   bool chSysIntegrityCheckI(unsigned testmask);
   void chSysTimerHandlerI(void);
   syssts_t chSysGetStatusAndLockX(void);
@@ -933,17 +949,14 @@ static inline void chSysUnlockFromISR(void) {
   port_unlock_from_isr();
 }
 static inline void chSysUnconditionalLock(void) {
-  if (port_irq_enabled(port_get_irq_status())) {
+  if (!port_is_locked(port_get_lock_status())) {
     chSysLock();
   }
 }
 static inline void chSysUnconditionalUnlock(void) {
-  if (!port_irq_enabled(port_get_irq_status())) {
+  if (port_is_locked(port_get_lock_status())) {
     chSysUnlock();
   }
-}
-static inline thread_t *chSysGetIdleThreadX(void) {
-  return (thread_t *)currcore->rlist.pqueue.prev;
 }
 #define CHINSTANCES_H 
 #define __instance_get_currthread(oip) (oip)->rlist.current
@@ -1052,7 +1065,6 @@ static inline systimestamp_t chVTGetTimeStamp(void) {
   return stamp;
 }
 static inline void chVTResetTimeStamp(void) {
-  chDbgCheckClassI();
   chSysLock();
   chVTResetTimeStampI();
   chSysUnlock();
@@ -1106,13 +1118,13 @@ static inline void __vt_object_init(virtual_timers_list_t *vtlp) {
   void chSchDoPreemption(void);
   void chSchPreemption(void);
   void chSchDoYieldS(void);
-  thread_t *chSchSelectFirstI(void);
+  thread_t *chSchSelectFirst(void);
 static inline void ch_sch_prio_insert(ch_queue_t *qp, ch_queue_t *tp) {
   ch_queue_t *cp = qp;
   do {
     cp = cp->next;
   } while ((cp != qp) &&
-           (((thread_t *)cp)->hdr.pqueue.prio >= ((thread_t *)tp)->hdr.pqueue.prio));
+           (threadref(cp)->hdr.pqueue.prio >= threadref(tp)->hdr.pqueue.prio));
   tp->next = cp;
   tp->prev = cp->prev;
   tp->prev->next = tp;
@@ -1203,7 +1215,7 @@ static inline bool chThdQueueIsEmptyI(threads_queue_t *tqp) {
 static inline void chThdDoDequeueNextI(threads_queue_t *tqp, msg_t msg) {
   thread_t *tp;
   chDbgAssert(ch_queue_notempty(&tqp->queue), "empty queue");
-  tp = (thread_t *)ch_queue_fifo_remove(&tqp->queue);
+  tp = threadref(ch_queue_fifo_remove(&tqp->queue));
   chDbgAssert(tp->state == CH_STATE_QUEUED, "invalid state");
   tp->u.rdymsg = msg;
   (void) chSchReadyI(tp);
@@ -1228,6 +1240,21 @@ typedef struct {
   uint8_t off_refs;
   uint8_t off_preempt;
   uint8_t off_time;
+  uint8_t off_reserved[4];
+  uint8_t intctxsize;
+  uint8_t intervalsize;
+  uint8_t instancesnum;
+  uint8_t off_sys_state;
+  uint8_t off_sys_instances;
+  uint8_t off_sys_reglist;
+  uint8_t off_sys_rfcu;
+  uint8_t off_sys_reserved[4];
+  uint8_t off_inst_rlist_current;
+  uint8_t off_inst_rlist;
+  uint8_t off_inst_vtlist;
+  uint8_t off_inst_reglist;
+  uint8_t off_inst_core_id;
+  uint8_t off_inst_rfcu;
 } chdebug_t;
 #define REG_HEADER(oip) (&(oip)->reglist.queue)
 #define REG_REMOVE(tp) (void) ch_queue_dequeue(&(tp)->rqueue)
@@ -1347,6 +1374,10 @@ typedef void (*evhandler_t)(eventid_t id);
 #define EVENT_MASK(eid) ((eventmask_t)1 << (eventmask_t)(eid))
 #define __EVENTSOURCE_DATA(name) {(event_listener_t *)(&name)}
 #define EVENTSOURCE_DECL(name) event_source_t name = __EVENTSOURCE_DATA(name)
+  void chEvtRegisterMaskWithFlagsI(event_source_t *esp,
+                                   event_listener_t *elp,
+                                   eventmask_t events,
+                                   eventflags_t wflags);
   void chEvtRegisterMaskWithFlags(event_source_t *esp,
                                   event_listener_t *elp,
                                   eventmask_t events,
@@ -1355,8 +1386,8 @@ typedef void (*evhandler_t)(eventid_t id);
   eventmask_t chEvtGetAndClearEventsI(eventmask_t events);
   eventmask_t chEvtGetAndClearEvents(eventmask_t events);
   eventmask_t chEvtAddEvents(eventmask_t events);
-  eventflags_t chEvtGetAndClearFlags(event_listener_t *elp);
   eventflags_t chEvtGetAndClearFlagsI(event_listener_t *elp);
+  eventflags_t chEvtGetAndClearFlags(event_listener_t *elp);
   void chEvtSignal(thread_t *tp, eventmask_t events);
   void chEvtSignalI(thread_t *tp, eventmask_t events);
   void chEvtBroadcastFlags(event_source_t *esp, eventflags_t flags);
@@ -1430,7 +1461,7 @@ static inline bool chMsgIsPendingI(thread_t *tp) {
 }
 static inline msg_t chMsgGet(thread_t *tp) {
   chDbgAssert(tp->state == CH_STATE_SNDMSG, "invalid state");
-  return tp->u.sentmsg;
+  return tp->sentmsg;
 }
 static inline void chMsgReleaseS(thread_t *tp, msg_t msg) {
   chDbgCheckClassS();
@@ -1438,11 +1469,11 @@ static inline void chMsgReleaseS(thread_t *tp, msg_t msg) {
 }
 #define CHLIB_H 
 #define __CHIBIOS_OSLIB__ 
-#define CH_OSLIB_STABLE 0
-#define CH_OSLIB_VERSION "1.3.0"
+#define CH_OSLIB_STABLE 1
+#define CH_OSLIB_VERSION "1.3.3"
 #define CH_OSLIB_MAJOR 1
 #define CH_OSLIB_MINOR 3
-#define CH_OSLIB_PATCH 0
+#define CH_OSLIB_PATCH 3
 #define CHBSEM_H 
 typedef struct ch_binary_semaphore {
   semaphore_t sem;
@@ -1647,11 +1678,12 @@ static inline cnt_t chGuardedPoolGetCounterI(guarded_memory_pool_t *gmp) {
 }
 static inline void *chGuardedPoolAllocI(guarded_memory_pool_t *gmp) {
   void *p;
-  p = chPoolAllocI(&gmp->pool);
-  if (p != NULL) {
+  if (chSemGetCounterI(&gmp->sem) > (cnt_t)0) {
     chSemFastWaitI(&gmp->sem);
-    chDbgAssert(chSemGetCounterI(&gmp->sem) >= (cnt_t)0,
-                "semaphore out of sync");
+    p = chPoolAllocI(&gmp->pool);
+  }
+  else {
+    p = NULL;
   }
   return p;
 }
@@ -1843,7 +1875,6 @@ struct ch_objects_cache {
   size_t objsz;
   void *objvp;
   oc_lru_header_t lru;
-  semaphore_t cache_sem;
   semaphore_t lru_sem;
   oc_readf_t readf;
   oc_writef_t writef;
@@ -1910,7 +1941,7 @@ static inline msg_t chDelegateCallDirect4(thread_t *tp, delegate_fn4_t func,
   return chDelegateCallVeneer(tp, __ch_delegate_fn4, func, p1, p2, p3, p4);
 }
 #define CHJOBS_H 
-#define MSG_JOB_NULL ((msg_t)-2)
+#define MSG_JOB_NULL ((msg_t)-3)
 typedef struct ch_jobs_queue {
   guarded_memory_pool_t free;
   mailbox_t mbx;
@@ -1924,7 +1955,7 @@ static inline void chJobObjectInit(jobs_queue_t *jqp,
                                    size_t jobsn,
                                    job_descriptor_t *jobsbuf,
                                    msg_t *msgbuf) {
-  chDbgCheck((jobsn > 0U) && (jobsbuf != NULL) && (msgbuf != NULL));
+  chDbgCheck((jqp != NULL) && (jobsn > 0U) && (jobsbuf != NULL) && (msgbuf != NULL));
   chGuardedPoolObjectInit(&jqp->free, sizeof (job_descriptor_t));
   chGuardedPoolLoadArray(&jqp->free, (void *)jobsbuf, jobsn);
   chMBObjectInit(&jqp->mbx, msgbuf, jobsn);
@@ -1945,31 +1976,37 @@ static inline job_descriptor_t *chJobGetTimeout(jobs_queue_t *jqp,
 }
 static inline void chJobPostI(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
+  chDbgCheck(jp != NULL);
   msg = chMBPostI(&jqp->mbx, (msg_t)jp);
   chDbgAssert(msg == MSG_OK, "post failed");
 }
 static inline void chJobPostS(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
+  chDbgCheck(jp != NULL);
   msg = chMBPostTimeoutS(&jqp->mbx, (msg_t)jp, TIME_IMMEDIATE);
   chDbgAssert(msg == MSG_OK, "post failed");
 }
 static inline void chJobPost(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
+  chDbgCheck(jp != NULL);
   msg = chMBPostTimeout(&jqp->mbx, (msg_t)jp, TIME_IMMEDIATE);
   chDbgAssert(msg == MSG_OK, "post failed");
 }
 static inline void chJobPostAheadI(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
+  chDbgCheck(jp != NULL);
   msg = chMBPostAheadI(&jqp->mbx, (msg_t)jp);
   chDbgAssert(msg == MSG_OK, "post failed");
 }
 static inline void chJobPostAheadS(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
+  chDbgCheck(jp != NULL);
   msg = chMBPostAheadTimeoutS(&jqp->mbx, (msg_t)jp, TIME_IMMEDIATE);
   chDbgAssert(msg == MSG_OK, "post failed");
 }
 static inline void chJobPostAhead(jobs_queue_t *jqp, job_descriptor_t *jp) {
   msg_t msg;
+  chDbgCheck(jp != NULL);
   msg = chMBPostAheadTimeout(&jqp->mbx, (msg_t)jp, TIME_IMMEDIATE);
   chDbgAssert(msg == MSG_OK, "post failed");
 }
@@ -1981,11 +2018,11 @@ static inline msg_t chJobDispatch(jobs_queue_t *jqp) {
     chDbgAssert(jp != NULL, "is NULL");
     if (jp->jobfunc != NULL) {
       jp->jobfunc(jp->jobarg);
-      chGuardedPoolFree(&jqp->free, (void *)jp);
     }
     else {
       msg = MSG_JOB_NULL;
     }
+    chGuardedPoolFree(&jqp->free, (void *)jp);
   }
   return msg;
 }
@@ -1998,11 +2035,11 @@ static inline msg_t chJobDispatchTimeout(jobs_queue_t *jqp,
     chDbgAssert(jp != NULL, "is NULL");
     if (jp->jobfunc != NULL) {
       jp->jobfunc(jp->jobarg);
-      chGuardedPoolFree(&jqp->free, (void *)jp);
     }
     else {
       msg = MSG_JOB_NULL;
     }
+    chGuardedPoolFree(&jqp->free, (void *)jp);
   }
   return msg;
 }
@@ -2053,6 +2090,7 @@ typedef struct ch_objects_factory {
 } objects_factory_t;
 extern objects_factory_t ch_factory;
   void __factory_init(void);
+  dyn_element_t *chFactoryDuplicateReference(dyn_element_t *dep);
   registered_object_t *chFactoryRegisterObject(const char *name,
                                                void *objp);
   registered_object_t *chFactoryFindObject(const char *name);
@@ -2076,10 +2114,6 @@ extern objects_factory_t ch_factory;
   dyn_pipe_t *chFactoryCreatePipe(const char *name, size_t size);
   dyn_pipe_t *chFactoryFindPipe(const char *name);
   void chFactoryReleasePipe(dyn_pipe_t *dpp);
-static inline dyn_element_t *chFactoryDuplicateReference(dyn_element_t *dep) {
-  dep->refs++;
-  return dep;
-}
 static inline void *chFactoryGetObject(registered_object_t *rop) {
   return rop->objp;
 }
