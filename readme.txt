@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 21.11.5 ***
+- FIX: Fixed harden memcore/heap boundary checks against arithmetic overflow
+       (bug #1302).
 - FIX: Fixed priority inheritance through prioritized message queues
        (bug #1301).
 - FIX: Fixed  chMsgSend missing rdymsg assignment causes spurious NULL return
