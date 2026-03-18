@@ -82,6 +82,7 @@ objects_factory_t ch_factory;
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+#if CH_FACTORY_REQUIRES_HEAP || defined(__DOXYGEN__)
 static bool add_size(size_t a, size_t b, size_t *result) {
 
   if (a > ((size_t)-1) - b) {
@@ -92,7 +93,10 @@ static bool add_size(size_t a, size_t b, size_t *result) {
 
   return false;
 }
+#endif /* CH_FACTORY_REQUIRES_HEAP */
 
+#if ((CH_CFG_FACTORY_MAILBOXES == TRUE) ||                                  \
+     (CH_CFG_FACTORY_OBJ_FIFOS == TRUE)) || defined(__DOXYGEN__)
 static bool mul_size(size_t a, size_t b, size_t *result) {
 
   if ((a != (size_t)0) && (b > ((size_t)-1) / a)) {
@@ -103,7 +107,9 @@ static bool mul_size(size_t a, size_t b, size_t *result) {
 
   return false;
 }
+#endif /* CH_CFG_FACTORY_MAILBOXES || CH_CFG_FACTORY_OBJ_FIFOS */
 
+#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXYGEN__)
 static bool align_size(size_t size, unsigned align, size_t *result) {
   size_t aligned;
 
@@ -116,6 +122,7 @@ static bool align_size(size_t size, unsigned align, size_t *result) {
 
   return false;
 }
+#endif /* CH_CFG_FACTORY_OBJ_FIFOS */
 
 static void copy_name(const char *sp, char *dp) {
   unsigned i;
