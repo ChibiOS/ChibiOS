@@ -159,12 +159,13 @@ msg_t chDelegateCallVeneer(thread_t *tp, delegate_veneer_t veneer, ...) {
   call_message_t cm;
   msg_t msg;
 
+  chDbgCheck((tp != NULL) && (veneer != NULL));
+
   va_start(args, veneer);
 
   /* Preparing the call message.*/
   cm.veneer = veneer;
   cm.argsp  = &args;
-  (void)cm; /* Suppresses a lint warning.*/
 
   /* Sending the message to the dispatcher thread, the return value is
      contained in the returned message.*/
@@ -207,6 +208,7 @@ void chDelegateDispatch(void) {
  *
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
  *                      .
  * @return              The function outcome.
