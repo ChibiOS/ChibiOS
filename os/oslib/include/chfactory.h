@@ -288,6 +288,7 @@ typedef struct ch_objects_factory {
 #else
   semaphore_t           sem;
 #endif
+#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   List of the registered objects.
    */
@@ -296,6 +297,7 @@ typedef struct ch_objects_factory {
    * @brief   Pool of the available registered objects.
    */
   memory_pool_t         obj_pool;
+#endif /* CH_CFG_FACTORY_OBJECTS_REGISTRY = TRUE */
 #if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   List of the allocated buffer objects.
