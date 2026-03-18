@@ -117,6 +117,7 @@ void chMBObjectInit(mailbox_t *mbp, msg_t *buf, size_t n) {
 void chMBObjectDispose(mailbox_t *mbp) {
 
   chDbgCheck(mbp != NULL);
+  chDbgAssert(mbp->cnt == (size_t)0, "messages pending");
 
   chThdQueueObjectDispose(&mbp->qr);
   chThdQueueObjectDispose(&mbp->qw);
