@@ -86,6 +86,7 @@ msg_t chMsgSend(thread_t *tp, msg_t msg) {
   currtp->u.sentmsg = msg;
   __ch_msg_insert(&tp->msgqueue, currtp);
   if (tp->state == CH_STATE_WTMSG) {
+    tp->u.rdymsg = MSG_OK;
     (void) chSchReadyI(tp);
   }
   chSchGoSleepS(CH_STATE_SNDMSGQ);
