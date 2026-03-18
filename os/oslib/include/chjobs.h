@@ -356,13 +356,13 @@ static inline msg_t chJobDispatch(jobs_queue_t *jqp) {
 
       /* Invoking the job function.*/
       jp->jobfunc(jp->jobarg);
-
-      /* Returning the job descriptor object.*/
-      chGuardedPoolFree(&jqp->free, (void *)jp);
     }
     else {
       msg = MSG_JOB_NULL;
     }
+
+    /* Returning the job descriptor object.*/
+    chGuardedPoolFree(&jqp->free, (void *)jp);
   }
 
   return msg;
@@ -397,13 +397,13 @@ static inline msg_t chJobDispatchTimeout(jobs_queue_t *jqp,
 
       /* Invoking the job function.*/
       jp->jobfunc(jp->jobarg);
-
-      /* Returning the job descriptor object.*/
-      chGuardedPoolFree(&jqp->free, (void *)jp);
     }
     else {
       msg = MSG_JOB_NULL;
     }
+
+    /* Returning the job descriptor object.*/
+    chGuardedPoolFree(&jqp->free, (void *)jp);
   }
 
   return msg;
