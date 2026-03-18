@@ -327,12 +327,19 @@ void sb_sysc_vrq_set_alarm(sb_class_t *sbp, struct port_extctx *ectxp) {
   sysinterval_t interval = (sysinterval_t )ectxp->r0;
   bool reload = (bool)ectxp->r1;
 
+  if (interval == TIME_IMMEDIATE) {
+    ectxp->r0 = (uint32_t)CH_RET_EINVAL;
+    return;
+  }
+
   if (reload) {
     chVTSetContinuous(&sbp->vrq.alarm_vt, interval, delay_cb, (void *)sbp);
   }
   else {
     chVTSet(&sbp->vrq.alarm_vt, interval, delay_cb, (void *)sbp);
   }
+
+  ectxp->r0 = (uint32_t)CH_RET_SUCCESS;
 }
 
 void sb_sysc_vrq_reset_alarm(sb_class_t *sbp, struct port_extctx *ectxp) {

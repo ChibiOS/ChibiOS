@@ -886,15 +886,20 @@ static inline void sbSleepMicroseconds(time_usecs_t usecs) {
 /**
  * @brief   Sets an alarm.
  * @note    On alarm a VRQ is triggered on vector @p SB_VRQ_ALARM.
+ * @note    The interval @p TIME_IMMEDIATE is not allowed.
  *
  * @param[in] interval  the interval in system ticks
  * @param[in] reload    specifies a periodic alarm
+ * @return              The operation result.
+ * @retval CH_RET_SUCCESS if the alarm has been accepted.
+ * @retval CH_RET_EINVAL  if @p interval is @p TIME_IMMEDIATE.
  *
  * @api
  */
-static inline void sbSetAlarm(sysinterval_t interval, bool reload) {
+static inline msg_t sbSetAlarm(sysinterval_t interval, bool reload) {
 
   __syscall2r(253, (uint32_t)interval, (uint32_t)reload);
+  return (msg_t)r0;
 }
 
 /**
