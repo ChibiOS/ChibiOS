@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 21.11.5 ***
+- FIX: Fixed serialize ref duplication and harden dynamic object size
+       calculations (bug #1303).
 - FIX: Fixed harden memcore/heap boundary checks against arithmetic overflow
        (bug #1302).
 - FIX: Fixed priority inheritance through prioritized message queues
