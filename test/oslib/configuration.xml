@@ -1203,6 +1203,28 @@ test_assert_sequence("abcdefgh", "unexpected tokens");
 ]]></value>
               </code>
             </step>
+            <step>
+              <description>
+                <value>Verifying that all descriptors have been returned.</value>
+              </description>
+              <tags>
+                <value></value>
+              </tags>
+              <code>
+                <value><![CDATA[
+cnt_t cnt;
+size_t used;
+
+chSysLock();
+cnt = chGuardedPoolGetCounterI(&jq.free);
+used = chMBGetUsedCountI(&jq.mbx);
+chSysUnlock();
+
+test_assert(cnt == (cnt_t)JOBS_QUEUE_SIZE, "lost descriptors");
+test_assert(used == 0U, "pending jobs");
+]]></value>
+              </code>
+            </step>
           </steps>
         </case>
       </cases>

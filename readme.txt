@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 21.11.5 ***
+- FIX: Fixed OSLIB Jobs Queues: return JOB_NULL descriptors to the free pool
+       (bug #1304).
 - FIX: Fixed serialize ref duplication and harden dynamic object size
        calculations (bug #1303).
 - FIX: Fixed harden memcore/heap boundary checks against arithmetic overflow
