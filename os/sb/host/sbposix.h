@@ -59,6 +59,10 @@
 typedef struct {
   /**
    * @brief   VFS driver associated to the sandbox as root.
+   * @note    The object is owned by the host side. SB uses the pointed
+   *          driver instance directly so mutable state inside the driver,
+   *          such as the current working directory, is private to the
+   *          sandbox only if a distinct driver instance is associated to it.
    */
   vfs_driver_c                  *vfs_driver;
   /**
