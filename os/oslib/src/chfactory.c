@@ -82,6 +82,41 @@ objects_factory_t ch_factory;
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+static bool add_size(size_t a, size_t b, size_t *result) {
+
+  if (a > ((size_t)-1) - b) {
+    return true;
+  }
+
+  *result = a + b;
+
+  return false;
+}
+
+static bool mul_size(size_t a, size_t b, size_t *result) {
+
+  if ((a != (size_t)0) && (b > ((size_t)-1) / a)) {
+    return true;
+  }
+
+  *result = a * b;
+
+  return false;
+}
+
+static bool align_size(size_t size, unsigned align, size_t *result) {
+  size_t aligned;
+
+  aligned = MEM_ALIGN_NEXT(size, align);
+  if (aligned < size) {
+    return true;
+  }
+
+  *result = aligned;
+
+  return false;
+}
+
 static void copy_name(const char *sp, char *dp) {
   unsigned i;
   char c;
@@ -307,6 +342,29 @@ void __factory_init(void) {
 #endif
 }
 
+/**
+ * @brief   Duplicates an object reference.
+ * @note    This function can be used on any kind of dynamic object.
+ *
+ * @param[in] dep       pointer to the element field of the object
+ * @return              The duplicated object reference.
+ *
+ * @api
+ */
+dyn_element_t *chFactoryDuplicateReference(dyn_element_t *dep) {
+
+  chDbgCheck(dep != NULL);
+
+  F_LOCK();
+
+  chDbgAssert(dep->refs > (ucnt_t)0, "invalid references number");
+  dep->refs++;
+
+  F_UNLOCK();
+
+  return dep;
+}
+
 #if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXIGEN__)
 /**
  * @brief   Registers a generic object.
@@ -380,10 +438,11 @@ registered_object_t *chFactoryFindObject(const char *name) {
  * @api
  */
 registered_object_t *chFactoryFindObjectByPointer(void *objp) {
-  registered_object_t *rop = (registered_object_t *)ch_factory.obj_list.next;
+  registered_object_t *rop;
 
   F_LOCK();
 
+  rop = (registered_object_t *)ch_factory.obj_list.next;
   while ((void *)rop != (void *)&ch_factory.obj_list) {
     if (rop->objp == objp) {
       rop->element.refs++;
@@ -441,13 +500,18 @@ void chFactoryReleaseObject(registered_object_t *rop) {
  * @api
  */
 dyn_buffer_t *chFactoryCreateBuffer(const char *name, size_t size) {
+  size_t alloc_size;
   dyn_buffer_t *dbp;
+
+  if (add_size(sizeof (dyn_buffer_t), size, &alloc_size)) {
+    return NULL;
+  }
 
   F_LOCK();
 
   dbp = (dyn_buffer_t *)dyn_create_object_heap(name,
                                                &ch_factory.buf_list,
-                                               sizeof (dyn_buffer_t) + size,
+                                               alloc_size,
                                                CH_HEAP_ALIGNMENT);
   if (dbp != NULL) {
     /* Initializing buffer object data.*/
@@ -602,14 +666,19 @@ void chFactoryReleaseSemaphore(dyn_semaphore_t *dsp) {
  * @api
  */
 dyn_mailbox_t *chFactoryCreateMailbox(const char *name, size_t n) {
+  size_t buffer_size, alloc_size;
   dyn_mailbox_t *dmp;
+
+  if (mul_size(n, sizeof (msg_t), &buffer_size) ||
+      add_size(sizeof (dyn_mailbox_t), buffer_size, &alloc_size)) {
+    return NULL;
+  }
 
   F_LOCK();
 
   dmp = (dyn_mailbox_t *)dyn_create_object_heap(name,
                                                 &ch_factory.mbx_list,
-                                                sizeof (dyn_mailbox_t) +
-                                                (n * sizeof (msg_t)),
+                                                alloc_size,
                                                 CH_HEAP_ALIGNMENT);
   if (dmp != NULL) {
     /* Initializing mailbox object data.*/
@@ -690,21 +759,27 @@ dyn_objects_fifo_t *chFactoryCreateObjectsFIFO(const char *name,
                                                size_t objsize,
                                                size_t objn,
                                                unsigned objalign) {
-  size_t size1, size2;
+  size_t msgbuf_size, size1, size2, alloc_size;
   dyn_objects_fifo_t *dofp;
 
-  F_LOCK();
+  chDbgCheck((objalign >= PORT_NATURAL_ALIGN) &&
+             MEM_IS_VALID_ALIGNMENT(objalign));
 
-  /* Enforcing alignment for the objects array.*/
-  objsize = MEM_ALIGN_NEXT(objsize, objalign);
-  size1   = MEM_ALIGN_NEXT(sizeof (dyn_objects_fifo_t) + (objn * sizeof (msg_t)),
-                           objalign);
-  size2   = objn * objsize;
+  if (align_size(objsize, objalign, &objsize) ||
+      mul_size(objn, sizeof (msg_t), &msgbuf_size) ||
+      add_size(sizeof (dyn_objects_fifo_t), msgbuf_size, &size1) ||
+      align_size(size1, objalign, &size1) ||
+      mul_size(objn, objsize, &size2) ||
+      add_size(size1, size2, &alloc_size)) {
+    return NULL;
+  }
+
+  F_LOCK();
 
   /* Allocating the FIFO object with messages buffer and objects buffer.*/
   dofp = (dyn_objects_fifo_t *)dyn_create_object_heap(name,
                                                       &ch_factory.fifo_list,
-                                                      size1 + size2,
+                                                      alloc_size,
                                                       objalign);
   if (dofp != NULL) {
     msg_t *msgbuf = (msg_t *)(dofp + 1);
@@ -785,13 +860,18 @@ void chFactoryReleaseObjectsFIFO(dyn_objects_fifo_t *dofp) {
  * @api
  */
 dyn_pipe_t *chFactoryCreatePipe(const char *name, size_t size) {
+  size_t alloc_size;
   dyn_pipe_t *dpp;
+
+  if (add_size(sizeof (dyn_pipe_t), size, &alloc_size)) {
+    return NULL;
+  }
 
   F_LOCK();
 
   dpp = (dyn_pipe_t *)dyn_create_object_heap(name,
                                              &ch_factory.pipe_list,
-                                             sizeof (dyn_pipe_t) + size,
+                                             alloc_size,
                                              CH_HEAP_ALIGNMENT);
   if (dpp != NULL) {
     /* Initializing mailbox object data.*/

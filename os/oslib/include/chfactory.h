@@ -82,13 +82,6 @@
 #endif
 
 /**
- * @brief   Enables factory for objects FIFOs.
- */
-#if !defined(CH_CFG_FACTORY_OBJ_FIFOS) || defined(__DOXYGEN__)
-#define CH_CFG_FACTORY_OBJ_FIFOS            TRUE
-#endif
-
-/**
  * @brief   Enables factory for Pipes.
  */
 #if !defined(CH_CFG_FACTORY_PIPES) || defined(__DOXYGEN__)
@@ -103,28 +96,28 @@
 /*lint -save -e767 [20.5] Valid because the #undef.*/
 #undef CH_CFG_FACTORY_SEMAPHORES
 #define CH_CFG_FACTORY_SEMAPHORES           FALSE
-/*lint restore*/
+/*lint -restore*/
 #endif
 
 #if (CH_CFG_FACTORY_MAILBOXES == TRUE) && (CH_CFG_USE_MAILBOXES == FALSE)
 /*lint -save -e767 [20.5] Valid because the #undef.*/
 #undef CH_CFG_FACTORY_MAILBOXES
 #define CH_CFG_FACTORY_MAILBOXES            FALSE
-/*lint restore*/
+/*lint -restore*/
 #endif
 
 #if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) && (CH_CFG_USE_OBJ_FIFOS == FALSE)
 /*lint -save -e767 [20.5] Valid because the #undef.*/
 #undef CH_CFG_FACTORY_OBJ_FIFOS
 #define CH_CFG_FACTORY_OBJ_FIFOS            FALSE
-/*lint restore*/
+/*lint -restore*/
 #endif
 
 #if (CH_CFG_FACTORY_PIPES == TRUE) && (CH_CFG_USE_PIPES == FALSE)
 /*lint -save -e767 [20.5] Valid because the #undef.*/
 #undef CH_CFG_FACTORY_PIPES
 #define CH_CFG_FACTORY_PIPES                FALSE
-/*lint restore*/
+/*lint -restore*/
 #endif
 
 #define CH_FACTORY_REQUIRES_POOLS                                           \
@@ -293,6 +286,7 @@ typedef struct ch_objects_factory {
 #else
   semaphore_t           sem;
 #endif
+#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   List of the registered objects.
    */
@@ -301,6 +295,7 @@ typedef struct ch_objects_factory {
    * @brief   Pool of the available registered objects.
    */
   memory_pool_t         obj_pool;
+#endif /* CH_CFG_FACTORY_OBJECTS_REGISTRY = TRUE */
 #if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   List of the allocated buffer objects.
@@ -353,6 +348,7 @@ extern objects_factory_t ch_factory;
 extern "C" {
 #endif
   void __factory_init(void);
+  dyn_element_t *chFactoryDuplicateReference(dyn_element_t *dep);
 #if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXYGEN__)
   registered_object_t *chFactoryRegisterObject(const char *name,
                                                void *objp);
@@ -395,22 +391,6 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
-
-/**
- * @brief   Duplicates an object reference.
- * @note    This function can be used on any kind of dynamic object.
- *
- * @param[in] dep       pointer to the element field of the object
- * @return              The duplicated object reference.
- *
- * @api
- */
-static inline dyn_element_t *chFactoryDuplicateReference(dyn_element_t *dep) {
-
-  dep->refs++;
-
-  return dep;
-}
 
 #if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXYGEN__)
 /**

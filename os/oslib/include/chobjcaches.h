@@ -20,7 +20,7 @@
  * @file    oslib/include/chobjcaches.h
  * @brief   Objects Caches macros and structures.
  *
- * @addtogroup oslib_objchaches
+ * @addtogroup oslib_objcaches
  * @{
  */
 
@@ -218,10 +218,6 @@ struct ch_objects_cache {
    * @brief   LRU list header.
    */
   oc_lru_header_t       lru;
-  /**
-   * @brief   Semaphore for cache access.
-   */
-  semaphore_t           cache_sem;
   /**
    * @brief   Semaphore for LRU access.
    */
