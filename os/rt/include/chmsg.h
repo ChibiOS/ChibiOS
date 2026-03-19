@@ -115,10 +115,9 @@ static inline thread_t *chMsgWait(void) {
  *          returned pointer is a temporary reference.
  *
  * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      the following special values are handled:
  *                      - @a TIME_INFINITE no timeout.
- *                      .
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
  * @return              A pointer to the thread carrying the message.
  * @retval NULL         if a timeout occurred.
  *

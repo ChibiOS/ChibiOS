@@ -142,9 +142,9 @@ thread_t *chMsgWaitS(void) {
  *          returned pointer is a temporary reference.
  *
  * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
+ *                      the following special values are handled:
  *                      - @a TIME_INFINITE no timeout.
- *                      .
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
  * @return              A pointer to the thread carrying the message.
  * @retval NULL         if a timeout occurred.
  *
@@ -155,6 +155,7 @@ thread_t *chMsgWaitTimeoutS(sysinterval_t timeout) {
   thread_t *tp;
 
   chDbgCheckClassS();
+  chDbgCheck(timeout != TIME_IMMEDIATE);
 
   if (!chMsgIsPendingI(currtp)) {
     if (chSchGoSleepTimeoutS(CH_STATE_WTMSG, timeout) != MSG_OK) {
