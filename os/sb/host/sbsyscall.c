@@ -958,7 +958,7 @@ void __port_do_syscall_entry(uint32_t n, struct port_extctx *ectxp) {
 
   /* Switching PSP to the privileged mode PSP.*/
   __set_PSP((uint32_t)newctxp);
-#if PORT_SAVE_PSPLIM
+#if defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE)
   __set_PSPLIM((uint32_t)sbp->thread.wabase);
 #endif
 }
@@ -982,7 +982,7 @@ void __port_do_syscall_return(void) {
   __sb_vrq_check_pending(sbp, ectxp);
 #else
   __set_PSP((uint32_t)ectxp);
-#if PORT_SAVE_PSPLIM
+#if defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE)
   __set_PSPLIM((uint32_t)sbp->u_data->base);
 #endif
 #endif

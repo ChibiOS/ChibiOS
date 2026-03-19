@@ -809,7 +809,7 @@ msg_t sbSendMessageTimeout(sb_class_t *sbp,
   chSysLock();
 
   /* Sending the message.*/
-  ctp->u.sentmsg = msg;
+  ctp->sentmsg = msg;
   __ch_msg_insert(&sbp->thread.msgqueue, ctp);
   if (sbp->thread.state == CH_STATE_WTMSG) {
     (void) chSchReadyI(&sbp->thread);

@@ -142,7 +142,7 @@ static void vrq_pushctx_this(sb_class_t *sbp, uint32_t psp, sb_vrqnum_t nvrq) {
     vrq_initctx(sbp, ectxp, nvrq);
   }
   __set_PSP((uint32_t)ectxp);
-#if PORT_SAVE_PSPLIM
+#if defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE)
   __set_PSPLIM((uint32_t)sbp->u_data->base);
 #endif
 }
@@ -497,7 +497,7 @@ void sb_fastc_vrq_return(sb_class_t *sbp, struct port_extctx *ectxp) {
 
     /* Keeping the current return context.*/
     __set_PSP((uint32_t)ectxp);
-#if PORT_SAVE_PSPLIM
+#if defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE)
     __set_PSPLIM((uint32_t)sbp->u_data->base);
 #endif
   }
@@ -527,7 +527,7 @@ void __sb_vrq_check_pending(sb_class_t *sbp, struct port_extctx *ectxp) {
   }
 
   __set_PSP((uint32_t)ectxp);
-#if PORT_SAVE_PSPLIM
+#if defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE)
   __set_PSPLIM((uint32_t)sbp->u_data->base);
 #endif
 }

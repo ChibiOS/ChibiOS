@@ -77,20 +77,12 @@ CC_NO_INLINE void port_syslock_noinline(void) {
   __dbg_check_lock();
 }
 
-#if (PORT_SAVE_PSPLIM == TRUE) || defined(__DOXYGEN__)
-CC_NO_INLINE uint32_t port_get_s_psp(void) {
+CC_NO_INLINE uint64_t port_get_s_psp(void) {
   thread_t *tp = __sch_get_currthread();
 
-  return (uint32_t)__sch_get_currthread()->waend;
   return ((uint64_t)(uint32_t)(tp->wabase) << 32) |
          ((uint64_t)(uint32_t)(tp->waend) << 0);
 }
-#else
-CC_NO_INLINE uint32_t port_get_s_psp(void) {
-
-  return (uint32_t)__sch_get_currthread()->waend;
-}
-#endif
 
 CC_WEAK void __port_do_fastcall_entry(uint32_t n, struct port_extctx *ectxp) {
 

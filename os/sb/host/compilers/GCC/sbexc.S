@@ -117,7 +117,7 @@ UsageFault_Handler:
                 /* This thread is going to die so going back on
                    S-PSP and working safely from there.*/
                 bl          port_get_s_psp
-#if PORT_SAVE_PSPLIM
+#if defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE)
                 msr         PSPLIM, r1
 #endif
 #if CORTEX_USE_FPU
