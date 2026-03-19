@@ -109,7 +109,7 @@ extern "C" {
 
 /**
  * @brief   Initializes a FIFO object.
- * @pre     The messages size must be a multiple of the alignment
+ * @pre     The objects size must be a multiple of the alignment
  *          requirement.
  *
  * @param[out] ofp      pointer to a @p objects_fifo_t structure
@@ -137,7 +137,7 @@ static inline void chFifoObjectInitAligned(objects_fifo_t *ofp, size_t objsize,
 
 /**
  * @brief   Initializes a FIFO object.
- * @pre     The messages size must be a multiple of the alignment
+ * @pre     The objects size must be a multiple of the alignment
  *          requirement.
  *
  * @param[out] ofp      pointer to a @p objects_fifo_t structure
