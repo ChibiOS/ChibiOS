@@ -17,11 +17,6 @@ STARTUPLD  = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/ld
 USE_EXCEPTIONS_STACKSIZE ?= 0x800
 USE_PROCESS_STACKSIZE    ?= 0x800
 
-# RP2350-specific defines:
-# - CH_DBG_ENABLE_STACK_CHECK: Always save/restore PSPLIM during context switch
-DDEFS  += -DCH_DBG_ENABLE_STACK_CHECK=TRUE
-DADEFS += -DCH_DBG_ENABLE_STACK_CHECK=TRUE
-
 # Shared variables
 ALLXASMSRC += $(STARTUPASM)
 ALLCSRC    += $(STARTUPSRC)
