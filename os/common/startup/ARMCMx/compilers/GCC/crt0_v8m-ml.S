@@ -47,6 +47,7 @@
 #define SCB_CPACR                           0xE000ED88
 #define SCB_FPCCR                           0xE000EF34
 #define SCB_FPDSCR                          0xE000EF3C
+#define CPACR_FPU_MASK                      0x00F00000
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -67,6 +68,13 @@
  */
 #if !defined(CRT0_VTOR_INIT) || defined(__DOXYGEN__)
 #define CRT0_VTOR_INIT                      TRUE
+#endif
+
+/**
+ * @brief   PSPLIM special register initialization.
+ */
+#if !defined(CRT0_INIT_PSPLIM) || defined(__DOXYGEN__)
+#define CRT0_INIT_PSPLIM                    TRUE
 #endif
 
 /**
@@ -169,14 +177,6 @@
 #define CRT0_FPCCR_INIT                     (FPCCR_ASPEN | FPCCR_LSPEN)
 #endif
 
-/**
- * @brief   CPACR register initialization value.
- * @note    Only used if @p CRT0_INIT_FPU is equal to @p TRUE.
- */
-#if !defined(CRT0_CPACR_INIT) || defined(__DOXYGEN__)
-#define CRT0_CPACR_INIT                     0x00F00000
-#endif
-
 /*===========================================================================*/
 /* Code section.                                                             */
 /*===========================================================================*/
@@ -215,8 +215,10 @@ _crt0_entry:
                 /* PSP stack pointers initialization.*/
                 ldr     r0, =__process_stack_end__
                 msr     PSP, r0
+#if CRT0_INIT_PSPLIM == TRUE
                 ldr     r0, =__process_stack_base__
                 msr     PSPLIM, r0
+#endif
 
 #if CRT0_VTOR_INIT == TRUE
                 ldr     r0, =_vectors
@@ -234,11 +236,14 @@ _crt0_entry:
                 dsb
                 isb
 
-                /* CPACR initialization.*/
-                movw    r0, #CRT0_CPACR_INIT & 0xFFFF
-                movt    r0, #CRT0_CPACR_INIT >> 16
+                /* CPACR FPU access initialization.*/
                 movw    r1, #SCB_CPACR & 0xFFFF
                 movt    r1, #SCB_CPACR >> 16
+                ldr     r0, [r1]
+                movw    r2, #CPACR_FPU_MASK & 0xFFFF
+                movt    r2, #CPACR_FPU_MASK >> 16
+                bic     r0, r0, r2
+                orr     r0, r0, r2
                 str     r0, [r1]
                 dsb
                 isb
@@ -401,8 +406,10 @@ _crt0_c\core\()_entry:
                 /* PSP stack pointers initialization.*/
                 ldr     r0, =__c\core\()_process_stack_end__
                 msr     PSP, r0
+#if CRT0_INIT_PSPLIM == TRUE
                 ldr     r0, =__c\core\()_process_stack_base__
                 msr     PSPLIM, r0
+#endif
 
 #if CRT0_VTOR_INIT == TRUE
                 ldr     r0, =_vectors
@@ -420,11 +427,14 @@ _crt0_c\core\()_entry:
                 dsb
                 isb
 
-                /* CPACR initialization.*/
-                movw    r0, #CRT0_CPACR_INIT & 0xFFFF
-                movt    r0, #CRT0_CPACR_INIT >> 16
+                /* CPACR FPU access initialization.*/
                 movw    r1, #SCB_CPACR & 0xFFFF
                 movt    r1, #SCB_CPACR >> 16
+                ldr     r0, [r1]
+                movw    r2, #CPACR_FPU_MASK & 0xFFFF
+                movt    r2, #CPACR_FPU_MASK >> 16
+                bic     r0, r0, r2
+                orr     r0, r0, r2
                 str     r0, [r1]
                 dsb
                 isb
