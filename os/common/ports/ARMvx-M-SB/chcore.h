@@ -409,6 +409,24 @@ static inline bool port_irq_enabled(syssts_t sts) {
 }
 
 /**
+ * @brief   Returns a word encoding the current lock status.
+ *
+ * @return              The lock status.
+ */
+#define port_get_lock_status()               port_get_irq_status()
+
+/**
+ * @brief   Checks the lock status.
+ *
+ * @param[in] sts       status word returned by @p port_get_lock_status()
+ *
+ * @return              The lock status.
+ * @retval false        if the lock is currently released
+ * @retval true         if the lock is currently held
+ */
+#define port_is_locked(sts)                  (!port_irq_enabled(sts))
+
+/**
  * @brief   Determines the current execution context.
  *
  * @return              The execution context.
