@@ -300,6 +300,8 @@ void chVTObjectDispose(virtual_timer_t *vtp) {
 
   chDbgCheck(vtp != NULL);
 
+  chSftCheckQueueX(&vtp->dlist);
+
   /* The timer must not be armed when disposed.*/
   chDbgAssert(vtp->dlist.next == NULL, "object in use");
 

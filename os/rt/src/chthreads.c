@@ -1080,6 +1080,9 @@ void chThdQueueObjectInit(threads_queue_t *tqp) {
 void chThdQueueObjectDispose(threads_queue_t *tqp) {
 
   chDbgCheck(tqp != NULL);
+
+  chSftCheckQueueX(&tqp->queue);
+
   chDbgAssert(ch_queue_isempty(&tqp->queue),
               "object in use");
 

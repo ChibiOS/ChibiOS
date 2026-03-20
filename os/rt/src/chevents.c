@@ -120,6 +120,9 @@ void chEvtObjectInit(event_source_t *esp) {
 void chEvtObjectDispose(event_source_t *esp) {
 
   chDbgCheck(esp != NULL);
+
+  chSftAssert(1, SFT_IS_VALID_DATA_POINTER(esp->next), "invalid link");
+
   chDbgAssert(esp->next == (event_listener_t *)esp, "object in use");
 
 #if CH_CFG_HARDENING_LEVEL > 0

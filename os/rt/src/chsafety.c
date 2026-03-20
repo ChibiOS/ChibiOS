@@ -42,10 +42,12 @@
  *              - Zeroing of objects on dispose.
  *              .
  *          - Level 2:
- *              - Ready list backward pointer check on insertion.
+ *              - Ready list and wait queues backward pointer check on
+ *                insertion.
  *              .
  *          - Level 3:
- *              - Ready list forward pointer validation on insertion.
+ *              - Ready list and wait queues forward pointer validation on
+ *                insertion.
  *              .
  *          .
  * @{
