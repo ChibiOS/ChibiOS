@@ -101,7 +101,10 @@ void hal_lld_init(void) {
   hal_lld_peripheral_unreset(RESETS_ALLREG_SYSCFG);
 #endif /* RP_NO_INIT */
 
-  /* Common subsystems initialization.*/
+  /* NVIC initialization.*/
+  nvicInit();
+
+  /* IRQ subsystem initialization.*/
   irqInit();
 #if defined(RP_DMA_REQUIRED)
   dmaInit();

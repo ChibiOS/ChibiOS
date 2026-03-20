@@ -60,7 +60,6 @@
  */
 void irqInit(void) {
 
-  nvicInit();
 }
 
 /**
