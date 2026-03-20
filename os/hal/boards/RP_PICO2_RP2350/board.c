@@ -42,8 +42,12 @@
 
 /**
  * @brief   Early initialization code.
+ * @note    Called before DATA/BSS init and stack fill.
  */
 void __early_init(void) {
+
+  /* Disable the bootrom watchdog. */
+  WATCHDOG->CLR.CTRL = WATCHDOG_CTRL_ENABLE;
 }
 
 #if HAL_USE_SDC || defined(__DOXYGEN__)
