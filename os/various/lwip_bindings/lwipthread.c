@@ -70,7 +70,6 @@
 #include <lwip/tcpip.h>
 #include <netif/etharp.h>
 #include <lwip/netifapi.h>
-#include <string.h>
 
 #if LWIP_DHCP
 #include <lwip/dhcp.h>
@@ -86,182 +85,6 @@
 static net_addr_mode_t addressMode;
 static ip4_addr_t ip, gateway, netmask;
 static struct netif thisif;
-
-#if defined(__CHIBIOS_XHAL_CONF__)
-
-#if (HAL_USE_ETH != TRUE)
-#error "lwipthread requires HAL_USE_ETH in XHAL mode"
-#endif
-
-#if (ETH_USE_SYNCHRONIZATION != TRUE)
-#error "lwipthread requires ETH_USE_SYNCHRONIZATION in XHAL mode"
-#endif
-
-#if (ETH_USE_EVENTS != TRUE)
-#error "lwipthread requires ETH_USE_EVENTS in XHAL mode"
-#endif
-
-typedef eth_receive_handle_t lwip_receive_handle_t;
-typedef eth_transmit_handle_t lwip_transmit_handle_t;
-
-static msg_t lwip_lld_start(void) {
-  static const hal_eth_config_t lwip_eth_config = {
-    .mac_address = thisif.hwaddr
-  };
-  const hal_eth_config_t *cfgp;
-  msg_t msg;
-
-  msg = drvSetCfgX(&ETHD1, &lwip_eth_config);
-  if (msg != HAL_RET_SUCCESS) {
-    cfgp = (const hal_eth_config_t *)drvSelectCfgX(&ETHD1, 0U);
-    if (cfgp == NULL) {
-      return msg;
-    }
-    if (cfgp->mac_address != NULL) {
-      memcpy(thisif.hwaddr, cfgp->mac_address, ETHARP_HWADDR_LEN);
-    }
-  }
-
-  return drvStart(&ETHD1);
-}
-
-static msg_t lwip_wait_transmit_handle(lwip_transmit_handle_t *txhp) {
-  *txhp = ethWaitTransmitHandle(&ETHD1, TIME_MS2I(LWIP_SEND_TIMEOUT));
-
-  return (*txhp != (lwip_transmit_handle_t)0U) ? MSG_OK : MSG_TIMEOUT;
-}
-
-static size_t lwip_write_transmit_handle(lwip_transmit_handle_t *txhp,
-                                         const uint8_t *bp,
-                                         size_t size) {
-
-  return ethWriteTransmitHandle(&ETHD1, *txhp, bp, size);
-}
-
-static void lwip_release_transmit_handle(lwip_transmit_handle_t *txhp) {
-
-  ethReleaseTransmitHandle(&ETHD1, *txhp);
-}
-
-static msg_t lwip_wait_receive_handle(lwip_receive_handle_t *rxhp) {
-  *rxhp = ethWaitReceiveHandle(&ETHD1, TIME_IMMEDIATE);
-
-  return (*rxhp != (lwip_receive_handle_t)0U) ? MSG_OK : MSG_TIMEOUT;
-}
-
-static size_t lwip_read_receive_handle(lwip_receive_handle_t *rxhp,
-                                       uint8_t *bp,
-                                       size_t size) {
-
-  return ethReadReceiveHandle(&ETHD1, *rxhp, bp, size);
-}
-
-static size_t lwip_receive_size(lwip_receive_handle_t *rxhp) {
-#if ETH_SUPPORTS_ZERO_COPY == TRUE
-  size_t size;
-
-  (void)ethGetReceiveBufferX(&ETHD1, *rxhp, &size);
-
-  return size;
-#else
-  (void)rxhp;
-
-  return (size_t)(LWIP_NETIF_MTU + SIZEOF_ETH_HDR);
-#endif
-}
-
-static void lwip_release_receive_handle(lwip_receive_handle_t *rxhp) {
-
-  ethReleaseReceiveHandle(&ETHD1, *rxhp);
-}
-
-static event_source_t *lwip_get_event_source(void) {
-
-  return &ETHD1.es;
-}
-
-static eventflags_t lwip_get_receive_event_flag(void) {
-
-  return ETH_FLAGS_RX;
-}
-
-static bool lwip_poll_link_status(void) {
-
-  return ethPollLinkStatus(&ETHD1);
-}
-
-#else /* !defined(__CHIBIOS_XHAL_CONF__) */
-
-typedef MACReceiveDescriptor lwip_receive_handle_t;
-typedef MACTransmitDescriptor lwip_transmit_handle_t;
-
-static msg_t lwip_lld_start(void) {
-  static const MACConfig mac_config = {thisif.hwaddr};
-
-  macStart(&ETHD1, &mac_config);
-
-  return HAL_RET_SUCCESS;
-}
-
-static msg_t lwip_wait_transmit_handle(lwip_transmit_handle_t *txhp) {
-
-  return macWaitTransmitDescriptor(&ETHD1, txhp, TIME_MS2I(LWIP_SEND_TIMEOUT));
-}
-
-static size_t lwip_write_transmit_handle(lwip_transmit_handle_t *txhp,
-                                         const uint8_t *bp,
-                                         size_t size) {
-
-  macWriteTransmitDescriptor(txhp, (uint8_t *)bp, size);
-
-  return size;
-}
-
-static void lwip_release_transmit_handle(lwip_transmit_handle_t *txhp) {
-
-  macReleaseTransmitDescriptorX(txhp);
-}
-
-static msg_t lwip_wait_receive_handle(lwip_receive_handle_t *rxhp) {
-
-  return macWaitReceiveDescriptor(&ETHD1, rxhp, TIME_IMMEDIATE);
-}
-
-static size_t lwip_read_receive_handle(lwip_receive_handle_t *rxhp,
-                                       uint8_t *bp,
-                                       size_t size) {
-
-  macReadReceiveDescriptor(rxhp, bp, size);
-
-  return size;
-}
-
-static size_t lwip_receive_size(lwip_receive_handle_t *rxhp) {
-
-  return rxhp->size;
-}
-
-static void lwip_release_receive_handle(lwip_receive_handle_t *rxhp) {
-
-  macReleaseReceiveDescriptorX(rxhp);
-}
-
-static event_source_t *lwip_get_event_source(void) {
-
-  return macGetEventSource(&ETHD1);
-}
-
-static eventflags_t lwip_get_receive_event_flag(void) {
-
-  return MAC_FLAGS_RX;
-}
-
-static bool lwip_poll_link_status(void) {
-
-  return macPollLinkStatus(&ETHD1);
-}
-
-#endif /* defined(__CHIBIOS_XHAL_CONF__) */
 
 /*
  * Suspension point for initialization procedure.
@@ -403,7 +226,7 @@ static bool low_level_input(struct netif *netif, struct pbuf **pbuf) {
     }
     lwip_release_receive_handle(&rxh);
 
-#if ETH_SUPPORTS_ZERO_COPY != TRUE
+#if defined(__CHIBIOS_XHAL_CONF__) && (ETH_SUPPORTS_ZERO_COPY != TRUE)
     pbuf_realloc(*pbuf, (u16_t)total);
 #endif
 
@@ -521,10 +344,7 @@ static THD_FUNCTION(lwip_thread, p) {
   /* TCP/IP parameters, runtime or compile time.*/
   if (p) {
     lwipthread_opts_t *opts = p;
-    unsigned i;
 
-    for (i = 0; i < 6; i++)
-      thisif.hwaddr[i] = opts->macaddress[i];
     ip.addr = opts->address;
     gateway.addr = opts->gateway;
     netmask.addr = opts->netmask;
@@ -536,12 +356,6 @@ static THD_FUNCTION(lwip_thread, p) {
     link_down_cb = opts->link_down_cb;
   }
   else {
-    thisif.hwaddr[0] = LWIP_ETHADDR_0;
-    thisif.hwaddr[1] = LWIP_ETHADDR_1;
-    thisif.hwaddr[2] = LWIP_ETHADDR_2;
-    thisif.hwaddr[3] = LWIP_ETHADDR_3;
-    thisif.hwaddr[4] = LWIP_ETHADDR_4;
-    thisif.hwaddr[5] = LWIP_ETHADDR_5;
     LWIP_IPADDR(&ip);
     LWIP_GATEWAY(&gateway);
     LWIP_NETMASK(&netmask);
@@ -567,7 +381,8 @@ static THD_FUNCTION(lwip_thread, p) {
     thisif.hostname = LWIP_NETIF_HOSTNAME_STRING;
 #endif
 
-  if (lwip_lld_start() != HAL_RET_SUCCESS) {
+  if (lwip_lld_start((const lwipthread_opts_t *)p, &thisif) !=
+      HAL_RET_SUCCESS) {
     chThdSleepMilliseconds(1000);
     osalSysHalt("ethernet start error");
   }

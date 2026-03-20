@@ -106,14 +106,14 @@
  */
 #define SB_VETH_INIT            0
 #define SB_VETH_DEINIT          1
-#define SB_VETH_RXREAD          2
-#define SB_VETH_TXWRITE         3
-#define SB_VETH_SELCFG          0
-#define SB_VETH_LINK            1
-#define SB_VETH_RXGET           2
-#define SB_VETH_TXGET           3
-#define SB_VETH_RXREL           4
-#define SB_VETH_TXREL           5
+#define SB_VETH_SELCFG          2
+#define SB_VETH_LINK            3
+#define SB_VETH_RXREAD          4
+#define SB_VETH_TXWRITE         5
+#define SB_VETH_RXREL           6
+#define SB_VETH_TXREL           7
+#define SB_VETH_RXGET           8
+#define SB_VETH_TXGET           9
 /** @} */
 
 /**

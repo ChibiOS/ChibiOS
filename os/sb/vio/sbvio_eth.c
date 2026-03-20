@@ -115,7 +115,7 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
         const hal_eth_config_t *confp;
         vio_eth_config_t cfg;
 
-        if (drvGetStateX(unitp->ethp) != HAL_DRV_STATE_READY) {
+        if (drvGetStateX(unitp->ethp) == HAL_DRV_STATE_UNINIT) {
           ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
           break;
         }

@@ -91,7 +91,7 @@ hal_eth_driver_c ETHD1;
 
 static const uint8_t default_mac_address[] = STM32_ETH_ETH1_DEFAULT_MAC_ADDRESS;
 static const hal_eth_config_t default_config = {
-  .mac_address = NULL,
+  .mac_address = default_mac_address,
   .regs = {
     .dmamr = 0U,
     .dmasbmr = 0U

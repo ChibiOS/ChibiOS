@@ -24,6 +24,7 @@
 #ifndef LWIPTHREAD_H
 #define LWIPTHREAD_H
 
+#include "hal.h"
 #include <lwip/init.h>
 
 /**
@@ -202,13 +203,59 @@ typedef enum {
 } net_addr_mode_t;
 
 /**
+ * @brief   Type of an application-owned Ethernet driver configuration.
+ */
+#if defined(__CHIBIOS_XHAL_CONF__)
+
+#if (HAL_USE_ETH != TRUE)
+#error "lwipthread requires HAL_USE_ETH in XHAL mode"
+#endif
+
+#if (ETH_USE_SYNCHRONIZATION != TRUE)
+#error "lwipthread requires ETH_USE_SYNCHRONIZATION in XHAL mode"
+#endif
+
+#if (ETH_USE_EVENTS != TRUE)
+#error "lwipthread requires ETH_USE_EVENTS in XHAL mode"
+#endif
+
+typedef hal_eth_config_t lwipthread_ethcfg_t;
+typedef eth_receive_handle_t lwip_receive_handle_t;
+typedef eth_transmit_handle_t lwip_transmit_handle_t;
+#elif defined(__DOXYGEN__)
+typedef hal_eth_config_t lwipthread_ethcfg_t;
+typedef eth_receive_handle_t lwip_receive_handle_t;
+typedef eth_transmit_handle_t lwip_transmit_handle_t;
+#else
+
+#if (HAL_USE_MAC != TRUE)
+#error "lwipthread requires HAL_USE_MAC in HAL mode"
+#endif
+
+typedef MACConfig lwipthread_ethcfg_t;
+typedef MACReceiveDescriptor lwip_receive_handle_t;
+typedef MACTransmitDescriptor lwip_transmit_handle_t;
+#endif
+
+/**
  * @brief   Runtime TCP/IP settings.
  */
 typedef struct lwipthread_opts {
   /**
-   * @brief   Pointer to MAC address as an array of 6 unsigned bytes.
+   * @brief   Pointer to an application-owned Ethernet driver configuration.
+   * @note    If not @p NULL then it is applied before the driver is started.
+   * @note    The effective MAC address is taken from the selected/applied
+   *          driver configuration.
    */
-  uint8_t         *macaddress;
+  const lwipthread_ethcfg_t *eth_config;
+#if defined(__CHIBIOS_XHAL_CONF__) || defined(__DOXYGEN__)
+  /**
+   * @brief   ETH configuration index to be selected when @p eth_config is
+   *          @p NULL.
+   * @note    The default configuration is index zero.
+   */
+  unsigned        eth_cfgnum;
+#endif
   /**
    * @brief   Network address as 32-bit unsigned integer.
    */
@@ -262,6 +309,27 @@ typedef struct lwipreconf_opts {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  struct netif;
+
+  /*
+   * Backend interface used by the common lwIP thread implementation.
+   */
+  msg_t lwip_lld_start(const lwipthread_opts_t *opts, struct netif *netif);
+  msg_t lwip_wait_transmit_handle(lwip_transmit_handle_t *txhp);
+  size_t lwip_write_transmit_handle(lwip_transmit_handle_t *txhp,
+                                    const uint8_t *bp,
+                                    size_t size);
+  void lwip_release_transmit_handle(lwip_transmit_handle_t *txhp);
+  msg_t lwip_wait_receive_handle(lwip_receive_handle_t *rxhp);
+  size_t lwip_read_receive_handle(lwip_receive_handle_t *rxhp,
+                                  uint8_t *bp,
+                                  size_t size);
+  size_t lwip_receive_size(lwip_receive_handle_t *rxhp);
+  void lwip_release_receive_handle(lwip_receive_handle_t *rxhp);
+  event_source_t *lwip_get_event_source(void);
+  eventflags_t lwip_get_receive_event_flag(void);
+  bool lwip_poll_link_status(void);
+
   void lwipDefaultLinkUpCB(void *p);
   void lwipDefaultLinkDownCB(void *p);
   void lwipInit(const lwipthread_opts_t *opts);
