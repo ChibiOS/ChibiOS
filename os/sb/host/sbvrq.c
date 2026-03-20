@@ -59,6 +59,14 @@ static void vrq_privileged_code(void) {
 
 CC_FORCE_INLINE
 static inline struct port_extctx *vrq_set_doomed(sb_class_t *sbp) {
+
+  /* The fake frame is placed at u_data->base, the very start of the sandbox
+     data region. This deliberately overwrites a few bytes of sandbox data,
+     which is acceptable because the sandbox is already in a terminal state
+     (its stack has overflowed and it cannot recover). On exception return
+     the CPU will branch to vrq_privileged_code, a kernel address outside
+     the sandbox's MPU regions, causing an immediate fault and sandbox
+     termination.*/
   struct port_extctx *ectxp = (struct port_extctx *)(void *)sbp->u_data->base;
 
   ectxp->pc = (uint32_t)vrq_privileged_code;
@@ -488,8 +496,11 @@ void sb_fastc_vrq_return(sb_class_t *sbp, struct port_extctx *ectxp) {
   }
   else {
 
-    /* Discarding the return current context, returning on the previous one.
-       TODO: Check for overflows????*/
+    /* Discarding the current VRQ context, returning on the previous one.
+       No overflow check is needed here: the frame at ectxp was pushed by
+       vrq_pushctx_this() which already verified that the new frame fit within
+       u_data. Incrementing ectxp recovers the pre-VRQ PSP value, which was
+       valid sandbox memory before the VRQ was injected and has not moved.*/
     ectxp++;
 
     /* Re-enabling VRQs globally.*/
