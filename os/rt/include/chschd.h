@@ -168,7 +168,13 @@ static inline void ch_sch_prio_insert(ch_queue_t *qp, ch_queue_t *tp) {
 
   ch_queue_t *cp = qp;
   do {
-    cp = cp->next;
+    ch_queue_t *next = cp->next;
+
+    /* Safety checks.*/
+    chSftValidateDataPointerX(3, next);
+    chSftAssert(2, next->prev == cp, "link back");
+
+    cp = next;
   } while ((cp != qp) &&
            (threadref(cp)->hdr.pqueue.prio >= threadref(tp)->hdr.pqueue.prio));
   tp->next       = cp;

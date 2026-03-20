@@ -265,6 +265,8 @@ static inline void ch_list_link(ch_list_t *lp, ch_list_t *p) {
  */
 static inline ch_list_t *ch_list_unlink(ch_list_t *lp) {
 
+  chDbgAssert(ch_list_notempty(lp), "empty list");
+
   ch_list_t *p = lp->next;
   lp->next = p->next;
 
@@ -337,6 +339,9 @@ static inline void ch_queue_insert(ch_queue_t *qp, ch_queue_t *p) {
  * @notapi
  */
 static inline ch_queue_t *ch_queue_fifo_remove(ch_queue_t *qp) {
+
+  chDbgAssert(ch_queue_notempty(qp), "empty queue");
+
   ch_queue_t *p = qp->next;
 
   qp->next       = p->next;
@@ -654,6 +659,15 @@ static inline ch_delta_list_t *ch_dlist_remove_first(ch_delta_list_t *dlhp) {
 
 /**
  * @brief   Dequeues an element from the delta list.
+ * @note    This function only unlinks the element; it does NOT adjust the
+ *          successor's @p delta field. The caller is responsible for adding
+ *          @p dlp->delta to @p dlp->next->delta to preserve the cumulative
+ *          time invariant of the delta list, unless the removal context makes
+ *          such an adjustment unnecessary (e.g. the element is being fired and
+ *          @p lasttime is being stepped forward by @p dlp->delta instead).
+ * @note    The @p dlp->next pointer is intentionally left intact after the
+ *          unlink so that callers can still read the old successor through
+ *          @p dlp->next when performing the delta adjustment after the call.
  *
  * @param[in] dlp       pointer to the delta list element
  *
