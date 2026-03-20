@@ -99,6 +99,7 @@ void *__eth_objinit_impl(void *ip, const void *vmt) {
 #if ETH_USE_EVENTS == TRUE
   osalEventObjectInit(&self->es);
 #endif
+  self->lastflags = (eventflags_t)0U;
 
   /* Optional, user-defined initializer.*/
 #if defined(ETH_DRIVER_EXT_INIT_HOOK)

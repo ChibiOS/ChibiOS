@@ -274,6 +274,15 @@ OSAL_IRQ_HANDLER(STM32_ETH_HANDLER) {
   ETH->DMACSR = dmacsr;
 
   if ((dmacsr & (ETH_DMACSR_RI | ETH_DMACSR_TI)) != 0U) {
+    eventflags_t flags = 0U;
+
+    if ((dmacsr & ETH_DMACSR_TI) != 0U) {
+      flags |= ETH_FLAGS_TX;
+    }
+    if ((dmacsr & ETH_DMACSR_RI) != 0U) {
+      flags |= ETH_FLAGS_RX;
+    }
+
     osalSysLockFromISR();
 #if ETH_USE_SYNCHRONIZATION == TRUE
     if ((dmacsr & ETH_DMACSR_TI) != 0U) {
@@ -283,18 +292,9 @@ OSAL_IRQ_HANDLER(STM32_ETH_HANDLER) {
       osalThreadDequeueAllI(&ethp->rxqueue, MSG_OK);
     }
 #endif
+    ethp->lastflags = flags;
 #if ETH_USE_EVENTS == TRUE
-    {
-      eventflags_t flags = 0U;
-
-      if ((dmacsr & ETH_DMACSR_TI) != 0U) {
-        flags |= ETH_FLAGS_TX;
-      }
-      if ((dmacsr & ETH_DMACSR_RI) != 0U) {
-        flags |= ETH_FLAGS_RX;
-      }
-      osalEventBroadcastFlagsI(&ethp->es, flags);
-    }
+    osalEventBroadcastFlagsI(&ethp->es, flags);
 #endif
     osalSysUnlockFromISR();
 

@@ -52,6 +52,7 @@ static void veth_cb(void *ip) {
     return;
   }
 
+  sbVRQSetFlagsI(unitp->vrqsb, unitp->vrqn, ethp->lastflags);
   sbVRQTriggerFromISR(unitp->vrqsb, unitp->vrqn);
 }
 

@@ -289,6 +289,10 @@ struct hal_eth_driver {
    */
   event_source_t            es;
 #endif /* ETH_USE_EVENTS == TRUE */
+  /**
+   * @brief       Cached ETH callback event flags.
+   */
+  eventflags_t              lastflags;
 #if defined(ETH_DRIVER_EXT_FIELS)
   ETH_DRIVER_EXT_FIELDS
 #endif

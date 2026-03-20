@@ -68,15 +68,27 @@ static inline uint32_t __eth_veth_selcfg(uint32_t nveth, uint32_t ncfg,
   return (uint32_t)r0;
 }
 
-static void eth_lld_serve_interrupt(hal_eth_driver_c *ethp) {
+static void eth_lld_serve_interrupt(hal_eth_driver_c *ethp, uint32_t nvrq) {
+  eventflags_t flags;
+
+  flags = (eventflags_t)__sb_vrq_gcsts(nvrq);
+  ethp->lastflags = flags;
+
+  if (flags == (eventflags_t)0U) {
+    return;
+  }
 
   osalSysLockFromISR();
 #if ETH_USE_SYNCHRONIZATION == TRUE
-  osalThreadDequeueAllI(&ethp->txqueue, MSG_OK);
-  osalThreadDequeueAllI(&ethp->rxqueue, MSG_OK);
+  if ((flags & ETH_FLAGS_TX) != 0U) {
+    osalThreadDequeueAllI(&ethp->txqueue, MSG_OK);
+  }
+  if ((flags & ETH_FLAGS_RX) != 0U) {
+    osalThreadDequeueAllI(&ethp->rxqueue, MSG_OK);
+  }
 #endif
 #if ETH_USE_EVENTS == TRUE
-  osalEventBroadcastFlagsI(&ethp->es, ETH_FLAGS_TX | ETH_FLAGS_RX);
+  osalEventBroadcastFlagsI(&ethp->es, flags);
 #endif
   osalSysUnlockFromISR();
 
@@ -103,7 +115,7 @@ OSAL_IRQ_HANDLER(MK_VECTOR(VIO_VETH1_IRQ)) {
 
   OSAL_IRQ_PROLOGUE();
 
-  eth_lld_serve_interrupt(&ETHD1);
+  eth_lld_serve_interrupt(&ETHD1, VIO_VETH1_IRQ);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -116,7 +128,7 @@ OSAL_IRQ_HANDLER(MK_VECTOR(VIO_VETH2_IRQ)) {
 
   OSAL_IRQ_PROLOGUE();
 
-  eth_lld_serve_interrupt(&ETHD2);
+  eth_lld_serve_interrupt(&ETHD2, VIO_VETH2_IRQ);
 
   OSAL_IRQ_EPILOGUE();
 }

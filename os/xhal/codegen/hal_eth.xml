@@ -133,6 +133,9 @@ ETH_CONFIG_EXT_FIELDS]]></verbatim>
               <brief>ETH driver events source</brief>
             </field>
           </condition>
+          <field name="lastflags" ctype="eventflags_t">
+            <brief>Cached ETH callback event flags.</brief>
+          </field>
           <verbatim><![CDATA[
 #if defined(ETH_DRIVER_EXT_FIELS)
 ETH_DRIVER_EXT_FIELDS
@@ -151,6 +154,7 @@ osalThreadQueueObjectInit(&self->rxqueue);
 #if ETH_USE_EVENTS == TRUE
 osalEventObjectInit(&self->es);
 #endif
+self->lastflags = (eventflags_t)0U;
 
 /* Optional, user-defined initializer.*/
 #if defined(ETH_DRIVER_EXT_INIT_HOOK)
