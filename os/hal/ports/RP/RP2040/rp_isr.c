@@ -52,15 +52,15 @@
 /*===========================================================================*/
 
 /**
- * @brief   Enables IRQ sources.
+ * @brief   IRQ subsystem initialization.
+ * @details Puts the IRQ controller in a known clean state before any
+ *          HAL drivers enable their individual interrupts.
  *
  * @notapi
  */
 void irqInit(void) {
 
-  /* Note: UART IRQs are enabled by the SIO/SERIAL/UART drivers when started,
-   * not here. Enabling them here before the peripheral is unreset can cause
-   * issues. */
+  nvicInit();
 }
 
 /**
