@@ -59,9 +59,9 @@
  *            default implementation.
  */
 #if defined(CUSTOM_IS_VALID_DATA_POINTER) || defined(__DOXYGEN__)
-#define SFT_IS_VALID_DATA_POINTER(p)        CUSTOM_IS_VALID_DATA_POINTER()
+#define SFT_IS_VALID_DATA_POINTER(p)        CUSTOM_IS_VALID_DATA_POINTER(p)
 #elif defined(PORT_IS_VALID_DATA_POINTER)
-#define SFT_IS_VALID_DATA_POINTER(p)        PORT_IS_VALID_DATA_POINTER()
+#define SFT_IS_VALID_DATA_POINTER(p)        PORT_IS_VALID_DATA_POINTER(p)
 #else
 #define SFT_IS_VALID_DATA_POINTER(p)                                        \
   (((p) != NULL) && (((uintptr_t)(p) & (PORT_NATURAL_ALIGN - 1U)) == 0U))

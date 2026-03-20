@@ -200,8 +200,12 @@ void chThdObjectDispose(thread_t *tp) {
 
   chDbgCheck(tp != NULL);
 
+#if CH_CFG_USE_WAITEXIT == TRUE
   chSftCheckListX(&tp->waiting);
+#endif
+#if CH_CFG_USE_MESSAGES == TRUE
   chSftCheckQueueX(&tp->msgqueue);
+#endif
 
 #if CH_CFG_USE_WAITEXIT == TRUE
   chDbgAssert(ch_list_isempty(&tp->waiting), "waiting list in use");
