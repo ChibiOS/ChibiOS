@@ -110,13 +110,19 @@ typedef struct {
    */
   uint32_t              type:3;
   /**
-   * @brief   Switched out thread state.
+   * @brief   Thread state associated with the event.
+   * @note    For @p CH_TRACE_TYPE_SWITCH this is the state of the thread
+   *          being switched out. For @p CH_TRACE_TYPE_READY this is the
+   *          state the thread was in immediately before becoming ready.
+   *          Set to zero for all other record types.
    */
   uint32_t              state:5;
   /**
    * @brief   Accurate time stamp.
-   * @note    This field only available if the post supports
-   *          @p PORT_SUPPORTS_RT else it is set to zero.
+   * @note    Only available if the port supports @p PORT_SUPPORTS_RT,
+   *          otherwise set to zero.
+   * @note    Stores the low 24 bits of the realtime counter; the upper
+   *          bits are truncated by the bitfield assignment.
    */
   uint32_t              rtstamp:24;
   /**
@@ -194,11 +200,14 @@ typedef struct {
    */
   uint16_t              suspended;
   /**
-   * @brief   Trace buffer size (entries).
+   * @brief   Trace buffer size in entries.
+   * @note    Informational field for external tools and debuggers only.
+   *          The trace implementation uses the compile-time constant
+   *          @p CH_DBG_TRACE_BUFFER_SIZE directly and never reads this field.
    */
   uint16_t              size;
   /**
-   * @brief   Pointer to the buffer front.
+   * @brief   Pointer to the next slot to be written.
    */
   trace_event_t         *ptr;
   /**
@@ -236,6 +245,13 @@ typedef struct {
 #endif
 #if !defined(chDbgWriteTrace)
 #define chDbgWriteTrace(up1, up2)
+#endif
+#else /* CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_DISABLED */
+#if !defined(chDbgWriteTraceI)
+#define chDbgWriteTraceI(up1, up2)    chTraceWriteI(up1, up2)
+#endif
+#if !defined(chDbgWriteTrace)
+#define chDbgWriteTrace(up1, up2)     chTraceWrite(up1, up2)
 #endif
 #endif /* CH_DBG_TRACE_MASK == CH_DBG_TRACE_MASK_DISABLED */
 
