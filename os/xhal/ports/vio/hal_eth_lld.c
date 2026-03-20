@@ -99,7 +99,7 @@ static void eth_lld_apply_cfgbuf(hal_eth_driver_c *ethp,
 
 #if VIO_ETH_USE_VETH1 || defined(__DOXYGEN__)
 #if !defined(VIO_VETH1_SUPPRESS_ISR)
-OSAL_IRQ_HANDLER(MK_VECTOR(VIO_ETH_VETH1_IRQ)) {
+OSAL_IRQ_HANDLER(MK_VECTOR(VIO_VETH1_IRQ)) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -112,7 +112,7 @@ OSAL_IRQ_HANDLER(MK_VECTOR(VIO_ETH_VETH1_IRQ)) {
 
 #if VIO_ETH_USE_VETH2 || defined(__DOXYGEN__)
 #if !defined(VIO_VETH2_SUPPRESS_ISR)
-OSAL_IRQ_HANDLER(MK_VECTOR(VIO_ETH_VETH2_IRQ)) {
+OSAL_IRQ_HANDLER(MK_VECTOR(VIO_VETH2_IRQ)) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -132,12 +132,12 @@ void eth_lld_init(void) {
 #if VIO_ETH_USE_VETH1 == TRUE
   ethObjectInit(&ETHD1);
   ETHD1.nveth = 0U;
-  __sb_vrq_seten(1U << VIO_ETH_VETH1_IRQ);
+  __sb_vrq_seten(1U << VIO_VETH1_IRQ);
 #endif
 #if VIO_ETH_USE_VETH2 == TRUE
   ethObjectInit(&ETHD2);
   ETHD2.nveth = 1U;
-  __sb_vrq_seten(1U << VIO_ETH_VETH2_IRQ);
+  __sb_vrq_seten(1U << VIO_VETH2_IRQ);
 #endif
 }
 

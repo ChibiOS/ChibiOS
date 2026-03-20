@@ -48,6 +48,7 @@
 /*===========================================================================*/
 
 #define HAL_USE_PAL                         ${doc.HAL_USE_PAL!"TRUE"}
+#define HAL_USE_ETH                         ${doc.HAL_USE_ETH!"FALSE"}
 #define HAL_USE_MMC_SPI                     ${doc.HAL_USE_MMC_SPI!"FALSE"}
 #define HAL_USE_SIO                         ${doc.HAL_USE_SIO!"FALSE"}
 #define HAL_USE_SPI                         ${doc.HAL_USE_SPI!"FALSE"}
@@ -58,6 +59,14 @@
 
 #define PAL_USE_CALLBACKS                   ${doc.PAL_USE_CALLBACKS!"TRUE"}
 #define PAL_USE_WAIT                        ${doc.PAL_USE_WAIT!"TRUE"}
+
+/*===========================================================================*/
+/* ETH driver settings.                                                      */
+/*===========================================================================*/
+
+#define ETH_USE_SYNCHRONIZATION             ${doc.ETH_USE_SYNCHRONIZATION!"TRUE"}
+#define ETH_USE_EVENTS                      ${doc.ETH_USE_EVENTS!"FALSE"}
+#define ETH_USE_CONFIGURATIONS              ${doc.ETH_USE_CONFIGURATIONS!"FALSE"}
 
 /*===========================================================================*/
 /* SIO driver settings.                                                      */
