@@ -111,7 +111,7 @@ include $(CHIBIOS)/os/common/ports/ARMv8-M-ML-ALT/compilers/GCC/mk/port.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files.
-include $(CHIBIOS)/os/various/lwip_bindings/lwip.mk
+include $(CHIBIOS)/os/various/lwip_bindings/lwip_xhal.mk
 
 # Define linker script file here.
 LDSCRIPT= $(STARTUPLD)/STM32H563xI.ld

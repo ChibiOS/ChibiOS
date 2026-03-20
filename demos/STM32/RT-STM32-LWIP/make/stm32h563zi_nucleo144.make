@@ -115,7 +115,7 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 #include $(CHIBIOS)/test/oslib/oslib_test.mk
 #include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 #include $(CHIBIOS)/os/various/xshell/xshell.mk
-include $(CHIBIOS)/os/various/lwip_bindings/lwip.mk
+include $(CHIBIOS)/os/various/lwip_bindings/lwip_hal.mk
 
 # Define linker script file here.
 LDSCRIPT= $(STARTUPLD)/STM32H563xI.ld
