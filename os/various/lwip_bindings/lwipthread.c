@@ -70,6 +70,7 @@
 #include <lwip/tcpip.h>
 #include <netif/etharp.h>
 #include <lwip/netifapi.h>
+#include <string.h>
 
 #if LWIP_DHCP
 #include <lwip/dhcp.h>
@@ -105,17 +106,20 @@ typedef eth_transmit_handle_t lwip_transmit_handle_t;
 
 static msg_t lwip_lld_start(void) {
   static const hal_eth_config_t lwip_eth_config = {
-    .mac_address = thisif.hwaddr,
-    .regs = {
-      .dmamr = 0U,
-      .dmasbmr = 0U
-    }
+    .mac_address = thisif.hwaddr
   };
+  const hal_eth_config_t *cfgp;
   msg_t msg;
 
   msg = drvSetCfgX(&ETHD1, &lwip_eth_config);
   if (msg != HAL_RET_SUCCESS) {
-    return msg;
+    cfgp = (const hal_eth_config_t *)drvSelectCfgX(&ETHD1, 0U);
+    if (cfgp == NULL) {
+      return msg;
+    }
+    if (cfgp->mac_address != NULL) {
+      memcpy(thisif.hwaddr, cfgp->mac_address, ETHARP_HWADDR_LEN);
+    }
   }
 
   return drvStart(&ETHD1);
@@ -153,11 +157,17 @@ static size_t lwip_read_receive_handle(lwip_receive_handle_t *rxhp,
 }
 
 static size_t lwip_receive_size(lwip_receive_handle_t *rxhp) {
+#if ETH_SUPPORTS_ZERO_COPY == TRUE
   size_t size;
 
   (void)ethGetReceiveBufferX(&ETHD1, *rxhp, &size);
 
   return size;
+#else
+  (void)rxhp;
+
+  return (size_t)(LWIP_NETIF_MTU + SIZEOF_ETH_HDR);
+#endif
 }
 
 static void lwip_release_receive_handle(lwip_receive_handle_t *rxhp) {
@@ -355,6 +365,7 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p) {
 static bool low_level_input(struct netif *netif, struct pbuf **pbuf) {
   lwip_receive_handle_t rxh;
   struct pbuf *q;
+  size_t total;
   u16_t len;
 
   (void)netif;
@@ -377,13 +388,24 @@ static bool low_level_input(struct netif *netif, struct pbuf **pbuf) {
 #if ETH_PAD_SIZE
     pbuf_header(*pbuf, -ETH_PAD_SIZE); /* drop the padding word */
 #endif
+    total = 0U;
 
     /* Iterates through the pbuf chain. */
     for (q = *pbuf; q != NULL; q = q->next) {
-      (void)lwip_read_receive_handle(&rxh, (uint8_t *)q->payload,
-                                     (size_t)q->len);
+      size_t n;
+
+      n = lwip_read_receive_handle(&rxh, (uint8_t *)q->payload,
+                                   (size_t)q->len);
+      total += n;
+      if (n != (size_t)q->len) {
+        break;
+      }
     }
     lwip_release_receive_handle(&rxh);
+
+#if ETH_SUPPORTS_ZERO_COPY != TRUE
+    pbuf_realloc(*pbuf, (u16_t)total);
+#endif
 
     MIB2_STATS_NETIF_ADD(netif, ifinoctets, (*pbuf)->tot_len);
 

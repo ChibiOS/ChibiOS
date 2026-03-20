@@ -54,7 +54,7 @@
 #include <hal.h>
 
 /* Use errno provided by system. */
-#define LWIP_ERRNO_INCLUDE <errno.h>
+#define LWIP_ERRNO_STDINCLUDE       1
 
 /**
  * @brief   Use system provided struct timeval by default.
