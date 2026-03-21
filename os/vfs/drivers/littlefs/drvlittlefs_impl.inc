@@ -73,7 +73,7 @@ static msg_t build_absolute_path(vfs_littlefs_driver_c *drvp,
 
 static enum lfs_open_flags translate_oflag(int oflag) {
 
-  enum lfs_open_flags flags = 0;;
+  enum lfs_open_flags flags = 0;
   switch (oflag & (VO_SUPPORTED_FLAGS_MASK & ~VO_TRUNC)) {
     case VO_RDONLY:                                   /* r */
       return LFS_O_RDONLY;
@@ -120,18 +120,18 @@ static enum lfs_open_flags translate_oflag(int oflag) {
 static vfs_mode_t translate_mode(enum lfs_open_flags fattrib) {
   vfs_mode_t mode = VFS_MODE_S_IFREG;
 
-  if (fattrib & LFS_O_RDONLY) {
+  switch (fattrib & LFS_O_RDWR) {
+  case LFS_O_RDONLY:
     mode |= VFS_MODE_S_IRUSR;
-    return mode;
-  }
-
-  if (fattrib & LFS_O_WRONLY) {
+    break;
+  case LFS_O_WRONLY:
     mode |= VFS_MODE_S_IWUSR;
-    return mode;
-  }
-
-  if (fattrib & LFS_O_RDWR) {
+    break;
+  case LFS_O_RDWR:
     mode |= VFS_MODE_S_IRUSR | VFS_MODE_S_IWUSR;
+    break;
+  default:
+    break;
   }
 
   return mode;
@@ -316,7 +316,6 @@ static msg_t __lfsdir_next_impl(void *ip, vfs_direntry_info_t *dip) {
         if (res == 0) {
 
           /* End of directory.*/
-          (void) lfs_dir_rewind(&drvp->lfs, &self->dir);
           ret = (msg_t)0;
           break;
         }
@@ -377,7 +376,7 @@ static msg_t __lfsdir_first_impl(void *ip, vfs_direntry_info_t *dip) {
   do {
     res = lfs_dir_rewind(&drvp->lfs, &self->dir);
     if (res == LFS_ERR_OK) {
-      ret = __lfsdir_next_impl(self, dip);
+      ret = __lfsdir_next_impl(ip, dip);
       break;
     }
 
@@ -792,8 +791,15 @@ msg_t __lfsdrv_getcwd_impl(void *ip, char *buf, size_t size) {
     CH_RETURN_ON_ERROR(ret);
   }
 
+  if (size == 0U) {
+    return CH_RET_ERANGE;
+  }
+
   /* Copy out the directory name.*/
-  strncpy(buf, self->path_cwd, size);
+  *buf = '\0';
+  if (vfs_path_append(buf, self->path_cwd, size) == (size_t)0) {
+    return CH_RET_ERANGE;
+  }
 
   return CH_RET_SUCCESS;
 }
@@ -841,10 +847,10 @@ msg_t __lfsdrv_stat_impl(void *ip, const char *path, vfs_stat_t *sp) {
     if (lfsip != NULL) {
 
       /* Build the path for the directory or file.*/
-      ret = build_absolute_path(self, self->scratch, path);
+      ret = build_absolute_path(self, self->scratch1, path);
       if (ret == CH_RET_SUCCESS) {
 
-        res = lfs_stat(&self->lfs, self->scratch, lfsip);
+        res = lfs_stat(&self->lfs, self->scratch1, lfsip);
         if (res == LFS_ERR_OK) {
 
           sp->size = (vfs_offset_t)lfsip->size;
@@ -904,11 +910,11 @@ msg_t __lfsdrv_opendir_impl(void *ip, const char *path,
           (VFS_MODE_S_IRWXU | VFS_MODE_S_IFDIR));
 
       /* Build the path for the directory.*/
-      ret = build_absolute_path(self, self->scratch, path);
+      ret = build_absolute_path(self, self->scratch1, path);
       if (ret == CH_RET_SUCCESS) {
 
         /* Open the directory.*/
-        res = lfs_dir_open(&self->lfs, &lfsdnp->dir, self->scratch);
+        res = lfs_dir_open(&self->lfs, &lfsdnp->dir, self->scratch1);
         if (res == LFS_ERR_OK) {
 
           *vdnpp = (vfs_directory_node_c *)lfsdnp;
@@ -965,12 +971,12 @@ msg_t __lfsdrv_openfile_impl(void *ip, const char *path, int flags,
       /* Node object initialization. Note: reference to lfs is set in object.*/
       (void) lfsfileObjectInit(lfsfnp,
                               (vfs_driver_c *)self,
-                              translate_mode(lfsfnp->file.flags));
+                              translate_mode(mode));
 
       /* Build the path for the directory.*/
-      ret = build_absolute_path(self, self->scratch, path);
+      ret = build_absolute_path(self, self->scratch1, path);
       if (ret == CH_RET_SUCCESS) {
-        res = lfs_file_open(&self->lfs, &lfsfnp->file, self->scratch, mode);
+        res = lfs_file_open(&self->lfs, &lfsfnp->file, self->scratch1, mode);
         if (res == LFS_ERR_OK) {
           *vfnpp = (vfs_file_node_c *)lfsfnp;
           return CH_RET_SUCCESS;
@@ -1008,15 +1014,15 @@ msg_t __lfsdrv_unlink_impl(void *ip, const char *path) {
   }
 
   /* Build the path for the directory.*/
-  ret = build_absolute_path(self, self->scratch, path);
+  ret = build_absolute_path(self, self->scratch1, path);
   CH_RETURN_ON_ERROR(ret);
 
   /* Check if it is the root.*/
-  if (self->scratch[1] == '\0') {
-    ret = CH_RET_EISDIR;
+  if (self->scratch1[1] == '\0') {
+    return CH_RET_EISDIR;
   }
 
-  res = lfs_remove(&self->lfs, self->scratch);
+  res = lfs_remove(&self->lfs, self->scratch1);
   if (res != LFS_ERR_OK) {
     return translate_error(res);
   }
@@ -1038,17 +1044,35 @@ msg_t __lfsdrv_unlink_impl(void *ip, const char *path) {
  */
 msg_t __lfsdrv_rename_impl(void *ip, const char *oldpath, const char *newpath) {
   vfs_littlefs_driver_c *self = (vfs_littlefs_driver_c *)ip;
+  vfs_shared_buffer_t *shbuf;
   int res;
+  msg_t ret;
 
   /* FS mount check.*/
   if (!self->mounted) {
     return CH_RET_EIO;
   }
 
-  /* TODO absolute paths? */
-  res = lfs_rename(&self->lfs, oldpath, newpath);
-  if (res != LFS_ERR_OK) {
-    return translate_error(res);
+  /* Taking a shared buffer for the new path.*/
+  shbuf = vfs_buffer_take_wait();
+
+  /* Build the paths for the renamed node.*/
+  ret = build_absolute_path(self, self->scratch1, oldpath);
+  if (ret == CH_RET_SUCCESS) {
+    ret = build_absolute_path(self, shbuf->buf, newpath);
+    if (ret == CH_RET_SUCCESS) {
+      res = lfs_rename(&self->lfs, self->scratch1, shbuf->buf);
+      if (res != LFS_ERR_OK) {
+        ret = translate_error(res);
+      }
+    }
+  }
+
+  /* Releasing the shared buffer.*/
+  vfs_buffer_release(shbuf);
+
+  if (CH_RET_IS_ERROR(ret)) {
+    return ret;
   }
 
   /* Close to flush and re-open current directory.*/
@@ -1079,12 +1103,12 @@ msg_t __lfsdrv_mkdir_impl(void *ip, const char *path, vfs_mode_t mode) {
   }
 
   /* Build the path for the directory.*/
-  ret = build_absolute_path(self, self->scratch, path);
+  ret = build_absolute_path(self, self->scratch1, path);
   if (ret != CH_RET_SUCCESS) {
     return ret;
   }
 
-  res = lfs_mkdir(&self->lfs, self->scratch);
+  res = lfs_mkdir(&self->lfs, self->scratch1);
   if (res != LFS_ERR_OK) {
     return translate_error(res);
   }
@@ -1114,17 +1138,17 @@ msg_t __lfsdrv_rmdir_impl(void *ip, const char *path) {
   }
 
   /* Build the path for the directory.*/
-  ret = build_absolute_path(self, self->scratch, path);
+  ret = build_absolute_path(self, self->scratch1, path);
   if (ret != CH_RET_SUCCESS) {
     return ret;
   }
 
-  if (strcmp(self->scratch, "/") == 0) {
+  if (strcmp(self->scratch1, "/") == 0) {
     /* Can't remove root.*/
     return CH_RET_EACCES;
   }
 
-  res = lfs_remove(&self->lfs, self->scratch);
+  res = lfs_remove(&self->lfs, self->scratch1);
   if (res != LFS_ERR_OK) {
     return translate_error(res);
   }
@@ -1186,7 +1210,7 @@ msg_t lfsdrvMount(void *ip) {
   self->mounted = true;
 
   /* Setting up root as current directory.*/
-  ret = __lfsdrv_setcwd_impl(ip, "/");;
+  ret = __lfsdrv_setcwd_impl(ip, "/");
   if (ret != CH_RET_SUCCESS) {
     (void) lfsdrvUnmount(self);
     return ret;
@@ -1255,4 +1279,3 @@ msg_t lfsdrvFormat(void *ip) {
   return CH_RET_SUCCESS;
 }
 /** @} */
-
