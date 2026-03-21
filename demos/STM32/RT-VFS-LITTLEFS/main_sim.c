@@ -27,55 +27,20 @@
 #include "lfs.h"
 #include "lfs_hal.h"
 
-#include "hal_xsnor_micron_n25q.h"
-#include "hal_xsnor_macronix_mx25.h"
-
 #include "portab.h"
-
-/*===========================================================================*/
-/* XSNOR-related.                                                            */
-/*===========================================================================*/
-
-/* XSNOR configuration.*/
-static union {
-  hal_xsnor_micron_n25q_c           n25q;
-  hal_xsnor_macronix_mx25_c         mx25;
-} snor1;
-
-static xsnor_buffers_t __nocache_snor1buf;
-
-static const xsnor_config_t snorcfg_n25q = {
-  .bus_type         = XSNOR_BUS_MODE_WSPI_4LINES,
-  .bus.wspi.drv     = &PORTAB_WSPI1,
-  .bus.wspi.cfg     = &WSPIcfg1,
-  .buffers          = &__nocache_snor1buf,
-  .options          = N25Q_OPT_DUMMY_CYCLES(8) |
-                      N25Q_OPT_USE_SUBSECTORS |
-                      N25Q_OPT_NICE_WAITING
-};
-
-static const xsnor_config_t snorcfg_mx25 = {
-  .bus_type         = XSNOR_BUS_MODE_WSPI_8LINES,
-  .bus.wspi.drv     = &PORTAB_WSPI1,
-  .bus.wspi.cfg     = &WSPIcfg1,
-  .buffers          = &__nocache_snor1buf,
-  .options          = MX25_OPT_DUMMY_CYCLES(14) |   /* Very conservative.*/
-                      MX25_OPT_USE_SUBSECTORS |
-                      MX25_OPT_NICE_WAITING
-};
 
 /*===========================================================================*/
 /* LittleFS-related.                                                         */
 /*===========================================================================*/
 
 /* LFS configuration.*/
-static uint8_t __nocache_lfs_read_buffer[16];
-static uint8_t __nocache_lfs_prog_buffer[16];
-static uint8_t __nocache_lfs_lookahead_buffer[16];
+static uint8_t lfs_read_buffer[16];
+static uint8_t lfs_prog_buffer[16];
+static uint8_t lfs_lookahead_buffer[16];
 
 static const hal_lfs_binding_t binding1 = {
   .base                 = 0,
-  .flp                  = (BaseFlash *)&snor1.n25q.fls, /* Dirty trick, "fls" at same offset by design.*/
+  .flp                  = (BaseFlash *)&EFLD1,
 };
 
 static const struct lfs_config lfscfg = {
@@ -94,13 +59,13 @@ static const struct lfs_config lfscfg = {
     .read_size          = 16,
     .prog_size          = 16,
     .block_size         = 4096,
-    .block_count        = 128,
+    .block_count        = SIM_EFL_TOTAL_SIZE / 4096,
     .block_cycles       = 500,
     .cache_size         = 16,
     .lookahead_size     = 16,
-    .read_buffer        = __nocache_lfs_read_buffer,
-    .prog_buffer        = __nocache_lfs_prog_buffer,
-    .lookahead_buffer   = __nocache_lfs_lookahead_buffer,
+    .read_buffer        = lfs_read_buffer,
+    .prog_buffer        = lfs_prog_buffer,
+    .lookahead_buffer   = lfs_lookahead_buffer,
     .name_max           = 0,
     .file_max           = 0,
     .attr_max           = 0,
@@ -128,7 +93,7 @@ static NullStream nullstream;
 
 /* Stream to be exposed under /dev as files.*/
 static const drv_streams_element_t streams[] = {
-  {"VSIOD1", (sequential_stream_i *)&PORTAB_SIOD1, NULL, VFS_MODE_S_IFCHR},
+  {"VSD1", (sequential_stream_i *)&PORTAB_SD1, NULL, VFS_MODE_S_IFCHR},
   {"null", (sequential_stream_i *)&nullstream, NULL, VFS_MODE_S_IFCHR},
   {NULL, NULL, NULL, 0}
 };
@@ -157,22 +122,6 @@ static const xshell_manager_config_t cfg1 = {
 /*===========================================================================*/
 
 /*
- * LED blinker thread, times are in milliseconds.
- */
-static THD_STACK(thd1_stack, 256);
-static THD_FUNCTION(thd1_func, arg) {
-
-  (void)arg;
-
-  while (true) {
-    palSetLine(PORTAB_LINE_LED1);
-    chThdSleepMilliseconds(500);
-    palClearLine(PORTAB_LINE_LED1);
-    chThdSleepMilliseconds(500);
-  }
-}
-
-/*
  * Application entry point.
  */
 int main(void) {
@@ -192,30 +141,11 @@ int main(void) {
   chSysInit();
   vfsInit();
 
-  /* Board-dependent GPIO setup code.*/
-  portab_setup();
+  /* Starting the simulated EFL driver.*/
+  eflStart(&EFLD1, NULL);
 
-  /*
-   * Spawning a blinker thread.
-   */
-  static thread_t thd1;
-  static const THD_DECL_STATIC(thd1_desc, "blinker", thd1_stack,
-                               NORMALPRIO + 10, thd1_func, NULL, NULL);
-  chThdSpawnRunning(&thd1, &thd1_desc);
-
-  /* Trying N25Q.*/
-  n25qObjectInit(&snor1.n25q);
-  if (xsnorStart(&snor1.n25q, &snorcfg_n25q) != FLASH_NO_ERROR) {
-
-    /* Trying MX25.*/
-    mx25ObjectInit(&snor1.mx25);
-    if (xsnorStart(&snor1.mx25, &snorcfg_mx25) != FLASH_NO_ERROR) {
-      chSysHalt("device not found");
-    }
-  }
-
-  /* Activates the SIO driver and a null stream.*/
-  sioStart(&PORTAB_SIOD1, NULL);
+  /* Activates the serial driver and a null stream.*/
+  sdStart(&PORTAB_SD1, NULL);
   nullObjectInit(&nullstream);
 
   /* Initialization of the VFS LFS driver object.*/
@@ -247,7 +177,7 @@ int main(void) {
   }
 
   /* Opening a file for shell I/O.*/
-  msg = vfsOpenFile("/dev/VSIOD1", VO_RDWR, &file1);
+  msg = vfsOpenFile("/dev/VSD1", VO_RDWR, &file1);
   if (CH_RET_IS_ERROR(msg)) {
     chSysHalt("VFS");
   }

@@ -107,8 +107,8 @@ static null_stream_c nullstream;
 
 /* Stream to be exposed under /dev as files.*/
 static const drv_streams_element_t streams[] = {
-  {"null", (BaseSequentialStream *)oopGetIf(&nullstream, stm), VFS_MODE_S_IFCHR},
-  {NULL, NULL, 0}
+  {"null", (BaseSequentialStream *)oopGetIf(&nullstream, stm), NULL, VFS_MODE_S_IFCHR},
+  {NULL, NULL, NULL, 0}
 };
 
 /*===========================================================================*/

@@ -28,7 +28,7 @@
 
 #if (VFS_CFG_ENABLE_DRV_TEMPLATE == TRUE) || defined(__DOXYGEN__)
 
-#include "oop_sequential_stream.h"
+#include "oop_random_stream.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */

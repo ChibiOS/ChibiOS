@@ -100,7 +100,7 @@ struct vfs_romfiles_driver_vmt {
   ssize_t (*write)(void *ip, const uint8_t *buf, size_t n);
   msg_t (*setpos)(void *ip, vfs_offset_t offset, vfs_seekmode_t whence);
   vfs_offset_t (*getpos)(void *ip);
-  sequential_stream_i * (*getstream)(void *ip);
+  random_stream_i * (*getstream)(void *ip);
   /* From vfs_romfiles_driver_c.*/
 };
 
@@ -125,6 +125,10 @@ struct vfs_romfiles_driver {
    */
   vfs_mode_t                mode;
   /**
+   * @brief       Implemented interface @p random_stream_i.
+   */
+  random_stream_i           rstm;
+  /**
    * @brief       Implemented interface @p sequential_stream_i.
    */
   sequential_stream_i       stm;
@@ -148,7 +152,7 @@ extern "C" {
   msg_t __romfile_setpos_impl(void *ip, vfs_offset_t offset,
                               vfs_seekmode_t whence);
   vfs_offset_t __romfile_getpos_impl(void *ip);
-  sequential_stream_i *__romfile_getstream_impl(void *ip);
+  random_stream_i *__romfile_getstream_impl(void *ip);
   /* Regular functions.*/
 #ifdef __cplusplus
 }

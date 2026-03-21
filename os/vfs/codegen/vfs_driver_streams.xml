@@ -11,7 +11,7 @@
   </imports>
   <public>
     <includes>
-      <include style="regular">oop_sequential_stream.h</include>
+      <include style="regular">oop_random_stream.h</include>
     </includes>
     <configs>
       <config name="DRV_CFG_STREAMS_DIR_NODES_NUM" default="1">
@@ -35,7 +35,10 @@
             <brief>Filename for the stream.</brief>
           </field>
           <field name="stm" ctype="sequential_stream_i$I*">
-            <brief>Pointer to the stream.</brief>
+            <brief>Pointer to the sequential stream.</brief>
+          </field>
+          <field name="rstm" ctype="random_stream_i$I*">
+            <brief>Pointer to the random stream or @p NULL.</brief>
           </field>
           <field name="mode" ctype="vfs_mode_t">
             <brief>Stream mode.</brief>
@@ -80,8 +83,11 @@ self->index = 0U;]]></implementation>
         namespace="stmfile" ancestorname="vfs_file_node"
         descr="VFS streams file node">
         <fields>
-          <field name="stm" ctype="sequential_stream_i$I*">
-            <brief>Stream interface for this file.</brief>
+          <field name="stream" ctype="sequential_stream_i$I*">
+            <brief>Pointer to the associated sequential stream.</brief>
+          </field>
+          <field name="rstream" ctype="random_stream_i$I*">
+            <brief>Pointer to the associated random stream or @p NULL.</brief>
           </field>
         </fields>
         <methods>
@@ -91,12 +97,16 @@ self->index = 0U;]]></implementation>
             </param>
             <param name="mode" ctype="vfs_mode_t" dir="in"> Node mode flags.
             </param>
-            <param name="stream" ctype="sequential_stream_i *" dir="in"> Stream
-              to be associated.
+            <param name="stream" ctype="sequential_stream_i *" dir="in">
+              Sequential stream to be associated.
+            </param>
+            <param name="rstream" ctype="random_stream_i *" dir="in">
+              Random stream to be associated or @p NULL.
             </param>
             <implementation><![CDATA[
 self = __vfsfile_objinit_impl(self, vmt, (vfs_driver_c *)driver, mode);
-self->stm = stream;]]></implementation>
+self->stream = stream;
+self->rstream = rstream;]]></implementation>
           </objinit>
           <dispose>
             <implementation><![CDATA[]]></implementation>
@@ -119,10 +129,6 @@ self->stm = stream;]]></implementation>
 ]]></implementation>
             </method>
             <method shortname="getpos">
-              <implementation><![CDATA[
-]]></implementation>
-            </method>
-            <method shortname="getstream">
               <implementation><![CDATA[
 ]]></implementation>
             </method>

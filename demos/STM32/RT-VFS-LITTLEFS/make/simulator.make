@@ -1,0 +1,178 @@
+##############################################################################
+# Build global options
+# NOTE: Can be overridden externally.
+#
+
+# Simulator word size selection.
+# Set SIM_BITS=32 for SIMIA32; default is 64 (SIMX86_64).
+SIM_BITS ?= 64
+ifeq ($(SIM_BITS),32)
+  SIM_PORT = SIMIA32
+else
+  SIM_PORT = SIMX86_64
+endif
+
+# Compiler options here.
+ifeq ($(USE_OPT),)
+  USE_OPT = -O2 -ggdb -m$(SIM_BITS)
+endif
+
+# C specific options here (added to USE_OPT).
+ifeq ($(USE_COPT),)
+  USE_COPT =
+endif
+
+# C++ specific options here (added to USE_OPT).
+ifeq ($(USE_CPPOPT),)
+  USE_CPPOPT = -fno-rtti
+endif
+
+# Enable this if you want the linker to remove unused code and data.
+ifeq ($(USE_LINK_GC),)
+  USE_LINK_GC = yes
+endif
+
+# Linker extra options here.
+ifeq ($(USE_LDOPT),)
+  USE_LDOPT = --defsym=__main_thread_stack_base__=0,--defsym=__main_thread_stack_end__=0
+endif
+
+# Enable this if you want link time optimizations (LTO).
+ifeq ($(USE_LTO),)
+  USE_LTO = no
+endif
+
+# Enable this if you want to see the full log while compiling.
+ifeq ($(USE_VERBOSE_COMPILE),)
+  USE_VERBOSE_COMPILE = no
+endif
+
+# If enabled, this option makes the build process faster by not compiling
+# modules not used in the current configuration.
+ifeq ($(USE_SMART_BUILD),)
+  USE_SMART_BUILD = yes
+endif
+
+#
+# Build global options
+##############################################################################
+
+##############################################################################
+# Architecture or project specific options
+#
+
+#
+# Architecture or project specific options
+##############################################################################
+
+##############################################################################
+# Project, sources and paths
+#
+
+# Define project name here
+PROJECT = ch
+
+# Imported source files and paths.
+CHIBIOS  := ../../..
+CONFDIR  := ./cfg/simulator
+BUILDDIR := ./build/simulator
+DEPDIR   := ./.dep/simulator
+
+# Required modules.
+OOPSELECT := base referenced
+
+# Licensing files.
+include $(CHIBIOS)/os/license/license.mk
+# Startup files.
+# Common files.
+include $(CHIBIOS)/os/common/oop/oop.mk
+include $(CHIBIOS)/os/common/utils/utils.mk
+# HAL-OSAL files (optional).
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/hal/boards/simulator/board.mk
+include $(CHIBIOS)/os/hal/ports/simulator/posix/platform.mk
+include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
+# RTOS files (optional).
+include $(CHIBIOS)/os/rt/rt.mk
+include $(CHIBIOS)/os/common/ports/$(SIM_PORT)/compilers/GCC/port.mk
+# VFS files (optional).
+include $(CHIBIOS)/os/vfs/vfs.mk
+# Other files (optional).
+include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+include $(CHIBIOS)/os/various/xshell/xshell.mk
+include $(CHIBIOS)/os/various/littlefs_bindings/littlefs.mk
+
+# C sources here.
+CSRC = $(ALLCSRC) \
+       $(CONFDIR)/portab.c \
+       main_sim.c
+
+# C++ sources here.
+CPPSRC = $(ALLCPPSRC)
+
+# List ASM source files here.
+ASMSRC = $(ALLASMSRC)
+ASMXSRC = $(ALLXASMSRC)
+
+INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC)
+
+#
+# Project, sources and paths
+##############################################################################
+
+##############################################################################
+# Start of user section
+#
+
+# List all user C define here, like -D_DEBUG=1
+UDEFS = -DSIMULATOR -DXSHELL_CMD_TEST_ENABLED=FALSE -DXSHELL_CMD_FILES_ENABLED=TRUE -DSYSCALL_USE_VFS
+
+# Define ASM defines here
+UADEFS =
+
+# List all user directories here
+UINCDIR =
+
+# List the user directory to look for the libraries here
+ULIBDIR =
+
+# List all user libraries here
+ULIBS =
+
+#
+# End of user section
+##############################################################################
+
+##############################################################################
+# Compiler settings
+#
+
+TRGT =
+CC   = $(TRGT)gcc
+CPPC = $(TRGT)g++
+# Enable loading with g++ only if you need C++ runtime support.
+# NOTE: You can use C++ even without C++ support if you are careful. C++
+#       runtime support makes code size explode.
+LD   = $(TRGT)gcc
+#LD   = $(TRGT)g++
+CP   = $(TRGT)objcopy
+AS   = $(TRGT)gcc -x assembler-with-cpp
+AR   = $(TRGT)ar
+OD   = $(TRGT)objdump
+SZ   = $(TRGT)size
+HEX  = $(CP) -O ihex
+BIN  = $(CP) -O binary
+COV  = gcov
+
+# Define C warning options here
+CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
+
+# Define C++ warning options here
+CPPWARN = -Wall -Wextra -Wundef
+
+#
+# Compiler settings
+##############################################################################
+
+RULESPATH = $(CHIBIOS)/os/common/startup/$(SIM_PORT)/compilers/GCC
+include $(RULESPATH)/rules.mk

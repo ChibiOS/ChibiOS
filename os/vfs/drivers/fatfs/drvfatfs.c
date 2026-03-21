@@ -116,7 +116,6 @@ struct vfs_fatfs_dir_node {
 /**
  * @class       vfs_fatfs_file_node_c
  * @extends     vfs_file_node_c
- * @implements  sequential_stream_i
  *
  *
  * @name        Class @p vfs_fatfs_file_node_c structures
@@ -144,7 +143,7 @@ struct vfs_fatfs_file_node_vmt {
   ssize_t (*write)(void *ip, const uint8_t *buf, size_t n);
   msg_t (*setpos)(void *ip, vfs_offset_t offset, vfs_seekmode_t whence);
   vfs_offset_t (*getpos)(void *ip);
-  sequential_stream_i * (*getstream)(void *ip);
+  random_stream_i * (*getstream)(void *ip);
   /* From vfs_fatfs_file_node_c.*/
 };
 
@@ -169,9 +168,9 @@ struct vfs_fatfs_file_node {
    */
   vfs_mode_t                mode;
   /**
-   * @brief       Implemented interface @p sequential_stream_i.
+   * @brief       Implemented interface @p random_stream_i.
    */
-  sequential_stream_i       stm;
+  random_stream_i           rstm;
   /**
    * @brief       FatFS inner @p FIL structure.
    */

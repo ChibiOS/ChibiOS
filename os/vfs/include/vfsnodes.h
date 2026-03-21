@@ -27,7 +27,7 @@
 #ifndef VFSNODES_H
 #define VFSNODES_H
 
-#include "oop_sequential_stream.h"
+#include "oop_random_stream.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -259,6 +259,7 @@ struct vfs_directory_node {
 /**
  * @class       vfs_file_node_c
  * @extends     vfs_node_c
+ * @implements  random_stream_i
  *
  * @brief       Ancestor class of all VFS file nodes classes.
  *
@@ -287,7 +288,7 @@ struct vfs_file_node_vmt {
   ssize_t (*write)(void *ip, const uint8_t *buf, size_t n);
   msg_t (*setpos)(void *ip, vfs_offset_t offset, vfs_seekmode_t whence);
   vfs_offset_t (*getpos)(void *ip);
-  sequential_stream_i * (*getstream)(void *ip);
+  random_stream_i * (*getstream)(void *ip);
 };
 
 /**
@@ -310,6 +311,10 @@ struct vfs_file_node {
    * @brief       Node mode information.
    */
   vfs_mode_t                mode;
+  /**
+   * @brief       Implemented interface @p random_stream_i.
+   */
+  random_stream_i           rstm;
 };
 /** @} */
 
@@ -340,7 +345,7 @@ extern "C" {
   msg_t __vfsfile_setpos_impl(void *ip, vfs_offset_t offset,
                               vfs_seekmode_t whence);
   vfs_offset_t __vfsfile_getpos_impl(void *ip);
-  sequential_stream_i *__vfsfile_getstream_impl(void *ip);
+  random_stream_i *__vfsfile_getstream_impl(void *ip);
 #ifdef __cplusplus
 }
 #endif
@@ -479,15 +484,15 @@ static inline vfs_offset_t vfsFileGetPosition(void *ip) {
 }
 
 /**
- * @brief       Returns the inner HAL stream associated to the file.
+ * @brief       Returns the inner stream associated to the file.
  *
  * @param[in,out] ip            Pointer to a @p vfs_file_node_c instance.
- * @return                      Pointer to the HAL stream interface.
+ * @return                      Pointer to the random stream interface.
  *
  * @api
  */
 CC_FORCE_INLINE
-static inline sequential_stream_i *vfsFileGetStream(void *ip) {
+static inline random_stream_i *vfsFileGetStream(void *ip) {
   vfs_file_node_c *self = (vfs_file_node_c *)ip;
 
   return self->vmt->getstream(ip);

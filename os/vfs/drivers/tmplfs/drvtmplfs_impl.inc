@@ -202,97 +202,6 @@ static vfs_tmpl_dir_node_c *tmpldirObjectInit(vfs_tmpl_dir_node_c *self,
 /*===========================================================================*/
 
 /**
- * @name        Interfaces implementation of vfs_tmpl_file_node_c
- * @{
- */
-/**
- * @memberof    vfs_tmpl_file_node_c
- * @private
- *
- * @brief       Implementation of interface method @p stmWrite().
- *
- * @param[in,out] ip            Pointer to the @p sequential_stream_i class
- *                              interface.
- * @param[in]     bp            Pointer to the data buffer.
- * @param[in]     n             The maximum amount of data to be transferred.
- * @return                      The number of bytes transferred. The returned
- *                              value can be less than the specified number of
- *                              bytes if an end-of-file condition has been met.
- */
-static size_t __tmplfile_stm_write_impl(void *ip, const uint8_t *bp, size_t n) {
-  vfs_tmpl_file_node_c *self = oopIfGetOwner(vfs_tmpl_file_node_c, ip);
-
-  (void)self;
-  (void)bp;
-  (void)n;
-
-  return 0;
-}
-
-/**
- * @memberof    vfs_tmpl_file_node_c
- * @private
- *
- * @brief       Implementation of interface method @p stmRead().
- *
- * @param[in,out] ip            Pointer to the @p sequential_stream_i class
- *                              interface.
- * @param[out]    bp            Pointer to the data buffer.
- * @param[in]     n             The maximum amount of data to be transferred.
- * @return                      The number of bytes transferred. The returned
- *                              value can be less than the specified number of
- *                              bytes if an end-of-file condition has been met.
- */
-static size_t __tmplfile_stm_read_impl(void *ip, uint8_t *bp, size_t n) {
-  vfs_tmpl_file_node_c *self = oopIfGetOwner(vfs_tmpl_file_node_c, ip);
-
-  (void)self;
-  (void)bp;
-  (void)n;
-
-  return 0;
-}
-
-/**
- * @memberof    vfs_tmpl_file_node_c
- * @private
- *
- * @brief       Implementation of interface method @p stmPut().
- *
- * @param[in,out] ip            Pointer to the @p sequential_stream_i class
- *                              interface.
- * @param[in]     b             The byte value to be written to the stream.
- * @return                      The operation status.
- */
-static int __tmplfile_stm_put_impl(void *ip, uint8_t b) {
-  vfs_tmpl_file_node_c *self = oopIfGetOwner(vfs_tmpl_file_node_c, ip);
-
-  (void)self;
-  (void)b;
-
-  return 0;
-}
-
-/**
- * @memberof    vfs_tmpl_file_node_c
- * @private
- *
- * @brief       Implementation of interface method @p stmGet().
- *
- * @param[in,out] ip            Pointer to the @p sequential_stream_i class
- *                              interface.
- * @return                      A byte value from the stream.
- */
-static int __tmplfile_stm_get_impl(void *ip) {
-  vfs_tmpl_file_node_c *self = oopIfGetOwner(vfs_tmpl_file_node_c, ip);
-
-  (void)self;
-
-  return 0;
-}
-/** @} */
-
-/**
  * @name        Methods implementations of vfs_tmpl_file_node_c
  * @{
  */
@@ -313,19 +222,6 @@ static int __tmplfile_stm_get_impl(void *ip) {
 static void *__tmplfile_objinit_impl(void *ip, const void *vmt,
                                      vfs_driver_c *driver, vfs_mode_t mode) {
   vfs_tmpl_file_node_c *self = (vfs_tmpl_file_node_c *)ip;
-
-  /* Initialization of interface sequential_stream_i.*/
-  {
-    static const struct sequential_stream_vmt tmplfile_stm_vmt = {
-      .instance_offset      = offsetof(vfs_tmpl_file_node_c, stm),
-      .write                = __tmplfile_stm_write_impl,
-      .read                 = __tmplfile_stm_read_impl,
-      .put                  = __tmplfile_stm_put_impl,
-      .get                  = __tmplfile_stm_get_impl,
-      .unget                = NULL /* Missing implementation.*/
-    };
-    oopIfObjectInit(&self->stm, &tmplfile_stm_vmt);
-  }
 
   /* Initialization code.*/
   self = __vfsfile_objinit_impl(ip, vmt, (vfs_driver_c *)driver, mode);
@@ -453,22 +349,6 @@ static vfs_offset_t __tmplfile_getpos_impl(void *ip) {
   return 0;
 }
 
-/**
- * @memberof    vfs_tmpl_file_node_c
- * @protected
- *
- * @brief       Override of method @p vfsFileGetStream().
- *
- * @param[in,out] ip            Pointer to a @p vfs_tmpl_file_node_c instance.
- * @return                      Pointer to the HAL stream interface.
- */
-static sequential_stream_i *__tmplfile_getstream_impl(void *ip) {
-  vfs_tmpl_file_node_c *self = (vfs_tmpl_file_node_c *)ip;
-
-  (void)self;
-
-  return NULL;
-}
 /** @} */
 
 /**
@@ -484,7 +364,7 @@ static const struct vfs_tmpl_file_node_vmt __vfs_tmpl_file_node_vmt = {
   .write                    = __tmplfile_write_impl,
   .setpos                   = __tmplfile_setpos_impl,
   .getpos                   = __tmplfile_getpos_impl,
-  .getstream                = __tmplfile_getstream_impl
+  .getstream                = __vfsfile_getstream_impl
 };
 
 /**

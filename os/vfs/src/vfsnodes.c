@@ -206,6 +206,152 @@ msg_t __vfsdir_next_impl(void *ip, vfs_direntry_info_t *dip) {
 /*===========================================================================*/
 
 /**
+ * @name        Interfaces implementation of vfs_file_node_c
+ * @{
+ */
+/**
+ * @brief       Implementation of interface method @p stmWrite().
+ *
+ * @param[in,out] ip            Pointer to the @p random_stream_i class
+ *                              interface.
+ * @param[in]     bp            Pointer to the data buffer.
+ * @param[in]     n             The maximum amount of data to be transferred.
+ * @return                      The number of bytes transferred. The returned
+ *                              value can be less than the specified number of
+ *                              bytes if an end-of-file condition has been met.
+ */
+static size_t __vfsfile_rstm_write_impl(void *ip, const uint8_t *bp, size_t n) {
+  vfs_file_node_c *self = oopIfGetOwner(vfs_file_node_c, ip);
+  msg_t msg;
+
+  msg = vfsFileWrite((void *)self, bp, n);
+  if (CH_RET_IS_ERROR(msg)) {
+
+    return (size_t)0;
+  }
+
+  return (size_t)msg;
+}
+
+/**
+ * @brief       Implementation of interface method @p stmRead().
+ *
+ * @param[in,out] ip            Pointer to the @p random_stream_i class
+ *                              interface.
+ * @param[out]    bp            Pointer to the data buffer.
+ * @param[in]     n             The maximum amount of data to be transferred.
+ * @return                      The number of bytes transferred. The returned
+ *                              value can be less than the specified number of
+ *                              bytes if an end-of-file condition has been met.
+ */
+static size_t __vfsfile_rstm_read_impl(void *ip, uint8_t *bp, size_t n) {
+  vfs_file_node_c *self = oopIfGetOwner(vfs_file_node_c, ip);
+  msg_t msg;
+
+  msg = vfsFileRead((void *)self, bp, n);
+  if (CH_RET_IS_ERROR(msg)) {
+
+    return (size_t)0;
+  }
+
+  return (size_t)msg;
+}
+
+/**
+ * @brief       Implementation of interface method @p stmPut().
+ *
+ * @param[in,out] ip            Pointer to the @p random_stream_i class
+ *                              interface.
+ * @param[in]     b             The byte value to be written to the stream.
+ * @return                      The operation status.
+ */
+static int __vfsfile_rstm_put_impl(void *ip, uint8_t b) {
+  vfs_file_node_c *self = oopIfGetOwner(vfs_file_node_c, ip);
+  msg_t msg;
+
+  msg = vfsFileWrite((void *)self, &b, (size_t)1);
+  if (CH_RET_IS_ERROR(msg)) {
+
+    return STM_TIMEOUT;
+  }
+
+  return msg;
+}
+
+/**
+ * @brief       Implementation of interface method @p stmGet().
+ *
+ * @param[in,out] ip            Pointer to the @p random_stream_i class
+ *                              interface.
+ * @return                      A byte value from the stream.
+ */
+static int __vfsfile_rstm_get_impl(void *ip) {
+  vfs_file_node_c *self = oopIfGetOwner(vfs_file_node_c, ip);
+  msg_t msg;
+  uint8_t b;
+
+  msg = vfsFileRead((void *)self, &b, (size_t)1);
+  if (CH_RET_IS_ERROR(msg)) {
+
+    return STM_TIMEOUT;
+  }
+
+  return (msg_t)b;
+}
+
+/**
+ * @brief       Implementation of interface method @p stmUnget().
+ *
+ * @param[in,out] ip            Pointer to the @p random_stream_i class
+ *                              interface.
+ * @param[in]     b             The byte value to be pushed back to the stream.
+ * @return                      The operation status.
+ */
+static int __vfsfile_rstm_unget_impl(void *ip, int b) {
+  vfs_file_node_c *self = oopIfGetOwner(vfs_file_node_c, ip);
+  msg_t msg;
+
+  /* For seekable file nodes, unget is implemented as a seek-back by one
+     byte. The parameter b is ignored because re-reading the position
+     will return the original byte from the file.*/
+  (void)b;
+
+  msg = vfsFileSetPosition((void *)self, (vfs_offset_t)-1, VFS_SEEK_CUR);
+  if (CH_RET_IS_ERROR(msg)) {
+
+    return STM_RESET;
+  }
+
+  return STM_OK;
+}
+
+/**
+ * @brief       Implementation of interface method @p rstmSeek().
+ *
+ * @param[in,out] ip            Pointer to the @p random_stream_i class
+ *                              interface.
+ * @param[in]     offset        The file offset.
+ * @param[in]     whence        Seek mode.
+ * @return                      Upon successful completion, lseek() returns the
+ *                              resulting offset location as measured in bytes
+ *                              from the beginning of the file.
+ */
+static uint32_t __vfsfile_rstm_seek_impl(void *ip, uint32_t offset, int whence) {
+  vfs_file_node_c *self = oopIfGetOwner(vfs_file_node_c, ip);
+  msg_t msg;
+
+  msg = vfsFileSetPosition((void *)self, (vfs_offset_t)offset,
+                           (vfs_seekmode_t)whence);
+  if (CH_RET_IS_ERROR(msg)) {
+
+    return 0U;
+  }
+
+  return (uint32_t)vfsFileGetPosition((void *)self);
+}
+/** @} */
+
+/**
  * @name        Methods implementations of vfs_file_node_c
  * @{
  */
@@ -223,6 +369,20 @@ msg_t __vfsdir_next_impl(void *ip, vfs_direntry_info_t *dip) {
 void *__vfsfile_objinit_impl(void *ip, const void *vmt, vfs_driver_c *driver,
                              vfs_mode_t mode) {
   vfs_file_node_c *self = (vfs_file_node_c *)ip;
+
+  /* Initialization of interface random_stream_i.*/
+  {
+    static const struct random_stream_vmt vfsfile_rstm_vmt = {
+      .instance_offset      = offsetof(vfs_file_node_c, rstm),
+      .write                = __vfsfile_rstm_write_impl,
+      .read                 = __vfsfile_rstm_read_impl,
+      .put                  = __vfsfile_rstm_put_impl,
+      .get                  = __vfsfile_rstm_get_impl,
+      .unget                = __vfsfile_rstm_unget_impl,
+      .seek                 = __vfsfile_rstm_seek_impl
+    };
+    oopIfObjectInit(&self->rstm, &vfsfile_rstm_vmt);
+  }
 
   /* Initialization code.*/
   self = __vfsnode_objinit_impl(ip, vmt, driver, mode);
@@ -325,14 +485,12 @@ vfs_offset_t __vfsfile_getpos_impl(void *ip) {
  * @note        This function is meant to be used by derived classes.
  *
  * @param[in,out] ip            Pointer to a @p vfs_file_node_c instance.
- * @return                      Pointer to the HAL stream interface.
+ * @return                      Pointer to the random stream interface.
  */
-sequential_stream_i *__vfsfile_getstream_impl(void *ip) {
+random_stream_i *__vfsfile_getstream_impl(void *ip) {
   vfs_file_node_c *self = (vfs_file_node_c *)ip;
 
-  (void)self;
-
-  return NULL;
+  return &self->rstm;
 }
 /** @} */
 

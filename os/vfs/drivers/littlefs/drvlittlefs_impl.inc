@@ -433,137 +433,6 @@ static vfs_littlefs_dir_node_c *lfsdirObjectInit(vfs_littlefs_dir_node_c *self,
 /*===========================================================================*/
 
 /**
- * @name        Interfaces implementation of vfs_littlefs_file_node_c
- * @{
- */
-/**
- * @memberof    vfs_littlefs_file_node_c
- * @private
- *
- * @brief       Implementation of interface method @p stmWrite().
- *
- * @param[in,out] ip            Pointer to the @p sequential_stream_i class
- *                              interface.
- * @param[in]     bp            Pointer to the data buffer.
- * @param[in]     n             The maximum amount of data to be transferred.
- * @return                      The number of bytes transferred. The returned
- *                              value can be less than the specified number of
- *                              bytes if an end-of-file condition has been met.
- */
-static size_t __lfsfile_stm_write_impl(void *ip, const uint8_t *bp, size_t n) {
-  vfs_littlefs_file_node_c *self = oopIfGetOwner(vfs_littlefs_file_node_c, ip);
-  vfs_littlefs_driver_c *drvp = (vfs_littlefs_driver_c *)self->driver;
-  ssize_t nw;
-
-  /* FS mount check.*/
-  if (!drvp->mounted) {
-    return (size_t)0;
-  }
-
-  nw = vfsFileWrite((void *)self, bp, n);
-  if (CH_RET_IS_ERROR(nw)) {
-
-    return (size_t)0;
-  }
-
-  return (size_t)nw;
-}
-
-/**
- * @memberof    vfs_littlefs_file_node_c
- * @private
- *
- * @brief       Implementation of interface method @p stmRead().
- *
- * @param[in,out] ip            Pointer to the @p sequential_stream_i class
- *                              interface.
- * @param[out]    bp            Pointer to the data buffer.
- * @param[in]     n             The maximum amount of data to be transferred.
- * @return                      The number of bytes transferred. The returned
- *                              value can be less than the specified number of
- *                              bytes if an end-of-file condition has been met.
- */
-static size_t __lfsfile_stm_read_impl(void *ip, uint8_t *bp, size_t n) {
-  vfs_littlefs_file_node_c *self = oopIfGetOwner(vfs_littlefs_file_node_c, ip);
-  vfs_littlefs_driver_c *drvp = (vfs_littlefs_driver_c *)self->driver;
-  ssize_t nr;
-
-  /* FS mount check.*/
-  if (!drvp->mounted) {
-    return (size_t)0;
-  }
-
-  nr = vfsFileRead((void *)self, bp, n);
-  if (CH_RET_IS_ERROR(nr)) {
-
-    return (size_t)0;
-  }
-
-  return (size_t)nr;
-}
-
-/**
- * @memberof    vfs_littlefs_file_node_c
- * @private
- *
- * @brief       Implementation of interface method @p stmPut().
- *
- * @param[in,out] ip            Pointer to the @p sequential_stream_i class
- *                              interface.
- * @param[in]     b             The byte value to be written to the stream.
- * @return                      The operation status.
- */
-static int __lfsfile_stm_put_impl(void *ip, uint8_t b) {
-  vfs_littlefs_file_node_c *self = oopIfGetOwner(vfs_littlefs_file_node_c, ip);
-  vfs_littlefs_driver_c *drvp = (vfs_littlefs_driver_c *)self->driver;
-  int res;
-
-  /* FS mount check.*/
-  if (!drvp->mounted) {
-    return CH_RET_EIO;
-  }
-
-  res = (int)vfsFileWrite((void *)self, &b, (size_t)1);
-  if (CH_RET_IS_ERROR(res)) {
-
-    return STM_TIMEOUT;
-  }
-
-  return res;
-}
-
-/**
- * @memberof    vfs_littlefs_file_node_c
- * @private
- *
- * @brief       Implementation of interface method @p stmGet().
- *
- * @param[in,out] ip            Pointer to the @p sequential_stream_i class
- *                              interface.
- * @return                      A byte value from the stream.
- */
-static int __lfsfile_stm_get_impl(void *ip) {
-  vfs_littlefs_file_node_c *self = oopIfGetOwner(vfs_littlefs_file_node_c, ip);
-  vfs_littlefs_driver_c *drvp = (vfs_littlefs_driver_c *)self->driver;
-  int res;
-  uint8_t b;
-
-  /* FS mount check.*/
-  if (!drvp->mounted) {
-    return CH_RET_EIO;
-  }
-
-  res = (int)vfsFileRead((void *)self, &b, (size_t)1);
-  if (CH_RET_IS_ERROR(res)) {
-
-    return STM_TIMEOUT;
-  }
-
-  return (msg_t)b;
-}
-/** @} */
-
-/**
  * @name        Methods implementations of vfs_littlefs_file_node_c
  * @{
  */
@@ -584,19 +453,6 @@ static int __lfsfile_stm_get_impl(void *ip) {
 static void *__lfsfile_objinit_impl(void *ip, const void *vmt,
                                     vfs_driver_c *driver, vfs_mode_t mode) {
   vfs_littlefs_file_node_c *self = (vfs_littlefs_file_node_c *)ip;
-
-  /* Initialization of interface sequential_stream_i.*/
-  {
-    static const struct sequential_stream_vmt lfsfile_stm_vmt = {
-      .instance_offset      = offsetof(vfs_littlefs_file_node_c, stm),
-      .write                = __lfsfile_stm_write_impl,
-      .read                 = __lfsfile_stm_read_impl,
-      .put                  = __lfsfile_stm_put_impl,
-      .get                  = __lfsfile_stm_get_impl,
-      .unget                = NULL /* Missing implementation.*/
-    };
-    oopIfObjectInit(&self->stm, &lfsfile_stm_vmt);
-  }
 
   /* Initialization code.*/
   self = __vfsfile_objinit_impl(ip, vmt, (vfs_driver_c *)driver, mode);
@@ -772,21 +628,6 @@ static vfs_offset_t __lfsfile_getpos_impl(void *ip) {
   return (vfs_offset_t)offset;
 }
 
-/**
- * @memberof    vfs_littlefs_file_node_c
- * @protected
- *
- * @brief       Override of method @p vfsFileGetStream().
- *
- * @param[in,out] ip            Pointer to a @p vfs_littlefs_file_node_c
- *                              instance.
- * @return                      Pointer to the HAL stream interface.
- */
-static sequential_stream_i *__lfsfile_getstream_impl(void *ip) {
-  vfs_littlefs_file_node_c *self = (vfs_littlefs_file_node_c *)ip;
-
-  return &self->stm;
-}
 /** @} */
 
 /**
@@ -802,7 +643,7 @@ static const struct vfs_littlefs_file_node_vmt __vfs_littlefs_file_node_vmt = {
   .write                    = __lfsfile_write_impl,
   .setpos                   = __lfsfile_setpos_impl,
   .getpos                   = __lfsfile_getpos_impl,
-  .getstream                = __lfsfile_getstream_impl
+  .getstream                = __vfsfile_getstream_impl
 };
 
 /**

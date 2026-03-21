@@ -365,11 +365,11 @@ vfs_offset_t vfsGetFilePosition(vfs_file_node_c *vfnp) {
  * @brief   Returns the inner stream associated to the file.
  *
  * @param[in] vfnp      Pointer to the @p vfs_file_node_c object.
- * @return              The inner stream interface.
+ * @return              The random stream interface.
  *
  * @api
  */
-sequential_stream_i *vfsGetFileStream(vfs_file_node_c *vfnp) {
+random_stream_i *vfsGetFileStream(vfs_file_node_c *vfnp) {
 
   chDbgAssert(vfnp->references > 0U, "zero count");
 

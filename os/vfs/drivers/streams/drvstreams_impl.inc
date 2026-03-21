@@ -204,12 +204,14 @@ const struct vfs_streams_dir_node_vmt __vfs_streams_dir_node_vmt = {
  * @return                      A new reference to the object.
  */
 void *__stmfile_objinit_impl(void *ip, const void *vmt, vfs_driver_c *driver,
-                             vfs_mode_t mode, sequential_stream_i *stream) {
+                             vfs_mode_t mode, sequential_stream_i *stream,
+                             random_stream_i *rstream) {
   vfs_streams_file_node_c *self = (vfs_streams_file_node_c *)ip;
 
   /* Initialization code.*/
   self = __vfsfile_objinit_impl(self, vmt, (vfs_driver_c *)driver, mode);
-  self->stm = stream;
+  self->stream  = stream;
+  self->rstream = rstream;
 
   return self;
 }
@@ -264,7 +266,7 @@ msg_t __stmfile_stat_impl(void *ip, vfs_stat_t *sp) {
 ssize_t __stmfile_read_impl(void *ip, uint8_t *buf, size_t n) {
   vfs_streams_file_node_c *self = (vfs_streams_file_node_c *)ip;
 
-  return stmRead(self->stm, buf, n);
+  return stmRead(self->stream, buf, n);
 }
 
 /**
@@ -282,7 +284,7 @@ ssize_t __stmfile_read_impl(void *ip, uint8_t *buf, size_t n) {
 ssize_t __stmfile_write_impl(void *ip, const uint8_t *buf, size_t n) {
   vfs_streams_file_node_c *self = (vfs_streams_file_node_c *)ip;
 
-  return stmWrite(self->stm, buf, n);
+  return stmWrite(self->stream, buf, n);
 }
 
 /**
@@ -299,8 +301,15 @@ ssize_t __stmfile_write_impl(void *ip, const uint8_t *buf, size_t n) {
  */
 msg_t __stmfile_setpos_impl(void *ip, vfs_offset_t offset,
                             vfs_seekmode_t whence) {
+  vfs_streams_file_node_c *self = (vfs_streams_file_node_c *)ip;
 
-  return __vfsfile_setpos_impl(ip, offset, whence);
+  if (self->rstream != NULL) {
+    rstmSeek(self->rstream, (uint32_t)offset, (int)whence);
+
+    return CH_RET_SUCCESS;
+  }
+
+  return CH_RET_ENOSYS;
 }
 
 /**
@@ -314,25 +323,15 @@ msg_t __stmfile_setpos_impl(void *ip, vfs_offset_t offset,
  * @return                      The current file position.
  */
 vfs_offset_t __stmfile_getpos_impl(void *ip) {
-
-  return __vfsfile_getpos_impl(ip);
-}
-
-/**
- * @memberof    vfs_streams_file_node_c
- * @protected
- *
- * @brief       Override of method @p vfsFileGetStream().
- *
- * @param[in,out] ip            Pointer to a @p vfs_streams_file_node_c
- *                              instance.
- * @return                      Pointer to the HAL stream interface.
- */
-sequential_stream_i *__stmfile_getstream_impl(void *ip) {
   vfs_streams_file_node_c *self = (vfs_streams_file_node_c *)ip;
 
-  return self->stm;
+  if (self->rstream != NULL) {
+    return (vfs_offset_t)rstmSeek(self->rstream, 0U, RSTM_SEEK_CUR);
+  }
+
+  return CH_RET_ENOSYS;
 }
+
 /** @} */
 
 /**
@@ -348,7 +347,7 @@ const struct vfs_streams_file_node_vmt __vfs_streams_file_node_vmt = {
   .write                    = __stmfile_write_impl,
   .setpos                   = __stmfile_setpos_impl,
   .getpos                   = __stmfile_getpos_impl,
-  .getstream                = __stmfile_getstream_impl
+  .getstream                = __vfsfile_getstream_impl
 };
 
 /*===========================================================================*/
@@ -589,7 +588,8 @@ msg_t __stmdrv_openfile_impl(void *ip, const char *path, int flags,
                                        VFS_MODE_S_IFIFO |
                                        VFS_MODE_S_IRUSR |
                                        VFS_MODE_S_IWUSR,
-                                   dsep->stm);
+                                   dsep->stm,
+                                   dsep->rstm);
 
           *vfnpp = (vfs_file_node_c *)sfnp;
           return CH_RET_SUCCESS;

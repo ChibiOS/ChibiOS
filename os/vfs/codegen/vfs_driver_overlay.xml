@@ -11,7 +11,7 @@
   </imports>
   <public>
     <includes>
-      <include style="regular">oop_sequential_stream.h</include>
+      <include style="regular">oop_random_stream.h</include>
     </includes>
     <configs>
       <config name="DRV_CFG_OVERLAY_DRV_MAX" default="1">

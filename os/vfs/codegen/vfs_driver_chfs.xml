@@ -11,7 +11,7 @@
   </imports>
   <public>
     <includes>
-      <include style="regular">oop_sequential_stream.h</include>
+      <include style="regular">oop_random_stream.h</include>
     </includes>
     <configs>
       <config name="DRV_CFG_CHFS_DIR_NODES_NUM" default="2">
@@ -212,26 +212,6 @@ self = __vfsdir_objinit_impl(ip, vmt, (vfs_driver_c *)driver, mode);]]></impleme
       </class>
       <class type="regular" name="vfs_chfs_file_node" namespace="chfsfile"
         ancestorname="vfs_file_node" descr="VFS ChibiFS file node">
-        <implements>
-          <if name="sequential_stream">
-            <method shortname="write">
-              <implementation><![CDATA[
-]]></implementation>
-            </method>
-            <method shortname="read">
-              <implementation><![CDATA[
-]]></implementation>
-            </method>
-            <method shortname="put">
-              <implementation><![CDATA[
-]]></implementation>
-            </method>
-            <method shortname="get">
-              <implementation><![CDATA[
-]]></implementation>
-            </method>
-          </if>
-        </implements>
         <fields>
         </fields>
         <methods>

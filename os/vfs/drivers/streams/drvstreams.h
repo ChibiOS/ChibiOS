@@ -28,7 +28,7 @@
 
 #if (VFS_CFG_ENABLE_DRV_STREAMS == TRUE) || defined(__DOXYGEN__)
 
-#include "oop_sequential_stream.h"
+#include "oop_random_stream.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -93,9 +93,13 @@ struct drv_streams_element {
    */
   const char                *name;
   /**
-   * @brief       Pointer to the stream.
+   * @brief       Pointer to the sequential stream.
    */
   sequential_stream_i       *stm;
+  /**
+   * @brief       Pointer to the random stream or @p NULL.
+   */
+  random_stream_i           *rstm;
   /**
    * @brief       Stream mode.
    */
@@ -190,7 +194,7 @@ struct vfs_streams_file_node_vmt {
   ssize_t (*write)(void *ip, const uint8_t *buf, size_t n);
   msg_t (*setpos)(void *ip, vfs_offset_t offset, vfs_seekmode_t whence);
   vfs_offset_t (*getpos)(void *ip);
-  sequential_stream_i * (*getstream)(void *ip);
+  random_stream_i * (*getstream)(void *ip);
   /* From vfs_streams_file_node_c.*/
 };
 
@@ -215,9 +219,17 @@ struct vfs_streams_file_node {
    */
   vfs_mode_t                mode;
   /**
-   * @brief       Stream interface for this file.
+   * @brief       Implemented interface @p random_stream_i.
    */
-  sequential_stream_i       *stm;
+  random_stream_i           rstm;
+  /**
+   * @brief       Pointer to the associated sequential stream.
+   */
+  sequential_stream_i       *stream;
+  /**
+   * @brief       Pointer to the associated random stream or @p NULL.
+   */
+  random_stream_i           *rstream;
 };
 /** @} */
 
@@ -285,7 +297,8 @@ extern "C" {
   msg_t __stmdir_next_impl(void *ip, vfs_direntry_info_t *dip);
   /* Methods of vfs_streams_file_node_c.*/
   void *__stmfile_objinit_impl(void *ip, const void *vmt, vfs_driver_c *driver,
-                               vfs_mode_t mode, sequential_stream_i *stream);
+                               vfs_mode_t mode, sequential_stream_i *stream,
+                               random_stream_i *rstream);
   void __stmfile_dispose_impl(void *ip);
   msg_t __stmfile_stat_impl(void *ip, vfs_stat_t *sp);
   ssize_t __stmfile_read_impl(void *ip, uint8_t *buf, size_t n);
@@ -293,7 +306,6 @@ extern "C" {
   msg_t __stmfile_setpos_impl(void *ip, vfs_offset_t offset,
                               vfs_seekmode_t whence);
   vfs_offset_t __stmfile_getpos_impl(void *ip);
-  sequential_stream_i *__stmfile_getstream_impl(void *ip);
   /* Methods of vfs_streams_driver_c.*/
   void *__stmdrv_objinit_impl(void *ip, const void *vmt,
                               const drv_streams_element_t *streams);
@@ -356,7 +368,8 @@ static inline vfs_streams_dir_node_c *stmdirObjectInit(vfs_streams_dir_node_c *s
  *                              instance to be initialized.
  * @param[in]     driver        Pointer to the controlling driver.
  * @param[in]     mode          Node mode flags.
- * @param[in]     stream        Stream to be associated.
+ * @param[in]     stream        Sequential stream to be associated.
+ * @param[in]     rstream       Random stream to be associated or @p NULL.
  * @return                      Pointer to the initialized object.
  *
  * @objinit
@@ -365,11 +378,12 @@ CC_FORCE_INLINE
 static inline vfs_streams_file_node_c *stmfileObjectInit(vfs_streams_file_node_c *self,
                                                          vfs_driver_c *driver,
                                                          vfs_mode_t mode,
-                                                         sequential_stream_i *stream) {
+                                                         sequential_stream_i *stream,
+                                                         random_stream_i *rstream) {
   extern const struct vfs_streams_file_node_vmt __vfs_streams_file_node_vmt;
 
   return __stmfile_objinit_impl(self, &__vfs_streams_file_node_vmt, driver,
-                                mode, stream);
+                                mode, stream, rstream);
 }
 /** @} */
 

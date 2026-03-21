@@ -5,11 +5,11 @@
   <brief>Common ancestor class of all reference-counted objects.</brief>
   <imports>
     <import>oop_referenced_object.xml</import>
-    <import>oop_sequential_stream.xml</import>
+    <import>oop_random_stream.xml</import>
   </imports>
   <public>
     <includes>
-      <include style="regular">oop_sequential_stream.h</include>
+      <include style="regular">oop_random_stream.h</include>
     </includes>
     <definitions_early>
       <group description="Node types">
@@ -198,6 +198,89 @@ return CH_RET_ENOSYS;<![CDATA[]]></implementation>
       <class type="abstract" name="vfs_file_node" namespace="vfsfile"
         ancestorname="vfs_node" descr="VFS file node">
         <brief>Ancestor class of all VFS file nodes classes.</brief>
+        <implements>
+          <if name="random_stream">
+            <method shortname="write">
+              <implementation><![CDATA[
+msg_t msg;
+
+msg = vfsFileWrite((void *)self, bp, n);
+if (CH_RET_IS_ERROR(msg)) {
+
+  return (size_t)0;
+}
+
+return (size_t)msg;]]></implementation>
+            </method>
+            <method shortname="read">
+              <implementation><![CDATA[
+msg_t msg;
+
+msg = vfsFileRead((void *)self, bp, n);
+if (CH_RET_IS_ERROR(msg)) {
+
+  return (size_t)0;
+}
+
+return (size_t)msg;]]></implementation>
+            </method>
+            <method shortname="put">
+              <implementation><![CDATA[
+msg_t msg;
+
+msg = vfsFileWrite((void *)self, &b, (size_t)1);
+if (CH_RET_IS_ERROR(msg)) {
+
+  return STM_TIMEOUT;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method shortname="get">
+              <implementation><![CDATA[
+msg_t msg;
+uint8_t b;
+
+msg = vfsFileRead((void *)self, &b, (size_t)1);
+if (CH_RET_IS_ERROR(msg)) {
+
+  return STM_TIMEOUT;
+}
+
+return (msg_t)b;]]></implementation>
+            </method>
+            <method shortname="unget">
+              <implementation><![CDATA[
+msg_t msg;
+
+/* For seekable file nodes, unget is implemented as a seek-back by one
+   byte. The parameter b is ignored because re-reading the position
+   will return the original byte from the file.*/
+(void)b;
+
+msg = vfsFileSetPosition((void *)self, (vfs_offset_t)-1, VFS_SEEK_CUR);
+if (CH_RET_IS_ERROR(msg)) {
+
+  return STM_RESET;
+}
+
+return STM_OK;]]></implementation>
+            </method>
+            <method shortname="seek">
+              <implementation><![CDATA[
+msg_t msg;
+
+msg = vfsFileSetPosition((void *)self, (vfs_offset_t)offset,
+                         (vfs_seekmode_t)whence);
+if (CH_RET_IS_ERROR(msg)) {
+
+  return 0U;
+}
+
+return (uint32_t)vfsFileGetPosition((void *)self);]]></implementation>
+            </method>
+          </if>
+        </implements>
         <fields>
         </fields>
         <methods>
@@ -275,15 +358,13 @@ return CH_RET_ENOSYS;<![CDATA[]]></implementation>
 return CH_RET_ENOSYS;<![CDATA[]]></implementation>
             </method>
             <method name="vfsFileGetStream" shortname="getstream"
-              ctype="sequential_stream_i *">
-              <brief>Returns the inner HAL stream associated to the file.</brief>
-              <return>Pointer to the HAL stream interface.</return>
+              ctype="random_stream_i *">
+              <brief>Returns the inner stream associated to the file.</brief>
+              <return>Pointer to the random stream interface.</return>
               <api />
-              <implementation>
+              <implementation><![CDATA[
 
-(void)self;
-
-return NULL;<![CDATA[]]></implementation>
+return &self->rstm;]]></implementation>
             </method>
           </virtual>
         </methods>
