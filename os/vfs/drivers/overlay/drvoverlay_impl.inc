@@ -569,6 +569,10 @@ msg_t __ovldrv_setcwd_impl(void *ip, const char *path) {
 msg_t __ovldrv_getcwd_impl(void *ip, char *buf, size_t size) {
   vfs_overlay_driver_c *self = (vfs_overlay_driver_c *)ip;
 
+  if (size == 0U) {
+    return CH_RET_ERANGE;
+  }
+
   *buf = '\0';
   if (vfs_path_append(buf, get_current_directory(self), size) == (size_t)0) {
     return CH_RET_ERANGE;
@@ -743,9 +747,13 @@ msg_t __ovldrv_unlink_impl(void *ip, const char *path) {
       }
       else {
         /* Passing the request to the overlaid driver, if any.*/
-        /* TODO remove the dirty trick.*/
-        ret = drv_overlaid_path_call(self, self->buf,
-                                     self->overlaid_drv->vmt->unlink);
+        if (self->overlaid_drv != NULL) {
+          ret = drv_overlaid_path_call(self, self->buf,
+                                       self->overlaid_drv->vmt->unlink);
+        }
+        else {
+          ret = CH_RET_ENOENT;
+        }
       }
     }
   } while (false);
@@ -832,6 +840,9 @@ msg_t __ovldrv_rename_impl(void *ip, const char *oldpath, const char *newpath) {
         ret = vfsDrvRename((void *)self->overlaid_drv,
                            self->buf,
                            shbuf->buf);
+      }
+      else {
+        ret = CH_RET_ENOENT;
       }
     }
     else {
@@ -951,9 +962,13 @@ msg_t __ovldrv_rmdir_impl(void *ip, const char *path) {
       }
       else {
         /* Passing the request to the overlaid driver, if any.*/
-        /* TODO remove the dirty trick.*/
-        ret = drv_overlaid_path_call(self, self->buf,
-                                     self->overlaid_drv->vmt->rmdir);
+        if (self->overlaid_drv != NULL) {
+          ret = drv_overlaid_path_call(self, self->buf,
+                                       self->overlaid_drv->vmt->rmdir);
+        }
+        else {
+          ret = CH_RET_ENOENT;
+        }
       }
     }
   } while (false);
@@ -1003,6 +1018,12 @@ const struct vfs_overlay_driver_vmt __vfs_overlay_driver_vmt = {
 msg_t ovldrvRegisterDriver(void *ip, vfs_driver_c *vdp, const char *name) {
   vfs_overlay_driver_c *self = (vfs_overlay_driver_c *)ip;
   msg_t ret;
+  unsigned i;
+
+  /* Name length check.*/
+  if (strlen(name) > (size_t)VFS_CFG_NAMELEN_MAX) {
+    return CH_RET_ENAMETOOLONG;
+  }
 
   chSysLock();
 
@@ -1010,10 +1031,21 @@ msg_t ovldrvRegisterDriver(void *ip, vfs_driver_c *vdp, const char *name) {
     ret = CH_RET_ENOMEM;
   }
   else {
-    self->names[self->next_driver]   = name;
-    self->drivers[self->next_driver] = vdp;
-    self->next_driver++;
+
+    /* Duplicate name check.*/
     ret = CH_RET_SUCCESS;
+    for (i = 0U; i < self->next_driver; i++) {
+      if (strcmp(self->names[i], name) == 0) {
+        ret = CH_RET_EEXIST;
+        break;
+      }
+    }
+
+    if (!CH_RET_IS_ERROR(ret)) {
+      self->names[self->next_driver]   = name;
+      self->drivers[self->next_driver] = vdp;
+      self->next_driver++;
+    }
   }
 
   chSysUnlock();
