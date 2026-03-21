@@ -27,6 +27,7 @@
 #include <string.h>
 
 #include "hal.h"
+#include "rp_flash_lockout.h"
 
 #if (HAL_USE_EFL == TRUE) || defined(__DOXYGEN__)
 
@@ -77,17 +78,6 @@
  * @{
  */
 #define SSI_BAUDR_DEFAULT                   6U
-/** @} */
-
-/**
- * @name    SSI configuration for XIP mode
- * @{
- */
-/* SPI_FRF=0 DFS_32=31 TMOD=3 */
-#define SSI_CTRLR0_XIP                      0x001F0300U
-
-/* XIP_CMD=0x03 INST_L=2 ADDR_L=6 TRANS_TYPE=0 */
-#define SSI_SPI_CTRLR0_XIP                  0x03000218U
 /** @} */
 
 /**
@@ -319,8 +309,8 @@ RAMFUNC static void rp_flash_flush_cache(void) {
   /* Write to flush register to trigger cache flush. */
   xip[XIP_FLUSH / 4U] = 1U;
 
-  __DSB();
-  __ISB();
+  /* Read back blocks until flush is complete. */
+  (void)xip[XIP_FLUSH / 4U];
 
   /* Enable the cache */
   xip[XIP_CTRL / 4U] = 1U;
@@ -340,12 +330,6 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
   uint32_t padctrl_tmp;
   unsigned i;
   volatile unsigned delay;
-
-  /* Save current XIP configuration before modifying. */
-  eflp->xip_ctrlr0 = ssi[SSI_CTRLR0 / 4U];
-  eflp->xip_ctrlr1 = ssi[SSI_CTRLR1 / 4U];
-  eflp->xip_spi_ctrlr0 = ssi[SSI_SPI_CTRLR0 / 4U];
-  eflp->xip_baudr = ssi[SSI_BAUDR / 4U];
 
   /* Wait for any pending work.*/
   while ((ssi[SSI_SR / 4U] & SSI_SR_BUSY) != 0U) {
@@ -432,30 +416,44 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
 }
 
 /**
- * @brief   Enter XIP mode
+ * @brief   Enter XIP mode by re-executing the boot2 stage2 code.
  * @note    This function MUST be in RAM.
- * @note    Restores the XIP configuration that was saved when exit_xip
- *          was called, preserving whatever mode the bootrom configured
- *          (e.g. QSPI fast read).
+ * @details The SSI SPI_CTRLR0 register XIP_CMD field (bits 31:24) does
+ *          not read back on RP2040 — it always returns zero regardless
+ *          of the value written.  Because the boot2 stores the QSPI
+ *          continuous-read mode byte (typically 0xA0) in this field,
+ *          a register save/restore approach cannot recover the original
+ *          XIP configuration.
+ *
+ *          Instead, the boot2 stage2 code is copied to RAM at driver
+ *          start and re-executed here.  This is the same technique used
+ *          by the Pico SDK (flash_enable_xip_via_boot2 in
+ *          hardware_flash/flash.c).
+ *
+ *          Per RP2040 Datasheet section 2.8.1.3, the 256-byte boot2
+ *          image is position-independent Thumb code — the bootrom
+ *          copies it to SRAM and calls it during the boot sequence.
+ *          All standard boot2 variants (w25q080, generic_03h,
+ *          at25sf128a, is25lp080) follow the Pico SDK convention of
+ *          checking the saved LR on exit: if non-zero (called from
+ *          user code) the boot2 returns to the caller; if zero (called
+ *          from the bootrom) it jumps to the application entry point.
+ *          Custom boot2 implementations that do not follow this
+ *          convention will not work with this driver.
  *
  * @param[in] eflp      pointer to the EFlashDriver object
  */
 RAMFUNC static void rp_flash_enter_xip(EFlashDriver *eflp) {
-  volatile uint32_t *ssi = eflp->ssi;
   volatile uint32_t *ioqspi_ss_ctrl =
       (volatile uint32_t *)(RP_IOQSPI_BASE + IOQSPI_GPIO_QSPI_SS_CTRL);
 
-  /* Reset CS control to normal */
+  /* Reset CS control to normal. */
   *ioqspi_ss_ctrl = 0U;
 
-  /* Restore saved XIP configuration. */
-  ssi[SSI_SSIENR / 4U] = 0U;
-  ssi[SSI_BAUDR / 4U] = eflp->xip_baudr;
-  ssi[SSI_CTRLR0 / 4U] = eflp->xip_ctrlr0;
-  ssi[SSI_CTRLR1 / 4U] = eflp->xip_ctrlr1;
-  ssi[SSI_SPI_CTRLR0 / 4U] = eflp->xip_spi_ctrlr0;
-  ssi[SSI_SER / 4U] = 1U;
-  ssi[SSI_SSIENR / 4U] = 1U;
+  /* Re-execute the boot2 to fully restore the SSI configuration
+   * including QSPI mode, continuous read, and baud rate.  The OR
+   * with 1 sets the Thumb bit required by BX on ARMv6-M. */
+  ((void (*)(void))((uintptr_t)eflp->boot2 | 1U))();
 
   rp_flash_flush_cache();
 }
@@ -620,6 +618,9 @@ void efl_lld_init(void) {
 
   /* Driver initialization. */
   eflObjectInit(&EFLD1);
+
+  /* Initialize the flash lockout spinlock to a known state. */
+  rpFlashLockoutInit();
 }
 
 /**
@@ -631,9 +632,12 @@ void efl_lld_init(void) {
  */
 void efl_lld_start(EFlashDriver *eflp) {
 
-  (void)eflp;
-
-  /* Nothing to do - flash is always accessible via XIP. */
+  /* Copy the boot2 stage2 image (first 252 bytes of flash, excluding
+   * the 4-byte CRC) into a RAM buffer while XIP is still functional.
+   * After flash program/erase operations, rp_flash_enter_xip()
+   * re-executes this copy to restore the SSI/XIP configuration.
+   * See RP2040 Datasheet section 2.8.1.3 for boot2 requirements. */
+  memcpy(eflp->boot2, (const void *)RP_FLASH_BASE, sizeof(eflp->boot2));
 }
 
 /**
@@ -740,6 +744,9 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
   /* FLASH_PGM state while the operation is performed. */
   devp->state = FLASH_PGM;
 
+  /* Park the other core once for the entire program operation. */
+  rpFlashLockoutAcquire();
+
   /* Program in page-sized chunks, source data is copied into RAM */
   while (n > 0U) {
     uint8_t page_buf[RP_FLASH_PAGE_SIZE];
@@ -761,6 +768,9 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
     pp += chunk;
     n -= chunk;
   }
+
+  /* Release the other core. */
+  rpFlashLockoutRelease();
 
   /* Ready state again. */
   devp->state = FLASH_READY;
@@ -819,14 +829,16 @@ flash_error_t efl_lld_start_erase_sector(void *instance,
   /* Calculate sector offset. */
   offset = sector * RP_FLASH_SECTOR_SIZE;
 
-  /* Lock system - interrupts could cause crash if they access flash. */
+  /* Park the other core and lock system. */
+  rpFlashLockoutAcquire();
   sts = osalSysGetStatusAndLockX();
 
   /* Perform the entire erase sequence in RAM. */
   rp_flash_erase_full(devp, FLASHCMD_SECTOR_ERASE, offset);
 
-  /* Restore system state. */
+  /* Restore system state and release the other core. */
   osalSysRestoreStatusX(sts);
+  rpFlashLockoutRelease();
 
   /* Back to ready state. */
   devp->state = FLASH_READY;
@@ -868,9 +880,11 @@ flash_error_t efl_lld_start_erase_block(void *instance,
 
   offset = block * erase_size;
 
+  rpFlashLockoutAcquire();
   sts = osalSysGetStatusAndLockX();
   rp_flash_erase_full(devp, cmd, offset);
   osalSysRestoreStatusX(sts);
+  rpFlashLockoutRelease();
 
   devp->state = FLASH_READY;
 
@@ -975,12 +989,15 @@ flash_error_t efl_lld_verify_erase(void *instance, flash_sector_t sector) {
  */
 void efl_lld_read_unique_id(EFlashDriver *eflp, uint8_t *uid) {
   uint8_t rx[4U + RP_FLASH_UNIQUE_ID_SIZE];
+  syssts_t sts;
 
   osalDbgCheck((eflp != NULL) && (uid != NULL));
 
-  osalSysLock();
+  rpFlashLockoutAcquire();
+  sts = osalSysGetStatusAndLockX();
   rp_flash_read_uid_full(eflp, rx, sizeof(rx));
-  osalSysUnlock();
+  osalSysRestoreStatusX(sts);
+  rpFlashLockoutRelease();
 
   memcpy(uid, rx + 4U, RP_FLASH_UNIQUE_ID_SIZE);
 }

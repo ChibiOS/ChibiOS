@@ -145,11 +145,10 @@
 #define efl_lld_driver_fields                                               \
   /* Pointer to SSI registers. */                                           \
   volatile uint32_t           *ssi;                                         \
-  /* Saved XIP configuration registers. */                                  \
-  uint32_t                    xip_ctrlr0;                                   \
-  uint32_t                    xip_ctrlr1;                                   \
-  uint32_t                    xip_spi_ctrlr0;                               \
-  uint32_t                    xip_baudr;
+  /* Copy of boot2 stage2 image for XIP restoration after flash ops.        \
+   * 252 bytes (full 256-byte image minus 4-byte CRC).                      \
+   * See RP2040 Datasheet 2.8.1.3 and rp_flash_enter_xip(). */           \
+  uint8_t                     boot2[252];
 
 /**
  * @brief   Low level fields of the embedded flash configuration structure.
