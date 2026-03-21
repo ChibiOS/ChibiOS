@@ -27,6 +27,7 @@
 #include <string.h>
 
 #include "hal.h"
+#include "rp_flash_lockout.h"
 
 #if (HAL_USE_EFL == TRUE) || defined(__DOXYGEN__)
 
@@ -588,6 +589,9 @@ void efl_lld_init(void) {
 
   /* Driver initialization. */
   eflObjectInit(&EFLD1);
+
+  /* Initialize the flash lockout spinlock to a known state. */
+  rpFlashLockoutInit();
 }
 
 /**
@@ -708,6 +712,9 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
   /* FLASH_PGM state while the operation is performed. */
   devp->state = FLASH_PGM;
 
+  /* Park the other core once for the entire program operation. */
+  rpFlashLockoutAcquire();
+
   /* Program in page-sized chunks, source data is copied into RAM */
   while (n > 0U) {
     uint8_t page_buf[RP_FLASH_PAGE_SIZE];
@@ -729,6 +736,9 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
     pp += chunk;
     n -= chunk;
   }
+
+  /* Release the other core. */
+  rpFlashLockoutRelease();
 
   /* Ready state again. */
   devp->state = FLASH_READY;
@@ -787,14 +797,16 @@ flash_error_t efl_lld_start_erase_sector(void *instance,
   /* Calculate sector offset. */
   offset = sector * RP_FLASH_SECTOR_SIZE;
 
-  /* Lock system - interrupts could cause crash if they access flash. */
+  /* Park the other core and lock system. */
+  rpFlashLockoutAcquire();
   sts = osalSysGetStatusAndLockX();
 
   /* Perform the entire erase sequence in RAM. */
   rp_flash_erase_full(devp, FLASHCMD_SECTOR_ERASE, offset);
 
-  /* Restore system state. */
+  /* Restore system state and release the other core. */
   osalSysRestoreStatusX(sts);
+  rpFlashLockoutRelease();
 
   /* Back to ready state. */
   devp->state = FLASH_READY;
@@ -836,9 +848,11 @@ flash_error_t efl_lld_start_erase_block(void *instance,
 
   offset = block * erase_size;
 
+  rpFlashLockoutAcquire();
   sts = osalSysGetStatusAndLockX();
   rp_flash_erase_full(devp, cmd, offset);
   osalSysRestoreStatusX(sts);
+  rpFlashLockoutRelease();
 
   devp->state = FLASH_READY;
 
@@ -943,12 +957,15 @@ flash_error_t efl_lld_verify_erase(void *instance, flash_sector_t sector) {
  */
 void efl_lld_read_unique_id(EFlashDriver *eflp, uint8_t *uid) {
   uint8_t rx[4U + RP_FLASH_UNIQUE_ID_SIZE];
+  syssts_t sts;
 
   osalDbgCheck((eflp != NULL) && (uid != NULL));
 
-  osalSysLock();
+  rpFlashLockoutAcquire();
+  sts = osalSysGetStatusAndLockX();
   rp_flash_read_uid_full(eflp, rx, sizeof(rx));
-  osalSysUnlock();
+  osalSysRestoreStatusX(sts);
+  rpFlashLockoutRelease();
 
   memcpy(uid, rx + 4U, RP_FLASH_UNIQUE_ID_SIZE);
 }
