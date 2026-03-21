@@ -8,7 +8,8 @@ PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
 
 # Required include directories.
 PLATFORMINC := $(CHIBIOS)/os/hal/ports/common/ARMCMx \
-               $(CHIBIOS)/os/hal/ports/RP/RP2040
+               $(CHIBIOS)/os/hal/ports/RP/RP2040 \
+               $(CHIBIOS)/os/hal/ports/RP
 
 # Optional platform files.
 ifeq ($(USE_SMART_BUILD),yes)
@@ -25,10 +26,12 @@ endif
 HALCONF := $(strip $(shell cat $(HALCONFDIR)/halconf.h | egrep -e "\#define"))
 
 ifneq ($(findstring HAL_USE_EFL TRUE,$(HALCONF)),)
-PLATFORMSRC += $(CHIBIOS)/os/hal/ports/RP/RP2040/hal_efl_lld.c
+PLATFORMSRC += $(CHIBIOS)/os/hal/ports/RP/RP2040/hal_efl_lld.c \
+               $(CHIBIOS)/os/hal/ports/RP/rp_flash_lockout.c
 endif
 else
-PLATFORMSRC += $(CHIBIOS)/os/hal/ports/RP/RP2040/hal_efl_lld.c
+PLATFORMSRC += $(CHIBIOS)/os/hal/ports/RP/RP2040/hal_efl_lld.c \
+               $(CHIBIOS)/os/hal/ports/RP/rp_flash_lockout.c
 endif
 
 # Drivers compatible with the platform.
