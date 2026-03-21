@@ -914,8 +914,8 @@ msg_t __lfsdrv_opendir_impl(void *ip, const char *path,
           *vdnpp = (vfs_directory_node_c *)lfsdnp;
           return CH_RET_SUCCESS;
         }
+        ret = translate_error(res);
       }
-      ret = translate_error(res);
       chPoolFree(&vfs_littlefs_driver_static.dir_nodes_pool, (void *)lfsdnp);
       break;
     }
@@ -975,8 +975,8 @@ msg_t __lfsdrv_openfile_impl(void *ip, const char *path, int flags,
           *vfnpp = (vfs_file_node_c *)lfsfnp;
           return CH_RET_SUCCESS;
         }
+        ret = translate_error(res);
       }
-      ret = translate_error(res);
       chPoolFree(&vfs_littlefs_driver_static.file_nodes_pool, (void *)lfsfnp);
       break;
     }
