@@ -106,6 +106,18 @@ static msg_t translate_error(FRESULT res) {
   case FR_NOT_DIRECTORY:
     msg = CH_RET_ENOTDIR;
     break;
+  case FR_INVALID_OBJECT:
+    msg = CH_RET_EBADF;
+    break;
+  case FR_NOT_ENABLED:
+    msg = CH_RET_EIO;
+    break;
+  case FR_LOCKED:
+    msg = CH_RET_EACCES;
+    break;
+  case FR_INVALID_PARAMETER:
+    msg = CH_RET_EINVAL;
+    break;
   default:
     msg = CH_RET_INNER_ERROR;
     break;
@@ -176,6 +188,10 @@ msg_t ffdrvMount(const char *name, bool mountnow) {
 
   res = f_mount(fs, name, (BYTE)(mountnow ? 1 : 0));
   if (res != FR_OK) {
+    /* Deregistering from FatFS before freeing, f_mount() registers the
+       object in the global volume table before attempting the actual mount
+       so a failure leaves a dangling pointer if not cleaned up.*/
+    (void) f_mount(NULL, name, 0);
     chPoolFree(&vfs_fatfs_driver_static.fs_nodes_pool, (void *)fs);
   }
 
@@ -201,7 +217,11 @@ msg_t ffdrvUnmount(const char *name) {
 
   res = f_unmount(name);
 
-  chPoolFree(&vfs_fatfs_driver_static.fs_nodes_pool, (void *)fs);
+  /* Only freeing the object if FatFS successfully deregistered it,
+     otherwise the global volume table still references it.*/
+  if (res == FR_OK) {
+    chPoolFree(&vfs_fatfs_driver_static.fs_nodes_pool, (void *)fs);
+  }
 
   return translate_error(res);
 }
