@@ -14,33 +14,11 @@
     limitations under the License.
 */
 
-#include <stdio.h>
-#include <string.h>
-
 #include "ch.h"
 #include "hal.h"
 
 #include "lwipthread.h"
 #include "lwip/apps/httpd.h"
-
-/*===========================================================================*/
-/* Generic code.                                                             */
-/*===========================================================================*/
-
-/*
- * LED blinker thread, times are in milliseconds.
- */
-static THD_STACK(thd1_stack, 256);
-static THD_FUNCTION(thd1_func, arg) {
-
-  (void)arg;
-
-  chRegSetThreadName("blinker");
-  while (true) {
-    palTogglePad(IOPORT1, 0);
-    chThdSleepMilliseconds(500);
-  }
-}
 
 /*
  * Application entry point.
@@ -58,16 +36,6 @@ int main(void) {
   halInit();
   chSysInit();
   lwipInit(NULL);
-
-  /*
-   * Target-dependent setup code.
-   */
-  portab_setup();
-
-  /*
-   * Creates the blinker thread.
-   */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
    * Starts the HTTP server.

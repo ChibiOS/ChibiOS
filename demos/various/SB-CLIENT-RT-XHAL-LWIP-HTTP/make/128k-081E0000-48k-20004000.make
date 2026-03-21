@@ -118,10 +118,10 @@ include $(CHIBIOS)/os/sb/user/sbuser.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
-include $(CHIBIOS)/os/various/lwip_bindings/lwip.mk
+include $(CHIBIOS)/os/various/lwip_bindings/lwip_xhal.mk
 
 # Define linker script file here.
-LDSCRIPT= ./ld/128k-081C0000-16k-20000000.ld
+LDSCRIPT= ./ld/128k-081E0000-48k-20004000.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -194,4 +194,3 @@ include $(RULESPATH)/rules.mk
 #
 # Custom rules
 ##############################################################################
-
