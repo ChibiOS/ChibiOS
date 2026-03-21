@@ -39,6 +39,7 @@
 
 #define HAL_USE_PAL                         TRUE
 #define HAL_USE_MMC_SPI                     FALSE
+#define HAL_USE_ETH                         TRUE
 #define HAL_USE_SIO                         TRUE
 #define HAL_USE_SPI                         FALSE
 
@@ -48,6 +49,14 @@
 
 #define PAL_USE_CALLBACKS                   TRUE
 #define PAL_USE_WAIT                        TRUE
+
+/*===========================================================================*/
+/* ETH driver settings.                                                      */
+/*===========================================================================*/
+
+#define ETH_USE_SYNCHRONIZATION             TRUE
+#define ETH_USE_EVENTS                      FALSE
+#define ETH_USE_CONFIGURATIONS              FALSE
 
 /*===========================================================================*/
 /* SIO driver settings.                                                      */

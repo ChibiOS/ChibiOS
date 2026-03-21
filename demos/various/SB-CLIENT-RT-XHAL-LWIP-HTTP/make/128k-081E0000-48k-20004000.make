@@ -91,8 +91,8 @@ MCU  = cortex-m4
 # Imported source files and paths.
 CHIBIOS  := ../../..
 CONFDIR  := ./cfg
-BUILDDIR := ./build/128k-081C0000-16k-20000000
-DEPDIR   := ./.dep/128k-081C0000-16k-20000000
+BUILDDIR := ./build/128k-081E0000-48k-20004000
+DEPDIR   := ./.dep/128k-081E0000-48k-20004000
 
 # Required modules.
 OOPSELECT := base chprintf

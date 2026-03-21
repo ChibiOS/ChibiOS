@@ -231,6 +231,14 @@
 #define STM32_IRQ_USB1_PRIORITY             13
 
 /*
+ * ETH driver system settings.
+ */
+#define STM32_ETH_ETH1_IRQ_PRIORITY         13
+#define STM32_ETH_ETH1_CHANGE_PHY_STATE     TRUE
+#define STM32_ETH_PHY_LINK_TYPE             MAC_LINK_DYNAMIC
+#define STM32_ETH_IP_CHECKSUM_OFFLOAD       0
+
+/*
  * SIO driver system settings.
  */
 #define STM32_SIO_USE_USART1                FALSE

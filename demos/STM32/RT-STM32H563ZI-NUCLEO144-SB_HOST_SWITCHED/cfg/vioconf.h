@@ -34,7 +34,7 @@
  * @brief   Enables the Virtual ETH support.
  */
 #if !defined(VIO_CFG_ENABLE_ETH) || defined(__DOXYGEN__)
-#define VIO_CFG_ENABLE_ETH                  FALSE
+#define VIO_CFG_ENABLE_ETH                  TRUE
 #endif
 
 /**

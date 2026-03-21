@@ -267,6 +267,7 @@ size_t eth_lld_read_receive_handle(hal_eth_driver_c *ethp,
                                    uint8_t *bp, size_t n) {
 
   __syscall4r(227, VIO_CALL(SB_VETH_RXREAD, ethp->nveth), rxh, bp, n);
+  osalDbgAssert(((int32_t)r0) >= 0, "host RXREAD failed");
   return (size_t)r0;
 }
 
@@ -275,6 +276,7 @@ size_t eth_lld_write_transmit_handle(hal_eth_driver_c *ethp,
                                      const uint8_t *bp, size_t n) {
 
   __syscall4r(227, VIO_CALL(SB_VETH_TXWRITE, ethp->nveth), txh, bp, n);
+  osalDbgAssert(((int32_t)r0) >= 0, "host TXWRITE failed");
   return (size_t)r0;
 }
 

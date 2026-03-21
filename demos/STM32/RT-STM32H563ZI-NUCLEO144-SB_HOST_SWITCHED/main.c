@@ -82,11 +82,27 @@ static vio_uart_units_t uart_units2 = {
   .n                = 0U
 };
 
+#if VIO_CFG_ENABLE_ETH == TRUE
+static vio_eth_units_t eth_units2 = {
+  .n                = 1U,
+  .units = {
+    [0] = {
+      .ethp         = &ETHD1,
+      .vrqsb        = &sbx2,
+      .vrqn         = 10U
+    }
+  }
+};
+#endif
+
 static sio_configurations_t uart_configs2 = {
   .cfgsnum          = 0U
 };
 
 static vio_conf_t vio_config2 = {
+#if VIO_CFG_ENABLE_ETH == TRUE
+  .eths             = &eth_units2,
+#endif
   .gpios            = &gpio_units2,
   .uarts            = &uart_units2,
   .uartconfs        = &uart_configs2
@@ -186,23 +202,6 @@ static void start_sb2(void) {
 }
 
 /*
- * Messenger thread, times are in milliseconds.
- */
-static THD_WORKING_AREA(waThread1, 256);
-static THD_FUNCTION(Thread1, arg) {
-  unsigned i = 1U;
-
-  (void)arg;
-
-  chRegSetThreadName("messenger");
-  while (true) {
-    chThdSleepMilliseconds(500);
-    sbSendMessage(&sbx2, (msg_t)i);
-    i++;
-  }
-}
-
-/*
  * Application entry point.
  */
 int main(void) {
@@ -259,11 +258,6 @@ int main(void) {
   /* Starting sandboxed threads.*/
   start_sb1();
   start_sb2();
-
-  /*
-   * Creating a messenger thread.
-   */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
 
   /*
    * Listening to sandbox events.
