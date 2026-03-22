@@ -149,11 +149,22 @@ static bool inint(SerialDriver *sdp) {
   if (sdp->com_data != -1) {
     int i;
     uint8_t data[32];
+    size_t nfree;
 
     /*
      * Input.
      */
-    int n = recv(sdp->com_data, data, sizeof(data), 0);
+    osalSysLockFromISR();
+    nfree = iqGetEmptyI(&sdp->iqueue);
+    osalSysUnlockFromISR();
+    if (nfree == 0U) {
+      return false;
+    }
+    if (nfree > sizeof(data)) {
+      nfree = sizeof(data);
+    }
+
+    int n = recv(sdp->com_data, data, nfree, 0);
     switch (n) {
     case 0:
       close(sdp->com_data);
@@ -280,13 +291,17 @@ void sd_lld_stop(SerialDriver *sdp) {
 }
 
 bool sd_lld_interrupt_pending(void) {
-  bool b;
+  bool b = false;
 
   OSAL_IRQ_PROLOGUE();
 
-  b =  connint(&SD1) || connint(&SD2) ||
-       inint(&SD1)   || inint(&SD2)   ||
-       outint(&SD1)  || outint(&SD2);
+#if USE_SIM_SERIAL1
+  b |= connint(&SD1) || inint(&SD1) || outint(&SD1);
+#endif
+
+#if USE_SIM_SERIAL2
+  b |= connint(&SD2) || inint(&SD2) || outint(&SD2);
+#endif
 
   OSAL_IRQ_EPILOGUE();
 
