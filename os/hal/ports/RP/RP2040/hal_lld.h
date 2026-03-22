@@ -255,6 +255,7 @@ typedef uint32_t halcnt_t;
 #include "rp_fifo.h"
 #include "rp_dma.h"
 #include "rp_pio.h"
+#include "rp_bootrom.h"
 
 #ifdef __cplusplus
 extern "C" {

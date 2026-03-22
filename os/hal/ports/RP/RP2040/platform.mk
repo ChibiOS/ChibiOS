@@ -1,5 +1,6 @@
 # Required platform files.
 PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
+               $(CHIBIOS)/os/hal/ports/RP/rp_bootrom.c \
                $(CHIBIOS)/os/hal/ports/RP/RP2040/rp_clocks.c \
                $(CHIBIOS)/os/hal/ports/RP/RP2040/rp_isr.c \
                $(CHIBIOS)/os/hal/ports/RP/RP2040/rp_pll.c \
