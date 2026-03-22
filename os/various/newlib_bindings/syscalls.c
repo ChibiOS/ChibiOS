@@ -30,6 +30,25 @@
 #endif
 
 static vfs_node_c *fds[SYSCALL_MAX_FDS];
+
+static mode_t mode_to_stat_mode(vfs_mode_t mode) {
+  mode_t stat_mode = 0U;
+
+  if (VFS_MODE_S_ISREG(mode)) {
+    stat_mode |= S_IFREG;
+  }
+  if (VFS_MODE_S_ISDIR(mode)) {
+    stat_mode |= S_IFDIR;
+  }
+  if (VFS_MODE_S_ISCHR(mode)) {
+    stat_mode |= S_IFCHR;
+  }
+  if (VFS_MODE_S_ISFIFO(mode)) {
+    stat_mode |= S_IFIFO;
+  }
+
+  return stat_mode;
+}
 #endif
 
 /***************************************************************************/
@@ -191,16 +210,8 @@ int _fstat_r(struct _reent *r, int file, struct stat * st) {
 
    memset(st, 0, sizeof(*st));
 
-  if (VFS_MODE_S_ISREG(fds[file]->mode)) {
-    st->st_mode = S_IFREG;
-  }
-  else if (VFS_MODE_S_ISCHR(fds[file]->mode)) {
-    st->st_mode = S_IFCHR;
-  }
-  else if (VFS_MODE_S_ISFIFO(fds[file]->mode)) {
-    st->st_mode = S_IFIFO;
-  }
-  else {
+  st->st_mode = mode_to_stat_mode(fds[file]->mode);
+  if (st->st_mode == 0U) {
     __errno_r(r) = ENOENT;
     return -1;
   }
@@ -213,6 +224,34 @@ int _fstat_r(struct _reent *r, int file, struct stat * st) {
   memset(st, 0, sizeof(*st));
   st->st_mode = S_IFCHR;
   return 0;
+#endif
+}
+
+/***************************************************************************/
+
+__attribute__((used))
+int _stat(const char *path, struct stat *st) {
+#if defined(SYSCALL_USE_VFS)
+  vfs_stat_t statbuf;
+  msg_t ret;
+
+  ret = vfsStat(path, &statbuf);
+  if (CH_RET_IS_ERROR(ret)) {
+    errno = CH_DECODE_ERROR(ret);
+    return -1;
+  }
+
+  memset(st, 0, sizeof(*st));
+  st->st_mode = mode_to_stat_mode(statbuf.mode);
+  st->st_size = (off_t)statbuf.size;
+
+  return 0;
+#else
+  (void)path;
+  (void)st;
+
+  errno = ENOENT;
+  return -1;
 #endif
 }
 

@@ -71,6 +71,7 @@ typedef intptr_t xshell_fd_t;
 #if (XSHELL_CMD_FILES_ENABLED == TRUE) || defined(__DOXYGEN__)
 static const xshell_fd_t xshell_invalid_fd = (xshell_fd_t)-1;
 
+#if XSHELL_CMD_FILES_USE_VFS == TRUE
 static int __ret_to_errno(msg_t ret) {
 
   if (CH_RET_IS_ERROR(ret)) {
@@ -98,6 +99,7 @@ static mode_t __vfs_mode_to_stat_mode(vfs_mode_t mode) {
 
   return stat_mode;
 }
+#endif
 
 static int __stat(const char *path, struct stat *sp) {
 

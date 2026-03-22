@@ -219,9 +219,9 @@ static const struct vfs_chfs_dir_node_vmt __vfs_chfs_dir_node_vmt = {
  *
  * @objinit
  */
-static vfs_chfs_dir_node_c *chfsdirObjectInit(vfs_chfs_dir_node_c *self,
-                                              vfs_driver_c *driver,
-                                              vfs_mode_t mode) {
+vfs_chfs_dir_node_c *chfsdirObjectInit(vfs_chfs_dir_node_c *self,
+                                       vfs_driver_c *driver,
+                                       vfs_mode_t mode) {
 
   return __chfsdir_objinit_impl(self, &__vfs_chfs_dir_node_vmt, driver, mode);
 }
@@ -414,9 +414,10 @@ static const struct vfs_chfs_file_node_vmt __vfs_chfs_file_node_vmt = {
  *
  * @objinit
  */
-static vfs_chfs_file_node_c *chfsfileObjectInit(vfs_chfs_file_node_c *self,
-                                                vfs_driver_c *driver,
-                                                vfs_mode_t mode) {
+static __attribute__((unused))
+vfs_chfs_file_node_c *chfsfileObjectInit(vfs_chfs_file_node_c *self,
+                                         vfs_driver_c *driver,
+                                         vfs_mode_t mode) {
 
   return __chfsfile_objinit_impl(self, &__vfs_chfs_file_node_vmt, driver, mode);
 }
@@ -746,4 +747,3 @@ msg_t chfsdrvFormat(void *ip) {
   return CH_RET_SUCCESS;
 }
 /** @} */
-
