@@ -79,6 +79,10 @@ void vfsInit(void) {
 #if VFS_CFG_ENABLE_DRV_LITTLEFS == TRUE
   __drv_littlefs_init();
 #endif
+
+#if VFS_CFG_ENABLE_DRV_ROMFS == TRUE
+  __drv_rom_init();
+#endif
 }
 
 /**

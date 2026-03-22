@@ -2,12 +2,12 @@
 <!DOCTYPE doc [
   <!ENTITY vfs_drivers                  SYSTEM "vfs_drivers.xml">
   <!ENTITY vfs_nodes                    SYSTEM "vfs_nodes.xml">
-  <!ENTITY vfs_romfiles                 SYSTEM "vfs_romfiles.xml">
   <!ENTITY vfs_driver_template          SYSTEM "vfs_driver_template.xml">
   <!ENTITY vfs_driver_overlay           SYSTEM "vfs_driver_overlay.xml">
   <!ENTITY vfs_driver_chfs              SYSTEM "vfs_driver_chfs.xml">
   <!ENTITY vfs_driver_fatfs             SYSTEM "vfs_driver_fatfs.xml">
   <!ENTITY vfs_driver_littlefs          SYSTEM "vfs_driver_littlefs.xml">
+  <!ENTITY vfs_driver_romfs             SYSTEM "vfs_driver_romfs.xml">
   <!ENTITY vfs_driver_streams           SYSTEM "vfs_driver_streams.xml">
 ]>
 <!-- Class/interfaces definitions -->
@@ -20,12 +20,12 @@
   <modules>
     &vfs_drivers;
     &vfs_nodes;
-    &vfs_romfiles;
     &vfs_driver_template;
     &vfs_driver_overlay;
     &vfs_driver_chfs;
     &vfs_driver_fatfs;
     &vfs_driver_littlefs;
+    &vfs_driver_romfs;
     &vfs_driver_streams;
   </modules>
 </instance>

@@ -110,6 +110,10 @@
 #include "drvlittlefs.h"
 #endif
 
+#if VFS_CFG_ENABLE_DRV_ROMFS == TRUE
+#include "drvromfs.h"
+#endif
+
 /* Only for testing, not a real driver.*/
 #define VFS_CFG_ENABLE_DRV_TEMPLATE         FALSE
 #define DRV_CFG_TEMPLATE_DIR_NODES_NUM      1
