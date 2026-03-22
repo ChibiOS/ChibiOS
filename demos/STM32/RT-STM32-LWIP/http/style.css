@@ -1,0 +1,70 @@
+body {
+  margin: 0;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at top right, #d6efe3 0, transparent 32%),
+    linear-gradient(180deg, #f3f7f2 0%, #e5efe8 100%);
+  color: #173226;
+}
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 48px 20px 64px;
+}
+
+.hero {
+  padding: 32px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 24px 60px rgba(31, 64, 47, 0.12);
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.8rem;
+  color: #527867;
+}
+
+.lede {
+  max-width: 42rem;
+  font-size: 1.1rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.card {
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 16px 40px rgba(31, 64, 47, 0.08);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.links a,
+.prose a {
+  color: #0e5d46;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.prose {
+  max-width: 44rem;
+}
+
+.prose ul {
+  line-height: 1.7;
+}

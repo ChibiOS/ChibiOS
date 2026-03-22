@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChibiOS lwIP Demo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">ChibiOS Demo</p>
+      <h1>RT-STM32-LWIP</h1>
+      <p class="lede">
+        A compact HTTP demo built on ChibiOS/RT, the STM32 HAL and the lwIP TCP/IP stack.
+      </p>
+    </header>
+
+    <section class="card-grid">
+      <article class="card">
+        <h2>What it shows</h2>
+        <p>
+          This application boots the RT kernel, initializes the Ethernet interface,
+          starts lwIP and serves a tiny website over HTTP.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Why ROMFS fits</h2>
+        <p>
+          The website assets can live in flash as a read-only image, with no SD card,
+          no FAT image and no generated lwIP fsdata table.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>What is wired now</h2>
+        <p>
+          The generated ROMFS image is instantiated as the VFS root and served by
+          lwIP HTTPD through the custom VFS binding.
+        </p>
+      </article>
+    </section>
+
+    <nav class="links">
+      <a href="components.html">Used components</a>
+      <a href="features.html">Demo features</a>
+      <a href="romfs.html">ROMFS notes</a>
+    </nav>
+  </main>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ROMFS Notes</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page prose">
+    <p class="eyebrow">RT-STM32-LWIP</p>
+    <h1>ROMFS Notes</h1>
+    <p>
+      The files in this directory are plain source assets. They are converted into a
+      ChibiOS ROMFS image and emitted as C sources under <code>./source</code>.
+    </p>
+    <p>
+      That makes the web content easy to version, diff and regenerate while keeping the
+      final runtime representation read-only and self-contained.
+    </p>
+    <p>
+      In this demo the generated ROMFS is instantiated directly as the VFS root, and
+      the HTTP server serves these files through the dedicated VFS custom-file binding.
+    </p>
+    <p><a href="index.html">Back to home</a></p>
+  </main>
+</body>
+</html>

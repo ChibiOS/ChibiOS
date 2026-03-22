@@ -19,15 +19,24 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "vfs.h"
 
 #include "lwipthread.h"
 #include "lwip/apps/httpd.h"
 
+#include "httpd_vfs.h"
+#include "http_romfs.h"
 #include "portab.h"
 
 /*===========================================================================*/
 /* Main and generic code.                                                    */
 /*===========================================================================*/
+
+/* VFS ROMFS driver object exported as the root file system.*/
+static vfs_rom_driver_c rom_driver;
+
+/* Global pointer to the root VFS driver.*/
+vfs_driver_c *vfs_root = (vfs_driver_c *)&rom_driver;
 
 /*
  * Green LED blinker thread, times are in milliseconds.
@@ -54,10 +63,19 @@ int main(void) {
    *   and performs the board-specific initializations.
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
+   * - Virtual File System initialization.
    * - lwIP subsystem initialization using the default configuration.
    */
   halInit();
   chSysInit();
+  vfsInit();
+
+  /*
+   * Initializes the ROMFS image exposed through the HTTPD custom file hooks.
+   */
+  romdrvObjectInit(&rom_driver, &http_romfs);
+  httpd_vfs_init();
+
   lwipInit(NULL);
 
   /*
