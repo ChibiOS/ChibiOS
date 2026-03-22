@@ -419,13 +419,13 @@ static THD_FUNCTION(lwip_thread, p) {
       if (current_link_status != netif_is_link_up(&thisif)) {
         if (current_link_status) {
           tcpip_callback_with_block((tcpip_callback_fn) netif_set_link_up,
-                                     &thisif, 0);
-          tcpip_callback_with_block(link_up_cb, &thisif, 0);
+                                     &thisif, 1);
+          tcpip_callback_with_block(link_up_cb, &thisif, 1);
         }
         else {
           tcpip_callback_with_block((tcpip_callback_fn) netif_set_link_down,
-                                     &thisif, 0);
-          tcpip_callback_with_block(link_down_cb, &thisif, 0);
+                                     &thisif, 1);
+          tcpip_callback_with_block(link_down_cb, &thisif, 1);
         }
       }
     }
@@ -439,6 +439,9 @@ static THD_FUNCTION(lwip_thread, p) {
             /* IP or ARP packet? */
             case ETHTYPE_IP:
             case ETHTYPE_ARP:
+#if LWIP_IPV6
+            case ETHTYPE_IPV6:
+#endif
               /* full packet send to tcpip_thread to process */
               if (thisif.input(p, &thisif) == ERR_OK)
                 break;
@@ -541,10 +544,14 @@ static void do_reconfigure(void *p)
 void lwipReconfigure(const lwipreconf_opts_t *opts)
 {
   lwip_reconf_params_t params;
+  err_t err;
+
   params.opts = opts;
   chSemObjectInit(&params.completion, 0);
-  tcpip_callback_with_block(do_reconfigure, &params, 0);
-  chSemWait(&params.completion);
+  err = tcpip_callback_with_block(do_reconfigure, &params, 1);
+  if (err == ERR_OK) {
+    chSemWait(&params.completion);
+  }
 }
 
 /** @} */
