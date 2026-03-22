@@ -21,6 +21,7 @@
 #include "oop_chprintf.h"
 #include "oop_nullstreams.h"
 
+#include "http_romfs.h"
 #include "startup_defs.h"
 
 /* Sandbox objects.*/
@@ -112,9 +113,9 @@ static vio_conf_t vio_config2 = {
 /* VFS-related.                                                              */
 /*===========================================================================*/
 
-#if VFS_CFG_ENABLE_DRV_FATFS == TRUE
-/* VFS FatFS driver object representing the root directory.*/
-static vfs_fatfs_driver_c root_driver;
+#if VFS_CFG_ENABLE_DRV_ROMFS == TRUE
+/* VFS ROMFS driver object representing the root directory.*/
+static vfs_rom_driver_c root_driver;
 #endif
 
 /* VFS overlay driver object representing the root directory.*/
@@ -229,10 +230,12 @@ int main(void) {
   nullstmObjectInit(&nullstream);
 
   /*
-   * Initializing an overlay VFS object as a root, no overlaid driver,
-   * registering a streams VFS driver on the VFS overlay root as "/dev".
+   * Initializing a ROMFS root, then overlaying "/dev" on top of it.
    */
-  ovldrvObjectInit(&root_overlay_driver, NULL, NULL);
+  ovldrvObjectInit(&root_overlay_driver,
+                   (vfs_driver_c *)romdrvObjectInit(&root_driver,
+                                                    &http_romfs),
+                   NULL);
   ret = ovldrvRegisterDriver(&root_overlay_driver,
                              (vfs_driver_c *)stmdrvObjectInit(&dev_driver,
                                                               &streams[0]),

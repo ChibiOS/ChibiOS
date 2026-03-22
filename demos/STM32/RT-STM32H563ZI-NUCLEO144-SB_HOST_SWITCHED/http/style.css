@@ -1,0 +1,72 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+  background: linear-gradient(180deg, #f3f7fb 0%, #e5edf5 100%);
+  color: #143046;
+}
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+}
+
+.hero {
+  padding: 24px 0 8px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #4b6a84;
+}
+
+.lede {
+  max-width: 42rem;
+  font-size: 1.1rem;
+}
+
+.card-grid {
+  display: grid;
+  gap: 16px;
+  margin: 28px 0;
+}
+
+.card {
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 10px 24px rgba(20, 48, 70, 0.08);
+}
+
+.card h2 {
+  margin-top: 0;
+}
+
+.links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+.links a,
+.prose a {
+  color: #0f5f8c;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.prose {
+  max-width: 46rem;
+  line-height: 1.6;
+}
+
+code {
+  font-family: "Consolas", "Courier New", monospace;
+  background: rgba(15, 95, 140, 0.08);
+  padding: 0.1em 0.35em;
+  border-radius: 0.35em;
+}

@@ -119,6 +119,7 @@ include $(CHIBIOS)/os/sb/user/sbuser.mk
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
 include $(CHIBIOS)/os/various/lwip_bindings/lwip_xhal.mk
+include $(CHIBIOS)/os/various/httpd_posix_bindings/httpd_posix.mk
 
 # Define linker script file here.
 LDSCRIPT= ./ld/128k-081E0000-48k-20004000.ld

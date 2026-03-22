@@ -15,8 +15,11 @@
 */
 
 /**
- * @file    demos/STM32/RT-STM32-LWIP/cfg/vfsconf.h
- * @brief   VFS configuration for the lwIP ROMFS HTTP demo.
+ * @file    templates/vfsconf.h
+ * @brief   VFS configuration header.
+ *
+ * @addtogroup VFS_CONF
+ * @{
  */
 
 #ifndef VFSCONF_H
@@ -25,41 +28,222 @@
 #define _CHIBIOS_VFS_CONF_
 #define _CHIBIOS_VFS_CONF_VER_1_0_
 
+/*===========================================================================*/
+/**
+ * @name VFS general settings
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Maximum filename length.
+ */
 #if !defined(VFS_CFG_NAMELEN_MAX) || defined(__DOXYGEN__)
 #define VFS_CFG_NAMELEN_MAX                 31
 #endif
 
+/**
+ * @brief   Maximum paths length.
+ */
 #if !defined(VFS_CFG_PATHLEN_MAX) || defined(__DOXYGEN__)
 #define VFS_CFG_PATHLEN_MAX                 255
 #endif
 
+/**
+ * @brief   Number of shared path buffers.
+ */
 #if !defined(VFS_CFG_PATHBUFS_NUM) || defined(__DOXYGEN__)
 #define VFS_CFG_PATHBUFS_NUM                1
 #endif
 
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name VFS drivers
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Enables the VFS Overlay Driver.
+ */
 #if !defined(VFS_CFG_ENABLE_DRV_OVERLAY) || defined(__DOXYGEN__)
 #define VFS_CFG_ENABLE_DRV_OVERLAY          FALSE
 #endif
 
+/**
+ * @brief   Enables the VFS Streams Driver.
+ */
 #if !defined(VFS_CFG_ENABLE_DRV_STREAMS) || defined(__DOXYGEN__)
 #define VFS_CFG_ENABLE_DRV_STREAMS          FALSE
 #endif
 
+/**
+ * @brief   Enables the VFS ChibiFS Driver.
+ */
 #if !defined(VFS_CFG_ENABLE_DRV_CHFS) || defined(__DOXYGEN__)
 #define VFS_CFG_ENABLE_DRV_CHFS             FALSE
 #endif
 
+/**
+ * @brief   Enables the VFS FatFS Driver.
+ */
 #if !defined(VFS_CFG_ENABLE_DRV_FATFS) || defined(__DOXYGEN__)
 #define VFS_CFG_ENABLE_DRV_FATFS            FALSE
 #endif
 
+/**
+ * @brief   Enables the VFS LittleFS Driver.
+ */
 #if !defined(VFS_CFG_ENABLE_DRV_LITTLEFS) || defined(__DOXYGEN__)
 #define VFS_CFG_ENABLE_DRV_LITTLEFS         FALSE
 #endif
 
+/**
+ * @brief   Enables the VFS ROMFS Driver.
+ */
 #if !defined(VFS_CFG_ENABLE_DRV_ROMFS) || defined(__DOXYGEN__)
 #define VFS_CFG_ENABLE_DRV_ROMFS            TRUE
 #endif
+
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name Overlay driver settings
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Maximum number of overlay directories.
+ */
+#if !defined(DRV_CFG_OVERLAY_DRV_MAX) || defined(__DOXYGEN__)
+#define DRV_CFG_OVERLAY_DRV_MAX             1
+#endif
+
+/**
+ * @brief   Number of directory nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_OVERLAY_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_OVERLAY_DIR_NODES_NUM       1
+#endif
+
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name Streams driver settings
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Number of directory nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_STREAMS_DIR_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_STREAMS_DIR_NODES_NUM       1
+#endif
+
+/**
+ * @brief   Number of file nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_STREAMS_FILE_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_STREAMS_FILE_NODES_NUM      1
+#endif
+
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name ChibiFS driver settings
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Number of directory nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_CHFS_DIR_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_CHFS_DIR_NODES_NUM          1
+#endif
+
+/**
+ * @brief   Number of file nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_CHFS_FILE_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_CHFS_FILE_NODES_NUM         1
+#endif
+
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name FatFS driver settings
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Maximum number of FatFS file systems mounted.
+ */
+#if !defined(DRV_CFG_FATFS_FS_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_FATFS_FS_NUM                1
+#endif
+
+/**
+ * @brief   Number of directory nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_FATFS_DIR_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_FATFS_DIR_NODES_NUM         1
+#endif
+
+/**
+ * @brief   Number of file nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_FATFS_FILE_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_FATFS_FILE_NODES_NUM        1
+#endif
+
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name LittleFS driver settings
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Number of shared path buffers.
+ */
+#if !defined(DRV_CFG_LITTLEFS_DIR_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_LITTLEFS_DIR_NODES_NUM      1
+#endif
+
+/**
+ * @brief   Number of file nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_LITTLEFS_FILE_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_LITTLEFS_FILE_NODES_NUM     1
+#endif
+
+/**
+ * @brief   Number of info nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_LITTLEFS_INFO_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_LITTLEFS_INFO_NODES_NUM     1
+#endif
+
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name ROMFS driver settings
+ * @{
+ */
+/*===========================================================================*/
 
 #if !defined(DRV_CFG_ROM_DIR_NODES_NUM) || defined(__DOXYGEN__)
 #define DRV_CFG_ROM_DIR_NODES_NUM           1
@@ -70,3 +254,5 @@
 #endif
 
 #endif /* VFSCONF_H */
+
+/** @} */

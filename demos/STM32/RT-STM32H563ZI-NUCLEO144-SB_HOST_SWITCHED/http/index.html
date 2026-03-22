@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sandboxed HTTP Demo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">ChibiOS Sandbox Demo</p>
+      <h1>SB Host Switched + lwIP HTTP</h1>
+      <p class="lede">
+        A sandboxed lwIP HTTP server serving files from a host-managed ROMFS.
+      </p>
+    </header>
+
+    <section class="card-grid">
+      <article class="card">
+        <h2>What is running</h2>
+        <p>
+          Sandbox 2 owns the Ethernet virtual I/O and runs the lwIP HTTP server
+          as an unprivileged application.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Where files come from</h2>
+        <p>
+          The privileged host instantiates a ROMFS image as the sandbox root
+          filesystem, then overlays <code>/dev</code> for standard descriptors.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Why POSIX matters</h2>
+        <p>
+          HTTPD reads pages through <code>open</code>, <code>read</code>,
+          <code>fstat</code> and <code>close</code> using the sandbox POSIX API.
+        </p>
+      </article>
+    </section>
+
+    <nav class="links">
+      <a href="components.html">Used components</a>
+      <a href="layout.html">Host and sandbox layout</a>
+      <a href="files.html">Served files</a>
+    </nav>
+  </main>
+</body>
+</html>

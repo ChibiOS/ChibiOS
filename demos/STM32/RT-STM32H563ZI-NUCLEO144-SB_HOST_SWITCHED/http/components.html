@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Used Components</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page prose">
+    <p class="eyebrow">SB Host Switched</p>
+    <h1>Used Components</h1>
+    <ul>
+      <li>ChibiOS/RT as the kernel on the privileged host side.</li>
+      <li>Sandbox manager with virtual Ethernet and GPIO for sandbox 2.</li>
+      <li>lwIP HTTPD running inside the sandboxed RT-XHAL client.</li>
+      <li>Host-side ROMFS plus overlay VFS to provide files and <code>/dev</code>.</li>
+      <li>POSIX HTTPD binding that reads files through the sandbox syscalls.</li>
+    </ul>
+    <p><a href="index.html">Back to home</a></p>
+  </main>
+</body>
+</html>

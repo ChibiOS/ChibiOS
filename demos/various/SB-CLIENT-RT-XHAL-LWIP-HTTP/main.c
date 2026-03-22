@@ -19,6 +19,7 @@
 
 #include "lwipthread.h"
 #include "lwip/apps/httpd.h"
+#include "httpd_posix.h"
 
 /*
  * Application entry point.
@@ -35,6 +36,7 @@ int main(void) {
    */
   halInit();
   chSysInit();
+  httpd_posix_init();
   lwipInit(NULL);
 
   /*

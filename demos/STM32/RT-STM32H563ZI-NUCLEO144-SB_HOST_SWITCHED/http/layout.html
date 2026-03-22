@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Host and Sandbox Layout</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page prose">
+    <p class="eyebrow">SB Host Switched</p>
+    <h1>Host and Sandbox Layout</h1>
+    <p>
+      The privileged host builds the filesystem view. Its VFS root is a ROMFS
+      image containing the web content, with a streams driver mounted on
+      <code>/dev</code>.
+    </p>
+    <p>
+      Sandbox 2 receives that VFS root through <code>sbSetFileSystem()</code>.
+      Inside the sandbox, the POSIX syscalls map <code>open</code>,
+      <code>read</code>, <code>fstat</code> and directory operations onto the
+      host VFS.
+    </p>
+    <p>
+      The HTTP server itself remains unaware of the host-side VFS details. It
+      just uses the POSIX binding hooks required by lwIP HTTPD custom files.
+    </p>
+    <p><a href="index.html">Back to home</a></p>
+  </main>
+</body>
+</html>

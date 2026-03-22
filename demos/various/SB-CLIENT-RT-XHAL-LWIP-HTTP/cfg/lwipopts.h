@@ -52,8 +52,8 @@
 #endif
 
 /* HTTPD settings override.*/
-#define LWIP_HTTPD_CUSTOM_FILES         0
-#define LWIP_HTTPD_DYNAMIC_FILE_READ    0
-#define LWIP_HTTPD_DYNAMIC_HEADERS      0
+#define LWIP_HTTPD_CUSTOM_FILES         1
+#define LWIP_HTTPD_DYNAMIC_FILE_READ    1
+#define LWIP_HTTPD_DYNAMIC_HEADERS      1
 
 #endif /* LWIP_HDR_LWIPOPTS_H__ */
