@@ -30,9 +30,50 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#define RP_PAL_LINE_REG(line)           ((uint32_t)(line) >> 3U)
+#define RP_PAL_LINE_SHIFT(line)         (4U * ((uint32_t)(line) & 0x07U))
+#define RP_PAL_LINE_MASK(line)          (0x0FU << RP_PAL_LINE_SHIFT(line))
+#define RP_PAL_REG_ALIAS_SET            0x2000U
+#define RP_PAL_REG_ALIAS_CLR            0x3000U
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
+
+#if RP_GPIO_NUM_LINES >= 32U
+  #define RP_PAL_PORT0_VALID_MASK          0xFFFFFFFFU
+#else
+  #define RP_PAL_PORT0_VALID_MASK          ((1U << RP_GPIO_NUM_LINES) - 1U)
+#endif
+
+#if RP_GPIO_NUM_LINES > 32U
+  #define RP_PAL_PORT1_VALID_MASK          ((1U << (RP_GPIO_NUM_LINES - 32U)) - 1U)
+#endif
+
+const rp_pal_port_t _pal_ports[RP_PAL_IOPORTS_COUNT] = {
+  {
+    .in        = &SIO->GPIO_IN,
+    .out       = &SIO->GPIO_OUT,
+    .out_set   = &SIO->GPIO_OUT_SET,
+    .out_clr   = &SIO->GPIO_OUT_CLR,
+    .out_xor   = &SIO->GPIO_OUT_XOR,
+    .oe_set    = &SIO->GPIO_OE_SET,
+    .oe_clr    = &SIO->GPIO_OE_CLR,
+    .valid_mask = RP_PAL_PORT0_VALID_MASK,
+  },
+#if RP_GPIO_NUM_LINES > 32U
+  {
+    .in        = &SIO->GPIO_HI_IN,
+    .out       = &SIO->GPIO_HI_OUT,
+    .out_set   = &SIO->GPIO_HI_OUT_SET,
+    .out_clr   = &SIO->GPIO_HI_OUT_CLR,
+    .out_xor   = &SIO->GPIO_HI_OUT_XOR,
+    .oe_set    = &SIO->GPIO_HI_OE_SET,
+    .oe_clr    = &SIO->GPIO_HI_OE_CLR,
+    .valid_mask = RP_PAL_PORT1_VALID_MASK,
+  },
+#endif
+};
 
 #if (PAL_USE_WAIT == TRUE) || (PAL_USE_CALLBACKS == TRUE) || defined(__DOXYGEN__)
 /**
@@ -49,13 +90,52 @@ palevent_t _pal_events[RP_GPIO_NUM_LINES];
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static inline void rp_pal_reg_set(volatile uint32_t *reg, uint32_t mask) {
+
+  *(volatile uint32_t *)((uintptr_t)reg + RP_PAL_REG_ALIAS_SET) = mask;
+}
+
+static inline void rp_pal_reg_clr(volatile uint32_t *reg, uint32_t mask) {
+
+  *(volatile uint32_t *)((uintptr_t)reg + RP_PAL_REG_ALIAS_CLR) = mask;
+}
+
+static void rp_pal_pad_set_mode(ioportid_t port,
+                                iopadid_t pad,
+                                iomode_t mode) {
+  uint32_t ctrlbits, padbits, oebits, bit, abspad;
+  const rp_pal_port_t *rpp = &_pal_ports[(uint32_t)port];
+
+  ctrlbits = mode & 0x007FFFFFU;
+  oebits   = (mode >> 23U) & 1U;
+  padbits  = mode >> 24U;
+  bit      = 1U << pad;
+  abspad   = ((uint32_t)port << 5U) | (uint32_t)pad;
+
+  if ((pad >= PAL_IOPORTS_WIDTH) ||
+      (((rpp->valid_mask >> pad) & 1U) == 0U) ||
+      (abspad >= RP_GPIO_NUM_LINES)) {
+    return;
+  }
+
+  /* Release the output driver while reprogramming mux and pad control. */
+  *rpp->oe_clr = bit;
+
+  IO_BANK0->GPIO[abspad].CTRL = ctrlbits;
+  PADS_BANK0->GPIO[abspad] = padbits;
+
+  if (oebits != 0U) {
+    *rpp->oe_set = bit;
+  }
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
 #if (PAL_USE_WAIT || PAL_USE_CALLBACKS) || defined(__DOXYGEN__)
 /**
- * @brief   EXTI[0], EXTI[1] interrupt handler.
+ * @brief   IO_BANK0 GPIO interrupt handler.
  *
  * @isr
  */
@@ -91,8 +171,11 @@ OSAL_IRQ_HANDLER(RP_IO_IRQ_BANK0_HANDLER) {
  *
  * @notapi
  */
-void __pal_lld_init(void) {
+void _pal_lld_init(void) {
 
+  /* Ensures a clean peripheral state */
+  hal_lld_peripheral_reset(RESETS_ALLREG_IO_BANK0);
+  hal_lld_peripheral_reset(RESETS_ALLREG_PADS_BANK0);
   hal_lld_peripheral_unreset(RESETS_ALLREG_IO_BANK0);
   hal_lld_peripheral_unreset(RESETS_ALLREG_PADS_BANK0);
 
@@ -107,58 +190,81 @@ void __pal_lld_init(void) {
   #endif
 }
 
+/**
+ * @brief   Pads group mode setup.
+ * @details Programs each selected pad in the specified port using the
+ *          RP pad/mux configuration helper.
+ *
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask, already shifted to port bit positions
+ * @param[in] mode      group mode
+ *
+ * @notapi
+ */
+void _pal_lld_setgroupmode(ioportid_t port,
+                           ioportmask_t mask,
+                           iomode_t mode) {
+  iopadid_t pad = 0U;
+
+  while (mask != 0U) {
+    if ((mask & 1U) != 0U) {
+      rp_pal_pad_set_mode(port, pad, mode);
+    }
+    mask >>= 1U;
+    pad++;
+  }
+}
+
 #if (PAL_USE_WAIT || PAL_USE_CALLBACKS) || defined(__DOXYGEN__)
 
+bool _pal_lld_ispadeventenabled(ioportid_t port, iopadid_t pad) {
+  ioline_t line = PAL_LINE(port, pad);
+
+  return (bool)((IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY]
+                 .INTE[RP_PAL_LINE_REG(line)] &
+                 RP_PAL_LINE_MASK(line)) != 0U);
+}
+
 /**
- * @brief   Pad event enable.
+ * @brief   Line event enable.
  * @note    Programming an unknown or unsupported mode is silently ignored.
  *
- * @param[in] line      line number within the port
+ * @param[in] line      line identifier
  * @param[in] mode      line event mode
  *
  * @notapi
  */
 void _pal_lld_enablelineevent(ioline_t line, ioeventmode_t mode) {
-  osalDbgAssert(
-    !(IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTE[line/8] & (0x0FU << (4U*(line & 0x07U)))),
-    "channel in use");
+  uint32_t inte = 0U;
+  uint32_t reg = RP_PAL_LINE_REG(line);
+  uint32_t shift = RP_PAL_LINE_SHIFT(line);
+  uint32_t mask = RP_PAL_LINE_MASK(line);
+  volatile uint32_t *inte_reg =
+    &IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTE[reg];
 
-  uint32_t mode_set = 0;
-  uint32_t mode_clr = 0;
+  osalDbgAssert((IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTE[reg] &
+                 mask) == 0U, "channel in use");
 
-  /* Programming the edge and level triggers.*/
-  if (mode & PAL_EVENT_MODE_RISING_EDGE)
-    mode_set |= 8;
-  else
-    mode_clr |= 8;
+  if (mode & PAL_EVENT_MODE_RISING_EDGE) {
+    inte |= 8U;
+  }
+  if (mode & PAL_EVENT_MODE_FALLING_EDGE) {
+    inte |= 4U;
+  }
+  if (mode & RP_PAL_EVENT_MODE_LEVEL_LOW) {
+    inte |= 1U;
+  }
+  if (mode & RP_PAL_EVENT_MODE_LEVEL_HIGH) {
+    inte |= 2U;
+  }
 
-  if (mode & PAL_EVENT_MODE_FALLING_EDGE)
-    mode_set |= 4;
-  else
-    mode_clr |= 4;
-
-  if (mode & RP_PAL_EVENT_MODE_LEVEL_LOW)
-    mode_set |= 1;
-  else
-    mode_clr |= 1;
-
-  if (mode & RP_PAL_EVENT_MODE_LEVEL_HIGH)
-    mode_set |= 2;
-  else
-    mode_clr |= 2;
-
-
-  /* Clear any pending interrupt status before enabling. */
-  IO_BANK0->INTR[line / 8] = 0x0FU << (4U * (line & 0x07U));
-
-  IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTE[line/8] &=
-    ~(mode_clr << (4*(line & 0x07)));
-  IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTE[line/8] |=
-    mode_set << (4*(line & 0x07));
-};
+  IO_BANK0->INTR[reg] = mask;
+  rp_pal_reg_clr(inte_reg, mask);
+  rp_pal_reg_set(inte_reg, inte << shift);
+}
 
 /**
- * @brief   Pad event disable.
+ * @brief   Line event disable.
  * @details This function disables previously programmed event callbacks.
  *
  * @param[in] line      line identifier
@@ -166,17 +272,21 @@ void _pal_lld_enablelineevent(ioline_t line, ioeventmode_t mode) {
  * @notapi
  */
 void _pal_lld_disablelineevent(ioline_t line) {
-  IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTE[line/8] &=
-    ~(0x0FU << (4*(line & 0x07)));
+  uint32_t reg = RP_PAL_LINE_REG(line);
+  uint32_t mask = RP_PAL_LINE_MASK(line);
+  volatile uint32_t *inte_reg =
+    &IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTE[reg];
+
+  rp_pal_reg_clr(inte_reg, mask);
 
   /* Clear pending interrupt status. INTR is W1C.*/
-  IO_BANK0->INTR[line / 8] = 0x0FU << (4U * (line & 0x07U));
+  IO_BANK0->INTR[reg] = mask;
 
 #if PAL_USE_CALLBACKS || PAL_USE_WAIT
   /* Callback cleared and/or thread reset.*/
   _pal_clear_event(line);
 #endif
-};
+}
 
 /**
  * @brief Force a trigger event on the line.
@@ -184,13 +294,16 @@ void _pal_lld_disablelineevent(ioline_t line) {
  * @param[in]         line identifier
  */
 void _pal_lld_forcelineevent(ioline_t line) {
-  uint32_t force_mask =
-    IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTE[line/8] &
-    (0x0FU << (4*(line & 0x07)));
+  uint32_t reg = RP_PAL_LINE_REG(line);
+  volatile uint32_t *intf =
+    &IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTF[reg];
+  uint32_t force_mask = IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTE[reg] &
+                        RP_PAL_LINE_MASK(line);
 
-  IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTF[line/8] &= ~force_mask;
-  IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTF[line/8] |= force_mask;
-};
+  /* Clear then set only the target bits, without an RMW race on sibling bits. */
+  rp_pal_reg_clr(intf, force_mask);
+  rp_pal_reg_set(intf, force_mask);
+}
 
 /**
  * @brief Clear all forced trigger event on the line.
@@ -198,12 +311,14 @@ void _pal_lld_forcelineevent(ioline_t line) {
  * @param[in]         line identifier
  */
 void _pal_lld_unforcelineevent(ioline_t line) {
-  uint32_t force_mask =
-    IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTE[line/8] &
-    (0x0FU << (4*(line & 0x07)));
+  uint32_t reg = RP_PAL_LINE_REG(line);
+  volatile uint32_t *intf =
+    &IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTF[reg];
+  uint32_t force_mask = IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTE[reg] &
+                        RP_PAL_LINE_MASK(line);
 
-  IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTF[line/8] &= ~force_mask;
-};
+  rp_pal_reg_clr(intf, force_mask);
+}
 
 #endif
 
