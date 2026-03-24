@@ -75,6 +75,16 @@
 #define RP_XIP_MAINTENANCE_BASE             0x18000000U
 #define RP_XIP_CACHE_LINE_SIZE              8U
 #define RP_XIP_CACHE_SIZE                   (16U * 1024U)
+#define RP_XIP_ADDRESS_SPACE_SIZE           0x04000000U
+#define RP_XIP_SET_WAY_BASE                 (RP_XIP_ADDRESS_SPACE_SIZE - RP_XIP_CACHE_SIZE)
+/** @} */
+
+/**
+ * @name    XIP cache maintenance operations
+ * @{
+ */
+#define RP_XIP_CACHE_INVALIDATE_BY_SET_WAY  0U
+#define RP_XIP_CACHE_CLEAN_BY_SET_WAY       1U
 /** @} */
 
 /**
@@ -281,24 +291,39 @@ RAMFUNC static void rp_flash_write_enable(EFlashDriver *eflp) {
 }
 
 /**
- * @brief   Invalidate XIP cache
+ * @brief   Flush XIP cache and restore cache policy.
  * @note    This function MUST be in RAM.
  */
-RAMFUNC static void rp_flash_invalidate_cache(void) {
+RAMFUNC static void rp_flash_flush_cache(EFlashDriver *eflp) {
   volatile uint8_t *maint = (volatile uint8_t *)RP_XIP_MAINTENANCE_BASE;
   volatile uint32_t *xip = (volatile uint32_t *)RP_XIP_CTRL_BASE;
   uint32_t offset;
 
-  for (offset = 0U; offset < RP_XIP_CACHE_SIZE; offset += RP_XIP_CACHE_LINE_SIZE) {
-    maint[offset] = 0U;
+  /*
+   * Clean before invalidate: the XIP cache is shared with PSRAM (CS1),
+   * which may have dirty write-back lines. The last 16KB of the XIP
+   * address space covers all cache set/way combinations.
+   */
+  for (offset = RP_XIP_SET_WAY_BASE;
+       offset < RP_XIP_ADDRESS_SPACE_SIZE;
+       offset += RP_XIP_CACHE_LINE_SIZE) {
+    maint[offset + RP_XIP_CACHE_CLEAN_BY_SET_WAY] = 0U;
   }
 
   __DSB();
   __ISB();
 
-  /* Enable the cache */
-  xip[XIP_CTRL / 4U] = (1U << 0) |           /* EN_SECURE */
-                       (1U << 1);            /* EN_NONSECURE */
+  for (offset = RP_XIP_SET_WAY_BASE;
+       offset < RP_XIP_ADDRESS_SPACE_SIZE;
+       offset += RP_XIP_CACHE_LINE_SIZE) {
+    maint[offset + RP_XIP_CACHE_INVALIDATE_BY_SET_WAY] = 0U;
+  }
+
+  __DSB();
+  __ISB();
+
+  /* Restore the saved cache policy after maintenance. */
+  xip[XIP_CTRL / 4U] = eflp->xip_ctrl;
 }
 
 /**
@@ -310,6 +335,7 @@ RAMFUNC static void rp_flash_invalidate_cache(void) {
  */
 RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
   volatile uint32_t *qmi = eflp->qmi;
+  volatile uint32_t *xip = (volatile uint32_t *)RP_XIP_CTRL_BASE;
   volatile uint32_t *pads_qspi = (volatile uint32_t *)RP_PADS_QSPI_BASE;
   uint32_t padctrl_save;
   uint32_t padctrl_tmp;
@@ -317,6 +343,7 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
   volatile unsigned delay;
 
   /* Save current XIP configuration before switching to direct mode. */
+  eflp->xip_ctrl = xip[XIP_CTRL / 4U];
   eflp->xip_timing = qmi[QMI_M0_TIMING / 4U];
   eflp->xip_rfmt = qmi[QMI_M0_RFMT / 4U];
   eflp->xip_rcmd = qmi[QMI_M0_RCMD / 4U];
@@ -426,7 +453,7 @@ RAMFUNC static void rp_flash_enter_xip(EFlashDriver *eflp) {
   qmi[QMI_M0_RFMT / 4U] = eflp->xip_rfmt;
   qmi[QMI_M0_RCMD / 4U] = eflp->xip_rcmd;
 
-  rp_flash_invalidate_cache();
+  rp_flash_flush_cache(eflp);
 }
 
 /**
