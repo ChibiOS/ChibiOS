@@ -27,10 +27,18 @@
  * VRQ assignment.
  * Note, assigned VRQs numbers must match assignments on the host side.
  */
+#define VIO_VETH1_IRQ                       10
+#define VIO_VETH2_IRQ                       11
 #define VIO_VUART1_IRQ                      8
 #define VIO_VUART2_IRQ                      9
 #define VIO_VSPI1_IRQ                       6
 #define VIO_VSPI2_IRQ                       7
+
+/*
+ * ETH driver system settings.
+ */
+#define VIO_ETH_USE_VETH1                   FALSE
+#define VIO_ETH_USE_VETH2                   FALSE
 
 /*
  * SIO driver system settings.
