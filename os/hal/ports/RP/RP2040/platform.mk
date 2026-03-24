@@ -34,6 +34,7 @@ PLATFORMSRC += $(CHIBIOS)/os/hal/ports/RP/RP2040/hal_efl_lld.c
 endif
 
 # Drivers compatible with the platform.
+include $(CHIBIOS)/os/hal/ports/RP/LLD/EFLv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/RP/LLD/DMAv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/RP/LLD/PIOv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/RP/LLD/GPIOv1/driver.mk
