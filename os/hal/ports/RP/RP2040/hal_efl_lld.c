@@ -102,6 +102,7 @@
  * @{
  */
 #define XIP_CTRL                            0x00U
+#define XIP_CTRL_EN                         1U
 #define XIP_FLUSH                           0x04U
 #define XIP_STAT                            0x08U
 /** @} */
@@ -305,6 +306,7 @@ RAMFUNC static void rp_flash_write_enable(EFlashDriver *eflp) {
  */
 RAMFUNC static void rp_flash_flush_cache(void) {
   volatile uint32_t *xip = (volatile uint32_t *)RP_XIP_CTRL_BASE;
+  uint32_t ctrl;
 
   /* Write to flush register to trigger cache flush. */
   xip[XIP_FLUSH / 4U] = 1U;
@@ -312,8 +314,10 @@ RAMFUNC static void rp_flash_flush_cache(void) {
   /* Read back blocks until flush is complete. */
   (void)xip[XIP_FLUSH / 4U];
 
-  /* Enable the cache */
-  xip[XIP_CTRL / 4U] = 1U;
+  /* Re-enable the cache while preserving the remaining policy bits. */
+  ctrl = xip[XIP_CTRL / 4U];
+  ctrl |= XIP_CTRL_EN;
+  xip[XIP_CTRL / 4U] = ctrl;
 }
 
 /**
