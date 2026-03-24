@@ -79,10 +79,6 @@ static vio_gpio_units_t gpio_units2 = {
   }
 };
 
-static vio_uart_units_t uart_units2 = {
-  .n                = 0U
-};
-
 #if VIO_CFG_ENABLE_ETH == TRUE
 static vio_eth_units_t eth_units2 = {
   .n                = 1U,
@@ -96,17 +92,11 @@ static vio_eth_units_t eth_units2 = {
 };
 #endif
 
-static sio_configurations_t uart_configs2 = {
-  .cfgsnum          = 0U
-};
-
 static vio_conf_t vio_config2 = {
 #if VIO_CFG_ENABLE_ETH == TRUE
   .eths             = &eth_units2,
 #endif
-  .gpios            = &gpio_units2,
-  .uarts            = &uart_units2,
-  .uartconfs        = &uart_configs2
+  .gpios            = &gpio_units2
 };
 
 /*===========================================================================*/

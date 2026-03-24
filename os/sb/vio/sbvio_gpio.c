@@ -55,69 +55,72 @@
 void sb_fastc_vio_gpio(sb_class_t *sbp, struct port_extctx *ectxp) {
   uint32_t sub  = VIO_CALL_SUBCODE(ectxp->r0);
   uint32_t unit = VIO_CALL_UNIT(ectxp->r0);
-  const vio_gpio_unit_t *unitp;
+
+  /* This driver returns zero in case of errors, errors are silently
+     ignored.*/
+  ectxp->r0 = 0U;
 
   /* VIO not associated.*/
-  if (sbp->vioconf == NULL) {
-    ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
+  if ((sbp->vioconf == NULL) || (sbp->vioconf->gpios == NULL)) {
     return;
   }
-
-  ectxp->r0 = 0U;
 
   if (unit >= sbp->vioconf->gpios->n) {
     return;
   }
 
-  unitp = &sbp->vioconf->gpios->units[unit];
+  /* API processing.*/
+  {
+    const vio_gpio_unit_t *unitp = unitp = &sbp->vioconf->gpios->units[unit];
 
-  switch (sub) {
-  case SB_VGPIO_WRITE:
-    if ((unitp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
-      palWriteGroup(unitp->port, unitp->mask, unitp->offset, ectxp->r1);
-    }
-    break;
-  case SB_VGPIO_SET:
-    if ((unitp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
-      uint32_t val = palReadGroup(unitp->port, unitp->mask, unitp->offset);
-      palWriteGroup(unitp->port, unitp->mask, unitp->offset, ectxp->r1 | val);
-    }
-    break;
-  case SB_VGPIO_CLEAR:
-    if ((unitp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
-      uint32_t val = palReadGroup(unitp->port, unitp->mask, unitp->offset);
-      palWriteGroup(unitp->port, unitp->mask, unitp->offset, val & ~ectxp->r1);
-    }
-    break;
-  case SB_VGPIO_TOGGLE:
-    if ((unitp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
-      uint32_t val = palReadGroup(unitp->port, unitp->mask, unitp->offset);
-      palWriteGroup(unitp->port, unitp->mask, unitp->offset, ectxp->r1 ^ val);
-    }
-    break;
-  case SB_VGPIO_READLATCH:
-    if ((unitp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
-      ectxp->r0 = palReadGroupLatch(unitp->port, unitp->mask, unitp->offset);
-    }
-    break;
-  case SB_VGPIO_READ:
-    if ((unitp->permissions & VIO_GPIO_PERM_READ) != 0U) {
-      ectxp->r0 = palReadGroup(unitp->port, unitp->mask, unitp->offset);
-    }
-    break;
-  case SB_VGPIO_SETMODE:
-    if ((unitp->permissions & VIO_GPIO_PERM_SETMODE) != 0U) {
-      ioportmask_t mask = (ioportmask_t)ectxp->r1;
-      uint32_t offset = ectxp->r2;
-
-      if (((mask << offset) & ~unitp->mask) == 0U) {
-        palSetGroupMode(unitp->port, mask, (unitp->offset + offset),
-                        (iomode_t)ectxp->r3);
+    switch (sub) {
+    case SB_VGPIO_WRITE:
+      if ((unitp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
+        palWriteGroup(unitp->port, unitp->mask, unitp->offset, ectxp->r1);
       }
+      break;
+    case SB_VGPIO_SET:
+      if ((unitp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
+        uint32_t val = palReadGroup(unitp->port, unitp->mask, unitp->offset);
+        palWriteGroup(unitp->port, unitp->mask, unitp->offset, ectxp->r1 | val);
+      }
+      break;
+    case SB_VGPIO_CLEAR:
+      if ((unitp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
+        uint32_t val = palReadGroup(unitp->port, unitp->mask, unitp->offset);
+        palWriteGroup(unitp->port, unitp->mask, unitp->offset, val & ~ectxp->r1);
+      }
+      break;
+    case SB_VGPIO_TOGGLE:
+      if ((unitp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
+        uint32_t val = palReadGroup(unitp->port, unitp->mask, unitp->offset);
+        palWriteGroup(unitp->port, unitp->mask, unitp->offset, ectxp->r1 ^ val);
+      }
+      break;
+    case SB_VGPIO_READLATCH:
+      if ((unitp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
+        ectxp->r0 = palReadGroupLatch(unitp->port, unitp->mask, unitp->offset);
+      }
+      break;
+    case SB_VGPIO_READ:
+      if ((unitp->permissions & VIO_GPIO_PERM_READ) != 0U) {
+        ectxp->r0 = palReadGroup(unitp->port, unitp->mask, unitp->offset);
+      }
+      break;
+    case SB_VGPIO_SETMODE:
+      if ((unitp->permissions & VIO_GPIO_PERM_SETMODE) != 0U) {
+        ioportmask_t mask = (ioportmask_t)ectxp->r1;
+        uint32_t offset = ectxp->r2;
+
+        if (((mask << offset) & ~unitp->mask) == 0U) {
+          palSetGroupMode(unitp->port, mask, (unitp->offset + offset),
+                          (iomode_t)ectxp->r3);
+        }
+      }
+      break;
+    default:
+      return;
     }
-    break;
-  default:
-    return;
   }
 }
 

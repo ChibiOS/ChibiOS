@@ -34,16 +34,6 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static bool veth_validate_unit(const vio_eth_unit_t *unitp) {
-
-  if ((unitp->ethp == NULL) ||
-      (unitp->vrqsb == NULL)) {
-    return false;
-  }
-
-  return true;
-}
-
 static void veth_cb(void *ip) {
   hal_eth_driver_c *ethp = (hal_eth_driver_c *)ip;
   const vio_eth_unit_t *unitp = (const vio_eth_unit_t *)drvGetArgumentX(ethp);
@@ -76,13 +66,9 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
     return;
   }
 
+  /* API processing.*/
   {
     const vio_eth_unit_t *unitp = &sbp->vioconf->eths->units[unit];
-
-    if (!veth_validate_unit(unitp)) {
-      ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
-      return;
-    }
 
     switch (sub) {
     case SB_VETH_INIT:
@@ -259,13 +245,9 @@ void sb_fastc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
     return;
   }
 
+  /* API processing.*/
   {
     const vio_eth_unit_t *unitp = &sbp->vioconf->eths->units[unit];
-
-    if (!veth_validate_unit(unitp)) {
-      ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
-      return;
-    }
 
     switch (sub) {
     case SB_VETH_RXGET:
