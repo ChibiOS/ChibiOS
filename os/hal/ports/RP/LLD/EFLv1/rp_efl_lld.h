@@ -24,26 +24,6 @@
 
 #if (HAL_USE_EFL == TRUE) || defined(__DOXYGEN__)
 
-/**
- * @brief   Cache the flash unique ID during driver init.
- * @details When enabled the unique ID is read once during @p efl_lld_init()
- *          while still single-core, avoiding XIP disable/enable on every
- *          subsequent @p efl_lld_read_unique_id() call.
- */
-#if !defined(RP_EFL_CACHE_UNIQUE_ID) || defined(__DOXYGEN__)
-#define RP_EFL_CACHE_UNIQUE_ID              FALSE
-#endif
-
-/**
- * @brief   Shared driver fields for unique ID caching.
- * @details Appended by each platform's @p efl_lld_driver_fields macro.
- */
-#define rp_efl_lld_uid_cache_fields                                         \
-  /* Cached flash unique ID, read during init before multi-core. */         \
-  uint8_t                     uid_cache[RP_FLASH_UNIQUE_ID_SIZE];           \
-  /* True when uid_cache contains a valid unique ID. */                     \
-  bool                        uid_cached;
-
 #if !defined(__ASSEMBLER__)
 
 #ifdef __cplusplus

@@ -157,8 +157,7 @@
   /* Saved XIP configuration registers. */                                  \
   uint32_t                    xip_timing;                                   \
   uint32_t                    xip_rfmt;                                     \
-  uint32_t                    xip_rcmd;                                     \
-  rp_efl_lld_uid_cache_fields
+  uint32_t                    xip_rcmd;
 
 /**
  * @brief   Low level fields of the embedded flash configuration structure.

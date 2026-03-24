@@ -177,7 +177,7 @@ EFlashDriver EFLD1 = {
  * @details 252 bytes (full 256-byte image minus 4-byte CRC).
  *          See RP2040 Datasheet 2.8.1.3 and rp_flash_enter_xip().
  */
-static CC_ALIGN_DATA(4) uint8_t rp_boot2[252];
+CC_ALIGN_DATA(4) static uint8_t rp_boot2[252];
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
