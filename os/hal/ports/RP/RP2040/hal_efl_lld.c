@@ -169,6 +169,17 @@ EFlashDriver EFLD1 = {
 };
 
 /*===========================================================================*/
+/* Driver local variables and types.                                         */
+/*===========================================================================*/
+
+/**
+ * @brief   Copy of boot2 stage2 image for XIP restoration after flash ops.
+ * @details 252 bytes (full 256-byte image minus 4-byte CRC).
+ *          See RP2040 Datasheet 2.8.1.3 and rp_flash_enter_xip().
+ */
+static CC_ALIGN_DATA(4) uint8_t rp_boot2[252];
+
+/*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
@@ -413,8 +424,8 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
  *          a register save/restore approach cannot recover the original
  *          XIP configuration.
  *
- *          Instead, the boot2 stage2 code is copied to RAM at driver
- *          start and re-executed here.  This is the same technique used
+ *          Instead, the boot2 stage2 code is copied to RAM during
+ *          driver init and re-executed here.  This is the same technique used
  *          by the Pico SDK (flash_enable_xip_via_boot2 in
  *          hardware_flash/flash.c).
  *
@@ -441,7 +452,7 @@ RAMFUNC static void rp_flash_enter_xip(EFlashDriver *eflp) {
   /* Re-execute the boot2 to fully restore the SSI configuration
    * including QSPI mode, continuous read, and baud rate.  The OR
    * with 1 sets the Thumb bit required by BX on ARMv6-M. */
-  ((void (*)(void))((uintptr_t)eflp->boot2 | 1U))();
+  ((void (*)(void))((uintptr_t)rp_boot2 | 1U))();
 
   rp_flash_flush_cache();
 }
@@ -597,14 +608,21 @@ RAMFUNC static void rp_flash_read_uid_full(EFlashDriver *eflp,
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
-void rp_efl_lld_start(EFlashDriver *eflp) {
+void rp_efl_lld_init(void) {
 
   /* Copy the boot2 stage2 image (first 252 bytes of flash, excluding
    * the 4-byte CRC) into a RAM buffer while XIP is still functional.
    * After flash program/erase operations, rp_flash_enter_xip()
    * re-executes this copy to restore the SSI/XIP configuration.
    * See RP2040 Datasheet section 2.8.1.3 for boot2 requirements. */
-  memcpy(eflp->boot2, (const void *)RP_FLASH_BASE, sizeof(eflp->boot2));
+  memcpy(rp_boot2, (const void *)RP_FLASH_BASE, sizeof(rp_boot2));
+}
+
+void rp_efl_lld_start(EFlashDriver *eflp) {
+
+  (void)eflp;
+
+  /* Nothing to do - boot2 is copied during init. */
 }
 
 void rp_efl_lld_program_page_full(EFlashDriver *eflp,

@@ -591,6 +591,11 @@ RAMFUNC static void rp_flash_read_uid_full(EFlashDriver *eflp,
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
+void rp_efl_lld_init(void) {
+
+  /* Nothing to do - RP2350 uses QMI register save/restore. */
+}
+
 void rp_efl_lld_start(EFlashDriver *eflp) {
 
   (void)eflp;

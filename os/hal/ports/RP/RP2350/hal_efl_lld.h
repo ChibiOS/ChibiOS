@@ -144,6 +144,8 @@
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+#include "rp_efl_lld.h"
+
 /**
  * @brief   Low level fields of the embedded flash driver structure.
  */
@@ -155,7 +157,8 @@
   /* Saved XIP configuration registers. */                                  \
   uint32_t                    xip_timing;                                   \
   uint32_t                    xip_rfmt;                                     \
-  uint32_t                    xip_rcmd;
+  uint32_t                    xip_rcmd;                                     \
+  rp_efl_lld_uid_cache_fields
 
 /**
  * @brief   Low level fields of the embedded flash configuration structure.

@@ -62,6 +62,27 @@ void efl_lld_init(void) {
 
   /* Driver initialization. */
   eflObjectInit(&EFLD1);
+
+  /* Platform-specific one-time initialization (e.g. RP2040 boot2 copy). */
+  rp_efl_lld_init();
+
+#if RP_EFL_CACHE_UNIQUE_ID == TRUE
+  {
+    uint8_t rx[4U + RP_FLASH_UNIQUE_ID_SIZE];
+    uint32_t primask;
+
+    /* Read and cache the flash unique ID while still single-core.
+     * Uses raw PRIMASK since OSAL may not be initialized yet.
+     * No XIP hooks needed — no other core is running yet. */
+    primask = __get_PRIMASK();
+    __disable_irq();
+    rp_efl_lld_read_uid_full(&EFLD1, rx, sizeof(rx));
+    __set_PRIMASK(primask);
+
+    memcpy(EFLD1.uid_cache, rx + 4U, RP_FLASH_UNIQUE_ID_SIZE);
+    EFLD1.uid_cached = true;
+  }
+#endif
 }
 
 /**
@@ -426,9 +447,10 @@ flash_error_t efl_lld_verify_erase(void *instance, flash_sector_t sector) {
 
 /**
  * @brief   Reads the flash chip's unique ID.
- * @note    The JEDEC 0x4B command requires 4 dummy bytes before the
- *          8-byte unique ID. The memcpy runs after XIP is restored
- *          so it is safe to call flash-resident libc.
+ * @note    When @p RP_EFL_CACHE_UNIQUE_ID is enabled, this returns the
+ *          value cached during @p efl_lld_init() with no XIP manipulation.
+ *          Otherwise the JEDEC 0x4B command is issued at runtime, which
+ *          requires exiting and re-entering XIP mode.
  *
  * @param[in] eflp      pointer to a @p EFlashDriver structure
  * @param[out] uid      pointer to an 8-byte buffer for the unique ID
@@ -436,22 +458,31 @@ flash_error_t efl_lld_verify_erase(void *instance, flash_sector_t sector) {
  * @api
  */
 void efl_lld_read_unique_id(EFlashDriver *eflp, uint8_t *uid) {
-  uint8_t rx[4U + RP_FLASH_UNIQUE_ID_SIZE];
-  syssts_t sts;
 
   osalDbgCheck((eflp != NULL) && (uid != NULL));
 
-  /* Allow the application to prepare for XIP becoming unavailable. */
-  rpEflBeforeXipOff();
+#if RP_EFL_CACHE_UNIQUE_ID == TRUE
+  osalDbgAssert(eflp->uid_cached, "UID not cached");
 
-  sts = osalSysGetStatusAndLockX();
-  rp_efl_lld_read_uid_full(eflp, rx, sizeof(rx));
-  osalSysRestoreStatusX(sts);
+  memcpy(uid, eflp->uid_cache, RP_FLASH_UNIQUE_ID_SIZE);
+#else
+  {
+    uint8_t rx[4U + RP_FLASH_UNIQUE_ID_SIZE];
+    syssts_t sts;
 
-  /* Notify the application that XIP is available again. */
-  rpEflAfterXipOn();
+    /* Allow the application to prepare for XIP becoming unavailable. */
+    rpEflBeforeXipOff();
 
-  memcpy(uid, rx + 4U, RP_FLASH_UNIQUE_ID_SIZE);
+    sts = osalSysGetStatusAndLockX();
+    rp_efl_lld_read_uid_full(eflp, rx, sizeof(rx));
+    osalSysRestoreStatusX(sts);
+
+    /* Notify the application that XIP is available again. */
+    rpEflAfterXipOn();
+
+    memcpy(uid, rx + 4U, RP_FLASH_UNIQUE_ID_SIZE);
+  }
+#endif
 }
 
 /**

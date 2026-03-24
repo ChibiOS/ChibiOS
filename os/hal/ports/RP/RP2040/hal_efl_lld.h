@@ -144,16 +144,15 @@
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+#include "rp_efl_lld.h"
+
 /**
  * @brief   Low level fields of the embedded flash driver structure.
  */
 #define efl_lld_driver_fields                                               \
   /* Pointer to SSI registers. */                                           \
   volatile uint32_t           *ssi;                                         \
-  /* Copy of boot2 stage2 image for XIP restoration after flash ops.        \
-   * 252 bytes (full 256-byte image minus 4-byte CRC).                      \
-   * See RP2040 Datasheet 2.8.1.3 and rp_flash_enter_xip(). */           \
-  uint8_t                     boot2[252];
+  rp_efl_lld_uid_cache_fields
 
 /**
  * @brief   Low level fields of the embedded flash configuration structure.
