@@ -27,7 +27,6 @@
 #include <string.h>
 
 #include "hal.h"
-#include "rp_flash_lockout.h"
 
 #if (HAL_USE_EFL == TRUE) || defined(__DOXYGEN__)
 
@@ -616,9 +615,6 @@ void efl_lld_init(void) {
 
   /* Driver initialization. */
   eflObjectInit(&EFLD1);
-
-  /* Initialize the flash lockout spinlock to a known state. */
-  rpFlashLockoutInit();
 }
 
 /**
@@ -739,10 +735,9 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
   /* FLASH_PGM state while the operation is performed. */
   devp->state = FLASH_PGM;
 
-  /* Park the other core once for the entire program operation. */
-  rpFlashLockoutAcquire();
-
-  /* Program in page-sized chunks, source data is copied into RAM */
+  /* Program in page-sized chunks.  The source data copy is intentionally
+   * done outside the system lock while XIP is still enabled; only the
+   * RAM-resident page transaction itself is bracketed by syslock. */
   while (n > 0U) {
     uint8_t page_buf[RP_FLASH_PAGE_SIZE];
     size_t page_offset = offset & RP_FLASH_PAGE_MASK;
@@ -763,9 +758,6 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
     pp += chunk;
     n -= chunk;
   }
-
-  /* Release the other core. */
-  rpFlashLockoutRelease();
 
   /* Ready state again. */
   devp->state = FLASH_READY;
@@ -824,16 +816,14 @@ flash_error_t efl_lld_start_erase_sector(void *instance,
   /* Calculate sector offset. */
   offset = sector * RP_FLASH_SECTOR_SIZE;
 
-  /* Park the other core and lock system. */
-  rpFlashLockoutAcquire();
+  /* Lock the system around the single RAM-resident erase sequence. */
   sts = osalSysGetStatusAndLockX();
 
   /* Perform the entire erase sequence in RAM. */
   rp_flash_erase_full(devp, FLASHCMD_SECTOR_ERASE, offset);
 
-  /* Restore system state and release the other core. */
+  /* Restore system state. */
   osalSysRestoreStatusX(sts);
-  rpFlashLockoutRelease();
 
   /* Back to ready state. */
   devp->state = FLASH_READY;
@@ -875,11 +865,11 @@ flash_error_t efl_lld_start_erase_block(void *instance,
 
   offset = block * erase_size;
 
-  rpFlashLockoutAcquire();
+  /* UID read is one uninterrupted RAM-resident XIP-off transaction, so the
+   * whole helper runs under syslock. */
   sts = osalSysGetStatusAndLockX();
   rp_flash_erase_full(devp, cmd, offset);
   osalSysRestoreStatusX(sts);
-  rpFlashLockoutRelease();
 
   devp->state = FLASH_READY;
 
@@ -988,11 +978,9 @@ void efl_lld_read_unique_id(EFlashDriver *eflp, uint8_t *uid) {
 
   osalDbgCheck((eflp != NULL) && (uid != NULL));
 
-  rpFlashLockoutAcquire();
   sts = osalSysGetStatusAndLockX();
   rp_flash_read_uid_full(eflp, rx, sizeof(rx));
   osalSysRestoreStatusX(sts);
-  rpFlashLockoutRelease();
 
   memcpy(uid, rx + 4U, RP_FLASH_UNIQUE_ID_SIZE);
 }
