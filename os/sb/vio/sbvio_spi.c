@@ -276,19 +276,20 @@ void sb_fastc_vio_spi(sb_class_t *sbp, struct port_extctx *ectxp) {
   }
 
   if ((unit >= sbp->vioconf->spis->n) || (sbp->vioconf->spis == NULL)) {
-    return = (uint32_t)HAL_RET_NO_RESOURCE;
-  }
-
-  /* We don't want assertion or errors to be caused in host, making sure
-     all functions are called in the proper state.*/
-  if (unitp->spip->state != HAL_DRV_STATE_READY) {
-    ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
-    return ;
+    ectxp->r0 =  (uint32_t)HAL_RET_NO_RESOURCE;
+    return;
   }
 
   /* API processing.*/
   {
     const vio_spi_unit_t *unitp = &sbp->vioconf->spis->units[unit];
+
+    /* We don't want assertion or errors to be caused in host, making sure
+       all functions are called in the proper state.*/
+    if (unitp->spip->state != HAL_DRV_STATE_READY) {
+      ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
+      return ;
+    }
 
     switch (sub) {
     case SB_VSPI_SELCFG:
