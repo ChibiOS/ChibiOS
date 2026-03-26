@@ -38,17 +38,20 @@
 /* Common.                                                                   */
 /*===========================================================================*/
 
-/* RTC and TAMP attributes.*/
+/* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
+#define STM32_RTC_HAS_PERIODIC_WAKEUPS      FALSE
 #define STM32_RTC_NUM_ALARMS                1
 #define STM32_RTC_STORAGE_SIZE              0
 #define STM32_RTC_COMMON_HANDLER            Vector48
 #define STM32_RTC_COMMON_NUMBER             2
 #define STM32_RTC_EVENT_RTC_EXTI            19
+#if !defined(STM32_RTC_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_RTC_IRQ_PRIORITY              STM32_IRQ_EXTI4_15_PRIORITY
+#endif
 #define STM32_RTC_IRQ_ENABLE() do {                                         \
   nvicEnableVector(STM32_RTC_COMMON_NUMBER,                                 \
-                   STM32_IRQ_EXTI19_PRIORITY);                              \
+                   STM32_RTC_IRQ_PRIORITY);                                 \
 } while (false)
 
  /* Enabling RTC-related EXTI lines.*/

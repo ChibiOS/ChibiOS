@@ -133,6 +133,7 @@ int main(void) {
     RTC_ALRM_ST(0) |
     RTC_ALRM_SU(0)      /* Match minute start.      */
   };
+#if RTC_ALARMS > 1
   static const RTCAlarm alarm2 = {
     RTC_ALRM_MSK4  |    /* No month/week day match. */
     RTC_ALRM_MSK3  |    /* No hour match.           */
@@ -140,6 +141,7 @@ int main(void) {
     RTC_ALRM_ST(3) |
     RTC_ALRM_SU(0)      /* Match minute half.       */
   };
+#endif
 
   /*
    * System initializations.
@@ -164,7 +166,9 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   rtcSetAlarm(&RTCD1, 0, &alarm1);
+#if RTC_ALARMS > 1
   rtcSetAlarm(&RTCD1, 1, &alarm2);
+#endif
   rtcSetCallback(&RTCD1, alarmcb);
 #if RTC_HAS_STORAGE
   psWrite(&RTCD1, 0U, 12U, (const uint8_t *)"Hello World!");
