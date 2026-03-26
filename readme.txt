@@ -85,8 +85,6 @@
 - FIX: Fixed  chMsgSend missing rdymsg assignment causes spurious NULL return
        from chMsgWaitTimeoutS (bug #1300).
 - FIX: Fixed problem with queues counter in NIL (bug #1299).
-
-*** 21.11.4 ***
 - FIX: Fixed problem with CH_PORT_SUPPORTS_RECURSIVE_LOCKS in NIL (bug #1298).
 
 *** 21.11.4 ***
