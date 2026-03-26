@@ -45,11 +45,14 @@
 #define STM32_RTC_STORAGE_SIZE              20
 #define STM32_RTC_COMMON_HANDLER            Vector48
 #define STM32_RTC_COMMON_NUMBER             2
-#define STM32_RTC_EVENT_RTC_EXTI            19
+#define STM32_RTC_EVENT_RTC_EXTI            20
 #define STM32_RTC_EVENT_TAMP_EXTI           21
+#if !defined(STM32_RTC_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_RTC_IRQ_PRIORITY              STM32_IRQ_EXTI4_15_PRIORITY
+#endif
 #define STM32_RTC_IRQ_ENABLE() do {                                         \
   nvicEnableVector(STM32_RTC_COMMON_NUMBER,                                 \
-                   STM32_IRQ_EXTI1921_PRIORITY);                            \
+                   STM32_RTC_IRQ_PRIORITY);                                 \
 } while (false)
 
  /* Enabling RTC-related EXTI lines.*/
@@ -150,10 +153,9 @@
 /* EXTI attributes.*/
 #define STM32_EXTI_HAS_CR                   TRUE
 #define STM32_EXTI_SEPARATE_RF              TRUE
-#define STM32_EXTI_HAS_GROUP2               TRUE
+#define STM32_EXTI_HAS_GROUP2               FALSE
 #define STM32_EXTI_NUM_LINES                22
 #define STM32_EXTI_IMR1_MASK                0xFFF80000U
-#define STM32_EXTI_IMR2_MASK                0xFFFFFFFFU
 
 /* Flash attributes.*/
 #define STM32_FLASH_NUMBER_OF_BANKS         1
@@ -332,10 +334,9 @@
 /* EXTI attributes.*/
 #define STM32_EXTI_HAS_CR                   TRUE
 #define STM32_EXTI_SEPARATE_RF              TRUE
-#define STM32_EXTI_HAS_GROUP2               TRUE
+#define STM32_EXTI_HAS_GROUP2               FALSE
 #define STM32_EXTI_NUM_LINES                22
 #define STM32_EXTI_IMR1_MASK                0xFFF80000U
-#define STM32_EXTI_IMR2_MASK                0xFFFFFFFFU
 
 /* Flash attributes.*/
 #define STM32_FLASH_NUMBER_OF_BANKS         1
