@@ -366,7 +366,6 @@ static void cmd_test(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
 
 #if (XSHELL_PROMPT_STR_LENGTH > 0)  || defined(__DOXYGEN__)
 static void cmd_prompt(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
-  xshell_manager_t *smp = xshellGetManager(xshp);
 
   (void)envp;
 
@@ -379,9 +378,8 @@ static void cmd_prompt(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
     chprintf(xshp->stream, "string too long" XSHELL_NEWLINE_STR);
     return;
   }
-
-  strncpy(smp->prompt, argv[1], XSHELL_PROMPT_STR_LENGTH);
-  smp->prompt[XSHELL_PROMPT_STR_LENGTH] = '\0';
+  strncpy(xshp->prompt, argv[1], XSHELL_PROMPT_STR_LENGTH);
+  xshp->prompt[XSHELL_PROMPT_STR_LENGTH] = '\0';
 }
 #endif
 
@@ -810,7 +808,7 @@ static void cmd_stat(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
 /**
  * @brief   Sets the prompt.
  *
- * @param[in,out] smp           pointer to the @p xshell_manager_t object
+ * @param[in,out] xshp          pointer to the @p xshell_t object
  * @param[in]     str           pointer to a prompt string
  *
  * @return  status
@@ -818,13 +816,15 @@ static void cmd_stat(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
  *
  * @api
  */
-bool xshellSetPrompt(xshell_manager_t *smp, const char *str) {
+bool xshellSetPrompt(xshell_t *xshp, const char *str) {
+
+  chDbgCheck(xshp != NULL);
 
   if (strlen(str) > XSHELL_PROMPT_STR_LENGTH) {
     return false;
   }
-  strncpy(smp->prompt, str, XSHELL_PROMPT_STR_LENGTH);
-  smp->prompt[XSHELL_PROMPT_STR_LENGTH] = '\0';
+  strncpy(xshp->prompt, str, XSHELL_PROMPT_STR_LENGTH);
+  xshp->prompt[XSHELL_PROMPT_STR_LENGTH] = '\0';
 
   return true;
 }

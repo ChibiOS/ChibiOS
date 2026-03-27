@@ -60,16 +60,11 @@ static MEMORYPOOL_DECL(shells_pool, sizeof (xshell_t),
 /*===========================================================================*/
 
 static const char *xshell_get_prompt(xshell_t *xshp) {
-  xshell_manager_t *smp = xshellGetManager(xshp);
 
 #if XSHELL_PROMPT_STR_LENGTH > 0
-  return smp->prompt;
+  return xshp->prompt;
 #else
-  if (smp->config->prompt == NULL) {
-    return XSHELL_DEFAULT_PROMPT_STR;
-  }
-
-  return smp->config->prompt;
+  return XSHELL_DEFAULT_PROMPT_STR;
 #endif
 }
 
@@ -269,9 +264,11 @@ static THD_FUNCTION(xshell_thread, p) {
   XSHELL_EXIT_HOOK(xshp);
 #endif
 
-  /* Atomically broadcasting the event source and terminating the thread,
-     there is not a chSysUnlock() because the thread terminates upon return.*/
+  /* Atomically broadcasting to the instance and manager event source and
+     terminating the thread, there is not a chSysUnlock() because the thread
+     terminates upon return.*/
   chSysLock();
+  chEvtBroadcastI(&xshp->events);
   chEvtBroadcastI(&smp->events);
   chThdExitS(MSG_OK);
 }
@@ -411,19 +408,7 @@ void xshellObjectInit(xshell_manager_t *smp,
   /* Keeping association with configuration data, it needs to be persistent.*/
   smp->config = config;
 
-  /* Set default prompt if enabled.*/
-#if XSHELL_PROMPT_STR_LENGTH > 0
-  /* Set the default prompt from config.*/
-  if (smp->config->prompt == NULL) {
-    strcpy(smp->prompt, XSHELL_DEFAULT_PROMPT_STR);
-  }
-  else {
-    strncpy(smp->prompt, config->prompt, XSHELL_PROMPT_STR_LENGTH);
-    smp->prompt[XSHELL_PROMPT_STR_LENGTH] = '\0';
-  }
-#endif
-
-  /* Shell events.*/
+  /* Shell manager events.*/
   chEvtObjectInit(&smp->events);
 
   /* Shell manager initialization hook.*/
@@ -458,6 +443,22 @@ xshell_t *xshellSpawn(xshell_manager_t *smp,
     memset(xshp, 0, sizeof (xshell_t));
     xshp->stream = stream;
     xshp->envp = envp;
+
+    /* Set default prompt if enabled.*/
+#if XSHELL_PROMPT_STR_LENGTH > 0
+    /* Set the default prompt from config.*/
+    if (smp->config->prompt == NULL) {
+      strcpy(xshp->prompt, XSHELL_DEFAULT_PROMPT_STR);
+    }
+    else {
+      strncpy(xshp->prompt, smp->config->prompt, XSHELL_PROMPT_STR_LENGTH);
+      xshp->prompt[XSHELL_PROMPT_STR_LENGTH] = '\0';
+    }
+#endif
+
+    /* Shell instance events.*/
+    chEvtObjectInit(&xshp->events);
+
 #if XSHELL_HISTORY_DEPTH > 0
     xshell_reset_history(xshp);
 #endif

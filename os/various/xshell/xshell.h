@@ -222,12 +222,6 @@ typedef struct xshell_manager {
    * @brief   Associated configuration.
    */
   const xshell_manager_config_t *config;
-#if XSHELL_PROMPT_STR_LENGTH > 0
-  /**
-   * @brief   Shells current prompt string.
-   */
-  char                          prompt[XSHELL_PROMPT_STR_LENGTH + 1];
-#endif
   /**
    * @brief   Shell events;
    */
@@ -295,6 +289,16 @@ typedef struct xshell {
   /* Extra fields defined in xshellconf.h.*/
   XSHELL_EXTRA_FIELDS
 #endif
+#if XSHELL_PROMPT_STR_LENGTH > 0
+  /**
+   * @brief   Shells current prompt string.
+   */
+  char                          prompt[XSHELL_PROMPT_STR_LENGTH + 1];
+#endif
+  /**
+   * @brief   Shell events;
+   */
+  event_source_t                events;
 } xshell_t;
 
 /*===========================================================================*/
@@ -374,6 +378,19 @@ static inline xshell_manager_t *xshellGetManager(xshell_t *xshp) {
 static inline shell_stream_i *xshellGetStream(xshell_t *xshp) {
 
   return xshp->stream;
+}
+
+/**
+ * @brief   Returns the thread associated to a shell.
+ *
+ * @param[in] xshp              pointer to a @p xshell_t object
+ * @return                      thread reference.
+ *
+ * @api
+ */
+static inline thread_t *xshellGetThread(xshell_t *xshp) {
+
+  return &xshp->thread;
 }
 
 #if (XSHELL_HISTORY_DEPTH > 0) || defined(__DOXYGEN__)

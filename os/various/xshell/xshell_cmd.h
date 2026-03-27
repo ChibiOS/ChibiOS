@@ -117,7 +117,7 @@ extern const xshell_command_t xshell_local_commands[];
 extern "C" {
 #endif
 #if XSHELL_PROMPT_STR_LENGTH > 0
-  bool xshellSetPrompt(xshell_manager_t *smp, const char *str);
+  bool xshellSetPrompt(xshell_t *xshp, const char *str);
 #endif
 #ifdef __cplusplus
 }
