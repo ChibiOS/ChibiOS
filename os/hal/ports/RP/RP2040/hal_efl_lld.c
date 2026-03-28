@@ -336,6 +336,8 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
 
   /* Default non XIP SPI configuration */
   ssi[SSI_SSIENR / 4U] = 0U;
+  (void)ssi[SSI_SR / 4U];          /* Clear sticky errors (clear-on-read). */
+  (void)ssi[SSI_ICR / 4U];
   ssi[SSI_BAUDR / 4U] = SSI_BAUDR_DEFAULT;
   ssi[SSI_CTRLR0 / 4U] = SSI_CTRLR0_DFS_32_8BIT;
   ssi[SSI_SER / 4U] = 1U;
@@ -445,6 +447,8 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
 RAMFUNC static void rp_flash_enter_xip(EFlashDriver *eflp) {
   volatile uint32_t *ioqspi_ss_ctrl =
       (volatile uint32_t *)(RP_IOQSPI_BASE + IOQSPI_GPIO_QSPI_SS_CTRL);
+
+  (void)eflp;
 
   /* Reset CS control to normal. */
   *ioqspi_ss_ctrl = 0U;
