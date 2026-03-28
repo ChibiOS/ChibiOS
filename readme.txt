@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 21.11.5 ***
+- NEW: STM32U0xx support.
+- NEW: STM32U3xx support.
 - FIX: Fixed OSLIB Jobs Queues: return JOB_NULL descriptors to the free pool
        (bug #1304).
 - FIX: Fixed serialize ref duplication and harden dynamic object size

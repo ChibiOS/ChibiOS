@@ -307,7 +307,6 @@ struct hal_dac_driver {
  *          - Driver state transitions.
  * @details The @p DAC_COMPLETE state is used only as a transient full buffer
  *          callback marker during the ongoing circular conversion.
- *          .
  * @note    This macro is meant to be used in the low level drivers
  *          implementation only.
  *

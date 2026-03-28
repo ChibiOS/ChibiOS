@@ -2,10 +2,10 @@ SPDXVersion: SPDX-2.3
 DataLicense: CC0-1.0
 SPDXID: SPDXRef-DOCUMENT
 DocumentName: ChibiOS-21.11.5-SBOM
-DocumentNamespace: https://www.chibios.org/spdxdocs/ChibiOS-21.11.5-SBOM-20260312
+DocumentNamespace: https://www.chibios.org/spdxdocs/ChibiOS-21.11.5-SBOM-20260328
 Creator: Organization:ChibiOS
 Creator: Tool:TRINITY-ChibiOS-SBOM-Template-1.0
-Created: 2026-03-12T07:00:25Z
+Created: 2026-03-28T04:15:42Z
 
 ##### Document Describes #####
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-ChibiOS-21-11-5
@@ -20,7 +20,7 @@ PackageSupplier: Organization:ChibiOS
 PackageOriginator: Organization:ChibiOS
 PackageSummary: "ChibiOS real-time operating system distribution for embedded systems."
 PackageComment: "This SBOM describes ChibiOS distribution version 21.11.5, including its RT (7.0.6), NIL (4.1.4), OSLIB (1.3.3), HAL (9.1.0), architecture ports and other internal support components. Third-party middleware (such as FatFs, lwIP, LittleFS, wolfSSL and vendor CMSIS headers) is not modeled as separate packages in this SBOM and should be considered based on the specific project configuration."
-PackageVerificationCode: ea29df4d6cd5da556b8871f20ee80873e787a746
+PackageVerificationCode: 84e88582a65e42a5a4d475156f6dee7f44dcf7d4
 PackageLicenseDeclared: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageCopyrightText: NOASSERTION
@@ -39,7 +39,7 @@ PackageSupplier: Organization:ChibiOS
 PackageOriginator: Organization:ChibiOS
 PackageSummary: "ChibiOS real-time kernel (RT) version 7.0.6."
 PackageComment: "ChibiOS-RT 7.0.6 included in ChibiOS 21.11.5 distribution. Licensed under commercial terms from ChibiOS; see the accompanying commercial license agreement. The open-source GPL variant is available separately but is not described by this SBOM."
-PackageVerificationCode: 137d4408e66f48d7a6d863929bf744f5a9b51bf0
+PackageVerificationCode: 6dae239a01bc2ed8a39d6c6a295d48799e8d4df7
 PackageLicenseDeclared: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageCopyrightText: NOASSERTION
@@ -54,7 +54,7 @@ PackageSupplier: Organization:ChibiOS
 PackageOriginator: Organization:ChibiOS
 PackageSummary: "ChibiOS NIL lightweight kernel version 4.1.4."
 PackageComment: "ChibiOS-NIL 4.1.4 included in ChibiOS 21.11.5 distribution. Licensed under commercial terms from ChibiOS; see the accompanying commercial license agreement."
-PackageVerificationCode: ae66f8776116181ff219327f568cb255027bcae3
+PackageVerificationCode: 39203ed7987f02b7c9e95e83dbc3b424834a2bc2
 PackageLicenseDeclared: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageCopyrightText: NOASSERTION
@@ -69,7 +69,7 @@ PackageSupplier: Organization:ChibiOS
 PackageOriginator: Organization:ChibiOS
 PackageSummary: "ChibiOS OSLIB shared kernel library 1.3.3."
 PackageComment: "ChibiOS-OSLIB 1.3.3 included in ChibiOS 21.11.5 distribution. Licensed under commercial terms from ChibiOS; see the accompanying commercial license agreement."
-PackageVerificationCode: cdb51ec0f3953045715e90ce799a939d6535cb35
+PackageVerificationCode: b56a404c67b095ff89615dae26a7875b5f5d7066
 PackageLicenseDeclared: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageCopyrightText: NOASSERTION
@@ -84,7 +84,7 @@ PackageSupplier: Organization:ChibiOS
 PackageOriginator: Organization:ChibiOS
 PackageSummary: "ChibiOS Hardware Abstraction Layer (HAL) version 9.1.0."
 PackageComment: "HAL 9.1.0 included in ChibiOS 21.11.5 distribution. HAL is licensed under the Apache License 2.0."
-PackageVerificationCode: 56900e827be0369a402a63ec3ee2beec3c0a95eb
+PackageVerificationCode: f45096d54a3986e623ea80fa8ca580c32b4058a0
 PackageLicenseDeclared: Apache-2.0
 PackageLicenseConcluded: Apache-2.0
 PackageCopyrightText: NOASSERTION
@@ -99,7 +99,7 @@ PackageSupplier: Organization:ChibiOS
 PackageOriginator: Organization:ChibiOS
 PackageSummary: "Architecture ports (ARM, ARMv7-M, ARMv6-M, ARMv8-M-ML and related low-level code) included in ChibiOS 21.11.5."
 PackageComment: "This package represents the architecture-specific ports (e.g. ARM, ARMv7-M, ARMv6-M, ARMv8-M-ML) shipped as part of ChibiOS 21.11.5. These ports are licensed under commercial terms from ChibiOS; see the accompanying commercial license agreement. They are not provided under GPL or other open-source terms in this distribution."
-PackageVerificationCode: 26632027e7b4c0acb0f5d3e0db0dba39fb22eed8
+PackageVerificationCode: 6a9fa2647c74c0b6dd5b58cc14004151fc1ef7c8
 PackageLicenseDeclared: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageCopyrightText: NOASSERTION
@@ -114,7 +114,7 @@ PackageSupplier: Organization:ChibiOS
 PackageOriginator: Organization:ChibiOS
 PackageSummary: "Other minor ChibiOS components and support modules included in ChibiOS 21.11.5 that are licensed under Apache-2.0, similar to HAL."
 PackageComment: "This package groups various minor support components that are part of the ChibiOS 21.11.5 distribution and are licensed under Apache License 2.0, consistent with the licensing of the HAL. Refer to the source tree and embedded license headers for exact file-level details."
-PackageVerificationCode: dbcb78b9f883409f775884ab6cf793375ff12025
+PackageVerificationCode: 8ea26722e1008470dbd173461c853d6e0e1d41d4
 PackageLicenseDeclared: Apache-2.0
 PackageLicenseConcluded: Apache-2.0
 PackageCopyrightText: NOASSERTION
@@ -134,7 +134,7 @@ FileCopyrightText: NOASSERTION
 FileName: os/rt/include/ch.h
 SPDXID: SPDXRef-FILE-RT-CH-H
 FileComment: "Representative header file from ChibiOS RT 7.0.6."
-FileChecksum: SHA1: f18c1b1398e05f0914a965c06650a29dd9b47aa4
+FileChecksum: SHA1: 3efed950ef5f4b60461d6b2db4566a0c314868de
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: NOASSERTION
 FileCopyrightText: NOASSERTION

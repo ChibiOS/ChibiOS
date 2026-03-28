@@ -6,34 +6,17 @@ ChibiOS 21.11.x is composed of several independent but inter-operable
 sub-projects: RT, NIL, SB, HAL, EX. Plus several external libraries
 integrated in our structure: WolfSSL, FatFS, LittleFS and lwIP.
 
-*** ChibiOS 21.11.4 highlights ****
+*** ChibiOS 21.11.5 highlights ****
 
-- Fully revamped HAL subsystem backported from the latest trunk code.
-  - STM32C0xx support.
-  - STM32G0B0 support.
-  - STM32H5xx support.
-  - FDCAN support for STM32G4xx, STM32H5xx and STM32H7xx.
-  - New XSNOR serial flash memories framework supporting:
-    - Multiple different devices on the same board.
-    - Device detection.
-    - Solved problems with cache memories.
-    The old serial_nor library is still present but will receive no more fixes,
-    consider it deprecated.
-  - I2C slave support in HAL and in ST low level drivers.
-  - Improvements to most existing drivers.
-- Support for LittleFS flash file system.
-- New VFS subsystem. VFS allows to assemble together multiple kind of file
-  systems and access them using an unified Posix-like API.
-  - FatFS support in VFS.
-  - LittleFS support in VFS.
-  - Overlay and mount points support in VFS.
-  - HAL streams /dev support in VFS.
-- New OOP framework. This subsystem allows to create C modules starting from
-  an high level XML description. The XML schema supports things like classes,
-  interfaces, multiple inheritance, etc. everything is translated in excellent
-  plain C complete of Doxygen tags. The new XSNOR and VFS source files are
-  generated using this tool and provide a good use example.
-  - Shared base classes and interfaces provided under /os/common/oop.
+- Fixed OSLIB jobs queues returning JOB_NULL descriptors to the free pool.
+- Fixed serialize reference duplication and hardened dynamic object size
+  calculations.
+- Hardened memcore and heap boundary checks against arithmetic overflow.
+- Fixed priority inheritance through prioritized message queues.
+- Fixed missing ready message assignment in chMsgSend() causing spurious
+  NULL returns from chMsgWaitTimeoutS().
+- Fixed NIL queues counter handling.
+- Fixed CH_PORT_SUPPORTS_RECURSIVE_LOCKS handling in NIL.
 
 *** ChibiOS 21.11.x highlights ****
 
