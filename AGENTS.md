@@ -16,6 +16,7 @@
 
 ## Build & Test Hygiene
 - Clean projects after test builds unless otherwise specified.
+- For generated configuration files such as `mcuconf.h`, `halconf.h`, and similar outputs, update the corresponding generator templates or updater scripts as part of the same change; otherwise a regeneration pass may overwrite manual edits.
 
 ## Repository
 - Repository is subversion, ignore .svn directory, do not use git commands.
