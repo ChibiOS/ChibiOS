@@ -191,17 +191,23 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
    * RAM-resident page transaction itself is bracketed by syslock. */
   while (n > 0U) {
     uint8_t page_buf[RP_FLASH_PAGE_SIZE];
+    uint32_t page_base = offset & ~(uint32_t)(RP_FLASH_PAGE_SIZE - 1U);
     size_t page_offset = offset & (RP_FLASH_PAGE_SIZE - 1U);
     size_t page_remaining = RP_FLASH_PAGE_SIZE - page_offset;
     size_t chunk = (n < page_remaining) ? n : page_remaining;
 
-    /* Copy to RAM while flash is still readable. */
-    memcpy(page_buf, pp, chunk);
+    /*
+     * Programming is done page-by-page. Fill the untouched bytes with
+     * 0xFF (all ones) so a partial write still emits a full page.
+     */
+    memset(page_buf, 0xFF, sizeof(page_buf));
+    memcpy(page_buf + page_offset, pp, chunk);
 
     sts = osalSysGetStatusAndLockX();
 
     /* Program the page. */
-    rp_efl_lld_program_page_full(devp, offset, page_buf, chunk);
+    rp_efl_lld_program_page_full(devp, page_base, page_buf,
+                                 RP_FLASH_PAGE_SIZE);
 
     osalSysRestoreStatusX(sts);
 
