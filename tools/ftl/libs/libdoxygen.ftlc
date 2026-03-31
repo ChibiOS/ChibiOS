@@ -1,0 +1,348 @@
+/*
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
+
+    This file is part of ChibiOS.
+
+    ChibiOS is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation version 3 of the License.
+
+    ChibiOS is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+
+/*
+  -- Coding style global settings.
+  */
+assign doxygen_boundary = 80
+assign near_align = 16
+assign middle_align = 32
+
+/*
+  -- Ouputs a formatted text starting from a "rich text" node containing
+  -- text and formatting elements.
+  */
+macro EmitRichTextFromNode(p1="", pn="", textnode=[], limit=doxygen_boundary)
+  list textnode?children as node
+    if node?is_first
+      local l1 = p1
+      local ln = pn
+    else
+      local l1 = pn
+      local ln = pn
+    endif
+    if node?node_type == "text"
+      local text = node?trim?cap_first
+      if text?matches("^.*[a-zA-Z0-9]$")
+        utils.FormatStringAsText(l1, ln, utils.WithDot(text), limit)
+      else
+        utils.FormatStringAsText(l1, ln, text, doxygen_boundary)
+      endif
+    elseif node?node_type == "element"
+      if node?node_name == "verbatim"
+        local lines = node?string?split("^", "rm")
+        list lines as line
+          local s = line?chop_linebreak
+          if (line_index > 0) || (s?trim?length > 0)
+            if line?is_first
+              emit "${l1}${s}\n"
+            else
+              emit "${ln}${s}\n"
+            endif
+          endif
+        endlist
+      elseif node?node_name == "br"
+      endif
+    endif
+  endlist
+endmacro
+
+/*
+  -- This macro generates a generic tag with unformatted text.
+  */
+macro EmitTagVerbatim(indent="", tag="no-tag", text="", align=near_align)
+  local s = (indent + " * @" + tag + " ")?right_pad(align) + text
+  emit "${s}\n"
+endmacro
+
+/*
+  -- This macro generates a generic tag with formatted text.
+  */
+macro EmitTagFormatted(indent="", tag="no-tag", text="", align=near_align)
+  utils.FormatStringAsText(
+    indent + (" * @" + tag + " ")?right_pad(align),
+    indent + (" *")?right_pad(align),
+    utils.WithDot(text?cap_first),
+    doxygen_boundary
+  )
+endmacro
+
+/*
+  -- This macro generates a generic tag with formatted text.
+  */
+macro EmitTagFormattedNoCap(indent="", tag="no-tag", text="", align=near_align)
+  utils.FormatStringAsText(
+    indent + (" * @" + tag + " ")?right_pad(align),
+    indent + (" *")?right_pad(align),
+    utils.WithDot(text),
+    doxygen_boundary
+  )
+endmacro
+
+/*
+  -- This macro generates a brief tag description.
+  */
+macro EmitBrief(indent="", text="")
+  EmitTagFormatted(indent=indent, tag="brief", text=text)
+endmacro
+
+/*
+  -- This macro generates a details tag description.
+  */
+macro EmitDetails(indent="", text="")
+  EmitTagFormatted(indent=indent, tag="details", text=text)
+endmacro
+
+/*
+  -- This macro generates a pre tag description.
+  */
+macro EmitPre(indent="", text="")
+  EmitTagFormatted(indent=indent, tag="pre", text=text)
+endmacro
+
+/*
+  -- This macro generates a post tag description.
+  */
+macro EmitPost(indent="", text="")
+  EmitTagFormatted(indent=indent, tag="post", text=text)
+endmacro
+
+/*
+  -- This macro generates a note tag description.
+  */
+macro EmitNote(indent="", text="")
+  EmitTagFormatted(indent=indent, tag="note", text=text)
+endmacro
+
+/*
+  -- This macro generates a param tag description.
+  */
+macro EmitParam(indent="", name="no-name", dir="boh", text="no-text")
+  if text?trim?length == 0
+    local text="missing description"
+  endif
+  if dir == "in"
+    utils.FormatStringAsText(
+      indent + (" * @param[in]     " + name + " ")?right_pad(middle_align),
+      indent + " *"?right_pad(middle_align),
+      utils.WithDot(text?cap_first),
+      doxygen_boundary
+    )
+  elseif dir == "out"
+    utils.FormatStringAsText(
+      indent + (" * @param[out]    " + name + " ")?right_pad(middle_align),
+      indent + " *"?right_pad(middle_align),
+      utils.WithDot(text?cap_first),
+      doxygen_boundary
+    )
+  elseif dir == "both"
+    utils.FormatStringAsText(
+      indent + (" * @param[in,out] " + name + " ")?right_pad(middle_align),
+      indent + " *"?right_pad(middle_align),
+      utils.WithDot(text?cap_first),
+      doxygen_boundary
+    )
+  else
+    utils.FormatStringAsText(
+      indent + (" * @param         " + name + " ")?right_pad(middle_align),
+      indent + " *"?right_pad(middle_align),
+      utils.WithDot(text?cap_first),
+      doxygen_boundary
+    )
+  endif
+endmacro
+
+/*
+  -- This macro generates a return tag description.
+  */
+macro EmitReturn(indent="", text="")
+  utils.FormatStringAsText(
+    indent + (" * @return")?right_pad(middle_align),
+    indent + " *"?right_pad(middle_align),
+    utils.WithDot(text?cap_first),
+    doxygen_boundary
+  )
+endmacro
+
+/*
+  -- This macro generates a brief description from an XML node.
+  */
+macro EmitBriefFromNode(indent="", node=[])
+  if node.brief[0]??
+    doxygen.EmitBrief(indent=indent, text=node.brief[0]!"no description")
+  endif
+endmacro
+
+/*
+  -- This macro generates a detailed description from an XML node.
+  */
+macro EmitDetailsFromNode(indent="", node=[])
+  if node.details[0]??
+    EmitRichTextFromNode(
+      p1=indent + (" * @details ")?right_pad(near_align),
+      pn=indent + " *"?right_pad(near_align),
+      textnode=node.details
+    )
+  endif
+endmacro
+
+/*
+  -- This macro generates a pre tags list from an XML nodet.
+  */
+macro EmitPreFromNode(indent="", node=[])
+  list node.pre as pre
+    EmitRichTextFromNode(
+      p1=indent + " * @pre "?right_pad(near_align),
+      pn=indent + " *"?right_pad(near_align),
+      textnode=pre
+    )
+  endlist
+endmacro
+
+/*
+  -- This macro generates a post tags list from an XML node.
+  */
+macro EmitPostFromNode(indent="", node=[])
+  list node.post as post
+    EmitRichTextFromNode(
+      p1=indent + " * @post "?right_pad(near_align),
+      pn=indent + " *"?right_pad(near_align),
+      textnode=post
+    )
+  endlist
+endmacro
+
+/*
+  -- This macro generates a notes list from an XML node.
+  */
+macro EmitNoteFromNode(indent="", node=[])
+  list node.note as note
+    EmitRichTextFromNode(
+      p1=indent + " * @note "?right_pad(near_align),
+      pn=indent + " *"?right_pad(near_align),
+      textnode=note
+    )
+  endlist
+endmacro
+
+/*
+  -- This macro generates a params list from an XML node.
+  */
+macro EmitParamFromNode(indent="", node=[])
+  list node.param as param
+    local name = param.@name[0]!"no-name"
+    local dir  = param.@dir[0]!"no-dir"
+    if dir == "in"
+      local p1 = indent + (" * @param[in]     " + name + " ")?right_pad(middle_align)
+    elseif dir == "out"
+      local p1 = indent + (" * @param[out]    " + name + " ")?right_pad(middle_align)
+    elseif dir == "both"
+      local p1 = indent + (" * @param[in,out] " + name + " ")?right_pad(middle_align)
+    else
+      local p1 = indent + (" * @param         " + name + " ")?right_pad(middle_align)
+    endif
+    local pn = indent + " *"?right_pad(middle_align)
+    EmitRichTextFromNode(p1=p1, pn=pn, textnode=param)
+  endlist
+endmacro
+
+/*
+  -- This macro generates a return tag from an XML node.
+  */
+macro EmitReturnFromNode(indent="", node=[])
+  if node.return[0]??
+    local p1 = (indent + " * @return ")?right_pad(middle_align)
+    local pn = (indent + " *         ")?right_pad(middle_align)
+    EmitRichTextFromNode(p1=p1, pn=pn, textnode=node.return)
+  endif
+endmacro
+
+/*
+  -- This macro generates retval tags from an XML node.
+  */
+macro EmitRetvalFromNode(indent="", node=[])
+  list node.retval as retval
+    local value = (retval.@value[0]!"no-value")?trim
+    local p1 = (indent + " * @retval " + value + " ")?right_pad(middle_align)
+    local pn = (indent + " *         ")?right_pad(middle_align)
+    EmitRichTextFromNode(p1=p1, pn=pn, textnode=retval)
+  endlist
+endmacro
+
+/*
+  -- This macro generates a function class tag from an XML node.
+  */
+macro EmitFunctionClassFromNode(indent="", node=[])
+  if node.init[0]??
+    emit indent + " *\n"
+    emit indent + " * @init\n"
+  elseif node.objinit[0]??
+    emit indent + " *\n"
+    emit indent + " * @objinit\n"
+  elseif node.dispose[0]??
+    emit indent + " *\n"
+    emit indent + " * @dispose\n"
+  elseif node.api[0]??
+    emit indent + " *\n"
+    emit indent + " * @api\n"
+  elseif node.notapi[0]??
+    emit indent + " *\n"
+    emit indent + " * @notapi\n"
+  elseif node.iclass[0]??
+    emit indent + " *\n"
+    emit indent + " * @iclass\n"
+  elseif node.sclass[0]??
+    emit indent + " *\n"
+    emit indent + " * @sclass\n"
+  elseif node.xclass[0]??
+    emit indent + " *\n"
+    emit indent + " * @xclass\n"
+  endif
+endmacro
+
+/*
+  -- This macro generates a complete Doxygen documentation comment.
+  */
+macro EmitFullCommentFromNode(indent="", node=[],
+                                extraname="", extradir="", extratext="",
+                                memberof="")
+  if node.brief[0]?? || (memberof?length > 0)
+    emit "${indent}/**\n"
+    if memberof?length > 0
+      EmitTagVerbatim(indent=indent, tag="memberof", text=memberof)
+      emit "${indent} * @public\n"
+      emit "${indent} *\n"
+    endif
+    EmitBriefFromNode(indent=indent, node=node)
+    EmitDetailsFromNode(indent=indent, node=node)
+    EmitPreFromNode(indent=indent, node=node)
+    EmitPostFromNode(indent=indent, node=node)
+    EmitNoteFromNode(indent=indent, node=node)
+    if node.param[0]?? || node.return[0]?? || (extraname?length > 0)
+      emit "${indent} *\n"
+      if extraname?length > 0
+        EmitParam(indent=indent, name=extraname, dir=extradir, text=extratext)
+      endif
+      EmitParamFromNode(indent=indent, node=node)
+      EmitReturnFromNode(indent=indent, node=node)
+      EmitRetvalFromNode(indent=indent, node=node)
+    endif
+    EmitFunctionClassFromNode(indent=indent, node=node)
+    emit "${indent} */\n"
+  endif
+endmacro
