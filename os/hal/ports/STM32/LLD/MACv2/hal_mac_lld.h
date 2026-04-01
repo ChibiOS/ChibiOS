@@ -271,7 +271,7 @@ typedef struct {
  */
 #define mac_lld_config_fields                                               \
   /* MAC address.*/                                                         \
-  uint8_t                       *mac_address;
+  const uint8_t                 *mac_address;
 
 /**
  * @brief   Low level fields of the MAC transmit descriptor structure.

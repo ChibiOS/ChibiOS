@@ -191,12 +191,17 @@
 #define STM32_RTC_TAMP_HANDLER              Vector50
 #define STM32_RTC_GLOBAL_NUMBER             2
 #define STM32_RTC_TAMP_NUMBER               4
-#if 0 /* TODO, differences no EXTI.*/
 #define STM32_RTC_GLOBAL_EXTI               17
 #define STM32_RTC_TAMP_EXTI                 19
+#if !defined(STM32_RTC_GLOBAL_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_RTC_GLOBAL_IRQ_PRIORITY       STM32_IRQ_EXTI15_PRIORITY
+#endif
+#if !defined(STM32_RTC_TAMP_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_RTC_TAMP_IRQ_PRIORITY         STM32_IRQ_EXTI15_PRIORITY
+#endif
 #define STM32_RTC_IRQ_ENABLE() do {                                         \
-  nvicEnableVector(STM32_RTC_GLOBAL_NUMBER, STM32_IRQ_EXTI17_PRIORITY);     \
-  nvicEnableVector(STM32_RTC_TAMP_NUMBER, STM32_IRQ_EXTI19_PRIORITY);       \
+  nvicEnableVector(STM32_RTC_GLOBAL_NUMBER, STM32_RTC_GLOBAL_IRQ_PRIORITY); \
+  nvicEnableVector(STM32_RTC_TAMP_NUMBER, STM32_RTC_TAMP_IRQ_PRIORITY);     \
 } while (false)
 
  /* Enabling RTC-related EXTI lines.*/
@@ -211,7 +216,6 @@
   extiClearGroup1(EXTI_MASK1(STM32_RTC_GLOBAL_EXTI) |                       \
                   EXTI_MASK1(STM32_RTC_TAMP_EXTI));                         \
 } while (false)
-#endif
 
 /* Masks used to preserve state of RTC and TAMP register reserved bits. */
 #define STM32_RTC_CR_MASK                   0xE7FFFF7F

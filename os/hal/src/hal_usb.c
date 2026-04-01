@@ -1015,8 +1015,11 @@ void _usb_ep0in(USBDriver *usbp, usbep_t ep) {
     /* Put setup back in ready state.*/
     setup_reset(usbp);
     return;
-  case USB_EP0_STP_WAITING:
+
   case USB_EP0_OUT_WAITING_STS:
+    /* Tolerate out of order setup.*/
+    return;
+  case USB_EP0_STP_WAITING:
   case USB_EP0_OUT_RX:
     /* All the above are invalid states in the IN phase.*/
     osalDbgAssert(false, "EP0 state machine error");
@@ -1072,8 +1075,11 @@ void _usb_ep0out(USBDriver *usbp, usbep_t ep) {
     /* Put setup back in ready state.*/
     setup_reset(usbp);
     return;
-  case USB_EP0_STP_WAITING:
+
   case USB_EP0_IN_TX:
+    /* Tolerate out of order setup.*/
+    return;
+  case USB_EP0_STP_WAITING:
   case USB_EP0_IN_WAITING_TX0:
   case USB_EP0_IN_SENDING_STS:
     /* All the above are invalid states in the IN phase.*/

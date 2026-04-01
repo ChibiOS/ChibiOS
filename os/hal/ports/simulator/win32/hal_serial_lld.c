@@ -129,11 +129,22 @@ static bool inint(SerialDriver *sdp) {
   if (sdp->com_data != INVALID_SOCKET) {
     int i;
     uint8_t data[32];
+    size_t nfree;
 
     /*
      * Input.
      */
-    int n = recv(sdp->com_data, (char *)data, sizeof(data), 0);
+    chSysLockFromISR();
+    nfree = iqGetEmptyI(&sdp->iqueue);
+    chSysUnlockFromISR();
+    if (nfree == 0U) {
+      return false;
+    }
+    if (nfree > sizeof(data)) {
+      nfree = sizeof(data);
+    }
+
+    int n = recv(sdp->com_data, (char *)data, nfree, 0);
     switch (n) {
     case 0:
       closesocket(sdp->com_data);

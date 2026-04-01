@@ -2,10 +2,10 @@ SPDXVersion: SPDX-2.3
 DataLicense: CC0-1.0
 SPDXID: SPDXRef-DOCUMENT
 DocumentName: ChibiOS-21.11.5-SBOM
-DocumentNamespace: https://www.chibios.org/spdxdocs/ChibiOS-21.11.5-SBOM-20260328
+DocumentNamespace: https://www.chibios.org/spdxdocs/ChibiOS-21.11.5-SBOM-20260401
 Creator: Organization:ChibiOS
 Creator: Tool:TRINITY-ChibiOS-SBOM-Template-1.0
-Created: 2026-03-28T04:15:42Z
+Created: 2026-04-01T08:31:05Z
 
 ##### Document Describes #####
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-ChibiOS-21-11-5
@@ -20,7 +20,7 @@ PackageSupplier: Organization:ChibiOS
 PackageOriginator: Organization:ChibiOS
 PackageSummary: "ChibiOS real-time operating system distribution for embedded systems."
 PackageComment: "This SBOM describes ChibiOS distribution version 21.11.5, including its RT (7.0.6), NIL (4.1.4), OSLIB (1.3.3), HAL (9.1.0), architecture ports and other internal support components. Third-party middleware (such as FatFs, lwIP, LittleFS, wolfSSL and vendor CMSIS headers) is not modeled as separate packages in this SBOM and should be considered based on the specific project configuration."
-PackageVerificationCode: 84e88582a65e42a5a4d475156f6dee7f44dcf7d4
+PackageVerificationCode: 5eb523116d97c4eb184486dde2780a55fd2933b4
 PackageLicenseDeclared: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageCopyrightText: NOASSERTION
@@ -126,7 +126,7 @@ PackageCopyrightText: NOASSERTION
 FileName: os/license/chversion.h
 SPDXID: SPDXRef-FILE-VER
 FileComment: "Representative top-level file for the ChibiOS 21.11.5 distribution."
-FileChecksum: SHA1: c3687105b939b9b4ed58016358860337e09e1f67
+FileChecksum: SHA1: a0881d3a0b3bb422862d47ca38ac8299bbe669c0
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: NOASSERTION
 FileCopyrightText: NOASSERTION

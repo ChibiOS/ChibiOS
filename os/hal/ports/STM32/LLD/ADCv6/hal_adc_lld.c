@@ -411,6 +411,9 @@ OSAL_IRQ_HANDLER(STM32_ADC4_HANDLER) {
 
   isr  = ADC4->ISR;
   ADC4->ISR = isr;
+#if defined(STM32_ADC_ADC4_IRQ_HOOK)
+  STM32_ADC_ADC4_IRQ_HOOK
+#endif
 
   adc_lld_serve_interrupt(&ADCD3, isr);
 
@@ -432,6 +435,9 @@ OSAL_IRQ_HANDLER(STM32_ADC4_HANDLER) {
 
   isr  = ADC4->ISR;
   ADC4->ISR = isr;
+#if defined(STM32_ADC_ADC4_IRQ_HOOK)
+  STM32_ADC_ADC4_IRQ_HOOK
+#endif
 
   adc_lld_serve_interrupt(&ADCD4, isr);
 
