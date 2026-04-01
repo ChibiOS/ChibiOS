@@ -53,7 +53,7 @@
 #define CH_VERSION              "2021.11.5"
 
 /**
- * @brief   ChibiOS version release year
+ * @brief   ChibiOS version release year.
  */
 #define CH_VERSION_YEAR         21
 

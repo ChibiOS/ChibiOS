@@ -172,7 +172,7 @@
 
 #if (CH_CUSTOMER_LICENSE_VERSION_DATE < 201201) ||                          \
     (CH_CUSTOMER_LICENSE_VERSION_DATE > 209912)
-  #error "invalid CH_CUSTOMER_LICENSE_VERSION_DATE value in chversion.h"
+  #error "invalid CH_CUSTOMER_LICENSE_VERSION_DATE value in chcustomer.h"
 #endif
 
 /* Checks on licensed versions.*/
@@ -246,7 +246,7 @@
 #define CH_LICENSE_ID_CODE                  CH_CUSTOMER_ID_CODE
 #define CH_LICENSE_MODIFIABLE_CODE          TRUE
 #define CH_LICENSE_FEATURES                 CH_FEATURES_FULL
-#define CH_LICENSE_DEPLOY_LIMIT             1000
+#define CH_LICENSE_MAX_DEPLOY               1000
 
 #elif CH_LICENSE == CH_LICENSE_COMMERCIAL_DEV_5000
 #define CH_LICENSE_TYPE_STRING              "Developer Commercial License for 5000 Cores"
@@ -254,7 +254,7 @@
 #define CH_LICENSE_ID_CODE                  CH_CUSTOMER_ID_CODE
 #define CH_LICENSE_MODIFIABLE_CODE          TRUE
 #define CH_LICENSE_FEATURES                 CH_FEATURES_FULL
-#define CH_LICENSE_DEPLOY_LIMIT             5000
+#define CH_LICENSE_MAX_DEPLOY               5000
 
 #elif CH_LICENSE == CH_LICENSE_COMMERCIAL_FULL
 #define CH_LICENSE_TYPE_STRING              "Full Commercial License for Unlimited Deployment"
