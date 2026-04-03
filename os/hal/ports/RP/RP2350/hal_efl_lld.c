@@ -40,33 +40,7 @@
  */
 #define RAMFUNC __attribute__((noinline, section(".ramtext")))
 
-/**
- * @name    QMI register offsets
- * @{
- */
-#define QMI_DIRECT_CSR                      0x00U
-#define QMI_DIRECT_TX                       0x04U
-#define QMI_DIRECT_RX                       0x08U
-#define QMI_M0_TIMING                       0x0CU
-#define QMI_M0_RFMT                         0x10U
-#define QMI_M0_RCMD                         0x14U
-#define QMI_M0_WFMT                         0x18U
-#define QMI_M0_WCMD                         0x1CU
-/** @} */
-
-/**
- * @name    QMI_DIRECT_CSR bits
- * @{
- */
-#define QMI_DIRECT_CSR_EN                   (1U << 0)
-#define QMI_DIRECT_CSR_BUSY                 (1U << 1)
-#define QMI_DIRECT_CSR_ASSERT_CS0N          (1U << 2)
-#define QMI_DIRECT_CSR_TXFULL               (1U << 10)
-#define QMI_DIRECT_CSR_TXEMPTY              (1U << 11)
-#define QMI_DIRECT_CSR_RXEMPTY              (1U << 16)
-#define QMI_DIRECT_CSR_CLKDIV_POS           22U
-#define QMI_DIRECT_CSR_CLKDIV_MASK          (0xFFU << QMI_DIRECT_CSR_CLKDIV_POS)
-/** @} */
+/* QMI DIRECT_CSR and DIRECT_TX bit definitions are in rp2350.h. */
 
 /**
  * @name    XIP cache constants
@@ -85,36 +59,6 @@
  */
 #define RP_XIP_CACHE_INVALIDATE_BY_SET_WAY  0U
 #define RP_XIP_CACHE_CLEAN_BY_SET_WAY       1U
-/** @} */
-
-/**
- * @name    XIP control register offsets
- * @{
- */
-#define XIP_CTRL                            0x00U
-#define XIP_FLUSH                           0x04U
-#define XIP_STAT                            0x08U
-/** @} */
-
-/**
- * @name    PADS QSPI base and register offsets
- * @{
- */
-#define RP_PADS_QSPI_BASE                   0x40040000U
-#define PADS_QSPI_GPIO_QSPI_SD0             0x08U
-#define PADS_QSPI_GPIO_QSPI_SD1             0x0CU
-#define PADS_QSPI_GPIO_QSPI_SD2             0x10U
-#define PADS_QSPI_GPIO_QSPI_SD3             0x14U
-/** @} */
-
-/**
- * @name    PADS QSPI control bits
- * @{
- */
-#define PADS_QSPI_OD_BITS                   (1U << 7)   /* Output disable */
-#define PADS_QSPI_IE_BITS                   (1U << 6)   /* Input enable */
-#define PADS_QSPI_PUE_BITS                  (1U << 3)   /* Pull up enable */
-#define PADS_QSPI_PDE_BITS                  (1U << 2)   /* Pull down enable */
 /** @} */
 
 /**
@@ -154,7 +98,7 @@
  * @note    EFLD1.ssi is statically initialized to allow use before hal init
  */
 EFlashDriver EFLD1 = {
-  .qmi = (volatile uint32_t *)RP_QMI_BASE
+  .qmi = QMI
 };
 
 /*===========================================================================*/
@@ -169,16 +113,16 @@ EFlashDriver EFLD1 = {
  * @param[in] high      true for CS high (deassert), false for CS low (assert)
  */
 RAMFUNC static void rp_flash_cs_force(EFlashDriver *eflp, bool high) {
-  volatile uint32_t *qmi = eflp->qmi;
+  QMI_TypeDef *qmi = eflp->qmi;
 
   if (high) {
-    qmi[QMI_DIRECT_CSR / 4U] &= ~QMI_DIRECT_CSR_ASSERT_CS0N;
+    qmi->DIRECT_CSR &= ~QMI_DIRECT_CSR_ASSERT_CS0N;
   } else {
-    qmi[QMI_DIRECT_CSR / 4U] |= QMI_DIRECT_CSR_ASSERT_CS0N;
+    qmi->DIRECT_CSR |= QMI_DIRECT_CSR_ASSERT_CS0N;
   }
 
   /* Read back to ensure write is flushed */
-  (void)qmi[QMI_DIRECT_CSR / 4U];
+  (void)qmi->DIRECT_CSR;
 }
 
 /**
@@ -192,22 +136,22 @@ RAMFUNC static void rp_flash_cs_force(EFlashDriver *eflp, bool high) {
  */
 RAMFUNC static void rp_flash_put_get(EFlashDriver *eflp, const uint8_t *tx,
                                      uint8_t *rx, size_t count) {
-  volatile uint32_t *qmi = eflp->qmi;
+  QMI_TypeDef *qmi = eflp->qmi;
   size_t tx_remaining = count;
   size_t rx_remaining = count;
 
   while ((tx_remaining > 0U) || (rx_remaining > 0U)) {
-    uint32_t csr = qmi[QMI_DIRECT_CSR / 4U];
+    uint32_t csr = qmi->DIRECT_CSR;
 
     /* Send if TX FIFO not full and data remaining. */
     if ((tx_remaining > 0U) && ((csr & QMI_DIRECT_CSR_TXFULL) == 0U)) {
       uint8_t data = (tx != NULL) ? *tx++ : 0U;
-      qmi[QMI_DIRECT_TX / 4U] = data;
+      qmi->DIRECT_TX = data;
       tx_remaining--;
     }
 
     if ((rx_remaining > 0U) && ((csr & QMI_DIRECT_CSR_RXEMPTY) == 0U)) {
-      uint8_t data = (uint8_t)qmi[QMI_DIRECT_RX / 4U];
+      uint8_t data = (uint8_t)qmi->DIRECT_RX;
       if (rx != NULL) {
         *rx++ = data;
       }
@@ -229,16 +173,16 @@ RAMFUNC static void rp_flash_put_get(EFlashDriver *eflp, const uint8_t *tx,
 RAMFUNC static void rp_flash_do_cmd(EFlashDriver *eflp, uint8_t cmd,
                                     const uint8_t *tx, uint8_t *rx,
                                     size_t count) {
-  volatile uint32_t *qmi = eflp->qmi;
+  QMI_TypeDef *qmi = eflp->qmi;
 
   /* Assert CS. */
   rp_flash_cs_force(eflp, false);
 
   /* Send command byte. */
-  qmi[QMI_DIRECT_TX / 4U] = cmd;
-  while ((qmi[QMI_DIRECT_CSR / 4U] & QMI_DIRECT_CSR_RXEMPTY) != 0U) {
+  qmi->DIRECT_TX = cmd;
+  while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_RXEMPTY) != 0U) {
   }
-  (void)qmi[QMI_DIRECT_RX / 4U];
+  (void)qmi->DIRECT_RX;
 
   /* Transfer remaining data. */
   if (count > 0U) {
@@ -280,7 +224,7 @@ RAMFUNC static void rp_flash_write_enable(EFlashDriver *eflp) {
  */
 RAMFUNC static void rp_flash_flush_cache(EFlashDriver *eflp) {
   volatile uint8_t *maint = (volatile uint8_t *)RP_XIP_MAINTENANCE_BASE;
-  volatile uint32_t *xip = (volatile uint32_t *)RP_XIP_CTRL_BASE;
+  XIP_CTRL_TypeDef *xip_ctrl = XIP_CTRL;
   uint32_t offset;
 
   /*
@@ -307,7 +251,7 @@ RAMFUNC static void rp_flash_flush_cache(EFlashDriver *eflp) {
   __ISB();
 
   /* Restore the saved cache policy after maintenance. */
-  xip[XIP_CTRL / 4U] = eflp->xip_ctrl;
+  xip_ctrl->CTRL = eflp->xip_ctrl;
 }
 
 /**
@@ -318,48 +262,47 @@ RAMFUNC static void rp_flash_flush_cache(EFlashDriver *eflp) {
  * @param[in] eflp      pointer to the EFlashDriver object
  */
 RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
-  volatile uint32_t *qmi = eflp->qmi;
-  volatile uint32_t *xip = (volatile uint32_t *)RP_XIP_CTRL_BASE;
-  volatile uint32_t *pads_qspi = (volatile uint32_t *)RP_PADS_QSPI_BASE;
+  QMI_TypeDef *qmi = eflp->qmi;
+  XIP_CTRL_TypeDef *xip_ctrl = XIP_CTRL;
+  PADS_QSPI_TypeDef *pads_qspi = PADS_QSPI;
   uint32_t padctrl_save;
   uint32_t padctrl_tmp;
   unsigned i;
   volatile unsigned delay;
 
   /* Save current XIP configuration before switching to direct mode. */
-  eflp->xip_ctrl = xip[XIP_CTRL / 4U];
-  eflp->xip_timing = qmi[QMI_M0_TIMING / 4U];
-  eflp->xip_rfmt = qmi[QMI_M0_RFMT / 4U];
-  eflp->xip_rcmd = qmi[QMI_M0_RCMD / 4U];
+  eflp->xip_ctrl = xip_ctrl->CTRL;
+  eflp->xip_timing = qmi->M0_TIMING;
+  eflp->xip_rfmt = qmi->M0_RFMT;
+  eflp->xip_rcmd = qmi->M0_RCMD;
 
   /* Wait for any pending work.*/
-  while ((qmi[QMI_DIRECT_CSR / 4U] & QMI_DIRECT_CSR_BUSY) != 0U) {
+  while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_BUSY) != 0U) {
   }
 
   /* Default non XIP SPI configuration */
-  qmi[QMI_DIRECT_CSR / 4U] = QMI_DIRECT_CSR_EN |
-                             (6U << QMI_DIRECT_CSR_CLKDIV_POS);
+  qmi->DIRECT_CSR = QMI_DIRECT_CSR_EN | QMI_DIRECT_CSR_CLKDIV(6U);
 
   /*
    * Exit continuous read mode sequence:
    * 1. CS high 32 clocks with IO pulled down
    * 2. CS low 32 clocks with IO pulled up
    * 3. Send 0xFF, 0xFF
-   */
+  */
 
   /* Save pad control and configure with output disabled.*/
-  padctrl_save = pads_qspi[PADS_QSPI_GPIO_QSPI_SD0 / 4U];
-  padctrl_tmp = (padctrl_save & ~(PADS_QSPI_OD_BITS | PADS_QSPI_PUE_BITS |
-                                  PADS_QSPI_PDE_BITS))
-                | PADS_QSPI_OD_BITS | PADS_QSPI_PDE_BITS;
+  padctrl_save = pads_qspi->GPIO_QSPI_SD0;
+  padctrl_tmp = (padctrl_save & ~(PADS_QSPI_OD | PADS_QSPI_PUE |
+                                  PADS_QSPI_PDE))
+                | PADS_QSPI_OD | PADS_QSPI_PDE;
 
   /* 1. CS high */
   rp_flash_cs_force(eflp, true);
 
-  pads_qspi[PADS_QSPI_GPIO_QSPI_SD0 / 4U] = padctrl_tmp;
-  pads_qspi[PADS_QSPI_GPIO_QSPI_SD1 / 4U] = padctrl_tmp;
-  pads_qspi[PADS_QSPI_GPIO_QSPI_SD2 / 4U] = padctrl_tmp;
-  pads_qspi[PADS_QSPI_GPIO_QSPI_SD3 / 4U] = padctrl_tmp;
+  pads_qspi->GPIO_QSPI_SD0 = padctrl_tmp;
+  pads_qspi->GPIO_QSPI_SD1 = padctrl_tmp;
+  pads_qspi->GPIO_QSPI_SD2 = padctrl_tmp;
+  pads_qspi->GPIO_QSPI_SD3 = padctrl_tmp;
 
   /* Delay of ~6000 cycles */
   for (delay = 0U; delay < 2048U; delay++) {
@@ -367,21 +310,21 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
 
   /* Send 4 bytes / 32 clocks */
   for (i = 0U; i < 4U; i++) {
-    qmi[QMI_DIRECT_TX / 4U] = 0U;
-    while ((qmi[QMI_DIRECT_CSR / 4U] & QMI_DIRECT_CSR_RXEMPTY) != 0U) {
+    qmi->DIRECT_TX = 0U;
+    while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_RXEMPTY) != 0U) {
     }
-    (void)qmi[QMI_DIRECT_RX / 4U];
+    (void)qmi->DIRECT_RX;
   }
 
-  padctrl_tmp = (padctrl_tmp & ~PADS_QSPI_PDE_BITS) | PADS_QSPI_PUE_BITS;
+  padctrl_tmp = (padctrl_tmp & ~PADS_QSPI_PDE) | PADS_QSPI_PUE;
 
   /* 2. CS low */
   rp_flash_cs_force(eflp, false);
 
-  pads_qspi[PADS_QSPI_GPIO_QSPI_SD0 / 4U] = padctrl_tmp;
-  pads_qspi[PADS_QSPI_GPIO_QSPI_SD1 / 4U] = padctrl_tmp;
-  pads_qspi[PADS_QSPI_GPIO_QSPI_SD2 / 4U] = padctrl_tmp;
-  pads_qspi[PADS_QSPI_GPIO_QSPI_SD3 / 4U] = padctrl_tmp;
+  pads_qspi->GPIO_QSPI_SD0 = padctrl_tmp;
+  pads_qspi->GPIO_QSPI_SD1 = padctrl_tmp;
+  pads_qspi->GPIO_QSPI_SD2 = padctrl_tmp;
+  pads_qspi->GPIO_QSPI_SD3 = padctrl_tmp;
 
   /* Delay of ~6000 cycles */
   for (delay = 0U; delay < 2048U; delay++) {
@@ -389,29 +332,29 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
 
   /* Send 4 bytes / 32 clocks */
   for (i = 0U; i < 4U; i++) {
-    qmi[QMI_DIRECT_TX / 4U] = 0U;
-    while ((qmi[QMI_DIRECT_CSR / 4U] & QMI_DIRECT_CSR_RXEMPTY) != 0U) {
+    qmi->DIRECT_TX = 0U;
+    while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_RXEMPTY) != 0U) {
     }
-    (void)qmi[QMI_DIRECT_RX / 4U];
+    (void)qmi->DIRECT_RX;
   }
 
   /* Restore pad controls. */
-  pads_qspi[PADS_QSPI_GPIO_QSPI_SD0 / 4U] = padctrl_save;
-  pads_qspi[PADS_QSPI_GPIO_QSPI_SD1 / 4U] = padctrl_save;
-  padctrl_save = (padctrl_save & ~PADS_QSPI_PDE_BITS) | PADS_QSPI_PUE_BITS;
-  pads_qspi[PADS_QSPI_GPIO_QSPI_SD2 / 4U] = padctrl_save;
-  pads_qspi[PADS_QSPI_GPIO_QSPI_SD3 / 4U] = padctrl_save;
+  pads_qspi->GPIO_QSPI_SD0 = padctrl_save;
+  pads_qspi->GPIO_QSPI_SD1 = padctrl_save;
+  padctrl_save = (padctrl_save & ~PADS_QSPI_PDE) | PADS_QSPI_PUE;
+  pads_qspi->GPIO_QSPI_SD2 = padctrl_save;
+  pads_qspi->GPIO_QSPI_SD3 = padctrl_save;
 
   /* 3. Send 0xFF, 0xFF */
   rp_flash_cs_force(eflp, false);
-  qmi[QMI_DIRECT_TX / 4U] = 0xFFU;
-  qmi[QMI_DIRECT_TX / 4U] = 0xFFU;
-  while ((qmi[QMI_DIRECT_CSR / 4U] & QMI_DIRECT_CSR_RXEMPTY) != 0U) {
+  qmi->DIRECT_TX = 0xFFU;
+  qmi->DIRECT_TX = 0xFFU;
+  while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_RXEMPTY) != 0U) {
   }
-  (void)qmi[QMI_DIRECT_RX / 4U];
-  while ((qmi[QMI_DIRECT_CSR / 4U] & QMI_DIRECT_CSR_RXEMPTY) != 0U) {
+  (void)qmi->DIRECT_RX;
+  while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_RXEMPTY) != 0U) {
   }
-  (void)qmi[QMI_DIRECT_RX / 4U];
+  (void)qmi->DIRECT_RX;
   rp_flash_cs_force(eflp, true);
 }
 
@@ -425,17 +368,17 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
  * @param[in] eflp      pointer to the EFlashDriver object
  */
 RAMFUNC static void rp_flash_enter_xip(EFlashDriver *eflp) {
-  volatile uint32_t *qmi = eflp->qmi;
+  QMI_TypeDef *qmi = eflp->qmi;
 
   /* Wait for transfers to complete */
-  while ((qmi[QMI_DIRECT_CSR / 4U] & QMI_DIRECT_CSR_BUSY) != 0U) {
+  while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_BUSY) != 0U) {
   }
 
   /* Disable direct mode and restore saved XIP configuration. */
-  qmi[QMI_DIRECT_CSR / 4U] = 0U;
-  qmi[QMI_M0_TIMING / 4U] = eflp->xip_timing;
-  qmi[QMI_M0_RFMT / 4U] = eflp->xip_rfmt;
-  qmi[QMI_M0_RCMD / 4U] = eflp->xip_rcmd;
+  qmi->DIRECT_CSR = 0U;
+  qmi->M0_TIMING = eflp->xip_timing;
+  qmi->M0_RFMT = eflp->xip_rfmt;
+  qmi->M0_RCMD = eflp->xip_rcmd;
 
   rp_flash_flush_cache(eflp);
 }
@@ -451,7 +394,7 @@ RAMFUNC static void rp_flash_enter_xip(EFlashDriver *eflp) {
  */
 RAMFUNC static void rp_flash_program_page(EFlashDriver *eflp, uint32_t offset,
                                           const uint8_t *data, size_t len) {
-  volatile uint32_t *qmi = eflp->qmi;
+  QMI_TypeDef *qmi = eflp->qmi;
   uint8_t addr[3];
 
   /* Send write enable. */
@@ -466,10 +409,10 @@ RAMFUNC static void rp_flash_program_page(EFlashDriver *eflp, uint32_t offset,
   rp_flash_cs_force(eflp, false);
 
   /* Send page program command. */
-  qmi[QMI_DIRECT_TX / 4U] = FLASHCMD_PAGE_PROGRAM;
-  while ((qmi[QMI_DIRECT_CSR / 4U] & QMI_DIRECT_CSR_RXEMPTY) != 0U) {
+  qmi->DIRECT_TX = FLASHCMD_PAGE_PROGRAM;
+  while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_RXEMPTY) != 0U) {
   }
-  (void)qmi[QMI_DIRECT_RX / 4U];
+  (void)qmi->DIRECT_RX;
 
   /* Send address. */
   rp_flash_put_get(eflp, addr, NULL, 3U);

@@ -151,7 +151,7 @@
  */
 #define efl_lld_driver_fields                                               \
   /* Pointer to QMI registers. */                                           \
-  volatile uint32_t           *qmi;                                         \
+  QMI_TypeDef                 *qmi;                                         \
   /* Saved XIP control register. */                                         \
   uint32_t                    xip_ctrl;                                     \
   /* Saved XIP configuration registers. */                                  \

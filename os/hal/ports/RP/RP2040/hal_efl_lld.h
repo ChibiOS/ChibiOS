@@ -151,7 +151,7 @@
  */
 #define efl_lld_driver_fields                                               \
   /* Pointer to SSI registers. */                                           \
-  volatile uint32_t           *ssi;
+  SSI_TypeDef                 *ssi;
 
 /**
  * @brief   Low level fields of the embedded flash configuration structure.
