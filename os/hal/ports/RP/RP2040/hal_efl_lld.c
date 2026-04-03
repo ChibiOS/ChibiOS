@@ -241,6 +241,26 @@ RAMFUNC static void rp_flash_flush_cache(void) {
 }
 
 /**
+ * @brief   Reset QSPI pads and mux to connect SSI to internal flash.
+ * @note    This function MUST be in RAM.
+ */
+RAMFUNC static void rp_flash_connect_internal(void) {
+  uint32_t bits = RESETS_ALLREG_IO_QSPI | RESETS_ALLREG_PADS_QSPI;
+  unsigned i;
+
+  /* Hard-reset IO_QSPI and PADS_QSPI. */
+  RESETS->SET.RESET = bits;
+  RESETS->CLR.RESET = bits;
+  while ((RESETS->RESET_DONE & bits) != bits) {
+  }
+
+  /* Mux all QSPI GPIOs to function 0 (XIP). */
+  for (i = 0U; i < 6U; i++) {
+    IO_QSPI->GPIO[i].CTRL = 0U;
+  }
+}
+
+/**
  * @brief   Exit XIP mode and configure for direct access.
  * @note    This function MUST be in RAM.
  * @note    This follows a similar pattern to the ROM's flash_exit_xip()
@@ -467,7 +487,8 @@ RAMFUNC static void rp_flash_erase_cmd(EFlashDriver *eflp, uint8_t cmd,
 RAMFUNC static void rp_flash_erase_full(EFlashDriver *eflp, uint8_t cmd,
                                         uint32_t offset) {
 
-  /* Exit XIP mode. */
+  /* Connect SSI to flash and exit XIP mode. */
+  rp_flash_connect_internal();
   rp_flash_exit_xip(eflp);
 
   /* Send erase command. */
@@ -496,7 +517,8 @@ RAMFUNC static void rp_flash_program_page_full(EFlashDriver *eflp,
                                                const uint8_t *data,
                                                size_t len) {
 
-  /* Exit XIP mode. */
+  /* Connect SSI to flash and exit XIP mode. */
+  rp_flash_connect_internal();
   rp_flash_exit_xip(eflp);
 
   /* Program the page. */
@@ -519,7 +541,8 @@ RAMFUNC static void rp_flash_program_page_full(EFlashDriver *eflp,
 RAMFUNC static void rp_flash_read_uid_full(EFlashDriver *eflp,
                                            uint8_t *rx, size_t count) {
 
-  /* Exit XIP mode. */
+  /* Connect SSI to flash and exit XIP mode. */
+  rp_flash_connect_internal();
   rp_flash_exit_xip(eflp);
 
   /* Send read unique ID command. */
