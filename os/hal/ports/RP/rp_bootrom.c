@@ -36,16 +36,12 @@
 #define RP_ROM_BOOTROM_DATA_TABLE_OFFSET     0x16U
 #else
 #define RP_ROM_BOOTROM_TABLE_LOOKUP_OFFSET   0x16U
-#define RP_ROM_RT_FLAG_FUNC_ARM_SEC          0x0004U
-#define RP_ROM_RT_FLAG_FUNC_ARM_NONSEC       0x0010U
-#define RP_ROM_RT_FLAG_DATA                  0x0040U
-#define RP_ROM_REBOOT2_FLAG_REBOOT_TYPE_BOOTSEL    0x02U
-#define RP_ROM_REBOOT2_FLAG_NO_RETURN_ON_SUCCESS   0x100U
-#define RP_ROM_BOOTSEL_FLAG_GPIO_PIN_SPECIFIED     0x20U
 #endif
 
-#define RP_ROM_HWORD_PTR(addr) \
-  ((void *)(uintptr_t)(*(uint16_t *)(uintptr_t)(addr)))
+static inline void *rp_rom_hword_ptr(uint32_t addr) {
+
+  return (void *)(uintptr_t)(*(uint16_t *)(uintptr_t)(addr));
+}
 
 typedef void *(*rp_rom_table_lookup_2040_fn_t)(uint16_t *table, uint32_t code);
 
@@ -62,7 +58,9 @@ typedef int (*rp_rom_reboot_fn_t)(uint32_t flags, uint32_t delay_ms,
 #if defined(RP2350)
 static uint32_t rp_rom_func_mask_x(void) {
 
-#if defined(PORT_KERNEL_MODE) && (PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST)
+#if defined(__riscv)
+  return RP_ROM_RT_FLAG_FUNC_RISCV;
+#elif defined(PORT_KERNEL_MODE) && (PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST)
   return RP_ROM_RT_FLAG_FUNC_ARM_NONSEC;
 #else
   return RP_ROM_RT_FLAG_FUNC_ARM_SEC;
@@ -81,17 +79,17 @@ void *rpRomFuncLookupX(uint32_t code) {
   uint16_t *func_table;
 
   rom_table_lookup =
-      (rp_rom_table_lookup_2040_fn_t)RP_ROM_HWORD_PTR(
+      (rp_rom_table_lookup_2040_fn_t)rp_rom_hword_ptr(
           RP_ROM_BOOTROM_TABLE_LOOKUP_OFFSET);
-  func_table = (uint16_t *)RP_ROM_HWORD_PTR(RP_ROM_BOOTROM_FUNC_TABLE_OFFSET);
+  func_table = (uint16_t *)rp_rom_hword_ptr(RP_ROM_BOOTROM_FUNC_TABLE_OFFSET);
 
   return rom_table_lookup(func_table, code);
 #else
   rp_rom_table_lookup_2350_fn_t rom_table_lookup;
 
   rom_table_lookup =
-      (rp_rom_table_lookup_2350_fn_t)(uintptr_t)
-          *(uint16_t *)(uintptr_t)RP_ROM_BOOTROM_TABLE_LOOKUP_OFFSET;
+      (rp_rom_table_lookup_2350_fn_t)rp_rom_hword_ptr(
+          RP_ROM_BOOTROM_TABLE_LOOKUP_OFFSET);
 
   return rom_table_lookup(code, rp_rom_func_mask_x());
 #endif
@@ -104,22 +102,34 @@ void *rpRomDataLookupX(uint32_t code) {
   uint16_t *data_table;
 
   rom_table_lookup =
-      (rp_rom_table_lookup_2040_fn_t)RP_ROM_HWORD_PTR(
+      (rp_rom_table_lookup_2040_fn_t)rp_rom_hword_ptr(
           RP_ROM_BOOTROM_TABLE_LOOKUP_OFFSET);
-  data_table = (uint16_t *)RP_ROM_HWORD_PTR(RP_ROM_BOOTROM_DATA_TABLE_OFFSET);
+  data_table = (uint16_t *)rp_rom_hword_ptr(RP_ROM_BOOTROM_DATA_TABLE_OFFSET);
 
   return rom_table_lookup(data_table, code);
 #else
   rp_rom_table_lookup_2350_fn_t rom_table_lookup;
 
   rom_table_lookup =
-      (rp_rom_table_lookup_2350_fn_t)(uintptr_t)
-          *(uint16_t *)(uintptr_t)RP_ROM_BOOTROM_TABLE_LOOKUP_OFFSET;
+      (rp_rom_table_lookup_2350_fn_t)rp_rom_hword_ptr(
+          RP_ROM_BOOTROM_TABLE_LOOKUP_OFFSET);
 
   return rom_table_lookup(code, RP_ROM_RT_FLAG_DATA);
 #endif
 }
 
+/**
+ * @brief   Batch-resolves ROM function codes into function pointers.
+ * @note    The @p table array is modified in place: each entry must be
+ *          initialized with a ROM table code (via @p RP_ROM_TABLE_CODE)
+ *          stored in a @p uintptr_t slot. On return every entry is
+ *          overwritten with the resolved function pointer (or zero on
+ *          lookup failure).
+ *
+ * @param[in,out] table   array of ROM codes, replaced with pointers
+ * @param[in]     count   number of entries in @p table
+ * @return              @p true if every code resolved successfully
+ */
 bool rpRomFuncsLookupX(uintptr_t *table, unsigned count) {
   bool ok = true;
   unsigned i;
@@ -163,14 +173,17 @@ bool rpRomGetFlashApiX(rp_rom_flash_api_t *apip) {
   return ok;
 }
 
-bool rpRomSupportsUsbBootX(void) {
+#if defined(RP2350)
+int rpRomReboot(uint32_t flags, uint32_t delay_ms,
+                uint32_t p0, uint32_t p1) {
+  rp_rom_reboot_fn_t func;
 
-#if defined(RP2040)
-  return rpRomFuncLookupX(RP_ROM_FUNC_RESET_USB_BOOT) != NULL;
-#else
-  return rpRomFuncLookupX(RP_ROM_FUNC_REBOOT) != NULL;
-#endif
+  func = (rp_rom_reboot_fn_t)rpRomFuncLookupX(RP_ROM_FUNC_REBOOT);
+  osalDbgAssert(func != NULL, "reboot unavailable");
+
+  return func(flags, delay_ms, p0, p1);
 }
+#endif
 
 void __attribute__((noreturn)) rpRomResetUsbBoot(
   uint32_t gpio_mask, uint32_t disable_interface_mask) {
@@ -188,21 +201,17 @@ void __attribute__((noreturn)) rpRomResetUsbBoot(
 
   func(gpio_mask, disable_interface_mask);
 #else
-  rp_rom_reboot_fn_t func;
   uint32_t flags = disable_interface_mask;
   uint32_t gpio = 0U;
 
-  func = (rp_rom_reboot_fn_t)rpRomFuncLookupX(RP_ROM_FUNC_REBOOT);
-  osalDbgAssert(func != NULL, "USB boot reset unavailable");
-
   if (gpio_mask != 0U) {
-    flags |= RP_ROM_BOOTSEL_FLAG_GPIO_PIN_SPECIFIED;
+    flags |= RP_ROM_BOOTSEL_GPIO_PIN_SPECIFIED;
     gpio = (uint32_t)__builtin_ctz(gpio_mask);
   }
 
-  (void)func(RP_ROM_REBOOT2_FLAG_REBOOT_TYPE_BOOTSEL |
-             RP_ROM_REBOOT2_FLAG_NO_RETURN_ON_SUCCESS,
-             10U, flags, gpio);
+  (void)rpRomReboot(RP_ROM_REBOOT2_FLAG_REBOOT_TYPE_BOOTSEL |
+                     RP_ROM_REBOOT2_FLAG_NO_RETURN_ON_SUCCESS,
+                     10U, flags, gpio);
 #endif
 
   osalSysHalt("bootrom return");

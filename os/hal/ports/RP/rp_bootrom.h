@@ -79,6 +79,20 @@
 #define RP_ROM_FUNC_MEMSET4       RP_ROM_TABLE_CODE('S', '4')
 #define RP_ROM_FUNC_CTZ32         RP_ROM_TABLE_CODE('T', '3')
 #define RP_ROM_FUNC_RESET_USB_BOOT RP_ROM_TABLE_CODE('U', 'B')
+#define RP_ROM_FUNC_WAIT_FOR_VECTOR RP_ROM_TABLE_CODE('W', 'V')
+/** @} */
+
+/**
+ * @name    RP2040-only boot ROM data table codes
+ * @{
+ */
+#define RP_ROM_DATA_COPYRIGHT_STRING  RP_ROM_TABLE_CODE('C', 'R')
+#define RP_ROM_DATA_GIT_REVISION      RP_ROM_TABLE_CODE('G', 'R')
+#define RP_ROM_DATA_SOFT_FLOAT_TABLE  RP_ROM_TABLE_CODE('S', 'F')
+#define RP_ROM_DATA_SOFT_DOUBLE_TABLE RP_ROM_TABLE_CODE('S', 'D')
+#define RP_ROM_DATA_FPLIB_START       RP_ROM_TABLE_CODE('F', 'S')
+#define RP_ROM_DATA_FPLIB_END         RP_ROM_TABLE_CODE('F', 'E')
+#define RP_ROM_DATA_FLOAT_TABLE_SIZE  RP_ROM_TABLE_CODE('F', 'Z')
 /** @} */
 #endif
 
@@ -87,7 +101,112 @@
  * @name    RP2350-only boot ROM function codes
  * @{
  */
-#define RP_ROM_FUNC_REBOOT        RP_ROM_TABLE_CODE('R', 'B')
+#define RP_ROM_FUNC_REBOOT                      \
+  RP_ROM_TABLE_CODE('R', 'B')
+#define RP_ROM_FUNC_FLASH_OP                    \
+  RP_ROM_TABLE_CODE('F', 'O')
+#define RP_ROM_FUNC_FLASH_RUNTIME_TO_STORAGE_ADDR \
+  RP_ROM_TABLE_CODE('F', 'A')
+#define RP_ROM_FUNC_FLASH_RESET_ADDRESS_TRANS   \
+  RP_ROM_TABLE_CODE('R', 'A')
+#define RP_ROM_FUNC_FLASH_SELECT_XIP_READ_MODE  \
+  RP_ROM_TABLE_CODE('X', 'M')
+#define RP_ROM_FUNC_GET_SYS_INFO                \
+  RP_ROM_TABLE_CODE('G', 'S')
+#define RP_ROM_FUNC_GET_PARTITION_TABLE_INFO    \
+  RP_ROM_TABLE_CODE('G', 'P')
+#define RP_ROM_FUNC_PICK_AB_PARTITION           \
+  RP_ROM_TABLE_CODE('A', 'B')
+#define RP_ROM_FUNC_GET_B_PARTITION             \
+  RP_ROM_TABLE_CODE('G', 'B')
+#define RP_ROM_FUNC_GET_UF2_TARGET_PARTITION    \
+  RP_ROM_TABLE_CODE('G', 'U')
+#define RP_ROM_FUNC_LOAD_PARTITION_TABLE        \
+  RP_ROM_TABLE_CODE('L', 'P')
+#define RP_ROM_FUNC_OTP_ACCESS                  \
+  RP_ROM_TABLE_CODE('O', 'A')
+#define RP_ROM_FUNC_CHAIN_IMAGE                 \
+  RP_ROM_TABLE_CODE('C', 'I')
+#define RP_ROM_FUNC_EXPLICIT_BUY                \
+  RP_ROM_TABLE_CODE('E', 'B')
+#define RP_ROM_FUNC_BOOTROM_STATE_RESET         \
+  RP_ROM_TABLE_CODE('S', 'R')
+#define RP_ROM_FUNC_SET_BOOTROM_STACK           \
+  RP_ROM_TABLE_CODE('S', 'S')
+#define RP_ROM_FUNC_SECURE_CALL                 \
+  RP_ROM_TABLE_CODE('S', 'C')
+#define RP_ROM_FUNC_SET_NS_API_PERMISSION       \
+  RP_ROM_TABLE_CODE('S', 'P')
+#define RP_ROM_FUNC_SET_ROM_CALLBACK            \
+  RP_ROM_TABLE_CODE('R', 'C')
+#define RP_ROM_FUNC_VALIDATE_NS_BUFFER          \
+  RP_ROM_TABLE_CODE('V', 'B')
+/** @} */
+
+/**
+ * @name    RP2350-only boot ROM data table codes
+ * @{
+ */
+#define RP_ROM_DATA_SOFTWARE_GIT_REVISION       \
+  RP_ROM_TABLE_CODE('G', 'R')
+#define RP_ROM_DATA_FLASH_DEVINFO16_PTR         \
+  RP_ROM_TABLE_CODE('F', 'D')
+#define RP_ROM_DATA_PARTITION_TABLE_PTR         \
+  RP_ROM_TABLE_CODE('P', 'T')
+#define RP_ROM_DATA_SAVED_XIP_SETUP_FUNC_PTR    \
+  RP_ROM_TABLE_CODE('X', 'F')
+/** @} */
+
+/**
+ * @name    RP2350 ROM table lookup flags
+ * @{
+ */
+#define RP_ROM_RT_FLAG_FUNC_RISCV               0x0001U
+#define RP_ROM_RT_FLAG_FUNC_RISCV_FAR           0x0003U
+#define RP_ROM_RT_FLAG_FUNC_ARM_SEC             0x0004U
+#define RP_ROM_RT_FLAG_FUNC_ARM_NONSEC          0x0010U
+#define RP_ROM_RT_FLAG_DATA                     0x0040U
+/** @} */
+
+/**
+ * @name    RP2350 reboot flags
+ * @{
+ */
+#define RP_ROM_REBOOT2_FLAG_REBOOT_TYPE_NORMAL       0x00U
+#define RP_ROM_REBOOT2_FLAG_REBOOT_TYPE_BOOTSEL      0x02U
+#define RP_ROM_REBOOT2_FLAG_REBOOT_TYPE_RAM_IMAGE    0x03U
+#define RP_ROM_REBOOT2_FLAG_REBOOT_TYPE_FLASH_UPDATE 0x04U
+#define RP_ROM_REBOOT2_FLAG_REBOOT_TYPE_PC_SP        0x0DU
+#define RP_ROM_REBOOT2_FLAG_REBOOT_TO_ARM            0x10U
+#define RP_ROM_REBOOT2_FLAG_REBOOT_TO_RISCV          0x20U
+#define RP_ROM_REBOOT2_FLAG_NO_RETURN_ON_SUCCESS     0x100U
+/** @} */
+
+/**
+ * @name    RP2350 BOOTSEL flags
+ * @{
+ */
+#define RP_ROM_BOOTSEL_GPIO_PIN_ACTIVE_LOW      0x10U
+#define RP_ROM_BOOTSEL_GPIO_PIN_SPECIFIED       0x20U
+/** @} */
+
+/**
+ * @name    RP2350 boot ROM error codes
+ * @{
+ */
+#define RP_ROM_OK                               0
+#define RP_ROM_ERROR_NOT_PERMITTED              (-4)
+#define RP_ROM_ERROR_INVALID_ARG                (-5)
+#define RP_ROM_ERROR_INVALID_ADDRESS            (-10)
+#define RP_ROM_ERROR_BAD_ALIGNMENT              (-11)
+#define RP_ROM_ERROR_INVALID_STATE              (-12)
+#define RP_ROM_ERROR_BUFFER_TOO_SMALL           (-13)
+#define RP_ROM_ERROR_PRECONDITION_NOT_MET       (-14)
+#define RP_ROM_ERROR_MODIFIED_DATA              (-15)
+#define RP_ROM_ERROR_INVALID_DATA               (-16)
+#define RP_ROM_ERROR_NOT_FOUND                  (-17)
+#define RP_ROM_ERROR_UNSUPPORTED_MODIFICATION   (-18)
+#define RP_ROM_ERROR_LOCK_REQUIRED              (-19)
 /** @} */
 #endif
 
@@ -169,9 +288,12 @@ extern "C" {
   void *rpRomDataLookupX(uint32_t code);
   bool rpRomFuncsLookupX(uintptr_t *table, unsigned count);
   bool rpRomGetFlashApiX(rp_rom_flash_api_t *apip);
-  bool rpRomSupportsUsbBootX(void);
   void __attribute__((noreturn)) rpRomResetUsbBoot(
     uint32_t gpio_mask, uint32_t disable_interface_mask);
+#if defined(RP2350) || defined(__DOXYGEN__)
+  int rpRomReboot(uint32_t flags, uint32_t delay_ms,
+                  uint32_t p0, uint32_t p1);
+#endif
 #if defined(RP2040) || defined(__DOXYGEN__)
   bool rpRomGetMemApiX(rp_rom_mem_api_t *apip);
   bool rpRomGetBitApiX(rp_rom_bit_api_t *apip);
