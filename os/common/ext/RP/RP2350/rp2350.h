@@ -2310,9 +2310,17 @@ typedef struct {
 #define QMI_DIRECT_CSR_ASSERT_CS1N        (1U << 3)
 #define QMI_DIRECT_CSR_AUTO_CS0N          (1U << 6)
 #define QMI_DIRECT_CSR_AUTO_CS1N          (1U << 7)
-#define QMI_DIRECT_CSR_RXDELAY_Pos        8U
-#define QMI_DIRECT_CSR_RXDELAY_Msk        (0x7U << QMI_DIRECT_CSR_RXDELAY_Pos)
+#define QMI_DIRECT_CSR_RXDELAY_Pos        30U
+#define QMI_DIRECT_CSR_RXDELAY_Msk        (0x3U << QMI_DIRECT_CSR_RXDELAY_Pos)
 #define QMI_DIRECT_CSR_RXDELAY(n)         ((n) << QMI_DIRECT_CSR_RXDELAY_Pos)
+#define QMI_DIRECT_CSR_TXFULL             (1U << 10)
+#define QMI_DIRECT_CSR_TXEMPTY            (1U << 11)
+#define QMI_DIRECT_CSR_TXLEVEL_Pos        12U
+#define QMI_DIRECT_CSR_TXLEVEL_Msk        (0x7U << QMI_DIRECT_CSR_TXLEVEL_Pos)
+#define QMI_DIRECT_CSR_RXEMPTY            (1U << 16)
+#define QMI_DIRECT_CSR_RXFULL             (1U << 17)
+#define QMI_DIRECT_CSR_RXLEVEL_Pos        18U
+#define QMI_DIRECT_CSR_RXLEVEL_Msk        (0x7U << QMI_DIRECT_CSR_RXLEVEL_Pos)
 #define QMI_DIRECT_CSR_CLKDIV_Pos         22U
 #define QMI_DIRECT_CSR_CLKDIV_Msk         (0xFFU << QMI_DIRECT_CSR_CLKDIV_Pos)
 #define QMI_DIRECT_CSR_CLKDIV(n)          ((n) << QMI_DIRECT_CSR_CLKDIV_Pos)

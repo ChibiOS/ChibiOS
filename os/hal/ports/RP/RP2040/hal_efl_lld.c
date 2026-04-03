@@ -81,20 +81,10 @@
 /** @} */
 
 /**
- * @name    IO QSPI base and register offsets
+ * @name    IO QSPI register indexes
  * @{
  */
-#define RP_IOQSPI_BASE                      0x40018000U
-#define IOQSPI_GPIO_QSPI_SS_CTRL            0x0CU
-/** @} */
-
-/**
- * @name    IO QSPI output override values
- * @{
- */
-#define IOQSPI_OUTOVER_NORMAL               0U
-#define IOQSPI_OUTOVER_LOW                  2U
-#define IOQSPI_OUTOVER_HIGH                 3U
+#define RP2040_IO_QSPI_SS_INDEX             1U
 /** @} */
 
 /**
@@ -192,15 +182,15 @@ CC_ALIGN_DATA(4) static uint8_t rp_boot2[252];
  */
 RAMFUNC static void rp_flash_cs_force(EFlashDriver *eflp, bool high) {
   (void)eflp;
+  uint32_t val = high ? IOQSPI_CTRL_OUTOVER_HIGH : IOQSPI_CTRL_OUTOVER_LOW;
 
-  volatile uint32_t *ioqspi_ss_ctrl =
-      (volatile uint32_t *)(RP_IOQSPI_BASE + IOQSPI_GPIO_QSPI_SS_CTRL);
-  uint32_t val = high ? IOQSPI_OUTOVER_HIGH : IOQSPI_OUTOVER_LOW;
-
-  *ioqspi_ss_ctrl = (*ioqspi_ss_ctrl & ~(3U << 8)) | (val << 8);
+  IO_QSPI->GPIO[RP2040_IO_QSPI_SS_INDEX].CTRL =
+      (IO_QSPI->GPIO[RP2040_IO_QSPI_SS_INDEX].CTRL &
+       ~IOQSPI_CTRL_OUTOVER_Msk) |
+      IOQSPI_CTRL_OUTOVER(val);
 
   /* Read back to ensure write is flushed */
-  (void)*ioqspi_ss_ctrl;
+  (void)IO_QSPI->GPIO[RP2040_IO_QSPI_SS_INDEX].CTRL;
 }
 
 /**
@@ -445,13 +435,13 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
  * @param[in] eflp      pointer to the EFlashDriver object
  */
 RAMFUNC static void rp_flash_enter_xip(EFlashDriver *eflp) {
-  volatile uint32_t *ioqspi_ss_ctrl =
-      (volatile uint32_t *)(RP_IOQSPI_BASE + IOQSPI_GPIO_QSPI_SS_CTRL);
-
   (void)eflp;
 
   /* Reset CS control to normal. */
-  *ioqspi_ss_ctrl = 0U;
+  IO_QSPI->GPIO[RP2040_IO_QSPI_SS_INDEX].CTRL =
+      (IO_QSPI->GPIO[RP2040_IO_QSPI_SS_INDEX].CTRL &
+       ~IOQSPI_CTRL_OUTOVER_Msk) |
+      IOQSPI_CTRL_OUTOVER(IOQSPI_CTRL_OUTOVER_NORMAL);
 
   /* Re-execute the boot2 to fully restore the SSI configuration
    * including QSPI mode, continuous read, and baud rate.  The OR

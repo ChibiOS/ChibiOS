@@ -1483,7 +1483,7 @@ typedef struct {
  */
 #define DMA                               ((DMA_TypeDef *)    __DMA_BASE)
 #define IO_BANK0                          ((IOUSER_TypeDef *) __IOUSER0_BASE)
-#define IO_QSPI                           ((IOUSER_TypeDef *) __IOQSPI_BASE)
+#define IO_QSPI                           ((IOQSPI_TypeDef *) __IOQSPI_BASE)
 #define PADS_BANK0                        ((PADS_TypeDef *)   __PADSUSER0_BASE)
 #define PADS_QSPI                         ((PADS_TypeDef *)   __PADSQSPI_BASE)
 #define PSM                               ((PSM_TypeDef *)    __PSM_BASE)
@@ -3137,6 +3137,20 @@ typedef struct {
 #define RP_CLK_ADC                        8U
 #define RP_CLK_RTC                        9U
 #define RP_CLK_COUNT                      10U
+/** @} */
+
+/**
+ * @name    IOQSPI CTRL OUTOVER bits definitions
+ * @note    See RP2040 Datasheet 2.19.6.1 GPIO_QSPI Registers.
+ * @{
+ */
+#define IOQSPI_CTRL_OUTOVER_Pos           8U
+#define IOQSPI_CTRL_OUTOVER_Msk           (0x3U << IOQSPI_CTRL_OUTOVER_Pos)
+#define IOQSPI_CTRL_OUTOVER(n)            ((n) << IOQSPI_CTRL_OUTOVER_Pos)
+#define IOQSPI_CTRL_OUTOVER_NORMAL        0U
+#define IOQSPI_CTRL_OUTOVER_INVERT        1U
+#define IOQSPI_CTRL_OUTOVER_LOW           2U
+#define IOQSPI_CTRL_OUTOVER_HIGH          3U
 /** @} */
 
 #ifdef __cplusplus
