@@ -55,6 +55,25 @@ static uint32_t configured_freq[RP_CLK_COUNT];
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static void delay_us(uint32_t delay) {
+  uint32_t start = TIMER0->TIMERAWL;
+
+  while ((TIMER0->TIMERAWL - start) < delay) {
+  }
+}
+
+static void set_vreg(void) {
+  uint32_t current_vsel;
+
+  current_vsel = (VREG_AND_CHIP_RESET->VREG & VREG_VSEL_Msk) >> VREG_VSEL_Pos;
+  if (current_vsel < RP_SYS_VREG_VOLTAGE) {
+    VREG_AND_CHIP_RESET->VREG =
+        (VREG_AND_CHIP_RESET->VREG & ~VREG_VSEL_Msk) |
+        (RP_SYS_VREG_VOLTAGE << VREG_VSEL_Pos);
+    delay_us(RP_SYS_VREG_SETTLE_DELAY_US);
+  }
+}
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -113,7 +132,13 @@ void rp_clock_init(void) {
     configured_freq[RP_CLK_REF] = RP_XOSCCLK;
   }
 
-  /* CLK_SYS = PLL_SYS = 125 MHz */
+  /* Reconfigure tick generator for accurate 1 us ticks now that clk_ref
+   * is on XOSC, then raise core voltage if needed before the fast
+   * clk_sys switch.  */
+  WATCHDOG->TICK = WATCHDOG_TICK_ENABLE | (RP_XOSCCLK / 1000000U);
+  set_vreg();
+
+  /* CLK_SYS = PLL_SYS */
   CLOCKS->CLR.CLK[RP_CLK_SYS].CTRL = CLOCKS_CLK_SYS_CTRL_SRC_Msk;
   while ((CLOCKS->CLK[RP_CLK_SYS].SELECTED & 1U) == 0U) {
     /* Wait for switch to clk_ref */

@@ -102,6 +102,29 @@
 /** @} */
 
 /**
+ * @name    VREG voltage configuration for high-speed operation
+ * @note    200 MHz is supported by the pico-sdk and requires 1.15V.
+ *          Frequencies above 200 MHz are not officially supported.
+ *          Automatically selected based on RP_PLL_SYS_CLK.
+ *          Set to 0 to disable VREG adjustment.
+ * @{
+ */
+#if !defined(RP_SYS_VREG_VOLTAGE) || defined(__DOXYGEN__)
+#if RP_PLL_SYS_CLK >= 250000000U
+#define RP_SYS_VREG_VOLTAGE             13U     /* 1.20V */
+#elif RP_PLL_SYS_CLK >= 200000000U
+#define RP_SYS_VREG_VOLTAGE             12U     /* 1.15V */
+#else
+#define RP_SYS_VREG_VOLTAGE             0U      /* No adjustment */
+#endif
+#endif
+
+#if !defined(RP_SYS_VREG_SETTLE_DELAY_US) || defined(__DOXYGEN__)
+#define RP_SYS_VREG_SETTLE_DELAY_US     1000U   /* 1 ms */
+#endif
+/** @} */
+
+/**
  * @name    Compile-time clock frequencies
  * @note    These are compile-time constants derived from PLL configuration.
  *          For runtime clock queries, use the hal_lld_get_clock_point() API.
