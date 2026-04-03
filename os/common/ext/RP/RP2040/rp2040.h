@@ -244,6 +244,67 @@ typedef struct {
 } PADS_TypeDef;
 
 typedef struct {
+  __IO uint32_t         VOLTAGE_SELECT;
+  __IO uint32_t         GPIO_QSPI_SCLK;
+  __IO uint32_t         GPIO_QSPI_SD0;
+  __IO uint32_t         GPIO_QSPI_SD1;
+  __IO uint32_t         GPIO_QSPI_SD2;
+  __IO uint32_t         GPIO_QSPI_SD3;
+  __IO uint32_t         GPIO_QSPI_SS;
+} PADS_QSPI_TypeDef;
+
+/**
+ * @brief   XIP SSI (Synchronous Serial Interface) register block.
+ * @note    DWC SSI controller used for XIP flash access on RP2040.
+ *          See RP2040 Datasheet 4.10.13 SSI List of Registers.
+ */
+typedef struct {
+  __IO uint32_t         CTRLR0;             /* 0x00 */
+  __IO uint32_t         CTRLR1;             /* 0x04 */
+  __IO uint32_t         SSIENR;             /* 0x08 */
+  __IO uint32_t         MWCR;               /* 0x0C */
+  __IO uint32_t         SER;                /* 0x10 */
+  __IO uint32_t         BAUDR;              /* 0x14 */
+  __IO uint32_t         TXFTLR;             /* 0x18 */
+  __IO uint32_t         RXFTLR;             /* 0x1C */
+  __I  uint32_t         TXFLR;              /* 0x20 */
+  __I  uint32_t         RXFLR;              /* 0x24 */
+  __I  uint32_t         SR;                 /* 0x28 */
+  __IO uint32_t         IMR;                /* 0x2C */
+  __I  uint32_t         ISR;                /* 0x30 */
+  __I  uint32_t         RISR;               /* 0x34 */
+  __I  uint32_t         TXOICR;             /* 0x38 */
+  __I  uint32_t         RXOICR;             /* 0x3C */
+  __I  uint32_t         RXUICR;             /* 0x40 */
+  __I  uint32_t         MSTICR;             /* 0x44 */
+  __I  uint32_t         ICR;                /* 0x48 */
+  __IO uint32_t         DMACR;              /* 0x4C */
+  __IO uint32_t         DMATDLR;            /* 0x50 */
+  __IO uint32_t         DMARDLR;            /* 0x54 */
+  __I  uint32_t         IDR;                /* 0x58 */
+  __I  uint32_t         SSI_VERSION_ID;     /* 0x5C */
+  __IO uint32_t         DR[36];             /* 0x60-0xEC */
+  __IO uint32_t         RX_SAMPLE_DLY;      /* 0xF0 */
+  __IO uint32_t         SPI_CTRLR0;         /* 0xF4 */
+  __IO uint32_t         TXD_DRIVE_EDGE;     /* 0xF8 */
+} SSI_TypeDef;
+
+/**
+ * @brief   XIP control register block.
+ * @note    See RP2040 Datasheet 2.6.3.1 XIP Cache Control.
+ */
+typedef struct {
+  __IO uint32_t         CTRL;               /* 0x00 */
+  __IO uint32_t         FLUSH;              /* 0x04 */
+  __I  uint32_t         STAT;               /* 0x08 */
+  __IO uint32_t         CTR_HIT;            /* 0x0C */
+  __IO uint32_t         CTR_ACC;            /* 0x10 */
+  __IO uint32_t         STREAM_ADDR;        /* 0x14 */
+  __IO uint32_t         STREAM_CTR;         /* 0x18 */
+  __I  uint32_t         STREAM_FIFO;        /* 0x1C */
+} XIP_CTRL_TypeDef;
+
+typedef struct {
   __IO uint32_t         FRCE_ON;
   __IO uint32_t         FRCE_OFF;
   __IO uint32_t         WDSEL;
@@ -1469,6 +1530,9 @@ typedef struct {
 #define __PLL_SYS_BASE                    (__APBPERIPH_BASE + 0x00028000U)
 #define __PLL_USB_BASE                    (__APBPERIPH_BASE + 0x0002C000U)
 
+#define __XIP_CTRL_BASE                   0x14000000U
+#define __XIP_SSI_BASE                    0x18000000U
+
 #define __DMA_BASE                        (__AHBPERIPH_BASE + 0x00000000U)
 #define __USB_BASE                        (__AHBPERIPH_BASE + 0x00110000U)
 #define __PIO0_BASE                       (__AHBPERIPH_BASE + 0x00200000U)
@@ -1485,7 +1549,7 @@ typedef struct {
 #define IO_BANK0                          ((IOUSER_TypeDef *) __IOUSER0_BASE)
 #define IO_QSPI                           ((IOQSPI_TypeDef *) __IOQSPI_BASE)
 #define PADS_BANK0                        ((PADS_TypeDef *)   __PADSUSER0_BASE)
-#define PADS_QSPI                         ((PADS_TypeDef *)   __PADSQSPI_BASE)
+#define PADS_QSPI                         ((PADS_QSPI_TypeDef *) __PADSQSPI_BASE)
 #define PSM                               ((PSM_TypeDef *)    __PSM_BASE)
 #define RESETS                            ((RESETS_TypeDef *) __RESETS_BASE)
 #define SIO                               ((SIO_TypeDef *)    __SIO_BASE)
@@ -1507,6 +1571,8 @@ typedef struct {
 #define CLOCKS                            ((CLOCKS_TypeDef *) __CLOCKS_BASE)
 #define PLL_SYS                           ((PLL_TypeDef *)    __PLL_SYS_BASE)
 #define PLL_USB                           ((PLL_TypeDef *)    __PLL_USB_BASE)
+#define XIP_SSI                           ((SSI_TypeDef *)    __XIP_SSI_BASE)
+#define XIP_CTRL                          ((XIP_CTRL_TypeDef *) __XIP_CTRL_BASE)
 /** @} */
 
 /**
@@ -1781,6 +1847,135 @@ typedef struct {
 #define SPI_SSPDMACR_RXDMAE_Pos           0U
 #define SPI_SSPDMACR_RXDMAE_Msk           (1U << SPI_SSPDMACR_RXDMAE_Pos)
 #define SPI_SSPDMACR_RXDMAE               SPI_SSPDMACR_RXDMAE_Msk
+/** @} */
+
+/**
+ * @name    SSI CTRLR0 bits definitions
+ * @note    See RP2040 Datasheet 4.10.13 SSI List of Registers.
+ * @{
+ */
+#define SSI_CTRLR0_DFS_Pos                0U
+#define SSI_CTRLR0_DFS_Msk                (0xFU << SSI_CTRLR0_DFS_Pos)
+#define SSI_CTRLR0_FRF_Pos                4U
+#define SSI_CTRLR0_FRF_Msk                (0x3U << SSI_CTRLR0_FRF_Pos)
+#define SSI_CTRLR0_SCPH                   (1U << 6)
+#define SSI_CTRLR0_SCPOL                  (1U << 7)
+#define SSI_CTRLR0_TMOD_Pos               8U
+#define SSI_CTRLR0_TMOD_Msk               (0x3U << SSI_CTRLR0_TMOD_Pos)
+#define SSI_CTRLR0_TMOD(n)                ((n) << SSI_CTRLR0_TMOD_Pos)
+#define SSI_CTRLR0_SLV_OE                 (1U << 10)
+#define SSI_CTRLR0_SRL                    (1U << 11)
+#define SSI_CTRLR0_CFS_Pos                12U
+#define SSI_CTRLR0_CFS_Msk                (0xFU << SSI_CTRLR0_CFS_Pos)
+#define SSI_CTRLR0_DFS_32_Pos             16U
+#define SSI_CTRLR0_DFS_32_Msk             (0x1FU << SSI_CTRLR0_DFS_32_Pos)
+#define SSI_CTRLR0_DFS_32(n)              ((n) << SSI_CTRLR0_DFS_32_Pos)
+#define SSI_CTRLR0_SPI_FRF_Pos            21U
+#define SSI_CTRLR0_SPI_FRF_Msk            (0x3U << SSI_CTRLR0_SPI_FRF_Pos)
+#define SSI_CTRLR0_SPI_FRF(n)             ((n) << SSI_CTRLR0_SPI_FRF_Pos)
+#define SSI_CTRLR0_SSTE                   (1U << 24)
+
+/** TMOD encoded values. */
+#define SSI_CTRLR0_TMOD_TX_AND_RX         0U
+#define SSI_CTRLR0_TMOD_TX_ONLY           1U
+#define SSI_CTRLR0_TMOD_RX_ONLY           2U
+#define SSI_CTRLR0_TMOD_EEPROM_READ       3U
+
+/** SPI_FRF encoded values. */
+#define SSI_CTRLR0_SPI_FRF_STD            0U
+#define SSI_CTRLR0_SPI_FRF_DUAL           1U
+#define SSI_CTRLR0_SPI_FRF_QUAD           2U
+/** @} */
+
+/**
+ * @name    SSI SR (status register) bits definitions
+ * @{
+ */
+#define SSI_SR_BUSY                       (1U << 0)
+#define SSI_SR_TFNF                       (1U << 1)
+#define SSI_SR_TFE                        (1U << 2)
+#define SSI_SR_RFNE                       (1U << 3)
+#define SSI_SR_RFF                        (1U << 4)
+#define SSI_SR_TXE                        (1U << 5)
+#define SSI_SR_DCOL                       (1U << 6)
+/** @} */
+
+/**
+ * @name    SSI SPI_CTRLR0 bits definitions
+ * @{
+ */
+#define SSI_SPI_CTRLR0_TRANS_TYPE_Pos     0U
+#define SSI_SPI_CTRLR0_TRANS_TYPE_Msk     (0x3U << SSI_SPI_CTRLR0_TRANS_TYPE_Pos)
+#define SSI_SPI_CTRLR0_TRANS_TYPE(n)      ((n) << SSI_SPI_CTRLR0_TRANS_TYPE_Pos)
+#define SSI_SPI_CTRLR0_ADDR_L_Pos         2U
+#define SSI_SPI_CTRLR0_ADDR_L_Msk         (0xFU << SSI_SPI_CTRLR0_ADDR_L_Pos)
+#define SSI_SPI_CTRLR0_ADDR_L(n)          ((n) << SSI_SPI_CTRLR0_ADDR_L_Pos)
+#define SSI_SPI_CTRLR0_INST_L_Pos         8U
+#define SSI_SPI_CTRLR0_INST_L_Msk         (0x3U << SSI_SPI_CTRLR0_INST_L_Pos)
+#define SSI_SPI_CTRLR0_INST_L(n)          ((n) << SSI_SPI_CTRLR0_INST_L_Pos)
+#define SSI_SPI_CTRLR0_WAIT_CYCLES_Pos    11U
+#define SSI_SPI_CTRLR0_WAIT_CYCLES_Msk    (0x1FU << SSI_SPI_CTRLR0_WAIT_CYCLES_Pos)
+#define SSI_SPI_CTRLR0_WAIT_CYCLES(n)     ((n) << SSI_SPI_CTRLR0_WAIT_CYCLES_Pos)
+#define SSI_SPI_CTRLR0_SPI_DDR_EN         (1U << 16)
+#define SSI_SPI_CTRLR0_INST_DDR_EN        (1U << 17)
+#define SSI_SPI_CTRLR0_SPI_RXDS_EN        (1U << 18)
+#define SSI_SPI_CTRLR0_XIP_CMD_Pos        24U
+#define SSI_SPI_CTRLR0_XIP_CMD_Msk        (0xFFU << SSI_SPI_CTRLR0_XIP_CMD_Pos)
+#define SSI_SPI_CTRLR0_XIP_CMD(n)         ((n) << SSI_SPI_CTRLR0_XIP_CMD_Pos)
+
+/** TRANS_TYPE encoded values. */
+#define SSI_SPI_CTRLR0_TRANS_TYPE_1C1A    0U
+#define SSI_SPI_CTRLR0_TRANS_TYPE_1C2A    1U
+#define SSI_SPI_CTRLR0_TRANS_TYPE_2C2A    2U
+
+/** INST_L encoded values. */
+#define SSI_SPI_CTRLR0_INST_L_NONE        0U
+#define SSI_SPI_CTRLR0_INST_L_4B          1U
+#define SSI_SPI_CTRLR0_INST_L_8B          2U
+#define SSI_SPI_CTRLR0_INST_L_16B         3U
+/** @} */
+
+/**
+ * @name    XIP_CTRL bits definitions
+ * @note    See RP2040 Datasheet 2.6.3.1 XIP Cache Control.
+ * @{
+ */
+#define XIP_CTRL_CTRL_EN                  (1U << 0)
+#define XIP_CTRL_CTRL_ERR_BADWRITE        (1U << 1)
+#define XIP_CTRL_CTRL_POWER_DOWN          (1U << 3)
+#define XIP_CTRL_STAT_FLUSH_READY         (1U << 0)
+#define XIP_CTRL_STAT_FIFO_EMPTY          (1U << 1)
+#define XIP_CTRL_STAT_FIFO_FULL           (1U << 2)
+/** @} */
+
+/**
+ * @name    PADS QSPI control bits definitions
+ * @note    See RP2040 Datasheet 2.19.6.3 PADS_QSPI.
+ * @{
+ */
+#define PADS_QSPI_SLEWFAST               (1U << 0)
+#define PADS_QSPI_SCHMITT                (1U << 1)
+#define PADS_QSPI_PDE                    (1U << 2)
+#define PADS_QSPI_PUE                    (1U << 3)
+#define PADS_QSPI_DRIVE_Pos              4U
+#define PADS_QSPI_DRIVE_Msk              (0x3U << PADS_QSPI_DRIVE_Pos)
+#define PADS_QSPI_DRIVE(n)               ((n) << PADS_QSPI_DRIVE_Pos)
+#define PADS_QSPI_IE                     (1U << 6)
+#define PADS_QSPI_OD                     (1U << 7)
+/** @} */
+
+/**
+ * @name    IO QSPI GPIO_QSPI_SS_CTRL OUTOVER values
+ * @note    See RP2040 Datasheet 2.19.6.1 IO_QSPI Register List.
+ * @{
+ */
+#define IOQSPI_CTRL_OUTOVER_Pos           8U
+#define IOQSPI_CTRL_OUTOVER_Msk           (0x3U << IOQSPI_CTRL_OUTOVER_Pos)
+#define IOQSPI_CTRL_OUTOVER(n)            ((n) << IOQSPI_CTRL_OUTOVER_Pos)
+#define IOQSPI_CTRL_OUTOVER_NORMAL        0U
+#define IOQSPI_CTRL_OUTOVER_INVERT        1U
+#define IOQSPI_CTRL_OUTOVER_LOW           2U
+#define IOQSPI_CTRL_OUTOVER_HIGH          3U
 /** @} */
 
 /**
@@ -3137,20 +3332,6 @@ typedef struct {
 #define RP_CLK_ADC                        8U
 #define RP_CLK_RTC                        9U
 #define RP_CLK_COUNT                      10U
-/** @} */
-
-/**
- * @name    IOQSPI CTRL OUTOVER bits definitions
- * @note    See RP2040 Datasheet 2.19.6.1 GPIO_QSPI Registers.
- * @{
- */
-#define IOQSPI_CTRL_OUTOVER_Pos           8U
-#define IOQSPI_CTRL_OUTOVER_Msk           (0x3U << IOQSPI_CTRL_OUTOVER_Pos)
-#define IOQSPI_CTRL_OUTOVER(n)            ((n) << IOQSPI_CTRL_OUTOVER_Pos)
-#define IOQSPI_CTRL_OUTOVER_NORMAL        0U
-#define IOQSPI_CTRL_OUTOVER_INVERT        1U
-#define IOQSPI_CTRL_OUTOVER_LOW           2U
-#define IOQSPI_CTRL_OUTOVER_HIGH          3U
 /** @} */
 
 #ifdef __cplusplus

@@ -344,7 +344,12 @@ typedef struct {
 
 typedef struct {
   __IO uint32_t         VOLTAGE_SELECT;
-  __IO uint32_t         GPIO[6];
+  __IO uint32_t         GPIO_QSPI_SCLK;
+  __IO uint32_t         GPIO_QSPI_SD0;
+  __IO uint32_t         GPIO_QSPI_SD1;
+  __IO uint32_t         GPIO_QSPI_SD2;
+  __IO uint32_t         GPIO_QSPI_SD3;
+  __IO uint32_t         GPIO_QSPI_SS;
 } PADS_QSPI_TypeDef;
 
 typedef struct {
@@ -1541,6 +1546,21 @@ typedef struct {
   __IO uint32_t         M1_WCMD;
   __IO uint32_t         ATRANS[8];
 } QMI_TypeDef;
+
+/**
+ * @brief   XIP control register block.
+ * @note    See RP2350 Datasheet 12.3.8 XIP.
+ */
+typedef struct {
+  __IO uint32_t         CTRL;               /* 0x00 */
+  __I  uint32_t         resvd04;            /* 0x04 */
+  __I  uint32_t         STAT;               /* 0x08 */
+  __IO uint32_t         CTR_HIT;            /* 0x0C */
+  __IO uint32_t         CTR_ACC;            /* 0x10 */
+  __IO uint32_t         STREAM_ADDR;        /* 0x14 */
+  __IO uint32_t         STREAM_CTR;         /* 0x18 */
+  __I  uint32_t         STREAM_FIFO;        /* 0x1C */
+} XIP_CTRL_TypeDef;
 /** @} */
 
 /**
@@ -1636,6 +1656,7 @@ typedef struct {
 #define XOSC                              ((XOSC_TypeDef *)       __XOSC_BASE)
 #define CLOCKS                            ((CLOCKS_TypeDef *)     __CLOCKS_BASE)
 #define TICKS                             ((TICKS_TypeDef *)      __TICKS_BASE)
+#define XIP_CTRL                          ((XIP_CTRL_TypeDef *)   __XIP_CTRL_BASE)
 #define QMI                               ((QMI_TypeDef *)        __QMI_BASE)
 /** @} */
 
@@ -2266,6 +2287,22 @@ typedef struct {
 /** @} */
 
 /**
+ * @name    PADS QSPI control bits definitions
+ * @note    See RP2350 Datasheet 9.11.4 PADS_QSPI List of Registers.
+ * @{
+ */
+#define PADS_QSPI_SLEWFAST                (1U << 0)
+#define PADS_QSPI_SCHMITT                 (1U << 1)
+#define PADS_QSPI_PDE                     (1U << 2)
+#define PADS_QSPI_PUE                     (1U << 3)
+#define PADS_QSPI_DRIVE_Pos               4U
+#define PADS_QSPI_DRIVE_Msk               (0x3U << PADS_QSPI_DRIVE_Pos)
+#define PADS_QSPI_DRIVE(n)                ((n) << PADS_QSPI_DRIVE_Pos)
+#define PADS_QSPI_IE                      (1U << 6)
+#define PADS_QSPI_OD                      (1U << 7)
+/** @} */
+
+/**
  * @name    QMI M0_TIMING / M1_TIMING bits definitions
  * @note    See RP2350 Datasheet 12.14.6 QMI List of Registers
  * @{
@@ -2324,6 +2361,24 @@ typedef struct {
 #define QMI_DIRECT_CSR_CLKDIV_Pos         22U
 #define QMI_DIRECT_CSR_CLKDIV_Msk         (0xFFU << QMI_DIRECT_CSR_CLKDIV_Pos)
 #define QMI_DIRECT_CSR_CLKDIV(n)          ((n) << QMI_DIRECT_CSR_CLKDIV_Pos)
+/** @} */
+
+/**
+ * @name    QMI DIRECT_TX bits definitions
+ * @{
+ */
+#define QMI_DIRECT_TX_DATA_Msk            0x0000FFFFU
+#define QMI_DIRECT_TX_IWIDTH_Pos          16U
+#define QMI_DIRECT_TX_IWIDTH_Msk          (0x3U << QMI_DIRECT_TX_IWIDTH_Pos)
+#define QMI_DIRECT_TX_IWIDTH(n)           ((n) << QMI_DIRECT_TX_IWIDTH_Pos)
+#define QMI_DIRECT_TX_DWIDTH              (1U << 18)
+#define QMI_DIRECT_TX_OE                  (1U << 19)
+#define QMI_DIRECT_TX_NOPUSH              (1U << 20)
+
+/** IWIDTH encoded values. */
+#define QMI_DIRECT_TX_IWIDTH_S            0U
+#define QMI_DIRECT_TX_IWIDTH_D            1U
+#define QMI_DIRECT_TX_IWIDTH_Q            2U
 /** @} */
 
 
