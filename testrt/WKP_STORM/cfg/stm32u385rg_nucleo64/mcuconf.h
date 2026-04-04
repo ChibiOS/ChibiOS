@@ -284,6 +284,9 @@
 /*
  * RTC driver system settings.
  */
+#define STM32_RTC_PRESA_VALUE               32
+#define STM32_RTC_PRESS_VALUE               1024
+#define STM32_RTC_CR_INIT                   0
 
 /*
  * SDC driver system settings.
