@@ -55,14 +55,17 @@ static uint32_t configured_freq[RP_CLK_COUNT];
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+#if RP_SYS_VREG_VOLTAGE > 0U
 static void delay_us(uint32_t delay) {
   uint32_t start = TIMER0->TIMERAWL;
 
   while ((TIMER0->TIMERAWL - start) < delay) {
   }
 }
+#endif
 
 static void set_vreg(void) {
+#if RP_SYS_VREG_VOLTAGE > 0U
   uint32_t current_vsel;
 
   current_vsel = (VREG_AND_CHIP_RESET->VREG & VREG_VSEL_Msk) >> VREG_VSEL_Pos;
@@ -72,6 +75,7 @@ static void set_vreg(void) {
         (RP_SYS_VREG_VOLTAGE << VREG_VSEL_Pos);
     delay_us(RP_SYS_VREG_SETTLE_DELAY_US);
   }
+#endif
 }
 
 /*===========================================================================*/
