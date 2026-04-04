@@ -15,11 +15,15 @@
 */
 
 /*
- * RP2040 XIP (Execute In Place) validation test.
+ * RP2350 XIP (Execute In Place) validation test.
  *
- * Thoroughly validates the SSI-based XIP path: register preservation
+ * Thoroughly validates the QMI-based XIP path: register preservation
  * across flash operations, XIP readback correctness, cache behavior,
- * boot2 integrity, and resilience under repeated operation cycles.
+ * and resilience under repeated operation cycles.
+ *
+ * The RP2350 uses QMI register save/restore (M0_TIMING, M0_RFMT,
+ * M0_RCMD) instead of boot2 re-execution.  The XIP cache is 16KB
+ * with clean-then-invalidate maintenance.
  *
  * Uses the last 64KB block of flash to avoid overwriting firmware.
  * Single-core only (no SMP, no flash lockout).
@@ -52,23 +56,19 @@ static BaseFlash *bfp;
 
 typedef struct {
   uint32_t xip_ctrl;
-  uint32_t ssi_ctrlr0;
-  uint32_t ssi_baudr;
-  uint32_t ssi_ser;
-  uint32_t ssi_spi_ctrlr0;
-  uint32_t ssi_rx_sample_dly;
-  uint32_t ssi_txd_drive_edge;
+  uint32_t qmi_direct_csr;
+  uint32_t qmi_m0_timing;
+  uint32_t qmi_m0_rfmt;
+  uint32_t qmi_m0_rcmd;
 } xip_snapshot_t;
 
 static void xip_snapshot_capture(xip_snapshot_t *s) {
 
-  s->xip_ctrl          = XIP_CTRL->CTRL;
-  s->ssi_ctrlr0        = XIP_SSI->CTRLR0;
-  s->ssi_baudr         = XIP_SSI->BAUDR;
-  s->ssi_ser           = XIP_SSI->SER;
-  s->ssi_spi_ctrlr0    = XIP_SSI->SPI_CTRLR0;
-  s->ssi_rx_sample_dly = XIP_SSI->RX_SAMPLE_DLY;
-  s->ssi_txd_drive_edge = XIP_SSI->TXD_DRIVE_EDGE;
+  s->xip_ctrl       = XIP_CTRL->CTRL;
+  s->qmi_direct_csr = QMI->DIRECT_CSR;
+  s->qmi_m0_timing  = QMI->M0_TIMING;
+  s->qmi_m0_rfmt    = QMI->M0_RFMT;
+  s->qmi_m0_rcmd    = QMI->M0_RCMD;
 }
 
 static bool xip_snapshot_compare(const xip_snapshot_t *a,
@@ -79,13 +79,11 @@ static bool xip_snapshot_compare(const xip_snapshot_t *a,
 
 static void xip_snapshot_dump(const xip_snapshot_t *s) {
 
-  chprintf(chp, "    XIP_CTRL      = 0x%08X\r\n", s->xip_ctrl);
-  chprintf(chp, "    SSI CTRLR0    = 0x%08X\r\n", s->ssi_ctrlr0);
-  chprintf(chp, "    SSI BAUDR     = 0x%08X\r\n", s->ssi_baudr);
-  chprintf(chp, "    SSI SER       = 0x%08X\r\n", s->ssi_ser);
-  chprintf(chp, "    SPI_CTRLR0    = 0x%08X\r\n", s->ssi_spi_ctrlr0);
-  chprintf(chp, "    RX_SAMPLE_DLY = 0x%08X\r\n", s->ssi_rx_sample_dly);
-  chprintf(chp, "    TXD_DRV_EDGE  = 0x%08X\r\n", s->ssi_txd_drive_edge);
+  chprintf(chp, "    XIP_CTRL    = 0x%08X\r\n", s->xip_ctrl);
+  chprintf(chp, "    DIRECT_CSR  = 0x%08X\r\n", s->qmi_direct_csr);
+  chprintf(chp, "    M0_TIMING   = 0x%08X\r\n", s->qmi_m0_timing);
+  chprintf(chp, "    M0_RFMT     = 0x%08X\r\n", s->qmi_m0_rfmt);
+  chprintf(chp, "    M0_RCMD     = 0x%08X\r\n", s->qmi_m0_rcmd);
 }
 
 /*===========================================================================*/
@@ -170,9 +168,9 @@ static bool test_unique_id(void) {
 }
 
 /*
- * Test: SSI register preservation across sector erase.
+ * Test: QMI register preservation across sector erase.
  */
-static bool test_ssi_regs_sector_erase(uint32_t block) {
+static bool test_qmi_regs_sector_erase(uint32_t block) {
   xip_snapshot_t before, after;
 
   xip_snapshot_capture(&before);
@@ -189,9 +187,9 @@ static bool test_ssi_regs_sector_erase(uint32_t block) {
 }
 
 /*
- * Test: SSI register preservation across page program.
+ * Test: QMI register preservation across page program.
  */
-static bool test_ssi_regs_page_program(uint32_t block) {
+static bool test_qmi_regs_page_program(uint32_t block) {
   xip_snapshot_t before, after;
 
   xip_snapshot_capture(&before);
@@ -208,9 +206,9 @@ static bool test_ssi_regs_page_program(uint32_t block) {
 }
 
 /*
- * Test: SSI register preservation across block erase.
+ * Test: QMI register preservation across block erase.
  */
-static bool test_ssi_regs_block_erase(uint32_t block) {
+static bool test_qmi_regs_block_erase(uint32_t block) {
   xip_snapshot_t before, after;
 
   xip_snapshot_capture(&before);
@@ -279,36 +277,34 @@ static bool test_xip_readback_erase(uint32_t block) {
 }
 
 /*
- * Test: Boot2 integrity after XIP restore.
+ * Test: Firmware area integrity after XIP restore.
  *
- * Reads the boot2 area (first 252 bytes of flash) twice via XIP,
- * with a flash operation in between.  The first read happens after
- * an erase (so the cache was just flushed by rp_flash_enter_xip),
- * and the second read happens after another erase.  Both reads go
- * through a cold cache, so a cache-flush regression would cause
- * the second read to return stale or corrupted data.
+ * Reads 256 bytes (64 words) from the start of flash twice, with
+ * a flash operation in between.  Both reads go through cold cache
+ * (each erase flushes the cache), so a cache-flush regression
+ * would cause the second read to return stale or corrupted data.
  */
-static bool test_boot2_integrity(void) {
-  const uint8_t *boot2_flash = (const uint8_t *)RP_FLASH_BASE;
-  static uint8_t boot2_snapshot[252];
+static bool test_firmware_readable(void) {
+  const uint32_t *fw = (const uint32_t *)RP_FLASH_BASE;
+  static uint32_t fw_snapshot[64];
   unsigned i;
 
   /* First flash operation — flushes XIP cache. */
   if (erase_sector(TEST_BLOCK, 2U) != FLASH_NO_ERROR)
     return false;
 
-  /* First read of boot2 area — cold cache after erase. */
-  memcpy(boot2_snapshot, boot2_flash, sizeof(boot2_snapshot));
+  /* First read of firmware area — cold cache after erase. */
+  memcpy(fw_snapshot, fw, sizeof(fw_snapshot));
 
   /* Second flash operation — flushes XIP cache again. */
   if (erase_sector(TEST_BLOCK, 2U) != FLASH_NO_ERROR)
     return false;
 
-  /* Second read of boot2 area — cold cache, must match first. */
-  for (i = 0U; i < sizeof(boot2_snapshot); i++) {
-    if (boot2_flash[i] != boot2_snapshot[i]) {
-      chprintf(chp, "    Boot2 byte %u: expected 0x%02X got 0x%02X\r\n",
-               i, boot2_snapshot[i], boot2_flash[i]);
+  /* Second read — cold cache, must match first. */
+  for (i = 0U; i < 64U; i++) {
+    if (fw[i] != fw_snapshot[i]) {
+      chprintf(chp, "    Firmware word %u: expected 0x%08X got 0x%08X\r\n",
+               i, fw_snapshot[i], fw[i]);
       return false;
     }
   }
@@ -435,7 +431,7 @@ static bool test_full_block_write_verify(uint32_t block) {
 /* Blinker thread.                                                           */
 /*===========================================================================*/
 
-static THD_WORKING_AREA(waThread1, 128);
+static THD_WORKING_AREA(waThread1, 256);
 static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
@@ -477,39 +473,41 @@ int main(void) {
 
   chprintf(chp, "\r\n");
   chprintf(chp, "========================================\r\n");
-  chprintf(chp, "  RP2040 XIP Validation\r\n");
+  chprintf(chp, "  RP2350 XIP Validation\r\n");
   chprintf(chp, "========================================\r\n");
   chprintf(chp, "  Flash size:  %u KB\r\n", RP_FLASH_SIZE / 1024U);
   chprintf(chp, "  Test block:  %u (offset 0x%08X)\r\n",
            TEST_BLOCK, TEST_BLOCK * RP_FLASH_BLOCK_64K_SIZE);
   chprintf(chp, "\r\n");
 
-  /* Pre-erase test block. */
+  /* Test 1: Pre-erase test block. */
   chprintf(chp, "  Pre-erasing test block...\r\n");
   ok = erase_block(TEST_BLOCK) == FLASH_NO_ERROR;
   report("Pre-erase test block", ok);
   if (!ok)
     goto done;
 
-  /* Test 2: Unique ID read (exercises distinct XIP exit/enter path). */
+  /* Test 2: Unique ID read. */
   ok = test_unique_id();
   report("Flash unique ID consistent and not blank", ok);
 
-  /* Test 3: SSI regs across sector erase. */
-  ok = test_ssi_regs_sector_erase(TEST_BLOCK);
-  report("SSI regs preserved across sector erase", ok);
+  /* Test 3: QMI regs across sector erase. */
+  ok = test_qmi_regs_sector_erase(TEST_BLOCK);
+  report("QMI regs preserved across sector erase", ok);
 
-  /* Test 4: SSI regs across page program. */
+  /* Test 4: Setup erase for page program test. */
   ok = erase_sector(TEST_BLOCK, 0U) == FLASH_NO_ERROR;
   report("Setup erase for page program test", ok);
   if (!ok)
     goto done;
-  ok = test_ssi_regs_page_program(TEST_BLOCK);
-  report("SSI regs preserved across page program", ok);
 
-  /* Test 6: SSI regs across block erase. */
-  ok = test_ssi_regs_block_erase(TEST_BLOCK);
-  report("SSI regs preserved across block erase", ok);
+  /* Test 5: QMI regs across page program. */
+  ok = test_qmi_regs_page_program(TEST_BLOCK);
+  report("QMI regs preserved across page program", ok);
+
+  /* Test 6: QMI regs across block erase. */
+  ok = test_qmi_regs_block_erase(TEST_BLOCK);
+  report("QMI regs preserved across block erase", ok);
 
   /* Test 7: XIP readback after program. */
   ok = test_xip_readback_program(TEST_BLOCK);
@@ -519,21 +517,23 @@ int main(void) {
   ok = test_xip_readback_erase(TEST_BLOCK);
   report("XIP readback all 0xFF after sector erase", ok);
 
-  /* Test 9: Boot2 integrity. */
-  ok = test_boot2_integrity();
-  report("Boot2 area readable and valid after flash ops", ok);
+  /* Test 9: Firmware area integrity after XIP restore. */
+  ok = test_firmware_readable();
+  report("Firmware area consistent via XIP after flash ops", ok);
 
   /* Test 10: Repeated cycles. */
   chprintf(chp, "\r\n  Repeated erase/program/verify (10 cycles)...\r\n");
   ok = test_repeated_cycles(TEST_BLOCK);
   report("10 erase/program/verify cycles pass", ok);
 
-  /* Test 11: Rapid alternating. */
+  /* Test 11: Setup erase for rapid alternating. */
   chprintf(chp, "\r\n  Rapid alternating erase/program...\r\n");
   ok = erase_block(TEST_BLOCK) == FLASH_NO_ERROR;
   report("Setup erase for rapid alternating test", ok);
   if (!ok)
     goto done;
+
+  /* Test 12: Rapid alternating. */
   ok = test_rapid_alternating(TEST_BLOCK);
   report("Rapid alternating ops with XIP verify", ok);
 
