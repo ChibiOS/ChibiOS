@@ -520,8 +520,8 @@ void usb_lld_start(USBDriver *usbp) {
                     "invalid USB clock frequency");
 
       /* Reset usb controller. */
-      hal_lld_peripheral_reset(RESETS_ALLREG_USBCTRL);
-      hal_lld_peripheral_unreset(RESETS_ALLREG_USBCTRL);
+      rp_peripheral_reset(RESETS_ALLREG_USBCTRL);
+      rp_peripheral_unreset(RESETS_ALLREG_USBCTRL);
 
       /* Clear any previous state in dpram and hw regs */
       memset(USB, 0, sizeof(*USB));

@@ -212,8 +212,8 @@ void adc_lld_start(ADCDriver *adcp) {
       }
 
       /* Reset ADC peripheral.*/
-      hal_lld_peripheral_reset(RESETS_ALLREG_ADC);
-      hal_lld_peripheral_unreset(RESETS_ALLREG_ADC);
+      rp_peripheral_reset(RESETS_ALLREG_ADC);
+      rp_peripheral_unreset(RESETS_ALLREG_ADC);
 
       /* Enable ADC.*/
       adcp->adc->CS = ADC_CS_EN;
@@ -266,7 +266,7 @@ void adc_lld_stop(ADCDriver *adcp) {
       adcp->dma = NULL;
 
       /* Hold ADC in reset to gate the peripheral clock.*/
-      hal_lld_peripheral_reset(RESETS_ALLREG_ADC);
+      rp_peripheral_reset(RESETS_ALLREG_ADC);
     }
 #endif
   }

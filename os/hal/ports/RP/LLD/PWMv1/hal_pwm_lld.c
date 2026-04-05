@@ -261,7 +261,7 @@ OSAL_IRQ_HANDLER(RP_PWM_IRQ_WRAP_0_HANDLER) {
 void pwm_lld_init(void) {
 
   /* Reset PWM peripheral once for all slices. */
-  hal_lld_peripheral_reset(RESETS_ALLREG_PWM);
+  rp_peripheral_reset(RESETS_ALLREG_PWM);
 
 #if RP_PWM_USE_PWM0 == TRUE
   pwmObjectInit(&PWMD0);
@@ -362,7 +362,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
 
   if (pwmp->state == PWM_STOP) {
     /* Clock activation and timer reset. */
-    hal_lld_peripheral_unreset(RESETS_ALLREG_PWM);
+    rp_peripheral_unreset(RESETS_ALLREG_PWM);
     nvicEnableVector(RP_PWM_IRQ_WRAP_0_NUMBER, RP_PWM_IRQ_WRAP_NUMBER_PRIORITY);
   } else {
     /* Driver re-configuration scenario, it must be stopped first. */
@@ -437,7 +437,7 @@ void pwm_lld_stop(PWMDriver *pwmp) {
      PWM peripheral. */
   if (!p->EN) {
     nvicDisableVector(RP_PWM_IRQ_WRAP_0_NUMBER);
-    hal_lld_peripheral_reset(RESETS_ALLREG_PWM);
+    rp_peripheral_reset(RESETS_ALLREG_PWM);
   }
 }
 

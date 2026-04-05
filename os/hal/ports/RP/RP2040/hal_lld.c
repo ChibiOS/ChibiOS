@@ -95,11 +95,9 @@ static void start_core1(void) {
 void hal_lld_init(void) {
 
 #if RP_NO_INIT == FALSE
-  rp_clock_init();
-
-  hal_lld_peripheral_unreset(RESETS_ALLREG_BUSCTRL);
-  hal_lld_peripheral_unreset(RESETS_ALLREG_SYSINFO);
-  hal_lld_peripheral_unreset(RESETS_ALLREG_SYSCFG);
+  rp_peripheral_unreset(RESETS_ALLREG_BUSCTRL);
+  rp_peripheral_unreset(RESETS_ALLREG_SYSINFO);
+  rp_peripheral_unreset(RESETS_ALLREG_SYSCFG);
 #endif /* RP_NO_INIT */
 
   /* NVIC initialization.*/

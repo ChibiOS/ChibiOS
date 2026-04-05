@@ -91,11 +91,11 @@ void rp_pll_init(PLL_TypeDef *pll, uint32_t refdiv, uint32_t vco_freq,
 
   /* Reset the PLL */
   if (pll == PLL_SYS) {
-    hal_lld_peripheral_reset(RESETS_ALLREG_PLL_SYS);
-    hal_lld_peripheral_unreset(RESETS_ALLREG_PLL_SYS);
+    rp_peripheral_reset(RESETS_ALLREG_PLL_SYS);
+    rp_peripheral_unreset(RESETS_ALLREG_PLL_SYS);
   } else {
-    hal_lld_peripheral_reset(RESETS_ALLREG_PLL_USB);
-    hal_lld_peripheral_unreset(RESETS_ALLREG_PLL_USB);
+    rp_peripheral_reset(RESETS_ALLREG_PLL_USB);
+    rp_peripheral_unreset(RESETS_ALLREG_PLL_USB);
   }
 
   /* Set VCO divider */

@@ -174,10 +174,10 @@ OSAL_IRQ_HANDLER(RP_IO_IRQ_BANK0_HANDLER) {
 void _pal_lld_init(void) {
 
   /* Ensures a clean peripheral state */
-  hal_lld_peripheral_reset(RESETS_ALLREG_IO_BANK0);
-  hal_lld_peripheral_reset(RESETS_ALLREG_PADS_BANK0);
-  hal_lld_peripheral_unreset(RESETS_ALLREG_IO_BANK0);
-  hal_lld_peripheral_unreset(RESETS_ALLREG_PADS_BANK0);
+  rp_peripheral_reset(RESETS_ALLREG_IO_BANK0);
+  rp_peripheral_reset(RESETS_ALLREG_PADS_BANK0);
+  rp_peripheral_unreset(RESETS_ALLREG_IO_BANK0);
+  rp_peripheral_unreset(RESETS_ALLREG_PADS_BANK0);
 
   #if PAL_USE_CALLBACKS || PAL_USE_WAIT || defined(__DOXYGEN__)
   unsigned i;

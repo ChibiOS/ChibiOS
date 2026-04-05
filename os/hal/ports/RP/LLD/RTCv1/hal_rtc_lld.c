@@ -123,7 +123,7 @@ void rtc_lld_init(void) {
   osalDbgAssert((clock > 0U) && (clock - 1 <= RTC_CLKDIV_M1), "bad clock");
 
   /* Take RTC out of reset. */
-  hal_lld_peripheral_unreset(RESETS_ALLREG_RTC);
+  rp_peripheral_unreset(RESETS_ALLREG_RTC);
 
   /* Set divider. */
   RTCD1.rtc->CLKDIVM1 = clock - 1;

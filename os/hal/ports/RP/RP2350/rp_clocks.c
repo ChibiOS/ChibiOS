@@ -46,11 +46,6 @@
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Configured clock frequencies
- */
-static uint32_t configured_freq[RP_CLK_COUNT];
-
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -71,7 +66,7 @@ static uint32_t configured_freq[RP_CLK_COUNT];
 void rp_clock_init(void) {
 
   /* Start early tick generator for safety module timeouts. */
-  hal_lld_peripheral_unreset(RESETS_ALLREG_TIMER0);
+  rp_peripheral_unreset(RESETS_ALLREG_TIMER0);
 
   /* Configure tick generator for ~1 us ticks. */
   TICKS->TICK[TICKS_TIMER0].CYCLES = RP_ROSC_ASSUMED_HZ / 1000000U;;
@@ -110,7 +105,6 @@ void rp_clock_init(void) {
     while ((CLOCKS->CLK[RP_CLK_REF].SELECTED & (1U << src)) == 0U) {
       /* Wait for switch to XOSC */
     }
-    configured_freq[RP_CLK_REF] = RP_XOSCCLK;
   }
 
   /* CLK_SYS = PLL_SYS = 150 MHz */
@@ -125,7 +119,6 @@ void rp_clock_init(void) {
   while ((CLOCKS->CLK[RP_CLK_SYS].SELECTED & 2U) == 0U) {
     /* Wait for switch to aux */
   }
-  configured_freq[RP_CLK_SYS] = RP_PLL_SYS_CLK;
 
   /* CLK_USB = PLL_USB = 48 MHz */
   CLOCKS->XOR.CLK[RP_CLK_USB].CTRL =
@@ -133,7 +126,6 @@ void rp_clock_init(void) {
       CLOCKS_CLK_USB_CTRL_AUXSRC_Msk;
   CLOCKS->CLK[RP_CLK_USB].DIV = 1U << 16;
   CLOCKS->SET.CLK[RP_CLK_USB].CTRL = CLOCKS_CLK_PERI_CTRL_ENABLE;
-  configured_freq[RP_CLK_USB] = RP_PLL_USB_CLK;
 
   /* CLK_ADC = PLL_USB = 48 MHz */
   CLOCKS->XOR.CLK[RP_CLK_ADC].CTRL =
@@ -141,7 +133,6 @@ void rp_clock_init(void) {
       CLOCKS_CLK_ADC_CTRL_AUXSRC_Msk;
   CLOCKS->CLK[RP_CLK_ADC].DIV = 1U << 16;
   CLOCKS->SET.CLK[RP_CLK_ADC].CTRL = CLOCKS_CLK_PERI_CTRL_ENABLE;
-  configured_freq[RP_CLK_ADC] = RP_PLL_USB_CLK;
 
   /* CLK_PERI = CLK_SYS = 150 MHz */
   CLOCKS->XOR.CLK[RP_CLK_PERI].CTRL =
@@ -149,10 +140,9 @@ void rp_clock_init(void) {
       CLOCKS_CLK_PERI_CTRL_AUXSRC_Msk;
   CLOCKS->CLK[RP_CLK_PERI].DIV = 1U << 16;
   CLOCKS->SET.CLK[RP_CLK_PERI].CTRL = CLOCKS_CLK_PERI_CTRL_ENABLE;
-  configured_freq[RP_CLK_PERI] = RP_PLL_SYS_CLK;
 
   /* Calculate cycles for 1us tick based on clk_ref frequency. */
-  uint32_t cycles = configured_freq[RP_CLK_REF] / 1000000U;
+  uint32_t cycles = RP_XOSCCLK / 1000000U;
 
   /* Start tick generators */
   for (uint32_t i = 0U; i < 6U; i++) {
@@ -163,6 +153,8 @@ void rp_clock_init(void) {
 
 /**
  * @brief   Returns the frequency of a clock in Hz.
+ * @note    Uses compile-time constants so this function is safe to call
+ *          before BSS/DATA initialization.
  *
  * @param[in] clk_index     clock index (RP_CLK_xxx)
  * @return                  clock frequency in Hz
@@ -171,7 +163,20 @@ uint32_t rp_clock_get_hz(uint32_t clk_index) {
 
   osalDbgAssert(clk_index < RP_CLK_COUNT, "invalid clock index");
 
-  return configured_freq[clk_index];
+  switch (clk_index) {
+  case RP_CLK_REF:
+    return RP_CLK_REF_FREQ;
+  case RP_CLK_SYS:
+    return RP_CLK_SYS_FREQ;
+  case RP_CLK_PERI:
+    return RP_CLK_PERI_FREQ;
+  case RP_CLK_USB:
+    return RP_CLK_USB_FREQ;
+  case RP_CLK_ADC:
+    return RP_CLK_ADC_FREQ;
+  default:
+    return 0U;
+  }
 }
 
 /** @} */

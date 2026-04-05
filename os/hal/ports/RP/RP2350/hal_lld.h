@@ -269,12 +269,12 @@ extern "C" {
 /* Driver inline functions.                                                  */
 /*===========================================================================*/
 
-__STATIC_INLINE void hal_lld_peripheral_reset(uint32_t mask) {
+__STATIC_INLINE void rp_peripheral_reset(uint32_t mask) {
 
   RESETS->SET.RESET = mask;
 }
 
-__STATIC_INLINE void hal_lld_peripheral_unreset(uint32_t mask) {
+__STATIC_INLINE void rp_peripheral_unreset(uint32_t mask) {
 
   RESETS->CLR.RESET = mask;
   while ((RESETS->RESET_DONE & mask) != mask) {

@@ -308,7 +308,7 @@ const rp_pio_sm_t *pioSmAllocI(const rp_pio_block_t *block,
 
       /* Releasing PIO reset if this is the first state machine taken.*/
       if (prevmask == 0U) {
-        hal_lld_peripheral_unreset(block->resets_mask);
+        rp_peripheral_unreset(block->resets_mask);
       }
 
       return &pio_sms[b][i];
@@ -423,7 +423,7 @@ void pioSmFreeI(const rp_pio_sm_t *smp) {
   /* Reset PIO block if no state machines remain.*/
   if ((pio.blocks[b].c0_allocated_mask |
        pio.blocks[b].c1_allocated_mask) == 0U) {
-    hal_lld_peripheral_reset(smp->block->resets_mask);
+    rp_peripheral_reset(smp->block->resets_mask);
   }
 }
 

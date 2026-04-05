@@ -259,7 +259,7 @@ const rp_dma_channel_t *dmaChannelAllocI(uint32_t id,
 
       /* Releasing DMA reset if it is the 1st channel taken.*/
       if (prevmask == 0U) {
-        hal_lld_peripheral_unreset(RESETS_ALLREG_DMA);
+        rp_peripheral_unreset(RESETS_ALLREG_DMA);
       }
 
       return dmachp;
@@ -342,7 +342,7 @@ void dmaChannelFreeI(const rp_dma_channel_t *dmachp) {
 
   /* Shutting down clocks that are no more required, if any.*/
   if ((dma.c0_allocated_mask | dma.c1_allocated_mask) == 0U) {
-    hal_lld_peripheral_reset(RESETS_ALLREG_DMA);
+    rp_peripheral_reset(RESETS_ALLREG_DMA);
   }
 }
 
