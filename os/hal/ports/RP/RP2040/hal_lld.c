@@ -61,6 +61,23 @@ static void start_core1(void) {
                              (uint32_t)RP_CORE1_ENTRY_POINT};
   unsigned seq;
 
+  /* Force-reset core1 via PSM before starting the FIFO launch handshake.
+   *
+   * If core1 survived a preceding soft reset (e.g. a bootloader that uses
+   * BX to jump to the application rather than SYSRESETREQ), it may still
+   * be executing application code from a previous run.  In that case the
+   * ROM FIFO handshake protocol will deadlock: core0 sends the sync
+   * sequence but core1 is not in the ROM wait-for-launch loop so it never
+   * echoes back.
+   *
+   * PSM FRCE_OFF holds core1 in reset (powered-off state).  Clearing it
+   * releases core1 into the ROM boot-path which immediately enters the
+   * wait-for-launch loop.  The PSM DONE bit falls while the core is held
+   * off, and rises again once it has been released and is running.*/
+  PSM->SET.FRCE_OFF = PSM_ANY_PROC1;         /* assert reset to core1      */
+  while (PSM->DONE & PSM_ANY_PROC1) {}       /* wait until it powers off   */
+  PSM->CLR.FRCE_OFF = PSM_ANY_PROC1;         /* release — core1 enters ROM */
+
   /* Starting core 1.*/
   seq = 0;
   do {
