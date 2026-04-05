@@ -502,8 +502,5 @@
 		<scannerConfigBuildInfo instanceId="0.365230168.523175374.1861110630.122523474.2045120371">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="0.365230168.523175374.1861110630.122523474.2045120371.1658339204.1712384047">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
-		</scannerConfigBuildInfo>
 	</storageModule>
 </cproject>
