@@ -268,6 +268,8 @@ __STATIC_INLINE void dmaChannelSetModeX(const rp_dma_channel_t *dmachp,
 
 /**
  * @brief   Aborts the current transfer on a DMA channel.
+ * @note    EN and CHAIN_TO are cleared before asserting CHAN_ABORT to
+ *          prevent post-abort re-triggering (RP2350-E5).
  *
  * @param[in] dmachp    pointer to a rp_dma_channel_t structure
  *
@@ -275,6 +277,14 @@ __STATIC_INLINE void dmaChannelSetModeX(const rp_dma_channel_t *dmachp,
  */
 __STATIC_INLINE void dmaChannelAbortX(const rp_dma_channel_t *dmachp) {
 
+  /* Clear EN and set CHAIN_TO to self (no chaining) per RP2350-E5.
+     W1C error flags are masked to zero to preserve them. */
+  dmachp->channel->CTRL_TRIG = (dmachp->channel->CTRL_TRIG &
+                                ~(DMA_CTRL_TRIG_EN |
+                                  DMA_CTRL_TRIG_CHAIN_TO_Msk |
+                                  DMA_CTRL_TRIG_READ_ERROR |
+                                  DMA_CTRL_TRIG_WRITE_ERROR)) |
+                               DMA_CTRL_TRIG_CHAIN_TO(dmachp->chnidx);
   dmachp->dma->SET.CHAN_ABORT = dmachp->chnmask;
   while ((dmachp->dma->CHAN_ABORT & dmachp->chnmask) != 0U) {
   }
