@@ -44,7 +44,23 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static void __bsio_update_tx_irq(BufferedSIODriver *bsiop, bool txdone) {
+  sioevents_t mask;
+
+  mask = sioGetEnableFlagsX(bsiop->siop) & ~(SIO_EV_TXNOTFULL | SIO_EV_TXDONE);
+  if (!oqIsEmptyI(&bsiop->oqueue)) {
+    mask |= SIO_EV_TXNOTFULL;
+  }
+  if (txdone) {
+    mask |= SIO_EV_TXDONE;
+  }
+  sioWriteEnableFlagsX(bsiop->siop, mask);
+}
+
 static void __bsio_push_data(BufferedSIODriver *bsiop) {
+  bool txdone;
+
+  txdone = sioIsTXOngoingX(bsiop->siop);
 
   while (!sioIsTXFullX(bsiop->siop)) {
     msg_t msg;
@@ -52,10 +68,14 @@ static void __bsio_push_data(BufferedSIODriver *bsiop) {
     msg = oqGetI(&bsiop->oqueue);
     if (msg < MSG_OK) {
       chnAddFlagsI((BufferedSerial *)bsiop, CHN_OUTPUT_EMPTY);
+      __bsio_update_tx_irq(bsiop, txdone);
       return;
     }
     sioPutX(bsiop->siop, (uint_fast16_t)msg);
+    txdone = true;
   }
+
+  __bsio_update_tx_irq(bsiop, txdone);
 }
 
 static void __bsio_pop_data(BufferedSIODriver *bsiop) {
@@ -210,7 +230,8 @@ msg_t bsioStart(BufferedSIODriver *bsiop, const BufferedSIOConfig *config) {
     osalSysLock();
     bsiop->siop->arg = (void *)bsiop;
     sioSetCallbackX(bsiop->siop, &__bsio_default_cb);
-    sioWriteEnableFlagsX(bsiop->siop, SIO_EV_ALL_EVENTS);
+    sioWriteEnableFlagsX(bsiop->siop, SIO_EV_ALL_ERRORS | SIO_EV_RXNOTEMPY |
+                                     SIO_EV_RXIDLE);
     bsiop->state = BS_READY;
     osalSysUnlock();
   }
