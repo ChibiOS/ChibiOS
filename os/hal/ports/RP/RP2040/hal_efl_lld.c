@@ -284,7 +284,9 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
   (void)ssi->SR;                    /* Clear sticky errors (clear-on-read). */
   (void)ssi->ICR;
   ssi->BAUDR = SSI_BAUDR_DEFAULT;
-  ssi->CTRLR0 = SSI_CTRLR0_DFS_32(7U);
+  ssi->CTRLR0 = SSI_CTRLR0_SPI_FRF_STD |
+                 SSI_CTRLR0_TMOD_TX_AND_RX |
+                 SSI_CTRLR0_DFS_32(7U);
   ssi->SER = 1U;
   ssi->SSIENR = 1U;
 
