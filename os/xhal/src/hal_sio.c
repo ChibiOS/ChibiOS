@@ -99,18 +99,37 @@ static size_t sio_sync_read(hal_sio_driver_c *siop, uint8_t *bp, size_t n,
 #endif /* SIO_USE_STREAMS_INTERFACE == TRUE */
 
 #if (SIO_USE_BUFFERING == TRUE) || defined (__DOXYGEN__)
-static void __bsio_push_data(hal_buffered_sio_c *bsiop) {
+static void __bsio_update_tx_irq(hal_buffered_sio_c *bsiop, bool txdone) {
+  sioevents_t mask;
 
+  mask = sioGetEnableFlagsX(bsiop->siop) & ~(SIO_EV_TX_NOTFULL | SIO_EV_TX_END);
+  if (!oqIsEmptyI(&bsiop->oqueue)) {
+    mask |= SIO_EV_TX_NOTFULL;
+  }
+  if (txdone) {
+    mask |= SIO_EV_TX_END;
+  }
+  sioWriteEnableFlagsX(bsiop->siop, mask);
+}
+
+static void __bsio_push_data(hal_buffered_sio_c *bsiop) {
+  bool txdone;
+
+  txdone = sioIsTXOngoingX(bsiop->siop);
   while (!sioIsTXFullX(bsiop->siop)) {
     msg_t msg;
 
     msg = oqGetI(&bsiop->oqueue);
     if (msg < MSG_OK) {
       bsAddFlagsI(bsiop, CHN_FL_TX_NOTFULL);
+      __bsio_update_tx_irq(bsiop, txdone);
       return;
     }
     sioPutX(bsiop->siop, (uint_fast16_t)msg);
+    txdone = true;
   }
+
+  __bsio_update_tx_irq(bsiop, txdone);
 }
 
 static void __bsio_pop_data(hal_buffered_sio_c *bsiop) {
@@ -127,23 +146,26 @@ static void __bsio_default_cb(void *ip) {
   hal_buffered_sio_c *bsiop = (hal_buffered_sio_c *)siop->arg;
   sioevents_t events;
 
+  if (bsiop == NULL) {
+    return;
+  }
+
   osalSysLockFromISR();
+
+  /* Drain/fill FIFOs before re-enabling data interrupts in the LLD.
+     NOTE: this assumes status/error flags are not cleared by data reads,
+     otherwise non-data events could be lost before sioGetAndClearEventsX(). */
+  if (!sioIsRXEmptyX(siop)) {
+    __bsio_pop_data(bsiop);
+  }
+  if (!sioIsTXFullX(siop)) {
+    __bsio_push_data(bsiop);
+  }
 
   /* Posting the non-data SIO events as channel event flags, the masks are
      made to match.*/
   events = sioGetAndClearEventsX(siop, SIO_EV_ALL_EVENTS);
   bsAddFlagsI(bsiop, (eventflags_t)(events & ~SIO_EV_ALL_DATA));
-
-  /* RX FIFO event.*/
-  if ((events & SIO_EV_RX_NOTEMPTY) != (sioevents_t)0) {
-
-    __bsio_pop_data(bsiop);
-  }
-
-  /* TX FIFO event.*/
-  if ((events & SIO_EV_TX_NOTFULL) != (sioevents_t)0) {
-     __bsio_push_data(bsiop);
-  }
 
   osalSysUnlockFromISR();
 }
@@ -957,7 +979,9 @@ msg_t __bsio_start_impl(void *ip) {
   if (msg == HAL_RET_SUCCESS) {
     drvSetArgumentX(self->siop, self);
     drvSetCallbackX(self->siop, &__bsio_default_cb);
-    sioWriteEnableFlagsX(self->siop, SIO_EV_ALL_EVENTS);
+    sioWriteEnableFlagsX(self->siop,
+                         SIO_EV_ALL_ERRORS | SIO_EV_RX_NOTEMPTY |
+                         SIO_EV_RX_IDLE);
   }
 
   return msg;

@@ -633,7 +633,7 @@ struct hal_sio_driver {
    * @brief       Enabled event flags.
    */
   sioevents_t               enabled;
-#if (HAL_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
+#if (SIO_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Synchronization point for RX.
    */
@@ -650,7 +650,7 @@ struct hal_sio_driver {
    * @brief       Synchronization point for TX-end.
    */
   thread_reference_t        sync_txend;
-#endif /* HAL_USE_MUTUAL_EXCLUSION == TRUE */
+#endif /* SIO_USE_SYNCHRONIZATION == TRUE */
 #if defined(SIO_DRIVER_EXT_FIELDS)
   SIO_DRIVER_EXT_FIELDS
 #endif

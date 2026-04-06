@@ -583,7 +583,7 @@ return HAL_RET_SUCCESS;]]></implementation>
           <field name="enabled" ctype="sioevents_t">
             <brief>Enabled event flags.</brief>
           </field>
-          <condition check="HAL_USE_MUTUAL_EXCLUSION == TRUE">
+          <condition check="SIO_USE_SYNCHRONIZATION == TRUE">
             <field name="sync_rx" ctype="thread_reference_t">
               <brief>Synchronization point for RX.</brief>
             </field>
@@ -1010,7 +1010,9 @@ msg = drvStartS(self->siop);
 if (msg == HAL_RET_SUCCESS) {
   drvSetArgumentX(self->siop, self);
   drvSetCallbackX(self->siop, &__bsio_default_cb);
-  sioWriteEnableFlagsX(self->siop, SIO_EV_ALL_EVENTS);
+  sioWriteEnableFlagsX(self->siop,
+                       SIO_EV_ALL_ERRORS | SIO_EV_RX_NOTEMPTY |
+                       SIO_EV_RX_IDLE);
 }
 
 return msg;]]></implementation>
@@ -1104,20 +1106,41 @@ return i;]]></implementation>
         </function>
       </condition>
       <condition check="SIO_USE_BUFFERING == TRUE">
+        <function name="__bsio_update_tx_irq" ctype="void">
+          <param name="bsiop" ctype="hal_buffered_sio_c *"></param>
+          <param name="txdone" ctype="bool"></param>
+          <implementation><![CDATA[
+sioevents_t mask;
+
+mask = sioGetEnableFlagsX(bsiop->siop) & ~(SIO_EV_TX_NOTFULL | SIO_EV_TX_END);
+if (!oqIsEmptyI(&bsiop->oqueue)) {
+  mask |= SIO_EV_TX_NOTFULL;
+}
+if (txdone) {
+  mask |= SIO_EV_TX_END;
+}
+sioWriteEnableFlagsX(bsiop->siop, mask);]]></implementation>
+        </function>
         <function name="__bsio_push_data" ctype="void">
           <param name="bsiop" ctype="hal_buffered_sio_c *"></param>
           <implementation><![CDATA[
+bool txdone;
 
+txdone = sioIsTXOngoingX(bsiop->siop);
 while (!sioIsTXFullX(bsiop->siop)) {
   msg_t msg;
 
   msg = oqGetI(&bsiop->oqueue);
   if (msg < MSG_OK) {
     bsAddFlagsI(bsiop, CHN_FL_TX_NOTFULL);
+    __bsio_update_tx_irq(bsiop, txdone);
     return;
   }
   sioPutX(bsiop->siop, (uint_fast16_t)msg);
-}]]></implementation>
+  txdone = true;
+}
+
+__bsio_update_tx_irq(bsiop, txdone);]]></implementation>
         </function>
         <function name="__bsio_pop_data" ctype="void">
           <param name="bsiop" ctype="hal_buffered_sio_c *"></param>
@@ -1136,23 +1159,26 @@ hal_sio_driver_c *siop = (hal_sio_driver_c *)ip;
 hal_buffered_sio_c *bsiop = (hal_buffered_sio_c *)siop->arg;
 sioevents_t events;
 
+if (bsiop == NULL) {
+  return;
+}
+
 osalSysLockFromISR();
+
+/* Drain/fill FIFOs before re-enabling data interrupts in the LLD.
+   NOTE: this assumes status/error flags are not cleared by data reads,
+   otherwise non-data events could be lost before sioGetAndClearEventsX(). */
+if (!sioIsRXEmptyX(siop)) {
+  __bsio_pop_data(bsiop);
+}
+if (!sioIsTXFullX(siop)) {
+  __bsio_push_data(bsiop);
+}
 
 /* Posting the non-data SIO events as channel event flags, the masks are
    made to match.*/
 events = sioGetAndClearEventsX(siop, SIO_EV_ALL_EVENTS);
 bsAddFlagsI(bsiop, (eventflags_t)(events & ~SIO_EV_ALL_DATA));
-
-/* RX FIFO event.*/
-if ((events & SIO_EV_RX_NOTEMPTY) != (sioevents_t)0) {
-
-  __bsio_pop_data(bsiop);
-}
-
-/* TX FIFO event.*/
-if ((events & SIO_EV_TX_NOTFULL) != (sioevents_t)0) {
-   __bsio_push_data(bsiop);
-}
 
 osalSysUnlockFromISR();]]></implementation>
         </function>

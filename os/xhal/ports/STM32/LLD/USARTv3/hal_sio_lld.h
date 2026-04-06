@@ -174,6 +174,54 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* Some devices have mixed USARTs, with and without FIFOs. This macro
+   indicates if in the current device there is a mixed situation, the
+   driver gets a bit more complex in that case.
+   LPUARTs are assumed to have FIFOs.*/
+#if !defined(STM32_USART_MIXED)
+#define STM32_USART_MIXED                   FALSE
+#endif
+
+#if !defined(STM32_USART1_HAS_FIFO)
+#define STM32_USART1_HAS_FIFO               TRUE
+#endif
+
+#if !defined(STM32_USART2_HAS_FIFO)
+#define STM32_USART2_HAS_FIFO               TRUE
+#endif
+
+#if !defined(STM32_USART3_HAS_FIFO)
+#define STM32_USART3_HAS_FIFO               TRUE
+#endif
+
+#if !defined(STM32_UART4_HAS_FIFO)
+#define STM32_UART4_HAS_FIFO                TRUE
+#endif
+
+#if !defined(STM32_UART5_HAS_FIFO)
+#define STM32_UART5_HAS_FIFO                TRUE
+#endif
+
+#if !defined(STM32_USART6_HAS_FIFO)
+#define STM32_USART6_HAS_FIFO               TRUE
+#endif
+
+#if !defined(STM32_UART7_HAS_FIFO)
+#define STM32_UART7_HAS_FIFO                TRUE
+#endif
+
+#if !defined(STM32_UART8_HAS_FIFO)
+#define STM32_UART8_HAS_FIFO                TRUE
+#endif
+
+#if !defined(STM32_UART9_HAS_FIFO)
+#define STM32_UART9_HAS_FIFO                TRUE
+#endif
+
+#if !defined(STM32_USART10_HAS_FIFO)
+#define STM32_USART10_HAS_FIFO              TRUE
+#endif
+
 #define SIO_DEFAULT_CONFIGURATION                                           \
 {                                                                           \
   .baud  = SIO_DEFAULT_BITRATE,                                             \
@@ -340,11 +388,21 @@
 /**
  * @brief   Low level fields of the SIO driver structure.
  */
+#if (STM32_USART_MIXED == TRUE) || defined(__DOXYGEN__)
+#define sio_lld_driver_fields                                               \
+  /* Pointer to the USARTx registers block.*/                               \
+  USART_TypeDef             *usart;                                         \
+  /* Flag indicating FIFO capability.*/                                     \
+  bool                      has_fifo;                                       \
+  /* Clock frequency for the associated USART/UART.*/                       \
+  uint32_t                  clock
+#else
 #define sio_lld_driver_fields                                               \
   /* Pointer to the USARTx registers block.*/                               \
   USART_TypeDef             *usart;                                         \
   /* Clock frequency for the associated USART/UART.*/                       \
   uint32_t                  clock
+#endif
 
 /**
  * @brief   Low level fields of the SIO configuration structure.
