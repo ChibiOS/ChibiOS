@@ -284,10 +284,10 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
   qmi->DIRECT_CSR = QMI_DIRECT_CSR_EN | QMI_DIRECT_CSR_CLKDIV(6U);
 
   /*
-   * Exit continuous read mode sequence:
+   * Exit continuous read / QPI mode sequence:
    * 1. CS high 32 clocks with IO pulled down
    * 2. CS low 32 clocks with IO pulled up
-   * 3. Send 0xFF, 0xFF
+   * 3. F5h QPI exit in quad width, 16x NOP ones, FFh QPI exit in quad width
   */
 
   /* Save pad control and configure with output disabled.*/
@@ -345,16 +345,34 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
   pads_qspi->GPIO_QSPI_SD2 = padctrl_save;
   pads_qspi->GPIO_QSPI_SD3 = padctrl_save;
 
-  /* 3. Send 0xFF, 0xFF */
+  /* 3. QPI exit: F5h in quad width (exits PSRAM: LY68L, IS66WV, etc.). */
   rp_flash_cs_force(eflp, false);
-  qmi->DIRECT_TX = 0xFFU;
-  qmi->DIRECT_TX = 0xFFU;
-  while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_RXEMPTY) != 0U) {
+  qmi->DIRECT_TX = 0xF5U | QMI_DIRECT_TX_IWIDTH(QMI_DIRECT_TX_IWIDTH_Q) |
+                   QMI_DIRECT_TX_OE | QMI_DIRECT_TX_NOPUSH;
+  while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_BUSY) != 0U) {
   }
-  (void)qmi->DIRECT_RX;
-  while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_RXEMPTY) != 0U) {
+  rp_flash_cs_force(eflp, true);
+
+  /* Continuous-read recovery: CSn=0, MOSI=1, all other IOs Hi-Z, 16
+   * clocks in single-width (Hardware Design with RP2350: Section 3.3,
+   * RP2350 Datasheet: 5.4.8.7). Exits devices stuck in continuous-read
+   * mode; QPI exit is handled separately by the FFh quad command below. */
+  rp_flash_cs_force(eflp, false);
+  for (i = 0U; i < 2U; i++) {
+    while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_TXFULL) != 0U) {
+    }
+    qmi->DIRECT_TX = 0xFFU | QMI_DIRECT_TX_NOPUSH;
   }
-  (void)qmi->DIRECT_RX;
+  while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_BUSY) != 0U) {
+  }
+  rp_flash_cs_force(eflp, true);
+
+  /* QPI exit: FFh in quad width (catches devices that ignore F5h). */
+  rp_flash_cs_force(eflp, false);
+  qmi->DIRECT_TX = 0xFFU | QMI_DIRECT_TX_IWIDTH(QMI_DIRECT_TX_IWIDTH_Q) |
+                   QMI_DIRECT_TX_OE | QMI_DIRECT_TX_NOPUSH;
+  while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_BUSY) != 0U) {
+  }
   rp_flash_cs_force(eflp, true);
 }
 
