@@ -100,16 +100,20 @@ static size_t sio_sync_read(hal_sio_driver_c *siop, uint8_t *bp, size_t n,
 
 #if (SIO_USE_BUFFERING == TRUE) || defined (__DOXYGEN__)
 static void __bsio_update_tx_irq(hal_buffered_sio_c *bsiop, bool txdone) {
+  sioevents_t current;
   sioevents_t mask;
 
-  mask = sioGetEnableFlagsX(bsiop->siop) & ~(SIO_EV_TX_NOTFULL | SIO_EV_TX_END);
+  current = sioGetEnableFlagsX(bsiop->siop);
+  mask = current & ~(SIO_EV_TX_NOTFULL | SIO_EV_TX_END);
   if (!oqIsEmptyI(&bsiop->oqueue)) {
     mask |= SIO_EV_TX_NOTFULL;
   }
   if (txdone) {
     mask |= SIO_EV_TX_END;
   }
-  sioWriteEnableFlagsX(bsiop->siop, mask);
+  if (mask != current) {
+    sioWriteEnableFlagsX(bsiop->siop, mask);
+  }
 }
 
 static void __bsio_push_data(hal_buffered_sio_c *bsiop) {

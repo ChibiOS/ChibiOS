@@ -1110,16 +1110,20 @@ return i;]]></implementation>
           <param name="bsiop" ctype="hal_buffered_sio_c *"></param>
           <param name="txdone" ctype="bool"></param>
           <implementation><![CDATA[
+sioevents_t current;
 sioevents_t mask;
 
-mask = sioGetEnableFlagsX(bsiop->siop) & ~(SIO_EV_TX_NOTFULL | SIO_EV_TX_END);
+current = sioGetEnableFlagsX(bsiop->siop);
+mask = current & ~(SIO_EV_TX_NOTFULL | SIO_EV_TX_END);
 if (!oqIsEmptyI(&bsiop->oqueue)) {
   mask |= SIO_EV_TX_NOTFULL;
 }
 if (txdone) {
   mask |= SIO_EV_TX_END;
 }
-sioWriteEnableFlagsX(bsiop->siop, mask);]]></implementation>
+if (mask != current) {
+  sioWriteEnableFlagsX(bsiop->siop, mask);
+}]]></implementation>
         </function>
         <function name="__bsio_push_data" ctype="void">
           <param name="bsiop" ctype="hal_buffered_sio_c *"></param>
