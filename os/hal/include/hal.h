@@ -161,6 +161,10 @@
 #define HAL_USE_DAC                         FALSE
 #endif
 
+#if !defined(HAL_USE_DISPLAY)
+#define HAL_USE_DISPLAY                     FALSE
+#endif
+
 #if !defined(HAL_USE_EFL)
 #define HAL_USE_EFL                         FALSE
 #endif
@@ -325,6 +329,7 @@ static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
 #include "hal_can.h"
 #include "hal_crypto.h"
 #include "hal_dac.h"
+#include "hal_dspl.h"
 #include "hal_efl.h"
 #include "hal_gpt.h"
 #include "hal_i2c.h"

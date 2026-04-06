@@ -76,6 +76,13 @@
 #endif
 
 /**
+ * @brief   Enables the display subsystem.
+ */
+#if !defined(HAL_USE_DSPL) || defined(__DOXYGEN__)
+#define HAL_USE_DSPL                        TRUE
+#endif
+
+/**
  * @brief   Enables the EFlash subsystem.
  */
 #if !defined(HAL_USE_EFL) || defined(__DOXYGEN__)
