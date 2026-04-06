@@ -755,6 +755,8 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
      to the state of the various CRx registers.*/
   isrmask = __sio_reloc_field(cr1, USART_CR1_TXEIE,  USART_CR1_TXEIE_Pos,  USART_ISR_TXE_Pos)  |
             __sio_reloc_field(cr1, USART_CR1_RXNEIE, USART_CR1_RXNEIE_Pos, USART_ISR_RXNE_Pos) |
+            /* NOTE: ORE interrupt also enabled by USART_CR1_RXNEIE, not just USART_CR3_EIE.*/
+            __sio_reloc_field(cr1, USART_CR1_RXNEIE, USART_CR1_RXNEIE_Pos, USART_ISR_ORE_Pos)  |
             __sio_reloc_field(cr1, USART_CR1_IDLEIE, USART_CR1_IDLEIE_Pos, USART_ISR_IDLE_Pos) |
             __sio_reloc_field(cr1, USART_CR1_TCIE,   USART_CR1_TCIE_Pos,   USART_ISR_TC_Pos)   |
             __sio_reloc_field(cr1, USART_CR1_PEIE,   USART_CR1_PEIE_Pos,   USART_ISR_PE_Pos)   |
@@ -842,7 +844,8 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
     __sio_callback(siop);
   }
   else {
-    osalDbgAssert(false, "spurious interrupt");
+    /* Shared STM32 USART vectors can dispatch multiple instances, ignore the
+       call if this peripheral has no pending enabled source.*/
   }
 }
 

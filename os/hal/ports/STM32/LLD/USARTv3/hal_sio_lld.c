@@ -1001,10 +1001,10 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
       cr2 &= ~(USART_CR2_LBDIE);
       cr3 &= ~(USART_CR3_EIE | USART_CR3_RXFTIE);
 
-      /* Notifying the application only if it is interested in errors.*/
-      if ((siop->enabled & SIO_EV_ALL_ERRORS) != (sioevents_t)0) {
-        __sio_wakeup_errors(siop);
-      }
+      /* RX waiters must always be woken on errors, the enabled mask only
+         controls which IRQ sources are armed, not whether synchronization
+         should notice an already pending error condition.*/
+      __sio_wakeup_errors(siop);
     }
     /* If there are no errors then we check for the other RX-related
        status flags.*/
@@ -1088,7 +1088,8 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
     __sio_callback(siop);
   }
   else {
-    osalDbgAssert(false, "spurious interrupt");
+    /* Shared STM32 USART vectors can dispatch multiple instances, ignore the
+       call if this peripheral has no pending enabled source.*/
   }
 }
 
