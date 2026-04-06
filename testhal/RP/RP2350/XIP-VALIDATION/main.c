@@ -60,6 +60,11 @@ typedef struct {
   uint32_t qmi_m0_timing;
   uint32_t qmi_m0_rfmt;
   uint32_t qmi_m0_rcmd;
+  uint32_t qmi_m1_timing;
+  uint32_t qmi_m1_rfmt;
+  uint32_t qmi_m1_rcmd;
+  uint32_t qmi_m1_wfmt;
+  uint32_t qmi_m1_wcmd;
 } xip_snapshot_t;
 
 static void xip_snapshot_capture(xip_snapshot_t *s) {
@@ -69,6 +74,11 @@ static void xip_snapshot_capture(xip_snapshot_t *s) {
   s->qmi_m0_timing  = QMI->M0_TIMING;
   s->qmi_m0_rfmt    = QMI->M0_RFMT;
   s->qmi_m0_rcmd    = QMI->M0_RCMD;
+  s->qmi_m1_timing  = QMI->M1_TIMING;
+  s->qmi_m1_rfmt    = QMI->M1_RFMT;
+  s->qmi_m1_rcmd    = QMI->M1_RCMD;
+  s->qmi_m1_wfmt    = QMI->M1_WFMT;
+  s->qmi_m1_wcmd    = QMI->M1_WCMD;
 }
 
 static bool xip_snapshot_compare(const xip_snapshot_t *a,
@@ -84,6 +94,11 @@ static void xip_snapshot_dump(const xip_snapshot_t *s) {
   chprintf(chp, "    M0_TIMING   = 0x%08X\r\n", s->qmi_m0_timing);
   chprintf(chp, "    M0_RFMT     = 0x%08X\r\n", s->qmi_m0_rfmt);
   chprintf(chp, "    M0_RCMD     = 0x%08X\r\n", s->qmi_m0_rcmd);
+  chprintf(chp, "    M1_TIMING   = 0x%08X\r\n", s->qmi_m1_timing);
+  chprintf(chp, "    M1_RFMT     = 0x%08X\r\n", s->qmi_m1_rfmt);
+  chprintf(chp, "    M1_RCMD     = 0x%08X\r\n", s->qmi_m1_rcmd);
+  chprintf(chp, "    M1_WFMT     = 0x%08X\r\n", s->qmi_m1_wfmt);
+  chprintf(chp, "    M1_WCMD     = 0x%08X\r\n", s->qmi_m1_wcmd);
 }
 
 /*===========================================================================*/

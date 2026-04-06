@@ -154,10 +154,16 @@
   QMI_TypeDef                 *qmi;                                         \
   /* Saved XIP control register. */                                         \
   uint32_t                    xip_ctrl;                                     \
-  /* Saved XIP configuration registers. */                                  \
+  /* Saved CS0 (flash) XIP configuration registers. */                       \
   uint32_t                    xip_timing;                                   \
   uint32_t                    xip_rfmt;                                     \
-  uint32_t                    xip_rcmd;
+  uint32_t                    xip_rcmd;                                     \
+  /* Saved CS1 (PSRAM) XIP configuration registers. */                      \
+  uint32_t                    xip_m1_timing;                                \
+  uint32_t                    xip_m1_rfmt;                                  \
+  uint32_t                    xip_m1_rcmd;                                  \
+  uint32_t                    xip_m1_wfmt;                                  \
+  uint32_t                    xip_m1_wcmd;
 
 /**
  * @brief   Low level fields of the embedded flash configuration structure.

@@ -270,11 +270,17 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
   unsigned i;
   volatile unsigned delay;
 
-  /* Save current XIP configuration before switching to direct mode. */
-  eflp->xip_ctrl = xip_ctrl->CTRL;
-  eflp->xip_timing = qmi->M0_TIMING;
-  eflp->xip_rfmt = qmi->M0_RFMT;
-  eflp->xip_rcmd = qmi->M0_RCMD;
+  /* Save current XIP configuration (CS0 and CS1) before switching
+   * to direct mode. */
+  eflp->xip_ctrl       = xip_ctrl->CTRL;
+  eflp->xip_timing     = qmi->M0_TIMING;
+  eflp->xip_rfmt       = qmi->M0_RFMT;
+  eflp->xip_rcmd       = qmi->M0_RCMD;
+  eflp->xip_m1_timing  = qmi->M1_TIMING;
+  eflp->xip_m1_rfmt    = qmi->M1_RFMT;
+  eflp->xip_m1_rcmd    = qmi->M1_RCMD;
+  eflp->xip_m1_wfmt    = qmi->M1_WFMT;
+  eflp->xip_m1_wcmd    = qmi->M1_WCMD;
 
   /* Wait for any pending work.*/
   while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_BUSY) != 0U) {
@@ -392,11 +398,16 @@ RAMFUNC static void rp_flash_enter_xip(EFlashDriver *eflp) {
   while ((qmi->DIRECT_CSR & QMI_DIRECT_CSR_BUSY) != 0U) {
   }
 
-  /* Disable direct mode and restore saved XIP configuration. */
+  /* Disable direct mode and restore saved XIP configuration (CS0 and CS1). */
   qmi->DIRECT_CSR = 0U;
-  qmi->M0_TIMING = eflp->xip_timing;
-  qmi->M0_RFMT = eflp->xip_rfmt;
-  qmi->M0_RCMD = eflp->xip_rcmd;
+  qmi->M0_TIMING  = eflp->xip_timing;
+  qmi->M0_RFMT    = eflp->xip_rfmt;
+  qmi->M0_RCMD    = eflp->xip_rcmd;
+  qmi->M1_TIMING  = eflp->xip_m1_timing;
+  qmi->M1_RFMT    = eflp->xip_m1_rfmt;
+  qmi->M1_RCMD    = eflp->xip_m1_rcmd;
+  qmi->M1_WFMT    = eflp->xip_m1_wfmt;
+  qmi->M1_WCMD    = eflp->xip_m1_wcmd;
 
   rp_flash_flush_cache(eflp);
 }
