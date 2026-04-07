@@ -550,6 +550,15 @@
 #define USB_USE_WAIT                        TRUE
 #endif
 
+/**
+ * @brief   Moves EP0 request handling to thread context.
+ * @note    When enabled the legacy requests hook callback is not available
+ *          and the application must provide a dedicated EP0 worker thread.
+ */
+#if !defined(USB_USE_EP0_THREAD) || defined(__DOXYGEN__)
+#define USB_USE_EP0_THREAD                  FALSE
+#endif
+
 /*===========================================================================*/
 /* WSPI driver related settings.                                             */
 /*===========================================================================*/
