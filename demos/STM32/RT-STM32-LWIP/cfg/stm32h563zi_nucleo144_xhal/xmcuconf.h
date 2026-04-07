@@ -17,20 +17,43 @@
 #ifndef XMCUCONF_H
 #define XMCUCONF_H
 
+/*
+ * STM32H5xx drivers configuration.
+ * The following settings override the default settings present in
+ * the various device driver implementation headers.
+ * Note that the settings for each driver only have effect if the whole
+ * driver is enabled in halconf.h.
+ *
+ * IRQ priorities:
+ * 15...0       Lowest...Highest.
+ *
+ * DMA priorities:
+ * 0...3        Lowest...Highest.
+ */
+
 #define STM32H5xx_XMCUCONF
 #define STM32H562_XMCUCONF
 #define STM32H563_XMCUCONF
 #define STM32H573_XMCUCONF
 
+/*
+ * HAL driver general settings.
+ */
 #define STM32_NO_INIT                       FALSE
 #define STM32_CLOCK_DYNAMIC                 FALSE
 
+/*
+ * ICache settings.
+ */
 #define STM32_ICACHE_CR                     (ICACHE_CR_EN)
 #define STM32_ICACHE_CRR0                   (0U)
 #define STM32_ICACHE_CRR1                   (0U)
 #define STM32_ICACHE_CRR2                   (0U)
 #define STM32_ICACHE_CRR3                   (0U)
 
+/*
+ * PWR settings.
+ */
 #define STM32_PWR_VOSCR                     PWR_VOSCR_VOS_RANGE0
 #define STM32_PWR_BDCR                      (0U)
 #define STM32_PWR_UCPDR                     (0U)
@@ -42,6 +65,9 @@
 #define STM32_PWR_SECCFGR                   (0U)
 #define STM32_PWR_PRIVCFGR                  (0U)
 
+/*
+ * Clock settings.
+ */
 #define STM32_HSI_ENABLED                   TRUE
 #define STM32_HSIDIV_VALUE                  2
 #define STM32_HSI48_ENABLED                 FALSE
@@ -82,6 +108,9 @@
 #define STM32_MCO2PRE_VALUE                 RCC_CFGR1_MCO2PRE_NOCLOCK
 #define STM32_LSCOSEL                       RCC_BDCR_LSCOSEL_NOCLOCK
 
+/*
+ * Peripherals clock sources.
+ */
 #define STM32_USART1SEL                     RCC_CCIPR1_USART1SEL_PCLK2
 #define STM32_USART2SEL                     RCC_CCIPR1_USART2SEL_PCLK1
 #define STM32_USART3SEL                     RCC_CCIPR1_USART3SEL_PCLK1
@@ -128,7 +157,11 @@
 #define STM32_CKPERSEL                      RCC_CCIPR5_CKPERSEL_HSI
 #define STM32_RTCSEL                        RCC_BDCR_RTCSEL_LSE
 
+/*
+ * IRQ system settings.
+ */
 #define STM32_IRQ_DAC1_PRIORITY             9
+
 #define STM32_IRQ_EXTI0_PRIORITY            6
 #define STM32_IRQ_EXTI1_PRIORITY            6
 #define STM32_IRQ_EXTI2_PRIORITY            6
@@ -197,11 +230,9 @@
 
 #define STM32_IRQ_USB1_PRIORITY             13
 
-#define STM32_ETH_ETH1_IRQ_PRIORITY         13
-#define STM32_ETH_ETH1_CHANGE_PHY_STATE     TRUE
-#define STM32_ETH_PHY_LINK_TYPE             MAC_LINK_DYNAMIC
-#define STM32_ETH_IP_CHECKSUM_OFFLOAD       0
-
+/*
+ * SIO driver system settings.
+ */
 #define STM32_SIO_USE_USART1                FALSE
 #define STM32_SIO_USE_USART2                FALSE
 #define STM32_SIO_USE_USART3                FALSE
@@ -216,6 +247,9 @@
 #define STM32_SIO_USE_UART12                FALSE
 #define STM32_SIO_USE_LPUART1               FALSE
 
+/*
+ * SPI driver system settings.
+ */
 #define STM32_SPI_USE_SPI1                  FALSE
 #define STM32_SPI_USE_SPI2                  FALSE
 #define STM32_SPI_USE_SPI3                  FALSE
@@ -242,7 +276,17 @@
 #define STM32_SPI_SPI6_DMA_PRIORITY         1
 #define STM32_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
 
+/*
+ * ST driver system settings.
+ */
 #define STM32_ST_IRQ_PRIORITY               8
 #define STM32_ST_USE_TIMER                  2
+
+/*
+ * RTC driver system settings.
+ */
+#define STM32_RTC_PRESA_VALUE               32
+#define STM32_RTC_PRESS_VALUE               1024
+#define STM32_RTC_CR_INIT                   0U
 
 #endif /* XMCUCONF_H */

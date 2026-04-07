@@ -231,14 +231,6 @@
 #define STM32_IRQ_USB1_PRIORITY             13
 
 /*
- * ETH driver system settings.
- */
-#define STM32_ETH_ETH1_IRQ_PRIORITY         13
-#define STM32_ETH_ETH1_CHANGE_PHY_STATE     TRUE
-#define STM32_ETH_PHY_LINK_TYPE             MAC_LINK_DYNAMIC
-#define STM32_ETH_IP_CHECKSUM_OFFLOAD       0
-
-/*
  * SIO driver system settings.
  */
 #define STM32_SIO_USE_USART1                FALSE
@@ -289,5 +281,12 @@
  */
 #define STM32_ST_IRQ_PRIORITY               8
 #define STM32_ST_USE_TIMER                  2
+
+/*
+ * RTC driver system settings.
+ */
+#define STM32_RTC_PRESA_VALUE               32
+#define STM32_RTC_PRESS_VALUE               1024
+#define STM32_RTC_CR_INIT                   0U
 
 #endif /* XMCUCONF_H */

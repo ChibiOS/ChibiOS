@@ -282,4 +282,11 @@
 #define STM32_ST_IRQ_PRIORITY               8
 #define STM32_ST_USE_TIMER                  2
 
+/*
+ * RTC driver system settings.
+ */
+#define STM32_RTC_PRESA_VALUE               32
+#define STM32_RTC_PRESS_VALUE               1024
+#define STM32_RTC_CR_INIT                   0U
+
 #endif /* XMCUCONF_H */

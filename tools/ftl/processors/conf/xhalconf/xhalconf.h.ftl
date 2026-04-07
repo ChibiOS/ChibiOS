@@ -50,6 +50,7 @@
 #define HAL_USE_PAL                         ${doc.HAL_USE_PAL!"TRUE"}
 #define HAL_USE_ETH                         ${doc.HAL_USE_ETH!"FALSE"}
 #define HAL_USE_MMC_SPI                     ${doc.HAL_USE_MMC_SPI!"FALSE"}
+#define HAL_USE_RTC                         ${doc.HAL_USE_RTC!"FALSE"}
 #define HAL_USE_SIO                         ${doc.HAL_USE_SIO!"FALSE"}
 #define HAL_USE_SPI                         ${doc.HAL_USE_SPI!"FALSE"}
 

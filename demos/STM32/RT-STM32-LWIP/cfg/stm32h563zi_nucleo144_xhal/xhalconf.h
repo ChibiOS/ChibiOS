@@ -14,6 +14,17 @@
     limitations under the License.
 */
 
+/**
+ * @file    templates/xhalconf.h
+ * @brief   XHAL configuration header.
+ * @details XHAL configuration file, this file allows to enable or disable the
+ *          various device drivers from your application. You may also use
+ *          this file in order to override the device drivers default settings.
+ *
+ * @addtogroup XHAL_CONF
+ * @{
+ */
+
 #ifndef XHALCONF_H
 #define XHALCONF_H
 
@@ -27,8 +38,9 @@
 /*===========================================================================*/
 
 #define HAL_USE_PAL                         TRUE
-#define HAL_USE_MMC_SPI                     FALSE
 #define HAL_USE_ETH                         TRUE
+#define HAL_USE_MMC_SPI                     FALSE
+#define HAL_USE_RTC                         FALSE
 #define HAL_USE_SIO                         FALSE
 #define HAL_USE_SPI                         FALSE
 
@@ -66,3 +78,5 @@
 #define SPI_USE_CONFIGURATIONS              FALSE
 
 #endif /* XHALCONF_H */
+
+/** @} */

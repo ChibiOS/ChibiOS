@@ -40,6 +40,7 @@
 #define HAL_USE_PAL                         FALSE
 #define HAL_USE_ETH                         TRUE
 #define HAL_USE_MMC_SPI                     FALSE
+#define HAL_USE_RTC                         FALSE
 #define HAL_USE_SIO                         FALSE
 #define HAL_USE_SPI                         FALSE
 

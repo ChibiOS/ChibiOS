@@ -40,16 +40,16 @@
 #define HAL_USE_PAL                         TRUE
 #define HAL_USE_ETH                         FALSE
 #define HAL_USE_MMC_SPI                     FALSE
-#define HAL_USE_RTC                         FALSE
-#define HAL_USE_SIO                         TRUE
-#define HAL_USE_SPI                         TRUE
+#define HAL_USE_RTC                         TRUE
+#define HAL_USE_SIO                         FALSE
+#define HAL_USE_SPI                         FALSE
 
 /*===========================================================================*/
 /* PAL driver settings.                                                      */
 /*===========================================================================*/
 
-#define PAL_USE_CALLBACKS                   FALSE
-#define PAL_USE_WAIT                        FALSE
+#define PAL_USE_CALLBACKS                   TRUE
+#define PAL_USE_WAIT                        TRUE
 
 /*===========================================================================*/
 /* ETH driver settings.                                                      */
@@ -66,7 +66,7 @@
 #define SIO_DEFAULT_BITRATE                 38400
 #define SIO_USE_SYNCHRONIZATION             TRUE
 #define SIO_USE_STREAMS_INTERFACE           SIO_USE_SYNCHRONIZATION
-#define SIO_USE_BUFFERING                   TRUE
+#define SIO_USE_BUFFERING                   FALSE
 #define SIO_USE_CONFIGURATIONS              FALSE
 
 /*===========================================================================*/
