@@ -56,19 +56,20 @@ typedef uint32_t adcerror_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  extern ADCDriver ADCD1;
+  extern hal_adc_driver_c ADCD1;
   void adc_lld_init(void);
-  msg_t adc_lld_start(ADCDriver *adcp);
-  void adc_lld_stop(ADCDriver *adcp);
-  const hal_adc_config_t *adc_lld_setcfg(ADCDriver *adcp,
+  msg_t adc_lld_start(hal_adc_driver_c *adcp);
+  void adc_lld_stop(hal_adc_driver_c *adcp);
+  const hal_adc_config_t *adc_lld_setcfg(hal_adc_driver_c *adcp,
                                          const hal_adc_config_t *config);
-  const hal_adc_config_t *adc_lld_selcfg(ADCDriver *adcp, unsigned cfgnum);
-  void adc_lld_set_callback(ADCDriver *adcp, drv_cb_t cb);
-  msg_t adc_lld_start_conversion(ADCDriver *adcp,
-                                 const ADCConversionGroup *grpp,
+  const hal_adc_config_t *adc_lld_selcfg(hal_adc_driver_c *adcp,
+                                         unsigned cfgnum);
+  void adc_lld_set_callback(hal_adc_driver_c *adcp, drv_cb_t cb);
+  msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp,
+                                 const adc_conversion_group_t *grpp,
                                  adcsample_t *samples,
                                  size_t depth);
-  void adc_lld_stop_conversion(ADCDriver *adcp);
+  void adc_lld_stop_conversion(hal_adc_driver_c *adcp);
 #ifdef __cplusplus
 }
 #endif

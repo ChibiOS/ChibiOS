@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
-  name="hal_rtc" descr="RTC Driver" check="HAL_USE_RTC == TRUE" editcode="false">
+  name="hal_rtc" descr="RTC Driver" check="HAL_USE_RTC == TRUE"
+  editcode="false">
   <brief>RTC Driver macros and structures.</brief>
   <imports>
     <import>hal_cb_driver.xml</import>
   </imports>
   <public>
+    <includes_always>
+      <include style="regular">hal_cb_driver.h</include>
+    </includes_always>
     <definitions_early>
-      <group description="RTC constants">
-        <define name="RTC_BASE_YEAR" value="1980U">
-          <brief>Base year of the RTC broken-down representation.</brief>
-        </define>
+      <define name="RTC_BASE_YEAR" value="1980U">
+        <brief>Base year of the RTC broken-down representation.</brief>
+      </define>
+      <group description="Day of week encoding">
         <define name="RTC_DAY_CATURDAY" value="0U">
-          <brief>Reserved/zero day encoding.</brief>
+          <brief>Zero/reserved day encoding.</brief>
         </define>
         <define name="RTC_DAY_MONDAY" value="1U">
           <brief>Monday day encoding.</brief>
@@ -36,6 +40,8 @@
         <define name="RTC_DAY_SUNDAY" value="7U">
           <brief>Sunday day encoding.</brief>
         </define>
+      </group>
+      <group description="RTC event flags">
         <define name="RTC_FLAGS_ALARM_A" value="(1U &lt;&lt; 0)">
           <brief>Alarm A event flag.</brief>
         </define>
@@ -76,48 +82,36 @@
         <basetype ctype="struct hal_rtc_config" />
       </typedef>
       <typedef name="rtcalarm_t">
-        <brief>Type of an RTC alarm selector.</brief>
+        <brief>Type of an RTC alarm number.</brief>
         <basetype ctype="unsigned int" />
       </typedef>
-      <struct name="rtc_datetime_t">
-        <brief>Structure representing an RTC date/time stamp.</brief>
-        <fields>
-          <field name="year" ctype="uint16_t">
-            <brief>Year offset from @p RTC_BASE_YEAR.</brief>
-          </field>
-          <field name="month" ctype="uint8_t">
-            <brief>Month in range 1..12.</brief>
-          </field>
-          <field name="day" ctype="uint8_t">
-            <brief>Day of month in range 1..31.</brief>
-          </field>
-          <field name="dayofweek" ctype="uint8_t">
-            <brief>Day of week encoding.</brief>
-          </field>
-          <field name="dstflag" ctype="uint8_t">
-            <brief>Daylight saving time flag.</brief>
-          </field>
-          <field name="millisecond" ctype="uint32_t">
-            <brief>Milliseconds elapsed since start of day.</brief>
-          </field>
-        </fields>
-      </struct>
-      <struct name="rtc_time64_t">
-        <brief>Linux-like 64-bit time representation.</brief>
-        <fields>
-          <field name="tv_sec" ctype="int64_t">
-            <brief>Seconds since the Unix epoch.</brief>
-          </field>
-          <field name="tv_nsec" ctype="uint32_t">
-            <brief>Nanoseconds fraction within the current second.</brief>
-          </field>
-        </fields>
-      </struct>
+      <verbatim><![CDATA[
+/**
+ * @brief       Type of a structure representing an RTC date/time stamp.
+ */
+typedef struct {
+  uint16_t                  year;
+  uint8_t                   month;
+  uint8_t                   day;
+  uint8_t                   dayofweek;
+  uint8_t                   dstflag;
+  uint32_t                  millisecond;
+} rtc_datetime_t;
+
+/**
+ * @brief       Linux-like 64-bit time representation.
+ */
+typedef struct {
+  int64_t                   tv_sec;
+  uint32_t                  tv_nsec;
+} rtc_time64_t;]]></verbatim>
       <verbatim><![CDATA[
 /* Inclusion of LLD header.*/
 #include "hal_rtc_lld.h"]]></verbatim>
       <struct name="hal_rtc_config">
         <brief>Driver configuration structure.</brief>
+        <note>Implementations may extend this structure to contain more,
+          architecture dependent, fields.</note>
         <fields>
           <field name="cr" ctype="uint32_t">
             <brief>Initial value for the RTC CR register.</brief>
@@ -128,16 +122,19 @@
           <verbatim><![CDATA[
 /* End of the mandatory fields.*/
 rtc_lld_config_fields;]]></verbatim>
+          <condition check="defined(RTC_CONFIG_EXT_FIELDS)">
+            <verbatim><![CDATA[
+RTC_CONFIG_EXT_FIELDS]]></verbatim>
+          </condition>
         </fields>
       </struct>
-      <struct name="rtc_alarm_t">
-        <brief>Structure representing an RTC alarm specification.</brief>
-        <fields>
-          <field name="alrmr" ctype="uint32_t">
-            <brief>Implementation-defined alarm register encoding.</brief>
-          </field>
-        </fields>
-      </struct>
+      <verbatim><![CDATA[
+/**
+ * @brief       Type of structure representing an RTC alarm time stamp.
+ */
+typedef struct {
+  uint32_t                  alrmr;
+} rtc_alarm_t;]]></verbatim>
       <class type="regular" name="hal_rtc_driver" namespace="rtc"
         ancestorname="hal_cb_driver" descr="RTC driver">
         <brief>Class of an RTC driver.</brief>
@@ -145,10 +142,11 @@ rtc_lld_config_fields;]]></verbatim>
           <field name="events" ctype="volatile rtceventflags_t">
             <brief>Pending RTC event flags.</brief>
           </field>
+          <condition check="defined(RTC_DRIVER_EXT_FIELDS)">
+            <verbatim><![CDATA[
+RTC_DRIVER_EXT_FIELDS]]></verbatim>
+          </condition>
           <verbatim><![CDATA[
-#if defined(RTC_DRIVER_EXT_FIELDS)
-RTC_DRIVER_EXT_FIELDS
-#endif
 /* End of the mandatory fields.*/
 rtc_lld_driver_fields;]]></verbatim>
         </fields>
@@ -158,12 +156,395 @@ rtc_lld_driver_fields;]]></verbatim>
 self->events = 0U;]]></implementation>
           </objinit>
           <dispose>
-            <implementation><![CDATA[ ]]></implementation>
+            <implementation><![CDATA[
+]]></implementation>
           </dispose>
+          <regular>
+            <method name="rtcSetDateTime" ctype="msg_t">
+              <brief>Sets the RTC broken-down date/time.</brief>
+              <param name="timespec" ctype="const rtc_datetime_t *" dir="in">
+                New date/time value.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck((self != NULL) && (timespec != NULL));
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+if (!rtc_datetime_is_valid(timespec)) {
+  return HAL_RET_CONFIG_ERROR;
+}
+
+return rtc_lld_set_datetime(self, timespec);]]></implementation>
+            </method>
+            <method name="rtcGetDateTimeX" ctype="msg_t">
+              <brief>Reads the RTC broken-down date/time.</brief>
+              <param name="timespec" ctype="rtc_datetime_t *" dir="out">
+                Current date/time value.
+              </param>
+              <return>The operation status.</return>
+              <xclass />
+              <implementation><![CDATA[
+osalDbgCheck((self != NULL) && (timespec != NULL));
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+return rtc_lld_get_datetime(self, timespec);]]></implementation>
+            </method>
+            <method name="rtcGetDateTime" ctype="msg_t">
+              <brief>Reads the RTC broken-down date/time.</brief>
+              <param name="timespec" ctype="rtc_datetime_t *" dir="out">
+                Current date/time value.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+return rtcGetDateTimeX(self, timespec);]]></implementation>
+            </method>
+            <method name="rtcSetTime64" ctype="msg_t">
+              <brief>Sets the RTC from a 64-bit UTC time value.</brief>
+              <param name="timespec" ctype="const rtc_time64_t *" dir="in">
+                New 64-bit time value.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+rtc_datetime_t dt;
+msg_t msg;
+
+osalDbgCheck((ip != NULL) && (timespec != NULL));
+
+msg = rtcConvertTime64ToDateTime(timespec, &dt);
+if (msg != HAL_RET_SUCCESS) {
+  return msg;
+}
+
+return rtcSetDateTime(self, &dt);]]></implementation>
+            </method>
+            <method name="rtcGetTime64X" ctype="msg_t">
+              <brief>Reads the RTC as a 64-bit UTC time value.</brief>
+              <param name="timespec" ctype="rtc_time64_t *" dir="out">
+                Current 64-bit time value.
+              </param>
+              <return>The operation status.</return>
+              <xclass />
+              <implementation><![CDATA[
+rtc_datetime_t dt;
+msg_t msg;
+
+osalDbgCheck((ip != NULL) && (timespec != NULL));
+
+msg = rtcGetDateTimeX(self, &dt);
+if (msg != HAL_RET_SUCCESS) {
+  return msg;
+}
+
+return rtcConvertDateTimeToTime64(&dt, timespec);]]></implementation>
+            </method>
+            <method name="rtcGetTime64" ctype="msg_t">
+              <brief>Reads the RTC as a 64-bit UTC time value.</brief>
+              <param name="timespec" ctype="rtc_time64_t *" dir="out">
+                Current 64-bit time value.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+return rtcGetTime64X(self, timespec);]]></implementation>
+            </method>
+            <method name="rtcSetAlarm" ctype="msg_t">
+              <brief>Programs an RTC alarm.</brief>
+              <param name="alarm" ctype="rtcalarm_t" dir="in">
+                Alarm selector.
+              </param>
+              <param name="alarmspec" ctype="const rtc_alarm_t *" dir="in">
+                Alarm specification.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+if (alarm >= (rtcalarm_t)RTC_ALARMS) {
+  return HAL_RET_CONFIG_ERROR;
+}
+
+return rtc_lld_set_alarm(self, alarm, alarmspec);]]></implementation>
+            </method>
+            <method name="rtcGetAlarm" ctype="msg_t">
+              <brief>Reads an RTC alarm configuration.</brief>
+              <param name="alarm" ctype="rtcalarm_t" dir="in">
+                Alarm selector.
+              </param>
+              <param name="alarmspec" ctype="rtc_alarm_t *" dir="out">
+                Alarm specification.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck((self != NULL) && (alarmspec != NULL));
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+if (alarm >= (rtcalarm_t)RTC_ALARMS) {
+  return HAL_RET_CONFIG_ERROR;
+}
+
+return rtc_lld_get_alarm(self, alarm, alarmspec);]]></implementation>
+            </method>
+          </regular>
+          <inline>
+            <method name="rtcGetEventsX" ctype="rtceventflags_t">
+              <brief>Returns the cached RTC event flags.</brief>
+              <return>The current cached event flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->events;]]></implementation>
+            </method>
+            <method name="rtcGetAndClearEventsX" ctype="rtceventflags_t">
+              <brief>Gets and clears cached RTC event flags.</brief>
+              <param name="mask" ctype="rtceventflags_t" dir="in">
+                Mask of events to be returned and cleared.
+              </param>
+              <return>The selected pending event flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+rtceventflags_t flags;
+syssts_t sts;
+
+sts = osalSysGetStatusAndLockX();
+flags = self->events & mask;
+self->events &= ~mask;
+osalSysRestoreStatusX(sts);
+
+return flags;]]></implementation>
+            </method>
+          </inline>
+          <override>
+            <method shortname="start">
+              <implementation><![CDATA[
+return rtc_lld_start(self);]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[
+rtc_lld_stop(self);]]></implementation>
+            </method>
+            <method shortname="setcfg">
+              <implementation><![CDATA[
+return (const void *)rtc_lld_setcfg(self, (const hal_rtc_config_t *)config);]]></implementation>
+            </method>
+            <method shortname="selcfg">
+              <implementation><![CDATA[
+return (const void *)rtc_lld_selcfg(self, cfgnum);]]></implementation>
+            </method>
+            <method shortname="setcb">
+              <implementation><![CDATA[
+__cbdrv_setcb_impl(self, cb);
+rtc_lld_set_callback(self, cb);]]></implementation>
+            </method>
+          </override>
         </methods>
       </class>
+      <verbatim><![CDATA[
+#if !defined(__DOXYGEN__)
+extern hal_rtc_driver_c RTCD1;
+#endif]]></verbatim>
     </types>
+    <functions>
+      <function name="rtcInit" ctype="void">
+        <brief>RTC Driver initialization.</brief>
+        <init />
+        <implementation><![CDATA[
+rtc_lld_init();]]></implementation>
+      </function>
+      <function name="rtcConvertDateTimeToTime64" ctype="msg_t">
+        <brief>Converts broken-down RTC time to a 64-bit UTC time value.</brief>
+        <param name="src" ctype="const rtc_datetime_t *" dir="in">
+          Broken-down RTC time.
+        </param>
+        <param name="dst" ctype="rtc_time64_t *" dir="out">
+          Converted 64-bit UTC time.
+        </param>
+        <return>The operation status.</return>
+        <api />
+        <implementation><![CDATA[
+int64_t days, sec;
+
+osalDbgCheck((src != NULL) && (dst != NULL));
+
+if (!rtc_datetime_is_valid(src)) {
+  return HAL_RET_CONFIG_ERROR;
+}
+
+days = rtc_days_from_civil((int64_t)src->year + RTC_BASE_YEAR,
+                           src->month,
+                           src->day);
+sec = days * RTC_SECONDS_PER_DAY + (int64_t)(src->millisecond / 1000U);
+
+dst->tv_sec = sec;
+dst->tv_nsec = (src->millisecond % 1000U) * 1000000U;
+
+return HAL_RET_SUCCESS;]]></implementation>
+      </function>
+      <function name="rtcConvertTime64ToDateTime" ctype="msg_t">
+        <brief>Converts a 64-bit UTC time value to broken-down RTC time.</brief>
+        <param name="src" ctype="const rtc_time64_t *" dir="in">
+          Source 64-bit UTC time.
+        </param>
+        <param name="dst" ctype="rtc_datetime_t *" dir="out">
+          Converted broken-down RTC time.
+        </param>
+        <return>The operation status.</return>
+        <api />
+        <implementation><![CDATA[
+int64_t days, sod;
+int64_t year;
+unsigned month, day;
+
+osalDbgCheck((src != NULL) && (dst != NULL));
+
+if ((src->tv_sec < 315532800LL) || (src->tv_nsec >= 1000000000U)) {
+  return HAL_RET_CONFIG_ERROR;
+}
+
+days = src->tv_sec / RTC_SECONDS_PER_DAY;
+sod = src->tv_sec % RTC_SECONDS_PER_DAY;
+
+if (sod < 0) {
+  sod += RTC_SECONDS_PER_DAY;
+  days--;
+}
+
+rtc_civil_from_days(days, &year, &month, &day);
+if (year < (int64_t)RTC_BASE_YEAR) {
+  return HAL_RET_CONFIG_ERROR;
+}
+
+dst->year = (uint16_t)(year - RTC_BASE_YEAR);
+dst->month = (uint8_t)month;
+dst->day = (uint8_t)day;
+dst->dayofweek = rtc_encode_day_of_week(days);
+dst->dstflag = 0U;
+dst->millisecond = (uint32_t)sod * 1000U + src->tv_nsec / 1000000U;
+
+return HAL_RET_SUCCESS;]]></implementation>
+      </function>
+    </functions>
   </public>
   <private>
+    <includes_always>
+      <include style="regular">hal.h</include>
+    </includes_always>
+    <definitions>
+      <define name="RTC_SECONDS_PER_DAY" value="86400LL" />
+      <define name="RTC_MILLISECONDS_PER_DAY" value="86400000U" />
+    </definitions>
+    <functions>
+      <function name="rtc_is_leap_year" ctype="bool">
+        <brief>Checks if the specified year is a leap year.</brief>
+        <param name="year" ctype="unsigned" dir="in">Year to be checked.</param>
+        <return>The leap-year check result.</return>
+        <implementation><![CDATA[
+return ((((year % 4U) == 0U) && ((year % 100U) != 0U)) ||
+        ((year % 400U) == 0U));]]></implementation>
+      </function>
+      <function name="rtc_get_month_length" ctype="uint8_t">
+        <brief>Returns the length of a month in days.</brief>
+        <param name="year" ctype="unsigned" dir="in">Year.</param>
+        <param name="month" ctype="unsigned" dir="in">Month in range 1..12.</param>
+        <return>The month length in days.</return>
+        <implementation><![CDATA[
+uint8_t n;
+
+n = rtc_month_len[month - 1U];
+if ((month == 2U) && rtc_is_leap_year(year)) {
+  n++;
+}
+
+return n;]]></implementation>
+      </function>
+      <function name="rtc_datetime_is_valid" ctype="bool">
+        <brief>Checks the validity of a broken-down RTC time value.</brief>
+        <param name="timespec" ctype="const rtc_datetime_t *" dir="in">
+          RTC time value to be checked.
+        </param>
+        <return>The validity check result.</return>
+        <implementation><![CDATA[
+unsigned year;
+
+if ((timespec->month < 1U) || (timespec->month > 12U)) {
+  return false;
+}
+if ((timespec->day < 1U) ||
+    (timespec->day > rtc_get_month_length((unsigned)timespec->year +
+                                          RTC_BASE_YEAR,
+                                          timespec->month))) {
+  return false;
+}
+if ((timespec->dayofweek > RTC_DAY_SUNDAY) ||
+    (timespec->millisecond >= RTC_MILLISECONDS_PER_DAY)) {
+  return false;
+}
+
+year = (unsigned)timespec->year + RTC_BASE_YEAR;
+
+return year >= RTC_BASE_YEAR;]]></implementation>
+      </function>
+      <function name="rtc_days_from_civil" ctype="int64_t">
+        <brief>Converts a civil date to days from the Unix epoch.</brief>
+        <param name="year" ctype="int64_t" dir="in">Year.</param>
+        <param name="month" ctype="unsigned" dir="in">Month.</param>
+        <param name="day" ctype="unsigned" dir="in">Day.</param>
+        <return>Days from the Unix epoch.</return>
+        <implementation><![CDATA[
+int64_t era, yoe, doy, doe;
+
+year -= month <= 2U ? 1 : 0;
+era = (year >= 0) ? (year / 400) : ((year - 399) / 400);
+yoe = year - era * 400;
+doy = ((153 * ((int64_t)month + (month > 2U ? -3 : 9)) + 2) / 5) +
+      (int64_t)day - 1;
+doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+
+return era * 146097 + doe - 719468;]]></implementation>
+      </function>
+      <function name="rtc_civil_from_days" ctype="void">
+        <brief>Converts days from the Unix epoch to a civil date.</brief>
+        <param name="z" ctype="int64_t" dir="in">Days from the Unix epoch.</param>
+        <param name="year" ctype="int64_t *" dir="out">Converted year.</param>
+        <param name="month" ctype="unsigned *" dir="out">Converted month.</param>
+        <param name="day" ctype="unsigned *" dir="out">Converted day.</param>
+        <implementation><![CDATA[
+int64_t era, doe, yoe, y, doy, mp;
+
+z += 719468;
+era = (z >= 0) ? (z / 146097) : ((z - 146096) / 146097);
+doe = z - era * 146097;
+yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+y = yoe + era * 400;
+doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+mp = (5 * doy + 2) / 153;
+
+*day = (unsigned)(doy - (153 * mp + 2) / 5 + 1);
+*month = (unsigned)(mp + (mp < 10 ? 3 : -9));
+*year = y + (*month <= 2U ? 1 : 0);]]></implementation>
+      </function>
+      <function name="rtc_encode_day_of_week" ctype="uint8_t">
+        <brief>Converts epoch days to RTC day-of-week encoding.</brief>
+        <param name="days" ctype="int64_t" dir="in">Days from the Unix epoch.</param>
+        <return>The RTC day-of-week encoding.</return>
+        <implementation><![CDATA[
+int64_t wday;
+
+wday = (days + 4) % 7;
+if (wday < 0) {
+  wday += 7;
+}
+
+return wday == 0 ? RTC_DAY_SUNDAY : (uint8_t)wday;]]></implementation>
+      </function>
+      <verbatim><![CDATA[
+static const uint8_t rtc_month_len[12] = {
+  31U, 28U, 31U, 30U, 31U, 30U, 31U, 31U, 30U, 31U, 30U, 31U
+};]]></verbatim>
+    </functions>
   </private>
 </module>

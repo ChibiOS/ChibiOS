@@ -26,7 +26,7 @@
 
 #if HAL_USE_ADC || defined(__DOXYGEN__)
 
-ADCDriver ADCD1;
+hal_adc_driver_c ADCD1;
 
 void adc_lld_init(void) {
 
@@ -34,19 +34,19 @@ void adc_lld_init(void) {
   ADCD1.nvadc = 1U;
 }
 
-msg_t adc_lld_start(ADCDriver *adcp) {
+msg_t adc_lld_start(hal_adc_driver_c *adcp) {
 
   (void)adcp;
 
   return HAL_RET_HW_FAILURE;
 }
 
-void adc_lld_stop(ADCDriver *adcp) {
+void adc_lld_stop(hal_adc_driver_c *adcp) {
 
   (void)adcp;
 }
 
-const hal_adc_config_t *adc_lld_setcfg(ADCDriver *adcp,
+const hal_adc_config_t *adc_lld_setcfg(hal_adc_driver_c *adcp,
                                        const hal_adc_config_t *config) {
 
   if (config == NULL) {
@@ -58,7 +58,8 @@ const hal_adc_config_t *adc_lld_setcfg(ADCDriver *adcp,
   return &adcp->config_buf;
 }
 
-const hal_adc_config_t *adc_lld_selcfg(ADCDriver *adcp, unsigned cfgnum) {
+const hal_adc_config_t *adc_lld_selcfg(hal_adc_driver_c *adcp,
+                                       unsigned cfgnum) {
 
   (void)adcp;
   (void)cfgnum;
@@ -66,14 +67,14 @@ const hal_adc_config_t *adc_lld_selcfg(ADCDriver *adcp, unsigned cfgnum) {
   return NULL;
 }
 
-void adc_lld_set_callback(ADCDriver *adcp, drv_cb_t cb) {
+void adc_lld_set_callback(hal_adc_driver_c *adcp, drv_cb_t cb) {
 
   (void)adcp;
   (void)cb;
 }
 
-msg_t adc_lld_start_conversion(ADCDriver *adcp,
-                               const ADCConversionGroup *grpp,
+msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp,
+                               const adc_conversion_group_t *grpp,
                                adcsample_t *samples,
                                size_t depth) {
 
@@ -85,7 +86,7 @@ msg_t adc_lld_start_conversion(ADCDriver *adcp,
   return HAL_RET_HW_FAILURE;
 }
 
-void adc_lld_stop_conversion(ADCDriver *adcp) {
+void adc_lld_stop_conversion(hal_adc_driver_c *adcp) {
 
   (void)adcp;
 }

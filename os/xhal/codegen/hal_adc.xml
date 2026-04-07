@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
-  name="hal_adc" descr="ADC Driver" check="HAL_USE_ADC == TRUE" editcode="false">
+  name="hal_adc" descr="ADC Driver" check="HAL_USE_ADC == TRUE"
+  editcode="false">
   <brief>ADC Driver macros and structures.</brief>
   <imports>
     <import>hal_cb_driver.xml</import>
   </imports>
   <public>
+    <includes_always>
+      <include style="regular">hal_cb_driver.h</include>
+    </includes_always>
     <definitions_early>
       <group description="ADC event flags">
         <define name="ADC_EVENT_HALF" value="(1U &lt;&lt; 0)">
@@ -26,6 +30,119 @@
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
     </configs>
+    <macros>
+      <group description="Macro functions">
+        <macro name="adcIsBufferComplete">
+          <brief>Checks if the current callback refers to a full buffer.</brief>
+          <param name="adcp" dir="in">Pointer to the ADC driver instance.</param>
+          <return>The buffer-complete state.</return>
+          <special />
+          <implementation><![CDATA[((bool)((adcp)->state == HAL_DRV_STATE_FULL))]]></implementation>
+        </macro>
+      </group>
+      <group description="Low level driver helper macros">
+        <condition check="ADC_USE_WAIT == TRUE">
+          <macro name="_adc_reset_i">
+            <brief>Resumes a thread waiting for conversion completion.</brief>
+            <param name="adcp" dir="in">Pointer to the ADC driver instance.</param>
+            <notapi />
+            <implementation><![CDATA[osalThreadResumeI(&(adcp)->thread, MSG_RESET)]]></implementation>
+          </macro>
+          <macro name="_adc_reset_s">
+            <brief>Resumes a thread waiting for conversion completion.</brief>
+            <param name="adcp" dir="in">Pointer to the ADC driver instance.</param>
+            <notapi />
+            <implementation><![CDATA[osalThreadResumeS(&(adcp)->thread, MSG_RESET)]]></implementation>
+          </macro>
+          <macro name="_adc_wakeup_isr">
+            <brief>Wakes up a thread waiting for conversion completion.</brief>
+            <param name="adcp" dir="in">Pointer to the ADC driver instance.</param>
+            <notapi />
+            <implementation><![CDATA[
+do {
+  osalSysLockFromISR();
+  osalThreadResumeI(&(adcp)->thread, MSG_OK);
+  osalSysUnlockFromISR();
+} while (false)]]></implementation>
+          </macro>
+          <macro name="_adc_timeout_isr">
+            <brief>Wakes up a thread waiting for conversion completion with timeout.</brief>
+            <param name="adcp" dir="in">Pointer to the ADC driver instance.</param>
+            <notapi />
+            <implementation><![CDATA[
+do {
+  osalSysLockFromISR();
+  osalThreadResumeI(&(adcp)->thread, MSG_TIMEOUT);
+  osalSysUnlockFromISR();
+} while (false)]]></implementation>
+          </macro>
+          <elseif />
+          <macro name="_adc_reset_i">
+            <param name="adcp" dir="in" />
+            <implementation><![CDATA[]]></implementation>
+          </macro>
+          <macro name="_adc_reset_s">
+            <param name="adcp" dir="in" />
+            <implementation><![CDATA[]]></implementation>
+          </macro>
+          <macro name="_adc_wakeup_isr">
+            <param name="adcp" dir="in" />
+            <implementation><![CDATA[]]></implementation>
+          </macro>
+          <macro name="_adc_timeout_isr">
+            <param name="adcp" dir="in" />
+            <implementation><![CDATA[]]></implementation>
+          </macro>
+        </condition>
+        <macro name="_adc_isr_half_code">
+          <brief>Common ISR code, half buffer event.</brief>
+          <param name="adcp" dir="both">Pointer to the ADC driver instance.</param>
+          <notapi />
+          <implementation><![CDATA[
+do {
+  (adcp)->events |= ADC_EVENT_HALF;
+  __cbdrv_invoke_half_cb(adcp);
+} while (false)]]></implementation>
+        </macro>
+        <macro name="_adc_isr_full_code">
+          <brief>Common ISR code, full buffer event.</brief>
+          <param name="adcp" dir="both">Pointer to the ADC driver instance.</param>
+          <notapi />
+          <implementation><![CDATA[
+do {
+  if ((adcp)->grpp->circular) {
+    (adcp)->events |= ADC_EVENT_FULL;
+    __cbdrv_invoke_full_cb(adcp);
+  }
+  else {
+    adc_lld_stop_conversion(adcp);
+    (adcp)->events |= ADC_EVENT_COMPLETE;
+    __cbdrv_invoke_cb_with_transition(adcp,
+                                      HAL_DRV_STATE_COMPLETE,
+                                      HAL_DRV_STATE_READY);
+    (adcp)->grpp = NULL;
+    _adc_wakeup_isr(adcp);
+  }
+} while (false)]]></implementation>
+        </macro>
+        <macro name="_adc_isr_error_code">
+          <brief>Common ISR code, error event.</brief>
+          <param name="adcp" dir="both">Pointer to the ADC driver instance.</param>
+          <param name="err" dir="in">Platform dependent error code.</param>
+          <notapi />
+          <implementation><![CDATA[
+do {
+  adc_lld_stop_conversion(adcp);
+  (adcp)->errors |= (err);
+  __cbdrv_invoke_cb_with_transition(adcp,
+                                    HAL_DRV_STATE_ERROR,
+                                    HAL_DRV_STATE_READY);
+  (adcp)->grpp = NULL;
+  _adc_timeout_isr(adcp);
+} while (false)]]></implementation>
+        </macro>
+      </group>
+    </macros>
     <types>
       <typedef name="adceventflags_t">
         <brief>Type of ADC event flags.</brief>
@@ -43,39 +160,10 @@
         <brief>Type of structure representing an ADC conversion group.</brief>
         <basetype ctype="struct hal_adc_conversion_group" />
       </typedef>
-      <typedef name="ADCDriver">
-        <brief>Legacy alias of @p hal_adc_driver_c.</brief>
-        <basetype ctype="struct hal_adc_driver" />
-      </typedef>
-      <typedef name="ADCConfig">
-        <brief>Legacy alias of @p hal_adc_config_t.</brief>
-        <basetype ctype="struct hal_adc_config" />
-      </typedef>
-      <typedef name="ADCConversionGroup">
-        <brief>Legacy alias of @p adc_conversion_group_t.</brief>
-        <basetype ctype="struct hal_adc_conversion_group" />
-      </typedef>
       <verbatim><![CDATA[
 /* Including the low level driver header, it exports information required
    for completing types.*/
 #include "hal_adc_lld.h"]]></verbatim>
-      <verbatim><![CDATA[
-/**
- * @brief       Type of an ADC notification callback.
- *
- * @param[in]   adcp            Pointer to the @p ADCDriver object triggering
- *                              the callback.
- */
-typedef void (*adccallback_t)(ADCDriver *adcp);
-
-/**
- * @brief       Type of an ADC error callback.
- *
- * @param[in]   adcp            Pointer to the @p ADCDriver object triggering
- *                              the callback.
- * @param[in]   err             ADC error code.
- */
-typedef void (*adcerrorcallback_t)(ADCDriver *adcp, adcerror_t err);]]></verbatim>
       <struct name="hal_adc_conversion_group">
         <brief>Conversion group configuration structure.</brief>
         <fields>
@@ -85,15 +173,13 @@ typedef void (*adcerrorcallback_t)(ADCDriver *adcp, adcerror_t err);]]></verbati
           <field name="num_channels" ctype="adc_channels_num_t">
             <brief>Number of analog channels in the conversion group.</brief>
           </field>
-          <field name="end_cb" ctype="adccallback_t">
-            <brief>End callback associated to the group or @p NULL.</brief>
-          </field>
-          <field name="error_cb" ctype="adcerrorcallback_t">
-            <brief>Error callback associated to the group or @p NULL.</brief>
-          </field>
           <verbatim><![CDATA[
 /* End of the mandatory fields.*/
 adc_lld_configuration_group_fields;]]></verbatim>
+          <condition check="defined(ADC_CONVERSION_GROUP_EXT_FIELDS)">
+            <verbatim><![CDATA[
+ADC_CONVERSION_GROUP_EXT_FIELDS]]></verbatim>
+          </condition>
         </fields>
       </struct>
       <struct name="hal_adc_config">
@@ -102,6 +188,10 @@ adc_lld_configuration_group_fields;]]></verbatim>
           <verbatim><![CDATA[
 /* End of the mandatory fields.*/
 adc_lld_config_fields;]]></verbatim>
+          <condition check="defined(ADC_CONFIG_EXT_FIELDS)">
+            <verbatim><![CDATA[
+ADC_CONFIG_EXT_FIELDS]]></verbatim>
+          </condition>
         </fields>
       </struct>
       <class type="regular" name="hal_adc_driver" namespace="adc"
@@ -128,10 +218,11 @@ adc_lld_config_fields;]]></verbatim>
               <brief>Waiting thread reference.</brief>
             </field>
           </condition>
+          <condition check="defined(ADC_DRIVER_EXT_FIELDS)">
+            <verbatim><![CDATA[
+ADC_DRIVER_EXT_FIELDS]]></verbatim>
+          </condition>
           <verbatim><![CDATA[
-#if defined(ADC_DRIVER_EXT_FIELDS)
-ADC_DRIVER_EXT_FIELDS
-#endif
 /* End of the mandatory fields.*/
 adc_lld_driver_fields;]]></verbatim>
         </fields>
@@ -139,21 +230,297 @@ adc_lld_driver_fields;]]></verbatim>
           <objinit callsuper="true">
             <implementation><![CDATA[
 self->samples = NULL;
-self->depth = 0U;
-self->grpp = NULL;
-self->events = 0U;
-self->errors = 0U;
+self->depth   = 0U;
+self->grpp    = NULL;
+self->events  = 0U;
+self->errors  = 0U;
 #if ADC_USE_WAIT == TRUE
-self->thread = NULL;
+self->thread  = NULL;
 #endif]]></implementation>
           </objinit>
           <dispose>
-            <implementation><![CDATA[ ]]></implementation>
+            <implementation><![CDATA[
+]]></implementation>
           </dispose>
+          <regular>
+            <method name="adcStart" ctype="msg_t">
+              <brief>Configures and activates the ADC peripheral.</brief>
+              <param name="config" ctype="const hal_adc_config_t *" dir="in">
+                Driver configuration or @p NULL.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+
+if (config != NULL) {
+  msg = drvSetCfgX(self, config);
+  if (msg != HAL_RET_SUCCESS) {
+    return msg;
+  }
+}
+
+return drvStart(self);]]></implementation>
+            </method>
+            <method name="adcStop" ctype="void">
+              <brief>Deactivates the ADC peripheral.</brief>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+drvStop(self);]]></implementation>
+            </method>
+            <method name="adcStartConversionI" ctype="msg_t">
+              <brief>Starts an ADC conversion.</brief>
+              <param name="grpp" ctype="const adc_conversion_group_t *" dir="in">
+                Conversion group.
+              </param>
+              <param name="samples" ctype="adcsample_t *" dir="out">
+                Samples buffer.
+              </param>
+              <param name="depth" ctype="size_t" dir="in">
+                Buffer depth.
+              </param>
+              <return>The operation status.</return>
+              <iclass />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (grpp != NULL) && (samples != NULL) &&
+             (depth > 0U) && ((depth == 1U) || ((depth & 1U) == 0U)));
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == HAL_DRV_STATE_ERROR),
+              "not ready");
+
+self->samples = samples;
+self->depth   = depth;
+self->grpp    = grpp;
+self->events  = 0U;
+self->errors  = 0U;
+self->state   = HAL_DRV_STATE_ACTIVE;
+msg = adc_lld_start_conversion(self, grpp, samples, depth);
+if (msg != HAL_RET_SUCCESS) {
+  self->samples = NULL;
+  self->depth   = 0U;
+  self->grpp    = NULL;
+  self->state   = HAL_DRV_STATE_READY;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method name="adcStartConversion" ctype="msg_t">
+              <brief>Starts an ADC conversion.</brief>
+              <param name="grpp" ctype="const adc_conversion_group_t *" dir="in">
+                Conversion group.
+              </param>
+              <param name="samples" ctype="adcsample_t *" dir="out">
+                Samples buffer.
+              </param>
+              <param name="depth" ctype="size_t" dir="in">
+                Buffer depth.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalSysLock();
+msg = adcStartConversionI(self, grpp, samples, depth);
+osalSysUnlock();
+
+return msg;]]></implementation>
+            </method>
+            <method name="adcStopConversionI" ctype="void">
+              <brief>Stops an ongoing conversion.</brief>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == HAL_DRV_STATE_ACTIVE) ||
+              (self->state == HAL_DRV_STATE_HALF) ||
+              (self->state == HAL_DRV_STATE_FULL) ||
+              (self->state == HAL_DRV_STATE_COMPLETE) ||
+              (self->state == HAL_DRV_STATE_ERROR),
+              "invalid state");
+
+if ((self->state != HAL_DRV_STATE_READY) &&
+    (self->state != HAL_DRV_STATE_STOP)) {
+  adc_lld_stop_conversion(self);
+  self->samples = NULL;
+  self->depth   = 0U;
+  self->grpp    = NULL;
+  self->state   = HAL_DRV_STATE_READY;
+  _adc_reset_i(self);
+}]]></implementation>
+            </method>
+            <method name="adcStopConversion" ctype="void">
+              <brief>Stops an ongoing conversion.</brief>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == HAL_DRV_STATE_ACTIVE) ||
+              (self->state == HAL_DRV_STATE_HALF) ||
+              (self->state == HAL_DRV_STATE_FULL) ||
+              (self->state == HAL_DRV_STATE_COMPLETE) ||
+              (self->state == HAL_DRV_STATE_ERROR),
+              "invalid state");
+if ((self->state != HAL_DRV_STATE_READY) &&
+    (self->state != HAL_DRV_STATE_STOP)) {
+  adc_lld_stop_conversion(self);
+  self->samples = NULL;
+  self->depth   = 0U;
+  self->grpp    = NULL;
+  self->state   = HAL_DRV_STATE_READY;
+  _adc_reset_s(self);
+}
+osalSysUnlock();]]></implementation>
+            </method>
+            <condition check="ADC_USE_WAIT == TRUE">
+              <method name="adcConvert" ctype="msg_t">
+                <brief>Performs a synchronous ADC conversion.</brief>
+                <param name="grpp" ctype="const adc_conversion_group_t *" dir="in">
+                  Conversion group.
+                </param>
+                <param name="samples" ctype="adcsample_t *" dir="out">
+                  Samples buffer.
+                </param>
+                <param name="depth" ctype="size_t" dir="in">
+                  Buffer depth.
+                </param>
+                <return>The conversion status.</return>
+                <api />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+osalDbgAssert(self->thread == NULL, "already waiting");
+msg = adcStartConversionI(self, grpp, samples, depth);
+if (msg == HAL_RET_SUCCESS) {
+  msg = osalThreadSuspendS(&self->thread);
+}
+osalSysUnlock();
+
+return msg;]]></implementation>
+              </method>
+            </condition>
+          </regular>
+          <inline>
+            <method name="adcGetEventsX" ctype="adceventflags_t">
+              <brief>Returns the cached ADC event flags.</brief>
+              <return>The current cached event flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->events;]]></implementation>
+            </method>
+            <method name="adcGetAndClearEventsX" ctype="adceventflags_t">
+              <brief>Gets and clears cached ADC event flags.</brief>
+              <param name="mask" ctype="adceventflags_t" dir="in">
+                Mask of events to be returned and cleared.
+              </param>
+              <return>The selected pending event flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+adceventflags_t flags;
+syssts_t sts;
+
+sts = osalSysGetStatusAndLockX();
+flags = self->events & mask;
+self->events &= ~mask;
+osalSysRestoreStatusX(sts);
+
+return flags;]]></implementation>
+            </method>
+            <method name="adcGetErrorsX" ctype="adcerror_t">
+              <brief>Returns the cached ADC error flags.</brief>
+              <return>The current cached error flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->errors;]]></implementation>
+            </method>
+            <method name="adcGetAndClearErrorsX" ctype="adcerror_t">
+              <brief>Gets and clears cached ADC error flags.</brief>
+              <param name="mask" ctype="adcerror_t" dir="in">
+                Mask of errors to be returned and cleared.
+              </param>
+              <return>The selected pending error flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+adcerror_t errors;
+syssts_t sts;
+
+sts = osalSysGetStatusAndLockX();
+errors = self->errors & mask;
+self->errors &= ~mask;
+osalSysRestoreStatusX(sts);
+
+return errors;]]></implementation>
+            </method>
+          </inline>
+          <override>
+            <method shortname="start">
+              <implementation><![CDATA[
+msg_t msg;
+
+self->samples = NULL;
+self->depth   = 0U;
+self->grpp    = NULL;
+self->events  = 0U;
+self->errors  = 0U;
+
+msg = adc_lld_start(self);
+if (msg != HAL_RET_SUCCESS) {
+  self->config = NULL;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[
+adc_lld_stop(self);
+self->samples = NULL;
+self->depth   = 0U;
+self->grpp    = NULL;
+self->events  = 0U;
+self->errors  = 0U;]]></implementation>
+            </method>
+            <method shortname="setcfg">
+              <implementation><![CDATA[
+return (const void *)adc_lld_setcfg(self, (const hal_adc_config_t *)config);]]></implementation>
+            </method>
+            <method shortname="selcfg">
+              <implementation><![CDATA[
+return (const void *)adc_lld_selcfg(self, cfgnum);]]></implementation>
+            </method>
+            <method shortname="setcb">
+              <implementation><![CDATA[
+__cbdrv_setcb_impl(self, cb);
+adc_lld_set_callback(self, cb);]]></implementation>
+            </method>
+          </override>
         </methods>
       </class>
     </types>
+    <functions>
+      <function name="adcInit" ctype="void">
+        <brief>ADC Driver initialization.</brief>
+        <init />
+        <implementation><![CDATA[
+adc_lld_init();]]></implementation>
+      </function>
+    </functions>
   </public>
   <private>
+    <includes_always>
+      <include style="regular">hal.h</include>
+    </includes_always>
   </private>
 </module>
