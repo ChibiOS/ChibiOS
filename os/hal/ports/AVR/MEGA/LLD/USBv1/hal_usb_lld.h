@@ -224,12 +224,14 @@ typedef struct {
    * @note    This callback is mandatory and cannot be set to @p NULL.
    */
   usbgetdescriptor_t            get_descriptor_cb;
+#if (USB_USE_EP0_THREAD == FALSE) || defined(__DOXYGEN__)
   /**
    * @brief   Requests hook callback.
    * @details This hook allows to be notified of standard requests or to
    *          handle non standard requests.
    */
   usbreqhandler_t               requests_hook_cb;
+#endif
   /**
    * @brief   Start Of Frame callback.
    */
@@ -291,6 +293,28 @@ struct USBDriver {
    * @brief   Endpoint 0 end transaction callback.
    */
   usbcallback_t                 ep0endcb;
+#if (USB_USE_EP0_THREAD == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Waiting thread for EP0 operations.
+   */
+  thread_reference_t            ep0thread;
+  /**
+   * @brief   Current EP0 sequence number.
+   */
+  uint8_t                       ep0seq;
+  /**
+   * @brief   EP0 sequence number owned by the worker thread.
+   */
+  uint8_t                       ep0rseq;
+  /**
+   * @brief   Pending setup notification for the worker thread.
+   */
+  uint8_t                       ep0setup;
+  /**
+   * @brief   Pending reset notification for the worker thread.
+   */
+  uint8_t                       ep0reset;
+#endif
   /**
    * @brief   Setup packet buffer.
    */
