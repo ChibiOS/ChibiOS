@@ -403,7 +403,9 @@ void adcRPDisableTS(ADCDriver *adcp) {
  * @brief   Configures a GPIO pin for ADC input.
  * @note    Disables digital I/O and pulls for proper analog operation.
  *
- * @param[in] gpio      GPIO pin number (26-29 RP2040, 26-29/40-47 RP2350)
+ * @param[in] gpio      GPIO pin number (RP2040: 26-29; RP2350A QFN-60: 26-29;
+ *                      RP2350B QFN-80: 40-47). Range is validated against
+ *                      RP_ADC_BASE_PIN and RP_ADC_NUM_CHANNELS for the build.
  *
  * @api
  */
