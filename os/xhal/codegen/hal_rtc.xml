@@ -9,73 +9,138 @@
   <public>
     <definitions_early>
       <group description="RTC constants">
-        <define name="RTC_BASE_YEAR" value="1980U" />
-        <define name="RTC_DAY_CATURDAY" value="0U" />
-        <define name="RTC_DAY_MONDAY" value="1U" />
-        <define name="RTC_DAY_TUESDAY" value="2U" />
-        <define name="RTC_DAY_WEDNESDAY" value="3U" />
-        <define name="RTC_DAY_THURSDAY" value="4U" />
-        <define name="RTC_DAY_FRIDAY" value="5U" />
-        <define name="RTC_DAY_SATURDAY" value="6U" />
-        <define name="RTC_DAY_SUNDAY" value="7U" />
-        <define name="RTC_FLAGS_ALARM_A" value="(1U &lt;&lt; 0)" />
-        <define name="RTC_FLAGS_ALARM_B" value="(1U &lt;&lt; 1)" />
-        <define name="RTC_FLAGS_TS" value="(1U &lt;&lt; 2)" />
-        <define name="RTC_FLAGS_TS_OVF" value="(1U &lt;&lt; 3)" />
-        <define name="RTC_FLAGS_TAMP1" value="(1U &lt;&lt; 4)" />
-        <define name="RTC_FLAGS_TAMP2" value="(1U &lt;&lt; 5)" />
-        <define name="RTC_FLAGS_TAMP3" value="(1U &lt;&lt; 6)" />
-        <define name="RTC_FLAGS_WAKEUP" value="(1U &lt;&lt; 7)" />
+        <define name="RTC_BASE_YEAR" value="1980U">
+          <brief>Base year of the RTC broken-down representation.</brief>
+        </define>
+        <define name="RTC_DAY_CATURDAY" value="0U">
+          <brief>Reserved/zero day encoding.</brief>
+        </define>
+        <define name="RTC_DAY_MONDAY" value="1U">
+          <brief>Monday day encoding.</brief>
+        </define>
+        <define name="RTC_DAY_TUESDAY" value="2U">
+          <brief>Tuesday day encoding.</brief>
+        </define>
+        <define name="RTC_DAY_WEDNESDAY" value="3U">
+          <brief>Wednesday day encoding.</brief>
+        </define>
+        <define name="RTC_DAY_THURSDAY" value="4U">
+          <brief>Thursday day encoding.</brief>
+        </define>
+        <define name="RTC_DAY_FRIDAY" value="5U">
+          <brief>Friday day encoding.</brief>
+        </define>
+        <define name="RTC_DAY_SATURDAY" value="6U">
+          <brief>Saturday day encoding.</brief>
+        </define>
+        <define name="RTC_DAY_SUNDAY" value="7U">
+          <brief>Sunday day encoding.</brief>
+        </define>
+        <define name="RTC_FLAGS_ALARM_A" value="(1U &lt;&lt; 0)">
+          <brief>Alarm A event flag.</brief>
+        </define>
+        <define name="RTC_FLAGS_ALARM_B" value="(1U &lt;&lt; 1)">
+          <brief>Alarm B event flag.</brief>
+        </define>
+        <define name="RTC_FLAGS_TS" value="(1U &lt;&lt; 2)">
+          <brief>Timestamp event flag.</brief>
+        </define>
+        <define name="RTC_FLAGS_TS_OVF" value="(1U &lt;&lt; 3)">
+          <brief>Timestamp overflow event flag.</brief>
+        </define>
+        <define name="RTC_FLAGS_TAMP1" value="(1U &lt;&lt; 4)">
+          <brief>Tamper 1 event flag.</brief>
+        </define>
+        <define name="RTC_FLAGS_TAMP2" value="(1U &lt;&lt; 5)">
+          <brief>Tamper 2 event flag.</brief>
+        </define>
+        <define name="RTC_FLAGS_TAMP3" value="(1U &lt;&lt; 6)">
+          <brief>Tamper 3 event flag.</brief>
+        </define>
+        <define name="RTC_FLAGS_WAKEUP" value="(1U &lt;&lt; 7)">
+          <brief>Wakeup event flag.</brief>
+        </define>
       </group>
     </definitions_early>
     <types>
       <typedef name="rtceventflags_t">
+        <brief>Type of RTC event flags.</brief>
         <basetype ctype="uint32_t" />
       </typedef>
       <typedef name="hal_rtc_driver_c">
+        <brief>Type of structure representing an RTC driver.</brief>
         <basetype ctype="struct hal_rtc_driver" />
       </typedef>
       <typedef name="hal_rtc_config_t">
+        <brief>Type of structure representing an RTC configuration.</brief>
         <basetype ctype="struct hal_rtc_config" />
       </typedef>
       <typedef name="rtcalarm_t">
+        <brief>Type of an RTC alarm selector.</brief>
         <basetype ctype="unsigned int" />
       </typedef>
       <struct name="rtc_datetime_t">
+        <brief>Structure representing an RTC date/time stamp.</brief>
         <fields>
-          <field name="year" ctype="uint16_t" />
-          <field name="month" ctype="uint8_t" />
-          <field name="day" ctype="uint8_t" />
-          <field name="dayofweek" ctype="uint8_t" />
-          <field name="dstflag" ctype="uint8_t" />
-          <field name="millisecond" ctype="uint32_t" />
+          <field name="year" ctype="uint16_t">
+            <brief>Year offset from @p RTC_BASE_YEAR.</brief>
+          </field>
+          <field name="month" ctype="uint8_t">
+            <brief>Month in range 1..12.</brief>
+          </field>
+          <field name="day" ctype="uint8_t">
+            <brief>Day of month in range 1..31.</brief>
+          </field>
+          <field name="dayofweek" ctype="uint8_t">
+            <brief>Day of week encoding.</brief>
+          </field>
+          <field name="dstflag" ctype="uint8_t">
+            <brief>Daylight saving time flag.</brief>
+          </field>
+          <field name="millisecond" ctype="uint32_t">
+            <brief>Milliseconds elapsed since start of day.</brief>
+          </field>
         </fields>
       </struct>
       <struct name="rtc_time64_t">
+        <brief>Linux-like 64-bit time representation.</brief>
         <fields>
-          <field name="tv_sec" ctype="int64_t" />
-          <field name="tv_nsec" ctype="uint32_t" />
+          <field name="tv_sec" ctype="int64_t">
+            <brief>Seconds since the Unix epoch.</brief>
+          </field>
+          <field name="tv_nsec" ctype="uint32_t">
+            <brief>Nanoseconds fraction within the current second.</brief>
+          </field>
         </fields>
       </struct>
       <verbatim><![CDATA[
 /* Inclusion of LLD header.*/
 #include "hal_rtc_lld.h"]]></verbatim>
       <struct name="hal_rtc_config">
+        <brief>Driver configuration structure.</brief>
         <fields>
-          <field name="cr" ctype="uint32_t" />
-          <field name="prer" ctype="uint32_t" />
+          <field name="cr" ctype="uint32_t">
+            <brief>Initial value for the RTC CR register.</brief>
+          </field>
+          <field name="prer" ctype="uint32_t">
+            <brief>Initial value for the RTC PRER register.</brief>
+          </field>
           <verbatim><![CDATA[
 /* End of the mandatory fields.*/
 rtc_lld_config_fields;]]></verbatim>
         </fields>
       </struct>
       <struct name="rtc_alarm_t">
+        <brief>Structure representing an RTC alarm specification.</brief>
         <fields>
-          <field name="alrmr" ctype="uint32_t" />
+          <field name="alrmr" ctype="uint32_t">
+            <brief>Implementation-defined alarm register encoding.</brief>
+          </field>
         </fields>
       </struct>
       <class type="regular" name="hal_rtc_driver" namespace="rtc"
         ancestorname="hal_cb_driver" descr="RTC driver">
+        <brief>Class of an RTC driver.</brief>
         <fields>
           <field name="events" ctype="volatile rtceventflags_t">
             <brief>Pending RTC event flags.</brief>
@@ -99,4 +164,6 @@ self->events = 0U;]]></implementation>
       </class>
     </types>
   </public>
+  <private>
+  </private>
 </module>

@@ -9,9 +9,15 @@
   <public>
     <definitions_early>
       <group description="ADC event flags">
-        <define name="ADC_EVENT_HALF" value="(1U &lt;&lt; 0)" />
-        <define name="ADC_EVENT_FULL" value="(1U &lt;&lt; 1)" />
-        <define name="ADC_EVENT_COMPLETE" value="(1U &lt;&lt; 2)" />
+        <define name="ADC_EVENT_HALF" value="(1U &lt;&lt; 0)">
+          <brief>Half-buffer completion event flag.</brief>
+        </define>
+        <define name="ADC_EVENT_FULL" value="(1U &lt;&lt; 1)">
+          <brief>Full-buffer completion event flag.</brief>
+        </define>
+        <define name="ADC_EVENT_COMPLETE" value="(1U &lt;&lt; 2)">
+          <brief>Linear conversion completion event flag.</brief>
+        </define>
       </group>
     </definitions_early>
     <configs>
@@ -22,42 +28,76 @@
     </configs>
     <types>
       <typedef name="adceventflags_t">
+        <brief>Type of ADC event flags.</brief>
         <basetype ctype="uint32_t" />
       </typedef>
       <typedef name="hal_adc_driver_c">
+        <brief>Type of structure representing an ADC driver.</brief>
         <basetype ctype="struct hal_adc_driver" />
       </typedef>
       <typedef name="hal_adc_config_t">
+        <brief>Type of structure representing an ADC configuration.</brief>
         <basetype ctype="struct hal_adc_config" />
       </typedef>
       <typedef name="adc_conversion_group_t">
+        <brief>Type of structure representing an ADC conversion group.</brief>
         <basetype ctype="struct hal_adc_conversion_group" />
       </typedef>
       <typedef name="ADCDriver">
+        <brief>Legacy alias of @p hal_adc_driver_c.</brief>
         <basetype ctype="struct hal_adc_driver" />
       </typedef>
       <typedef name="ADCConfig">
+        <brief>Legacy alias of @p hal_adc_config_t.</brief>
         <basetype ctype="struct hal_adc_config" />
       </typedef>
       <typedef name="ADCConversionGroup">
+        <brief>Legacy alias of @p adc_conversion_group_t.</brief>
         <basetype ctype="struct hal_adc_conversion_group" />
       </typedef>
       <verbatim><![CDATA[
 /* Including the low level driver header, it exports information required
    for completing types.*/
 #include "hal_adc_lld.h"]]></verbatim>
+      <verbatim><![CDATA[
+/**
+ * @brief       Type of an ADC notification callback.
+ *
+ * @param[in]   adcp            Pointer to the @p ADCDriver object triggering
+ *                              the callback.
+ */
+typedef void (*adccallback_t)(ADCDriver *adcp);
+
+/**
+ * @brief       Type of an ADC error callback.
+ *
+ * @param[in]   adcp            Pointer to the @p ADCDriver object triggering
+ *                              the callback.
+ * @param[in]   err             ADC error code.
+ */
+typedef void (*adcerrorcallback_t)(ADCDriver *adcp, adcerror_t err);]]></verbatim>
       <struct name="hal_adc_conversion_group">
+        <brief>Conversion group configuration structure.</brief>
         <fields>
-          <field name="circular" ctype="bool" />
-          <field name="num_channels" ctype="adc_channels_num_t" />
-          <field name="end_cb" ctype="adccallback_t" />
-          <field name="error_cb" ctype="adcerrorcallback_t" />
+          <field name="circular" ctype="bool">
+            <brief>Enables circular buffer mode for the group.</brief>
+          </field>
+          <field name="num_channels" ctype="adc_channels_num_t">
+            <brief>Number of analog channels in the conversion group.</brief>
+          </field>
+          <field name="end_cb" ctype="adccallback_t">
+            <brief>End callback associated to the group or @p NULL.</brief>
+          </field>
+          <field name="error_cb" ctype="adcerrorcallback_t">
+            <brief>Error callback associated to the group or @p NULL.</brief>
+          </field>
           <verbatim><![CDATA[
 /* End of the mandatory fields.*/
 adc_lld_configuration_group_fields;]]></verbatim>
         </fields>
       </struct>
       <struct name="hal_adc_config">
+        <brief>Driver configuration structure.</brief>
         <fields>
           <verbatim><![CDATA[
 /* End of the mandatory fields.*/
@@ -66,14 +106,27 @@ adc_lld_config_fields;]]></verbatim>
       </struct>
       <class type="regular" name="hal_adc_driver" namespace="adc"
         ancestorname="hal_cb_driver" descr="ADC driver">
+        <brief>Class of an ADC driver.</brief>
         <fields>
-          <field name="samples" ctype="adcsample_t *" />
-          <field name="depth" ctype="size_t" />
-          <field name="grpp" ctype="const adc_conversion_group_t *" />
-          <field name="events" ctype="volatile adceventflags_t" />
-          <field name="errors" ctype="volatile adcerror_t" />
+          <field name="samples" ctype="adcsample_t *">
+            <brief>Current samples buffer pointer or @p NULL.</brief>
+          </field>
+          <field name="depth" ctype="size_t">
+            <brief>Current samples buffer depth or zero.</brief>
+          </field>
+          <field name="grpp" ctype="const adc_conversion_group_t *">
+            <brief>Current conversion group pointer or @p NULL.</brief>
+          </field>
+          <field name="events" ctype="volatile adceventflags_t">
+            <brief>Cached ADC event flags.</brief>
+          </field>
+          <field name="errors" ctype="volatile adcerror_t">
+            <brief>Cached ADC error flags.</brief>
+          </field>
           <condition check="ADC_USE_WAIT == TRUE">
-            <field name="thread" ctype="thread_reference_t" />
+            <field name="thread" ctype="thread_reference_t">
+              <brief>Waiting thread reference.</brief>
+            </field>
           </condition>
           <verbatim><![CDATA[
 #if defined(ADC_DRIVER_EXT_FIELDS)
@@ -101,4 +154,6 @@ self->thread = NULL;
       </class>
     </types>
   </public>
+  <private>
+  </private>
 </module>
