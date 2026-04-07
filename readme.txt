@@ -78,6 +78,7 @@
 
 *** Next ***
 - NEW: Thread mode for EP0 handling in USB HAL driver.
+- NEW: ADC driver in XHAL.
 - NEW: RTC driver in XHAL.
 - NEW: Added EFL driver for simulator and a simulator MFS test application.
 - NEW: Added simulator support for x84-64 on Posix/Linux.

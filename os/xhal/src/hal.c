@@ -70,10 +70,10 @@ void halInit(void) {
 #if (HAL_USE_ETH == TRUE) || defined(__DOXYGEN__)
   ethInit();
 #endif
-#if 0
 #if (HAL_USE_ADC == TRUE) || defined(__DOXYGEN__)
   adcInit();
 #endif
+#if 0
 #if (HAL_USE_CAN == TRUE) || defined(__DOXYGEN__)
   canInit();
 #endif

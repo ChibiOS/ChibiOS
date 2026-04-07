@@ -159,3 +159,141 @@ Implementation order:
 - Then port one STM32 RTC LLD variant, preferably RTCv4, as the reference
   implementation.
 - After the RTCv4 port is stable, backport the same interface to RTCv1/v2/v3.
+
+ADC proposal:
+- Add a generated XHAL ADC module (`hal_adc.xml`) and keep the public API as
+  close as practical to the legacy HAL ADC regular-conversion model.
+- Base the driver on `hal_cb_driver_c` because conversion completion is
+  naturally callback-driven and the XHAL callback machinery already matches
+  DMA-backed peripherals well.
+- Do not redesign ADC around queued requests in the first iteration. Preserve
+  the current HAL split between driver configuration and conversion-group
+  configuration.
+
+Public model:
+- Driver class: `hal_adc_driver_c`, ancestor `hal_cb_driver_c`.
+- Configuration type: `hal_adc_config_t`, intentionally close to HAL
+  `ADCConfig`.
+- Conversion descriptor: `adc_conversion_group_t`, intentionally close to HAL
+  `ADCConversionGroup`.
+- Sample type: `adcsample_t`, kept unchanged where possible in order to ease
+  LLD reuse.
+- Event flags type: `adceventflags_t`.
+- Error flags type: `adcerror_t`, reusing the HAL-style error bitmask model.
+
+API direction:
+- Keep the main verbs and semantics aligned with HAL ADC:
+  `adcInit()`, `adcStart()`, `adcStop()`, `adcStartConversion()`,
+  `adcStopConversion()`.
+- Adapt the names and method signatures to XHAL object conventions but avoid
+  changing behavior unless there is a clear XHAL benefit.
+- Keep the conversion descriptor immutable and separate from the samples
+  buffer. The samples pointer and depth remain per-execution parameters.
+
+Proposed public API:
+- `void adcInit(void);`
+- `msg_t adcStart(hal_adc_driver_c *self);`
+- `void adcStop(hal_adc_driver_c *self);`
+- `const hal_adc_config_t *adcSetCfgX(hal_adc_driver_c *self,
+  const hal_adc_config_t *config);`
+- `msg_t adcStartConversion(hal_adc_driver_c *self,
+  const adc_conversion_group_t *grpp, adcsample_t *samples, size_t depth);`
+- `msg_t adcStopConversion(hal_adc_driver_c *self);`
+- `adceventflags_t adcGetEventsX(hal_adc_driver_c *self);`
+- `adceventflags_t adcGetAndClearEventsX(hal_adc_driver_c *self,
+  adceventflags_t mask);`
+- `adcerror_t adcGetErrorsX(hal_adc_driver_c *self);`
+- `adcerror_t adcGetAndClearErrorsX(hal_adc_driver_c *self, adcerror_t mask);`
+
+State and callback model:
+- Keep the state machine close to HAL ADC in order to preserve familiar
+  conversion flow:
+  `STOP`, `READY`, `ACTIVE`, `COMPLETE`, `ERROR`.
+- Do not encode half-buffer/full-buffer reasons into the state any more than
+  necessary.
+- Instead, cache conversion events in the driver object and expose them
+  through `adcGetEventsX()` and `adcGetAndClearEventsX()`.
+- Suggested event bits: `ADC_EVENT_HALF`, `ADC_EVENT_FULL`,
+  `ADC_EVENT_COMPLETE`.
+- Keep hardware errors as a separate cached bitmask, close to HAL:
+  `ADC_ERR_DMAFAILURE`, `ADC_ERR_OVERFLOW`, `ADC_ERR_AWD1`,
+  `ADC_ERR_AWD2`, `ADC_ERR_AWD3`.
+
+Why the samples pointer must stay outside the group:
+- The same conversion group should be reusable with different destination
+  buffers.
+- The conversion group is configuration data, while the samples pointer and
+  depth are runtime execution parameters.
+- Embedding the buffer in the group would make configuration objects mutable,
+  less reusable and more error-prone with respect to lifetime/ownership.
+- Keeping the buffer as an argument also preserves a close mapping to the
+  existing HAL ADC call shape.
+
+Conversion-group policy:
+- Keep `circular`, `num_channels`, `end_cb`, `error_cb` in the mandatory
+  generic fields, mirroring HAL ADC closely.
+- Keep hardware-specific register fields inside
+  `adc_lld_conversion_group_fields`.
+- Preserve the current HAL expectation that the conversion group is an
+  implementation-aware structure describing one regular conversion sequence.
+
+Configuration policy:
+- Keep `hal_adc_config_t` minimal and close to HAL `ADCConfig`.
+- Provide a built-in default configuration so the driver can be started
+  without a user-supplied config, consistent with XHAL conventions.
+- Keep all STM32 register details in `adc_lld_config_fields`.
+
+First-iteration feature scope:
+- Include regular conversions.
+- Include DMA linear mode.
+- Include DMA circular mode with callback/event reporting for half/full
+  completions.
+- Include trigger-controlled conversions.
+- Defer injected conversions, analog watchdog management APIs, multi-ADC
+  combined modes, oversampling-specific policy, and other family-specific
+  extensions to later revisions.
+
+LLD split for STM32:
+- Do not force a single STM32 ADC LLD for both G4 and H5. The HAL tree already
+  splits them by ADC generation and XHAL should mirror that.
+- Required XHAL LLDs:
+  `os/xhal/ports/STM32/LLD/ADCv3/` for STM32G4xx.
+  `os/xhal/ports/STM32/LLD/ADCv6/` for STM32H5xx.
+- This matches the existing HAL platform selections and keeps porting work
+  close to the legacy LLDs:
+  G4 -> `ADCv3`
+  H5 -> `ADCv6`
+
+LLD shape proposal:
+- `adc_lld_init()`
+- `msg_t adc_lld_start(hal_adc_driver_c *self)`
+- `void adc_lld_stop(hal_adc_driver_c *self)`
+- `const hal_adc_config_t *adc_lld_setcfg(hal_adc_driver_c *self,
+  const hal_adc_config_t *config)`
+- `msg_t adc_lld_start_conversion(hal_adc_driver_c *self,
+  const adc_conversion_group_t *grpp, adcsample_t *samples, size_t depth)`
+- `msg_t adc_lld_stop_conversion(hal_adc_driver_c *self)`
+- `void adc_lld_setcb(hal_adc_driver_c *self, drv_cb_t cb)`
+- The LLD remains responsible for register programming, DMA setup, IRQ
+  service and extraction of hardware error bits.
+- The common XHAL layer remains responsible for state assertions, callback
+  dispatch conventions, and cached event/error flag management.
+
+Generated files and build integration:
+- Add `os/xhal/codegen/hal_adc.xml`.
+- Register the new entity in `os/xhal/codegen/modules.xml`.
+- Regenerate `os/xhal/include/hal_adc.h` and `os/xhal/src/hal_adc.c`.
+- Add `os/xhal/src/hal_adc.c` to `os/xhal/xhal.mk` behind
+  `HAL_USE_ADC == TRUE`.
+- Include ADC initialization in `os/xhal/src/hal.c`.
+- Update `xhalconf.h.ftl` and the required `xmcuconf.h.ftl` templates with
+  ADC-related options rather than editing generated configuration files by
+  hand.
+
+Implementation order:
+- First add the common generated XHAL ADC module and keep its API HAL-like.
+- Then port `ADCv3` as the reference STM32 XHAL LLD for G4.
+- After the common API is stable, port `ADCv6` for H5 with minimal API drift.
+- Add a `testxhal/ADC` application early, focused on linear conversion,
+  circular conversion, half/full callbacks, stop-while-active, and restart
+  behavior.

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_adc" descr="ADC Driver" check="HAL_USE_ADC == TRUE" editcode="false">
+  <brief>ADC Driver macros and structures.</brief>
+  <imports>
+    <import>hal_cb_driver.xml</import>
+  </imports>
+  <public>
+    <definitions_early>
+      <group description="ADC event flags">
+        <define name="ADC_EVENT_HALF" value="(1U &lt;&lt; 0)" />
+        <define name="ADC_EVENT_FULL" value="(1U &lt;&lt; 1)" />
+        <define name="ADC_EVENT_COMPLETE" value="(1U &lt;&lt; 2)" />
+      </group>
+    </definitions_early>
+    <configs>
+      <config name="ADC_USE_WAIT" default="TRUE">
+        <brief>Support for synchronous conversion API.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+    </configs>
+    <types>
+      <typedef name="adceventflags_t">
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="hal_adc_driver_c">
+        <basetype ctype="struct hal_adc_driver" />
+      </typedef>
+      <typedef name="hal_adc_config_t">
+        <basetype ctype="struct hal_adc_config" />
+      </typedef>
+      <typedef name="adc_conversion_group_t">
+        <basetype ctype="struct hal_adc_conversion_group" />
+      </typedef>
+      <typedef name="ADCDriver">
+        <basetype ctype="struct hal_adc_driver" />
+      </typedef>
+      <typedef name="ADCConfig">
+        <basetype ctype="struct hal_adc_config" />
+      </typedef>
+      <typedef name="ADCConversionGroup">
+        <basetype ctype="struct hal_adc_conversion_group" />
+      </typedef>
+      <verbatim><![CDATA[
+/* Including the low level driver header, it exports information required
+   for completing types.*/
+#include "hal_adc_lld.h"]]></verbatim>
+      <struct name="hal_adc_conversion_group">
+        <fields>
+          <field name="circular" ctype="bool" />
+          <field name="num_channels" ctype="adc_channels_num_t" />
+          <field name="end_cb" ctype="adccallback_t" />
+          <field name="error_cb" ctype="adcerrorcallback_t" />
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+adc_lld_configuration_group_fields;]]></verbatim>
+        </fields>
+      </struct>
+      <struct name="hal_adc_config">
+        <fields>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+adc_lld_config_fields;]]></verbatim>
+        </fields>
+      </struct>
+      <class type="regular" name="hal_adc_driver" namespace="adc"
+        ancestorname="hal_cb_driver" descr="ADC driver">
+        <fields>
+          <field name="samples" ctype="adcsample_t *" />
+          <field name="depth" ctype="size_t" />
+          <field name="grpp" ctype="const adc_conversion_group_t *" />
+          <field name="events" ctype="volatile adceventflags_t" />
+          <field name="errors" ctype="volatile adcerror_t" />
+          <condition check="ADC_USE_WAIT == TRUE">
+            <field name="thread" ctype="thread_reference_t" />
+          </condition>
+          <verbatim><![CDATA[
+#if defined(ADC_DRIVER_EXT_FIELDS)
+ADC_DRIVER_EXT_FIELDS
+#endif
+/* End of the mandatory fields.*/
+adc_lld_driver_fields;]]></verbatim>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+self->samples = NULL;
+self->depth = 0U;
+self->grpp = NULL;
+self->events = 0U;
+self->errors = 0U;
+#if ADC_USE_WAIT == TRUE
+self->thread = NULL;
+#endif]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[ ]]></implementation>
+          </dispose>
+        </methods>
+      </class>
+    </types>
+  </public>
+</module>

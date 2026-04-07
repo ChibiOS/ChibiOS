@@ -5,6 +5,7 @@
   <!ENTITY hal_channels        SYSTEM "hal_channels.xml">
   <!ENTITY hal_block_io        SYSTEM "hal_block_io.xml">
   <!ENTITY hal_buffered_serial SYSTEM "hal_buffered_serial.xml">
+  <!ENTITY hal_adc             SYSTEM "hal_adc.xml">
   <!ENTITY hal_eth             SYSTEM "hal_eth.xml">
   <!ENTITY hal_rtc             SYSTEM "hal_rtc.xml">
   <!ENTITY hal_sio             SYSTEM "hal_sio.xml">
@@ -21,6 +22,7 @@
     &hal_channels;
     &hal_block_io;
     &hal_buffered_serial;
+    &hal_adc;
     &hal_eth;
     &hal_rtc;
     &hal_sio;
