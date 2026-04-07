@@ -32,3 +32,130 @@ General improvements:
   now required to handle this cleanly.
 - Many functions that used to return void in HAL now return error codes, this
   is especially true for communication functions.
+
+RTC proposal:
+- Add a generated XHAL RTC module (`hal_rtc.xml`) and make it a regular XHAL
+  driver, derived from `hal_cb_driver_c`.
+- Do not carry over the HAL persistent storage feature. The XHAL RTC should
+  not expose file-like or storage-like APIs, only clock/alarm/event services.
+- Keep the low level driver shape close to HAL RTC in order to ease porting of
+  the existing STM32 RTCv1/v2/v3/v4 LLDs.
+
+Public model:
+- Driver class: `hal_rtc_driver_c`, ancestor `hal_cb_driver_c`.
+- Configuration type: `hal_rtc_config_t`.
+- Broken-down time type: `rtc_datetime_t`, intentionally close to the current
+  HAL `RTCDateTime` for easy LLD reuse.
+- 64-bit time type: `rtc_time64_t`, defined as a Linux-like split time value:
+  `int64_t tv_sec` plus `uint32_t tv_nsec`.
+- Alarm type: `rtc_alarm_t`.
+- Event flags type: `rtceventflags_t`.
+
+Rationale for the 64-bit API:
+- Returning a pure broken-down calendar is inconvenient for interval
+  arithmetic, ordering and Unix/POSIX interoperability.
+- A Linux-like `tv_sec`/`tv_nsec` representation avoids 2038 issues while
+  keeping the API independent from the host `time_t` size.
+- The RTC remains a civil/real-time clock, therefore the 64-bit value should
+  represent UTC seconds from the Unix epoch (1970-01-01 00:00:00 UTC).
+
+Proposed public API:
+- `void rtcInit(void);`
+- `msg_t rtcSetDateTime(hal_rtc_driver_c *self, const rtc_datetime_t *dt);`
+- `msg_t rtcGetDateTime(hal_rtc_driver_c *self, rtc_datetime_t *dt);`
+- `msg_t rtcSetTime64(hal_rtc_driver_c *self, const rtc_time64_t *tv);`
+- `msg_t rtcGetTime64(hal_rtc_driver_c *self, rtc_time64_t *tv);`
+- `rtceventflags_t rtcGetEventsX(hal_rtc_driver_c *self);`
+- `rtceventflags_t rtcGetAndClearEventsX(hal_rtc_driver_c *self,
+  rtceventflags_t mask);`
+- `msg_t rtcSetAlarm(hal_rtc_driver_c *self, unsigned alarm,
+  const rtc_alarm_t *alarmp);`
+- `msg_t rtcGetAlarm(hal_rtc_driver_c *self, unsigned alarm,
+  rtc_alarm_t *alarmp);`
+
+Context rules:
+- `rtcSetDateTime()` and `rtcSetTime64()` should be thread-context APIs
+  because they can require write protection handling, calendar shadow
+  synchronization and multi-register updates.
+- `rtcGetDateTime()` and `rtcGetTime64()` should be callable from any context
+  if the LLD can provide an atomic snapshot; the generated API can expose them
+  as `X` methods if this guarantee is desired across XHAL.
+- Event accessors should be `X` APIs because they only manipulate cached event
+  flags in the driver object.
+
+Callback and event handling:
+- Reuse the generic XHAL single-callback model from `hal_cb_driver_c`.
+- Do not encode RTC reasons in driver states, this does not map well to RTC
+  alarm/tamper/timestamp events.
+- Add an event flags field in the driver object. The ISR/LLD ORs the pending
+  event bits into it, then invokes the generic callback if enabled.
+- The upper layer inspects the reason through `rtcGetEventsX()` or
+  `rtcGetAndClearEventsX()`.
+- Suggested bits: `RTC_FLAGS_ALARM_A`, `RTC_FLAGS_ALARM_B`, `RTC_FLAGS_TS`,
+  `RTC_FLAGS_TS_OVF`, `RTC_FLAGS_TAMP1`, `RTC_FLAGS_TAMP2`,
+  `RTC_FLAGS_TAMP3`, `RTC_FLAGS_WAKEUP`.
+
+Time conversion policy:
+- Keep the HAL-style broken-down representation with year offset from a fixed
+  base for compactness in the LLD-facing API.
+- Introduce conversion helpers between `rtc_datetime_t` and `rtc_time64_t` in
+  the common XHAL RTC source.
+- Use nanoseconds in the 64-bit API even if the hardware only exposes
+  subseconds at lower precision; LLDs can return a rounded/truncated
+  `tv_nsec`.
+- For the STM32 legacy LLDs, `tv_nsec` will initially be derived from the
+  subsecond register when available, otherwise it can be quantized to
+  milliseconds/seconds depending on the RTC version.
+
+Configuration proposal:
+- Provide a minimal generic configuration containing only mandatory fields
+  that are common across ports.
+- Suggested generic fields: `uint32_t cr`, `uint32_t prer`.
+- Keep all register-layout-specific fields in `rtc_lld_config_fields`.
+- Supply a built-in default configuration so `drvStart()` can start the RTC
+  without a user-provided configuration, consistent with the XHAL model.
+
+LLD shape proposal:
+- `rtc_lld_init()`
+- `msg_t rtc_lld_start(hal_rtc_driver_c *self)`
+- `void rtc_lld_stop(hal_rtc_driver_c *self)`
+- `const hal_rtc_config_t *rtc_lld_setcfg(hal_rtc_driver_c *self,
+  const hal_rtc_config_t *config)`
+- `msg_t rtc_lld_set_datetime(hal_rtc_driver_c *self,
+  const rtc_datetime_t *dt)`
+- `msg_t rtc_lld_get_datetime(hal_rtc_driver_c *self, rtc_datetime_t *dt)`
+- `msg_t rtc_lld_set_alarm(hal_rtc_driver_c *self, unsigned alarm,
+  const rtc_alarm_t *alarmp)`
+- `msg_t rtc_lld_get_alarm(hal_rtc_driver_c *self, unsigned alarm,
+  rtc_alarm_t *alarmp)`
+- `void rtc_lld_setcb(hal_rtc_driver_c *self, drv_cb_t cb)`
+- The 64-bit APIs should stay in common code and be implemented on top of the
+  broken-down LLD entry points in the first iteration. This keeps the STM32
+  porting effort low and centralizes epoch conversion logic in one place.
+
+Generated files and build integration:
+- Add `os/xhal/codegen/hal_rtc.xml`.
+- Register the new entity in `os/xhal/codegen/modules.xml`.
+- Regenerate `os/xhal/include/hal_rtc.h` and `os/xhal/src/hal_rtc.c`.
+- Add `os/xhal/src/hal_rtc.c` to `os/xhal/xhal.mk` behind
+  `HAL_USE_RTC == TRUE`.
+- Include RTC initialization in `os/xhal/src/hal.c` together with the other
+  enabled drivers.
+- Include the new header from the umbrella XHAL include path exactly as done
+  for SPI/SIO/ETH.
+
+STM32 migration strategy:
+- Reuse the existing register encode/decode helpers from HAL RTC where
+  possible.
+- Drop all storage-related code and macros (`RTC_HAS_STORAGE`, persistent
+  storage VMT, backup-storage read/write helpers).
+- Keep alarm register encodings and EXTI handling nearly unchanged.
+- Add a single helper that reads a coherent date/time/subsecond snapshot and
+  converts it to `rtc_datetime_t`; common code then converts that to
+  `rtc_time64_t`.
+
+Implementation order:
+- First commit the generated common XHAL RTC module and its XML description.
+- Then port one STM32 RTC LLD variant, preferably RTCv4, as the reference
+  implementation.
+- After the RTCv4 port is stable, backport the same interface to RTCv1/v2/v3.

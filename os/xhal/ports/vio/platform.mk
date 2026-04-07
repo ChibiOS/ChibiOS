@@ -27,6 +27,9 @@ else
 endif
 
 # Drivers compatible with the platform.
+ifneq ($(findstring HAL_USE_RTC TRUE,$(HALCONF)),)
+PLATFORMSRC += $(CHIBIOS)/os/xhal/ports/vio/hal_rtc_lld.c
+endif
 
 # Shared variables
 ALLCSRC += $(PLATFORMSRC)

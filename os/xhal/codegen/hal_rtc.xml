@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_rtc" descr="RTC Driver" check="HAL_USE_RTC == TRUE" editcode="false">
+  <brief>RTC Driver macros and structures.</brief>
+  <imports>
+    <import>hal_cb_driver.xml</import>
+  </imports>
+  <public>
+    <definitions_early>
+      <group description="RTC constants">
+        <define name="RTC_BASE_YEAR" value="1980U" />
+        <define name="RTC_DAY_CATURDAY" value="0U" />
+        <define name="RTC_DAY_MONDAY" value="1U" />
+        <define name="RTC_DAY_TUESDAY" value="2U" />
+        <define name="RTC_DAY_WEDNESDAY" value="3U" />
+        <define name="RTC_DAY_THURSDAY" value="4U" />
+        <define name="RTC_DAY_FRIDAY" value="5U" />
+        <define name="RTC_DAY_SATURDAY" value="6U" />
+        <define name="RTC_DAY_SUNDAY" value="7U" />
+        <define name="RTC_FLAGS_ALARM_A" value="(1U &lt;&lt; 0)" />
+        <define name="RTC_FLAGS_ALARM_B" value="(1U &lt;&lt; 1)" />
+        <define name="RTC_FLAGS_TS" value="(1U &lt;&lt; 2)" />
+        <define name="RTC_FLAGS_TS_OVF" value="(1U &lt;&lt; 3)" />
+        <define name="RTC_FLAGS_TAMP1" value="(1U &lt;&lt; 4)" />
+        <define name="RTC_FLAGS_TAMP2" value="(1U &lt;&lt; 5)" />
+        <define name="RTC_FLAGS_TAMP3" value="(1U &lt;&lt; 6)" />
+        <define name="RTC_FLAGS_WAKEUP" value="(1U &lt;&lt; 7)" />
+      </group>
+    </definitions_early>
+    <types>
+      <typedef name="rtceventflags_t">
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="hal_rtc_driver_c">
+        <basetype ctype="struct hal_rtc_driver" />
+      </typedef>
+      <typedef name="hal_rtc_config_t">
+        <basetype ctype="struct hal_rtc_config" />
+      </typedef>
+      <typedef name="rtcalarm_t">
+        <basetype ctype="unsigned int" />
+      </typedef>
+      <struct name="rtc_datetime_t">
+        <fields>
+          <field name="year" ctype="uint16_t" />
+          <field name="month" ctype="uint8_t" />
+          <field name="day" ctype="uint8_t" />
+          <field name="dayofweek" ctype="uint8_t" />
+          <field name="dstflag" ctype="uint8_t" />
+          <field name="millisecond" ctype="uint32_t" />
+        </fields>
+      </struct>
+      <struct name="rtc_time64_t">
+        <fields>
+          <field name="tv_sec" ctype="int64_t" />
+          <field name="tv_nsec" ctype="uint32_t" />
+        </fields>
+      </struct>
+      <verbatim><![CDATA[
+/* Inclusion of LLD header.*/
+#include "hal_rtc_lld.h"]]></verbatim>
+      <struct name="hal_rtc_config">
+        <fields>
+          <field name="cr" ctype="uint32_t" />
+          <field name="prer" ctype="uint32_t" />
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+rtc_lld_config_fields;]]></verbatim>
+        </fields>
+      </struct>
+      <struct name="rtc_alarm_t">
+        <fields>
+          <field name="alrmr" ctype="uint32_t" />
+        </fields>
+      </struct>
+      <class type="regular" name="hal_rtc_driver" namespace="rtc"
+        ancestorname="hal_cb_driver" descr="RTC driver">
+        <fields>
+          <field name="events" ctype="volatile rtceventflags_t">
+            <brief>Pending RTC event flags.</brief>
+          </field>
+          <verbatim><![CDATA[
+#if defined(RTC_DRIVER_EXT_FIELDS)
+RTC_DRIVER_EXT_FIELDS
+#endif
+/* End of the mandatory fields.*/
+rtc_lld_driver_fields;]]></verbatim>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+self->events = 0U;]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[ ]]></implementation>
+          </dispose>
+        </methods>
+      </class>
+    </types>
+  </public>
+</module>

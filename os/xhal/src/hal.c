@@ -114,6 +114,9 @@ void halInit(void) {
 #if (HAL_USE_SPI == TRUE) || defined(__DOXYGEN__)
   spiInit();
 #endif
+#if (HAL_USE_RTC == TRUE) || defined(__DOXYGEN__)
+  rtcInit();
+#endif
 #if 0
 #if (HAL_USE_TRNG == TRUE) || defined(__DOXYGEN__)
   trngInit();
@@ -129,9 +132,6 @@ void halInit(void) {
 #endif
 #if (HAL_USE_SERIAL_USB == TRUE) || defined(__DOXYGEN__)
   sduInit();
-#endif
-#if (HAL_USE_RTC == TRUE) || defined(__DOXYGEN__)
-  rtcInit();
 #endif
 #if (HAL_USE_WDG == TRUE) || defined(__DOXYGEN__)
   wdgInit();

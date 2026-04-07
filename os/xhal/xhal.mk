@@ -30,6 +30,9 @@ endif
 ifneq ($(findstring HAL_USE_PAL TRUE,$(XHALCONF)),)
 XHALSRC += $(CHIBIOS)/os/xhal/src/hal_pal.c
 endif
+ifneq ($(findstring HAL_USE_RTC TRUE,$(XHALCONF)),)
+XHALSRC += $(CHIBIOS)/os/xhal/src/hal_rtc.c
+endif
 ifneq ($(findstring HAL_USE_SIO TRUE,$(XHALCONF)),)
 XHALSRC += $(CHIBIOS)/os/xhal/src/hal_sio.c
 endif
@@ -46,6 +49,7 @@ XHALSRC = $(CHIBIOS)/os/xhal/src/hal.c \
           $(CHIBIOS)/os/xhal/src/hal_queues.c \
           $(CHIBIOS)/os/xhal/src/hal_eth.c \
           $(CHIBIOS)/os/xhal/src/hal_pal.c \
+          $(CHIBIOS)/os/xhal/src/hal_rtc.c \
           $(CHIBIOS)/os/xhal/src/hal_sio.c \
           $(CHIBIOS)/os/xhal/src/hal_spi.c
 endif
