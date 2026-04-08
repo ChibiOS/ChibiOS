@@ -114,14 +114,6 @@
 #define STM32_IRQ_EXTI4_PRIORITY            6
 #define STM32_IRQ_EXTI5_9_PRIORITY          6
 #define STM32_IRQ_EXTI10_15_PRIORITY        6
-#define STM32_IRQ_EXTI164041_PRIORITY       6
-#define STM32_IRQ_EXTI17_PRIORITY           6
-#define STM32_IRQ_EXTI18_PRIORITY           6
-#define STM32_IRQ_EXTI19_PRIORITY           6
-#define STM32_IRQ_EXTI20_PRIORITY           6
-#define STM32_IRQ_EXTI212229_PRIORITY       6
-#define STM32_IRQ_EXTI30_32_PRIORITY        6
-#define STM32_IRQ_EXTI33_PRIORITY           6
 
 #define STM32_IRQ_FDCAN1_PRIORITY           10
 #define STM32_IRQ_FDCAN2_PRIORITY           10
@@ -148,6 +140,9 @@
 #define STM32_IRQ_UART4_PRIORITY            12
 #define STM32_IRQ_UART5_PRIORITY            12
 #define STM32_IRQ_LPUART1_PRIORITY          12
+#define STM32_IRQ_RTC_TAMP_STAMP_PRIORITY   6
+#define STM32_IRQ_RTC_WKUP_PRIORITY         6
+#define STM32_IRQ_RTC_ALARM_PRIORITY        6
 
 /*
  * ADC driver system settings.
@@ -227,9 +222,6 @@
 /*
  * RTC driver system settings.
  */
-#define STM32_RTC_TAMP_STAMP_IRQ_PRIORITY   STM32_IRQ_EXTI19_PRIORITY
-#define STM32_RTC_WKUP_IRQ_PRIORITY         STM32_IRQ_EXTI20_PRIORITY
-#define STM32_RTC_ALARM_IRQ_PRIORITY        STM32_IRQ_EXTI18_PRIORITY
 #define STM32_RTC_PRESA_VALUE               32
 #define STM32_RTC_PRESS_VALUE               1024
 #define STM32_RTC_CR_INIT                   0U

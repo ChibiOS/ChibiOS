@@ -74,6 +74,17 @@
 #define STM32_ADC5_NUMBER                   62
 
 /*
+ * RTC unit.
+ */
+#define STM32_RTC_TAMP_STAMP_HANDLER        Vector48
+#define STM32_RTC_WKUP_HANDLER              Vector4C
+#define STM32_RTC_ALARM_HANDLER             VectorE4
+
+#define STM32_RTC_TAMP_STAMP_NUMBER         2
+#define STM32_RTC_WKUP_NUMBER               3
+#define STM32_RTC_ALARM_NUMBER              41
+
+/*
  * DMA unit.
  */
 #define STM32_DMA1_CH1_HANDLER              Vector6C

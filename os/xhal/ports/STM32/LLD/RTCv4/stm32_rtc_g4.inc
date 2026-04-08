@@ -50,25 +50,25 @@
 #endif
 
 /* Checks for mcuconf.h correctness.*/
-#if !defined(STM32_RTC_TAMP_STAMP_IRQ_PRIORITY)
-#error "STM32_RTC_TAMP_STAMP_IRQ_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_RTC_TAMP_STAMP_PRIORITY)
+#error "STM32_IRQ_RTC_TAMP_STAMP_PRIORITY not defined in mcuconf.h"
 #endif
-#if !defined(STM32_RTC_WKUP_IRQ_PRIORITY)
-#error "STM32_RTC_WKUP_IRQ_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_RTC_WKUP_PRIORITY)
+#error "STM32_IRQ_RTC_WKUP_PRIORITY not defined in mcuconf.h"
 #endif
-#if !defined(STM32_RTC_ALARM_IRQ_PRIORITY)
-#error "STM32_RTC_ALARM_IRQ_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_RTC_ALARM_PRIORITY)
+#error "STM32_IRQ_RTC_ALARM_PRIORITY not defined in mcuconf.h"
 #endif
 
 /* Priority settings checks.*/
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_RTC_TAMP_STAMP_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_RTC_TAMP_STAMP_IRQ_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_RTC_TAMP_STAMP_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_RTC_TAMP_STAMP_PRIORITY"
 #endif
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_RTC_WKUP_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_RTC_WKUP_IRQ_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_RTC_WKUP_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_RTC_WKUP_PRIORITY"
 #endif
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_RTC_ALARM_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_RTC_ALARM_IRQ_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_RTC_ALARM_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_RTC_ALARM_PRIORITY"
 #endif
 
 #endif /* STM32_HAS_RTC */
@@ -76,11 +76,11 @@
 static inline void rtc_irq_init(void) {
 #if HAL_USE_RTC
   nvicEnableVector(STM32_RTC_TAMP_STAMP_NUMBER,
-                   STM32_RTC_TAMP_STAMP_IRQ_PRIORITY);
+                   STM32_IRQ_RTC_TAMP_STAMP_PRIORITY);
   nvicEnableVector(STM32_RTC_WKUP_NUMBER,
-                   STM32_RTC_WKUP_IRQ_PRIORITY);
+                   STM32_IRQ_RTC_WKUP_PRIORITY);
   nvicEnableVector(STM32_RTC_ALARM_NUMBER,
-                   STM32_RTC_ALARM_IRQ_PRIORITY);
+                   STM32_IRQ_RTC_ALARM_PRIORITY);
 #endif
 }
 

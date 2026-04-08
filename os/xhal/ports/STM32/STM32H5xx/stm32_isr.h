@@ -68,6 +68,15 @@
  * @{
  */
 /*
+ * RTC unit.
+ */
+#define STM32_RTC_GLOBAL_HANDLER            Vector48
+#define STM32_RTC_TAMP_HANDLER              Vector50
+
+#define STM32_RTC_GLOBAL_NUMBER             2
+#define STM32_RTC_TAMP_NUMBER               4
+
+/*
  * ADC unit.
  */
 #define STM32_ADC1_HANDLER                  VectorD4

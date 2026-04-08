@@ -44,19 +44,19 @@
 #endif
 
 /* Checks for mcuconf.h correctness.*/
-#if !defined(STM32_RTC_GLOBAL_IRQ_PRIORITY)
-#error "STM32_RTC_GLOBAL_IRQ_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_RTC_GLOBAL_PRIORITY)
+#error "STM32_IRQ_RTC_GLOBAL_PRIORITY not defined in mcuconf.h"
 #endif
-#if !defined(STM32_RTC_TAMP_IRQ_PRIORITY)
-#error "STM32_RTC_TAMP_IRQ_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_RTC_TAMP_PRIORITY)
+#error "STM32_IRQ_RTC_TAMP_PRIORITY not defined in mcuconf.h"
 #endif
 
 /* Priority settings checks.*/
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_RTC_GLOBAL_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_RTC_GLOBAL_IRQ_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_RTC_GLOBAL_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_RTC_GLOBAL_PRIORITY"
 #endif
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_RTC_TAMP_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_RTC_TAMP_IRQ_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_RTC_TAMP_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_RTC_TAMP_PRIORITY"
 #endif
 
 #endif /* STM32_HAS_RTC */
@@ -64,9 +64,9 @@
 static inline void rtc_irq_init(void) {
 #if HAL_USE_RTC
   nvicEnableVector(STM32_RTC_GLOBAL_NUMBER,
-                   STM32_RTC_GLOBAL_IRQ_PRIORITY);
+                   STM32_IRQ_RTC_GLOBAL_PRIORITY);
   nvicEnableVector(STM32_RTC_TAMP_NUMBER,
-                   STM32_RTC_TAMP_IRQ_PRIORITY);
+                   STM32_IRQ_RTC_TAMP_PRIORITY);
 #endif
 }
 

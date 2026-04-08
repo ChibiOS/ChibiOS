@@ -62,28 +62,28 @@
 #endif
 
 #if defined(STM32_RTC_TAMP_STAMP_NUMBER) && \
-    (!defined(STM32_RTC_TAMP_STAMP_IRQ_PRIORITY) || defined(__DOXYGEN__))
-#define STM32_RTC_TAMP_STAMP_IRQ_PRIORITY   STM32_IRQ_EXTI19_PRIORITY
+    (!defined(STM32_IRQ_RTC_TAMP_STAMP_PRIORITY) || defined(__DOXYGEN__))
+#define STM32_IRQ_RTC_TAMP_STAMP_PRIORITY   6
 #endif
 
 #if defined(STM32_RTC_WKUP_NUMBER) && \
-    (!defined(STM32_RTC_WKUP_IRQ_PRIORITY) || defined(__DOXYGEN__))
-#define STM32_RTC_WKUP_IRQ_PRIORITY         STM32_IRQ_EXTI20_PRIORITY
+    (!defined(STM32_IRQ_RTC_WKUP_PRIORITY) || defined(__DOXYGEN__))
+#define STM32_IRQ_RTC_WKUP_PRIORITY         6
 #endif
 
 #if defined(STM32_RTC_ALARM_NUMBER) && \
-    (!defined(STM32_RTC_ALARM_IRQ_PRIORITY) || defined(__DOXYGEN__))
-#define STM32_RTC_ALARM_IRQ_PRIORITY        STM32_IRQ_EXTI18_PRIORITY
+    (!defined(STM32_IRQ_RTC_ALARM_PRIORITY) || defined(__DOXYGEN__))
+#define STM32_IRQ_RTC_ALARM_PRIORITY        6
 #endif
 
 #if defined(STM32_RTC_GLOBAL_NUMBER) && \
-    (!defined(STM32_RTC_GLOBAL_IRQ_PRIORITY) || defined(__DOXYGEN__))
-#define STM32_RTC_GLOBAL_IRQ_PRIORITY       STM32_IRQ_EXTI17_PRIORITY
+    (!defined(STM32_IRQ_RTC_GLOBAL_PRIORITY) || defined(__DOXYGEN__))
+#define STM32_IRQ_RTC_GLOBAL_PRIORITY       6
 #endif
 
 #if defined(STM32_RTC_TAMP_NUMBER) && \
-    (!defined(STM32_RTC_TAMP_IRQ_PRIORITY) || defined(__DOXYGEN__))
-#define STM32_RTC_TAMP_IRQ_PRIORITY         STM32_IRQ_EXTI19_PRIORITY
+    (!defined(STM32_IRQ_RTC_TAMP_PRIORITY) || defined(__DOXYGEN__))
+#define STM32_IRQ_RTC_TAMP_PRIORITY         6
 #endif
 
 #if HAL_USE_RTC && !STM32_HAS_RTC
