@@ -231,11 +231,29 @@
 #define STM32_IRQ_USB1_PRIORITY             13
 
 /*
+ * ADC driver system settings.
+ */
+#define STM32_ADC_DUAL_MODE                 FALSE
+#define STM32_ADC_COMPACT_SAMPLES           FALSE
+#define STM32_ADC_USE_ADC1                  FALSE
+#define STM32_ADC_USE_ADC2                  FALSE
+#define STM32_ADC_ADC1_DMA3_CHANNEL         STM32_DMA3_CHANNEL_ID_ANY
+#define STM32_ADC_ADC2_DMA3_CHANNEL         STM32_DMA3_CHANNEL_ID_ANY
+#define STM32_ADC_ADC1_DMA_PRIORITY         2
+#define STM32_ADC_ADC2_DMA_PRIORITY         2
+#define STM32_ADC_ADC1_IRQ_PRIORITY         5
+#define STM32_ADC_ADC2_IRQ_PRIORITY         5
+#define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     5
+#define STM32_ADC_ADC2_DMA_IRQ_PRIORITY     5
+#define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC_ADC12_PRESC               ADC_CCR_PRESC_DIV2
+
+/*
  * SIO driver system settings.
  */
 #define STM32_SIO_USE_USART1                FALSE
 #define STM32_SIO_USE_USART2                FALSE
-#define STM32_SIO_USE_USART3                TRUE
+#define STM32_SIO_USE_USART3                FALSE
 #define STM32_SIO_USE_UART4                 FALSE
 #define STM32_SIO_USE_UART5                 FALSE
 #define STM32_SIO_USE_USART6                FALSE
@@ -285,6 +303,8 @@
 /*
  * RTC driver system settings.
  */
+#define STM32_RTC_GLOBAL_IRQ_PRIORITY       STM32_IRQ_EXTI17_PRIORITY
+#define STM32_RTC_TAMP_IRQ_PRIORITY         STM32_IRQ_EXTI19_PRIORITY
 #define STM32_RTC_PRESA_VALUE               32
 #define STM32_RTC_PRESS_VALUE               1024
 #define STM32_RTC_CR_INIT                   0U

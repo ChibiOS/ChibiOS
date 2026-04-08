@@ -227,6 +227,9 @@
 /*
  * RTC driver system settings.
  */
+#define STM32_RTC_TAMP_STAMP_IRQ_PRIORITY   STM32_IRQ_EXTI19_PRIORITY
+#define STM32_RTC_WKUP_IRQ_PRIORITY         STM32_IRQ_EXTI20_PRIORITY
+#define STM32_RTC_ALARM_IRQ_PRIORITY        STM32_IRQ_EXTI18_PRIORITY
 #define STM32_RTC_PRESA_VALUE               32
 #define STM32_RTC_PRESS_VALUE               1024
 #define STM32_RTC_CR_INIT                   0U

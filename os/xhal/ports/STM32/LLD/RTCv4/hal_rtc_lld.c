@@ -247,7 +247,7 @@ static rtceventflags_t rtc_update_events(uint32_t cr, uint32_t misr) {
   return flags;
 }
 
-static void rtc_lld_serve_interrupt(void) {
+void rtc_lld_serve_interrupt(void) {
   uint32_t cr, isr;
   rtceventflags_t flags;
 
@@ -261,15 +261,6 @@ static void rtc_lld_serve_interrupt(void) {
     RTCD1.cb(&RTCD1);
   }
 }
-
-#if defined(STM32_RTC_TAMP_STAMP_HANDLER) && defined(STM32_RTC_WKUP_HANDLER) && \
-    defined(STM32_RTC_ALARM_HANDLER)
-#include "stm32_rtc_g4.inc"
-#elif defined(STM32_RTC_GLOBAL_HANDLER) && defined(STM32_RTC_TAMP_HANDLER)
-#include "stm32_rtc_h5.inc"
-#else
-#error "unsupported RTCv4 interrupt topology"
-#endif
 
 void rtc_lld_init(void) {
 
@@ -306,7 +297,6 @@ msg_t rtc_lld_start(hal_rtc_driver_c *rtcp) {
 
   rtcp->events = 0U;
   STM32_RTC_ENABLE_ALL_EXTI();
-  STM32_RTC_IRQ_ENABLE();
 
   return HAL_RET_SUCCESS;
 }

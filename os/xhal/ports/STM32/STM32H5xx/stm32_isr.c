@@ -111,6 +111,8 @@
 #include "stm32_uart12.inc"
 #include "stm32_lpuart1.inc"
 
+#include "stm32_rtc_h5.inc"
+
 //#include "stm32_usb1.inc"
 
 /*===========================================================================*/
@@ -154,6 +156,8 @@ void irqInit(void) {
 //  spi4_irq_init();
 //  spi5_irq_init();
 //  spi6_irq_init();
+
+  rtc_irq_init();
 
   tim1_irq_init();
   tim2_irq_init();
@@ -224,6 +228,8 @@ void irqDeinit(void) {
 //  spi4_irq_deinit();
 //  spi5_irq_deinit();
 //  spi6_irq_deinit();
+
+  rtc_irq_deinit();
 
   tim1_irq_deinit();
   tim2_irq_deinit();

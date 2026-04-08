@@ -78,6 +78,8 @@
 #include "stm32_uart5.inc"
 #include "stm32_lpuart1.inc"
 
+#include "stm32_rtc_g4.inc"
+
 #include "stm32_tim1_15_16_17.inc"
 #include "stm32_tim2.inc"
 #include "stm32_tim3.inc"
@@ -117,6 +119,8 @@ void irqInit(void) {
 //  fdcan1_irq_init();
 //  fdcan2_irq_init();
 //  fdcan3_irq_init();
+
+  rtc_irq_init();
 
   tim1_tim15_tim16_tim17_irq_init();
   tim2_irq_init();
@@ -161,6 +165,8 @@ void irqDeinit(void) {
 //  fdcan1_irq_deinit();
 //  fdcan2_irq_deinit();
 //  fdcan3_irq_deinit();
+
+  rtc_irq_deinit();
 
   tim1_tim15_tim16_tim17_irq_deinit();
   tim2_irq_deinit();
