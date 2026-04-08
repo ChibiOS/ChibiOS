@@ -50,16 +50,83 @@ static const hal_rtc_config_t rtc_default_config = {
 
 hal_rtc_driver_c RTCD1;
 
-static void rtc_enter_init(void) {
+static void rtc_wpr_unlock(hal_rtc_driver_c *rtcp) {
 
-  RTCD1.rtc->ICSR |= RTC_ICSR_INIT;
-  while ((RTCD1.rtc->ICSR & RTC_ICSR_INITF) == 0U) {
+  rtcp->rtc->WPR = 0xCAU;
+  rtcp->rtc->WPR = 0x53U;
+}
+
+static void rtc_wpr_lock(hal_rtc_driver_c *rtcp) {
+
+  rtcp->rtc->WPR = 0xFFU;
+}
+
+static void rtc_enter_init(hal_rtc_driver_c *rtcp) {
+
+  rtcp->rtc->ICSR |= RTC_ICSR_INIT;
+  while ((rtcp->rtc->ICSR & RTC_ICSR_INITF) == 0U) {
   }
 }
 
-static void rtc_exit_init(void) {
+static void rtc_exit_init(hal_rtc_driver_c *rtcp) {
 
-  RTCD1.rtc->ICSR &= ~RTC_ICSR_INIT;
+  rtcp->rtc->ICSR &= ~RTC_ICSR_INIT;
+}
+
+static void rtc_disable_interrupt_sources(hal_rtc_driver_c *rtcp) {
+
+#if defined(RTC_CR_ALRAIE)
+  rtcp->rtc->CR &= ~RTC_CR_ALRAIE;
+#endif
+#if defined(RTC_CR_ALRBIE)
+  rtcp->rtc->CR &= ~RTC_CR_ALRBIE;
+#endif
+#if defined(RTC_CR_WUTIE)
+  rtcp->rtc->CR &= ~RTC_CR_WUTIE;
+#endif
+#if defined(RTC_CR_TSIE)
+  rtcp->rtc->CR &= ~RTC_CR_TSIE;
+#endif
+#if defined(TAMP_CR1_TAMP1IE)
+  TAMP->CR1 &= ~TAMP_CR1_TAMP1IE;
+#endif
+#if defined(TAMP_CR1_TAMP2IE)
+  TAMP->CR1 &= ~TAMP_CR1_TAMP2IE;
+#endif
+#if defined(TAMP_CR1_ITAMP3IE)
+  TAMP->CR1 &= ~TAMP_CR1_ITAMP3IE;
+#endif
+}
+
+static void rtc_disable_irqs_exti(void) {
+
+#if defined(STM32_RTC_TAMP_STAMP_NUMBER)
+  nvicDisableVector(STM32_RTC_TAMP_STAMP_NUMBER);
+#endif
+#if defined(STM32_RTC_WKUP_NUMBER)
+  nvicDisableVector(STM32_RTC_WKUP_NUMBER);
+#endif
+#if defined(STM32_RTC_ALARM_NUMBER)
+  nvicDisableVector(STM32_RTC_ALARM_NUMBER);
+#endif
+#if defined(STM32_RTC_GLOBAL_NUMBER)
+  nvicDisableVector(STM32_RTC_GLOBAL_NUMBER);
+#endif
+#if defined(STM32_RTC_TAMP_NUMBER)
+  nvicDisableVector(STM32_RTC_TAMP_NUMBER);
+#endif
+#if defined(STM32_RTC_ALARM_EXTI) && defined(STM32_RTC_TAMP_STAMP_EXTI) && \
+    defined(STM32_RTC_WKUP_EXTI)
+  extiEnableGroup1(EXTI_MASK1(STM32_RTC_ALARM_EXTI) |
+                   EXTI_MASK1(STM32_RTC_TAMP_STAMP_EXTI) |
+                   EXTI_MASK1(STM32_RTC_WKUP_EXTI),
+                   EXTI_MODE_DISABLED);
+#elif defined(STM32_RTC_GLOBAL_EXTI) && defined(STM32_RTC_TAMP_EXTI)
+  extiEnableGroup1(EXTI_MASK1(STM32_RTC_GLOBAL_EXTI) |
+                   EXTI_MASK1(STM32_RTC_TAMP_EXTI),
+                   EXTI_MODE_DISABLED);
+#endif
+  STM32_RTC_CLEAR_ALL_EXTI();
 }
 
 static void rtc_decode_time(uint32_t tr, rtc_datetime_t *timespec) {
@@ -126,27 +193,27 @@ static uint32_t rtc_encode_date(const rtc_datetime_t *timespec) {
   return dr;
 }
 
-static void rtc_update_events(uint32_t misr) {
+static rtceventflags_t rtc_update_events(uint32_t cr, uint32_t misr) {
   rtceventflags_t flags = 0U;
   syssts_t sts;
 
 #if defined(RTC_MISR_ALRAMF)
-  if ((misr & RTC_MISR_ALRAMF) != 0U) {
+  if (((cr & RTC_CR_ALRAIE) != 0U) && ((misr & RTC_MISR_ALRAMF) != 0U)) {
     flags |= RTC_FLAGS_ALARM_A;
   }
 #endif
 #if defined(RTC_MISR_ALRBMF)
-  if ((misr & RTC_MISR_ALRBMF) != 0U) {
+  if (((cr & RTC_CR_ALRBIE) != 0U) && ((misr & RTC_MISR_ALRBMF) != 0U)) {
     flags |= RTC_FLAGS_ALARM_B;
   }
 #endif
 #if defined(RTC_MISR_TSMF)
-  if ((misr & RTC_MISR_TSMF) != 0U) {
+  if (((cr & RTC_CR_TSIE) != 0U) && ((misr & RTC_MISR_TSMF) != 0U)) {
     flags |= RTC_FLAGS_TS;
   }
 #endif
 #if defined(RTC_MISR_TSOVMF)
-  if ((misr & RTC_MISR_TSOVMF) != 0U) {
+  if (((cr & RTC_CR_TSIE) != 0U) && ((misr & RTC_MISR_TSOVMF) != 0U)) {
     flags |= RTC_FLAGS_TS_OVF;
   }
 #endif
@@ -176,17 +243,21 @@ static void rtc_update_events(uint32_t misr) {
     RTCD1.events |= flags;
     osalSysRestoreStatusX(sts);
   }
+
+  return flags;
 }
 
 static void rtc_lld_serve_interrupt(void) {
-  uint32_t isr;
+  uint32_t cr, isr;
+  rtceventflags_t flags;
 
+  cr = RTCD1.rtc->CR;
   isr = RTCD1.rtc->MISR;
   RTCD1.rtc->SCR = isr;
   STM32_RTC_CLEAR_ALL_EXTI();
-  rtc_update_events(isr);
+  flags = rtc_update_events(cr, isr);
 
-  if (RTCD1.cb != NULL) {
+  if ((flags != 0U) && (RTCD1.cb != NULL)) {
     RTCD1.cb(&RTCD1);
   }
 }
@@ -217,21 +288,21 @@ msg_t rtc_lld_start(hal_rtc_driver_c *rtcp) {
     return HAL_RET_CONFIG_ERROR;
   }
 
-  rtcp->rtc->WPR = 0xCAU;
-  rtcp->rtc->WPR = 0x53U;
+  rtc_wpr_unlock(rtcp);
 
   if ((rtcp->rtc->ICSR & RTC_ICSR_INITS) == 0U) {
-    rtc_enter_init();
+    rtc_enter_init(rtcp);
     rtcp->rtc->CR = (cfg->cr & STM32_RTC_CR_MASK) | RTC_CR_BYPSHAD;
     rtcp->rtc->PRER = cfg->prer & 0x7FFFU;
     rtcp->rtc->PRER = cfg->prer;
-    rtc_exit_init();
+    rtc_exit_init(rtcp);
   }
   else {
     rtcp->rtc->CR = (rtcp->rtc->CR & ~STM32_RTC_CR_MASK) |
                     (cfg->cr & STM32_RTC_CR_MASK) |
                     RTC_CR_BYPSHAD;
   }
+  rtc_wpr_lock(rtcp);
 
   rtcp->events = 0U;
   STM32_RTC_ENABLE_ALL_EXTI();
@@ -242,6 +313,10 @@ msg_t rtc_lld_start(hal_rtc_driver_c *rtcp) {
 
 void rtc_lld_stop(hal_rtc_driver_c *rtcp) {
 
+  rtc_wpr_unlock(rtcp);
+  rtc_disable_interrupt_sources(rtcp);
+  rtc_wpr_lock(rtcp);
+  rtc_disable_irqs_exti();
   rtcp->cb = NULL;
   rtcp->events = 0U;
 }
@@ -284,12 +359,14 @@ msg_t rtc_lld_set_datetime(hal_rtc_driver_c *rtcp,
   dr = rtc_encode_date(timespec);
 
   sts = osalSysGetStatusAndLockX();
-  rtc_enter_init();
+  rtc_wpr_unlock(rtcp);
+  rtc_enter_init(rtcp);
   rtcp->rtc->TR = tr;
   rtcp->rtc->DR = dr;
   rtcp->rtc->CR = (rtcp->rtc->CR & ~(1U << RTC_CR_BKP_OFFSET)) |
                   ((uint32_t)timespec->dstflag << RTC_CR_BKP_OFFSET);
-  rtc_exit_init();
+  rtc_exit_init(rtcp);
+  rtc_wpr_lock(rtcp);
   osalSysRestoreStatusX(sts);
 
   return HAL_RET_SUCCESS;
@@ -316,8 +393,8 @@ msg_t rtc_lld_get_datetime(hal_rtc_driver_c *rtcp, rtc_datetime_t *timespec) {
   osalSysRestoreStatusX(sts);
 
   rtc_decode_time(tr, timespec);
-  subs = (((STM32_RTC_PRESS_VALUE - 1U) - ssr) * 1000U) /
-         STM32_RTC_PRESS_VALUE;
+  subs = ((((rtcp->rtc->PRER & RTC_PRER_PREDIV_S_Msk) >> RTC_PRER_PREDIV_S_Pos) - ssr) * 1000U) /
+         ((((rtcp->rtc->PRER & RTC_PRER_PREDIV_S_Msk) >> RTC_PRER_PREDIV_S_Pos) + 1U));
   timespec->millisecond += subs;
   rtc_decode_date(dr, timespec);
   timespec->dstflag = (uint8_t)((cr >> RTC_CR_BKP_OFFSET) & 1U);
@@ -335,6 +412,7 @@ msg_t rtc_lld_set_alarm(hal_rtc_driver_c *rtcp,
   }
 
   sts = osalSysGetStatusAndLockX();
+  rtc_wpr_unlock(rtcp);
   if (alarm == 0U) {
     if (alarmspec != NULL) {
       rtcp->rtc->CR &= ~RTC_CR_ALRAE;
@@ -353,7 +431,6 @@ msg_t rtc_lld_set_alarm(hal_rtc_driver_c *rtcp,
   }
 #if RTC_ALARMS > 1
   else {
-    rtcp->rtc->CR &= ~RTC_CR_ALRBE;
     if (alarmspec != NULL) {
       rtcp->rtc->CR &= ~RTC_CR_ALRBE;
 #if defined(RTC_ICSR_ALRBWF)
@@ -370,6 +447,7 @@ msg_t rtc_lld_set_alarm(hal_rtc_driver_c *rtcp,
     }
   }
 #endif
+  rtc_wpr_lock(rtcp);
   osalSysRestoreStatusX(sts);
 
   return HAL_RET_SUCCESS;

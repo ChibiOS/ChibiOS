@@ -74,9 +74,12 @@ static bool rtc_is_leap_year(unsigned year) {
  * @return                      The month length in days.
  */
 static uint8_t rtc_get_month_length(unsigned year, unsigned month) {
+  static const uint8_t month_len[12] = {
+    31U, 28U, 31U, 30U, 31U, 30U, 31U, 31U, 30U, 31U, 30U, 31U
+  };
   uint8_t n;
 
-  n = rtc_month_len[month - 1U];
+  n = month_len[month - 1U];
   if ((month == 2U) && rtc_is_leap_year(year)) {
     n++;
   }
@@ -102,14 +105,18 @@ static bool rtc_datetime_is_valid(const rtc_datetime_t *timespec) {
                                             timespec->month))) {
     return false;
   }
+  if (timespec->dayofweek == RTC_DAY_RESERVED) {
+    return false;
+  }
   if ((timespec->dayofweek > RTC_DAY_SUNDAY) ||
       (timespec->millisecond >= RTC_MILLISECONDS_PER_DAY)) {
     return false;
   }
 
   year = (unsigned)timespec->year + RTC_BASE_YEAR;
+  (void)year;
 
-  return year >= RTC_BASE_YEAR;
+  return true;
 }
 
 /**
@@ -174,10 +181,6 @@ static uint8_t rtc_encode_day_of_week(int64_t days) {
 
   return wday == 0 ? RTC_DAY_SUNDAY : (uint8_t)wday;
 }
-
-static const uint8_t rtc_month_len[12] = {
-  31U, 28U, 31U, 30U, 31U, 30U, 31U, 31U, 30U, 31U, 30U, 31U
-};
 
 /*===========================================================================*/
 /* Module exported functions.                                                */

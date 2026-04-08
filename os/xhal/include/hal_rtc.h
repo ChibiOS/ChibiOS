@@ -47,7 +47,7 @@
 /**
  * @brief       Zero/reserved day encoding.
  */
-#define RTC_DAY_CATURDAY                    0U
+#define RTC_DAY_RESERVED                    0U
 
 /**
  * @brief       Monday day encoding.
@@ -186,6 +186,13 @@ typedef struct {
   uint32_t                  tv_nsec;
 } rtc_time64_t;
 
+/**
+ * @brief       Type of structure representing an RTC alarm time stamp.
+ */
+typedef struct {
+  uint32_t                  alrmr;
+} rtc_alarm_t;
+
 /* Inclusion of LLD header.*/
 #include "hal_rtc_lld.h"
 
@@ -209,13 +216,6 @@ struct hal_rtc_config {
   RTC_CONFIG_EXT_FIELDS
 #endif /* defined(RTC_CONFIG_EXT_FIELDS) */
 };
-
-/**
- * @brief       Type of structure representing an RTC alarm time stamp.
- */
-typedef struct {
-  uint32_t                  alrmr;
-} rtc_alarm_t;
 
 /**
  * @class       hal_rtc_driver_c

@@ -16,7 +16,7 @@
         <brief>Base year of the RTC broken-down representation.</brief>
       </define>
       <group description="Day of week encoding">
-        <define name="RTC_DAY_CATURDAY" value="0U">
+        <define name="RTC_DAY_RESERVED" value="0U">
           <brief>Zero/reserved day encoding.</brief>
         </define>
         <define name="RTC_DAY_MONDAY" value="1U">
@@ -106,6 +106,13 @@ typedef struct {
   uint32_t                  tv_nsec;
 } rtc_time64_t;]]></verbatim>
       <verbatim><![CDATA[
+/**
+ * @brief       Type of structure representing an RTC alarm time stamp.
+ */
+typedef struct {
+  uint32_t                  alrmr;
+} rtc_alarm_t;]]></verbatim>
+      <verbatim><![CDATA[
 /* Inclusion of LLD header.*/
 #include "hal_rtc_lld.h"]]></verbatim>
       <struct name="hal_rtc_config">
@@ -128,13 +135,6 @@ RTC_CONFIG_EXT_FIELDS]]></verbatim>
           </condition>
         </fields>
       </struct>
-      <verbatim><![CDATA[
-/**
- * @brief       Type of structure representing an RTC alarm time stamp.
- */
-typedef struct {
-  uint32_t                  alrmr;
-} rtc_alarm_t;]]></verbatim>
       <class type="regular" name="hal_rtc_driver" namespace="rtc"
         ancestorname="hal_cb_driver" descr="RTC driver">
         <brief>Class of an RTC driver.</brief>
@@ -452,9 +452,12 @@ return ((((year % 4U) == 0U) && ((year % 100U) != 0U)) ||
         <param name="month" ctype="unsigned" dir="in">Month in range 1..12.</param>
         <return>The month length in days.</return>
         <implementation><![CDATA[
+static const uint8_t month_len[12] = {
+  31U, 28U, 31U, 30U, 31U, 30U, 31U, 31U, 30U, 31U, 30U, 31U
+};
 uint8_t n;
 
-n = rtc_month_len[month - 1U];
+n = month_len[month - 1U];
 if ((month == 2U) && rtc_is_leap_year(year)) {
   n++;
 }
@@ -479,14 +482,18 @@ if ((timespec->day < 1U) ||
                                           timespec->month))) {
   return false;
 }
+if (timespec->dayofweek == RTC_DAY_RESERVED) {
+  return false;
+}
 if ((timespec->dayofweek > RTC_DAY_SUNDAY) ||
     (timespec->millisecond >= RTC_MILLISECONDS_PER_DAY)) {
   return false;
 }
 
 year = (unsigned)timespec->year + RTC_BASE_YEAR;
+(void)year;
 
-return year >= RTC_BASE_YEAR;]]></implementation>
+return true;]]></implementation>
       </function>
       <function name="rtc_days_from_civil" ctype="int64_t">
         <brief>Converts a civil date to days from the Unix epoch.</brief>
@@ -541,10 +548,6 @@ if (wday < 0) {
 
 return wday == 0 ? RTC_DAY_SUNDAY : (uint8_t)wday;]]></implementation>
       </function>
-      <verbatim><![CDATA[
-static const uint8_t rtc_month_len[12] = {
-  31U, 28U, 31U, 30U, 31U, 30U, 31U, 31U, 30U, 31U, 30U, 31U
-};]]></verbatim>
     </functions>
   </private>
 </module>
