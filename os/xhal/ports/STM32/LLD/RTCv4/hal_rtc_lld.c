@@ -323,25 +323,23 @@ void rtc_lld_stop(hal_rtc_driver_c *rtcp) {
 
 const hal_rtc_config_t *rtc_lld_setcfg(hal_rtc_driver_c *rtcp,
                                        const hal_rtc_config_t *config) {
+  (void)rtcp;
 
   if (config == NULL) {
     return rtc_lld_selcfg(rtcp, 0U);
   }
 
-  rtcp->config_buf = *config;
-
-  return &rtcp->config_buf;
+  return config;
 }
 
 const hal_rtc_config_t *rtc_lld_selcfg(hal_rtc_driver_c *rtcp, unsigned cfgnum) {
+  (void)rtcp;
 
   if (cfgnum != 0U) {
     return NULL;
   }
 
-  rtcp->config_buf = rtc_default_config;
-
-  return &rtcp->config_buf;
+  return &rtc_default_config;
 }
 
 void rtc_lld_set_callback(hal_rtc_driver_c *rtcp, drv_cb_t cb) {

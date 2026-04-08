@@ -85,8 +85,7 @@
                                                      STM32_RTC_PRESS_VALUE)
 
 #define rtc_lld_driver_fields                                               \
-  RTC_TypeDef               *rtc;                                           \
-  hal_rtc_config_t          config_buf
+  RTC_TypeDef               *rtc
 
 #define rtc_lld_config_fields
 

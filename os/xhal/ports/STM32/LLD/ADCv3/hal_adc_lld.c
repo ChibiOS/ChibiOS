@@ -118,6 +118,16 @@ static const hal_adc_config_t default_config = {
 
 static uint32_t clkmask;
 
+#define ADC1_CLKMASK                        (1U << 0)
+#define ADC2_CLKMASK                        (1U << 1)
+#define ADC3_CLKMASK                        (1U << 2)
+#define ADC4_CLKMASK                        (1U << 3)
+#define ADC5_CLKMASK                        (1U << 4)
+#define ADC12_CLKMASK                       (ADC1_CLKMASK | ADC2_CLKMASK)
+#define ADC34_CLKMASK                       (ADC3_CLKMASK | ADC4_CLKMASK)
+#define ADC123_CLKMASK                      (ADC1_CLKMASK | ADC2_CLKMASK | ADC3_CLKMASK)
+#define ADC345_CLKMASK                      (ADC3_CLKMASK | ADC4_CLKMASK | ADC5_CLKMASK)
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -159,7 +169,8 @@ static void adc_lld_vreg_off(hal_adc_driver_c *adcp) {
  */
 static void adc_lld_calibrate(hal_adc_driver_c *adcp) {
 
-  osalDbgAssert(adcp->adcm->CR == STM32_ADC_CR_ADVREGEN, "invalid register state");
+  osalDbgAssert(adcp->adcm->CR == STM32_ADC_CR_ADVREGEN,
+                "invalid register state");
 
   /* Differential calibration for master ADC.*/
   adcp->adcm->CR = STM32_ADC_CR_ADVREGEN | ADC_CR_ADCALDIF;
@@ -178,7 +189,8 @@ static void adc_lld_calibrate(hal_adc_driver_c *adcp) {
   osalSysPolledDelayX(OSAL_US2RTC(STM32_HCLK, 20));
 
 #if STM32_ADC_DUAL_MODE
-  osalDbgAssert(adcp->adcs->CR == ADC_CR_ADVREGEN, "invalid register state");
+  osalDbgAssert(adcp->adcs->CR == STM32_ADC_CR_ADVREGEN,
+                "invalid register state");
 
   /* Differential calibration for slave ADC.*/
   adcp->adcs->CR = STM32_ADC_CR_ADVREGEN | ADC_CR_ADCALDIF;
@@ -639,8 +651,8 @@ void adc_lld_init(void) {
   rccDisableADC12();
 #endif
 #if STM32_ADC_USE_ADC3 || STM32_ADC_USE_ADC4 || STM32_ADC_USE_ADC5
-  rccEnableADC345(true);
   rccResetADC345();
+  rccEnableADC345(true);
   ADC345_COMMON->CCR = STM32_ADC_ADC345_PRESC | STM32_ADC_ADC345_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC345();
 #endif
@@ -688,7 +700,7 @@ msg_t adc_lld_start(hal_adc_driver_c *adcp) {
                                      (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
-      clkmask |= (1 << 0);
+      clkmask |= ADC1_CLKMASK;
 #if defined(STM32F3XX) || defined(STM32G4XX)
       rccEnableADC12(true);
 #endif
@@ -716,7 +728,7 @@ msg_t adc_lld_start(hal_adc_driver_c *adcp) {
                                      (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
-      clkmask |= (1 << 1);
+      clkmask |= ADC2_CLKMASK;
 #if defined(STM32F3XX) || defined(STM32G4XX)
       rccEnableADC12(true);
 #endif
@@ -741,7 +753,7 @@ msg_t adc_lld_start(hal_adc_driver_c *adcp) {
                                      (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
-      clkmask |= (1 << 2);
+      clkmask |= ADC3_CLKMASK;
 #if defined(STM32F3XX)
       rccEnableADC34(true);
 #endif
@@ -769,7 +781,7 @@ msg_t adc_lld_start(hal_adc_driver_c *adcp) {
                                      (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
-      clkmask |= (1 << 3);
+      clkmask |= ADC4_CLKMASK;
 #if defined(STM32F3XX)
       rccEnableADC34(true);
 #endif
@@ -796,7 +808,7 @@ msg_t adc_lld_start(hal_adc_driver_c *adcp) {
                                      (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
-      clkmask |= (1 << 4);
+      clkmask |= ADC5_CLKMASK;
 #if defined(STM32G4XX)
       rccEnableADC345(true);
 #endif
@@ -858,69 +870,69 @@ void adc_lld_stop(hal_adc_driver_c *adcp) {
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
       /* Resetting CCR options except default ones.*/
-      clkmask &= ~(1 << 0);
+      clkmask &= ~ADC1_CLKMASK;
     }
 #endif
 
 #if STM32_ADC_USE_ADC2
     if (&ADCD2 == adcp) {
-      clkmask &= ~(1 << 1);
+      clkmask &= ~ADC2_CLKMASK;
     }
 #endif
 
 #if STM32_ADC_USE_ADC3
     if (&ADCD3 == adcp) {
-      clkmask &= ~(1 << 2);
+      clkmask &= ~ADC3_CLKMASK;
     }
 #endif
 
 #if STM32_ADC_USE_ADC4
     if (&ADCD4 == adcp) {
-      clkmask &= ~(1 << 3);
+      clkmask &= ~ADC4_CLKMASK;
     }
 #endif
 
 #if STM32_ADC_USE_ADC5
     if (&ADCD5 == adcp) {
-      clkmask &= ~(1 << 4);
+      clkmask &= ~ADC5_CLKMASK;
     }
 #endif
 
 #if defined(STM32F3XX)
 #if STM32_HAS_ADC1 || STM32_HAS_ADC2
-    if ((clkmask & 0x3) == 0) {
+    if ((clkmask & ADC12_CLKMASK) == 0U) {
       rccDisableADC12();
     }
 #endif
 
 #if STM32_HAS_ADC3 || STM32_HAS_ADC4
-    if ((clkmask & 0xC) == 0) {
+    if ((clkmask & ADC34_CLKMASK) == 0U) {
       rccDisableADC34();
     }
 #endif
 #endif
 
 #if defined(STM32L4XX) || defined(STM32L4XXP)
-    if ((clkmask & 0x7) == 0) {
+    if ((clkmask & ADC123_CLKMASK) == 0U) {
       rccDisableADC123();
     }
 #endif
 
 #if defined(STM32WBXX)
-    if ((clkmask & 0x1) == 0) {
+    if ((clkmask & ADC1_CLKMASK) == 0U) {
       rccDisableADC1();
     }
 #endif
 
 #if defined(STM32G4XX)
 #if STM32_HAS_ADC1 || STM32_HAS_ADC2
-    if ((clkmask & 0x3) == 0) {
+    if ((clkmask & ADC12_CLKMASK) == 0U) {
       rccDisableADC12();
     }
 #endif
 
 #if STM32_HAS_ADC3 || STM32_HAS_ADC4 || STM32_HAS_ADC5
-    if ((clkmask & 0x1C) == 0) {
+    if ((clkmask & ADC345_CLKMASK) == 0U) {
       rccDisableADC345();
     }
 #endif
@@ -937,14 +949,13 @@ void adc_lld_stop(hal_adc_driver_c *adcp) {
  */
 const hal_adc_config_t *adc_lld_setcfg(hal_adc_driver_c *adcp,
                                        const hal_adc_config_t *config) {
+  (void)adcp;
 
   if (config == NULL) {
     return adc_lld_selcfg(adcp, 0U);
   }
 
-  adcp->config_buf = *config;
-
-  return &adcp->config_buf;
+  return config;
 }
 
 const hal_adc_config_t *adc_lld_selcfg(hal_adc_driver_c *adcp,
@@ -972,9 +983,6 @@ msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp,
   uint32_t ccr = grpp->ccr & ~(ADC_CCR_CKMODE_MASK | ADC_CCR_MDMA_MASK);
 #endif
 
-  (void)samples;
-  (void)depth;
-
   osalDbgAssert(!STM32_ADC_DUAL_MODE || ((grpp->num_channels & 1) == 0),
                 "odd number of channels in dual mode");
 
@@ -988,7 +996,7 @@ msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp,
 #else
     cfgr |= ADC_CFGR_DMACFG_CIRCULAR;
 #endif
-    if (adcp->depth > 1) {
+    if (depth > 1U) {
       /* If circular buffer depth > 1, then the half transfer interrupt
          is enabled in order to allow streaming processing.*/
       dmamode |= STM32_DMA_CR_HTIE;
@@ -996,13 +1004,13 @@ msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp,
   }
 
   /* DMA setup.*/
-  dmaStreamSetMemory0(adcp->dmastp, adcp->samples);
+  dmaStreamSetMemory0(adcp->dmastp, samples);
 #if STM32_ADC_DUAL_MODE
   dmaStreamSetTransactionSize(adcp->dmastp, ((uint32_t)grpp->num_channels/2) *
-                                            (uint32_t)adcp->depth);
+                                            (uint32_t)depth);
 #else
   dmaStreamSetTransactionSize(adcp->dmastp, (uint32_t)grpp->num_channels *
-                                            (uint32_t)adcp->depth);
+                                            (uint32_t)depth);
 #endif
   dmaStreamSetMode(adcp->dmastp, dmamode);
   dmaStreamEnable(adcp->dmastp);

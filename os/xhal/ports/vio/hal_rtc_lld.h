@@ -38,8 +38,7 @@
 #define RTC_ALARMS                          1U
 
 #define rtc_lld_driver_fields                                               \
-  uint32_t                  nvrtc;                                          \
-  hal_rtc_config_t          config_buf
+  uint32_t                  nvrtc
 
 #define rtc_lld_config_fields
 

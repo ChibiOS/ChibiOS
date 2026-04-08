@@ -65,14 +65,14 @@ do {
   osalSysUnlockFromISR();
 } while (false)]]></implementation>
           </macro>
-          <macro name="_adc_timeout_isr">
-            <brief>Wakes up a thread waiting for conversion completion with timeout.</brief>
+          <macro name="_adc_error_wakeup_isr">
+            <brief>Wakes up a thread waiting for conversion termination because of an error.</brief>
             <param name="adcp" dir="in">Pointer to the ADC driver instance.</param>
             <notapi />
             <implementation><![CDATA[
 do {
   osalSysLockFromISR();
-  osalThreadResumeI(&(adcp)->thread, MSG_TIMEOUT);
+  osalThreadResumeI(&(adcp)->thread, MSG_RESET);
   osalSysUnlockFromISR();
 } while (false)]]></implementation>
           </macro>
@@ -89,7 +89,7 @@ do {
             <param name="adcp" dir="in" />
             <implementation><![CDATA[]]></implementation>
           </macro>
-          <macro name="_adc_timeout_isr">
+          <macro name="_adc_error_wakeup_isr">
             <param name="adcp" dir="in" />
             <implementation><![CDATA[]]></implementation>
           </macro>
@@ -138,7 +138,7 @@ do {
                                     HAL_DRV_STATE_ERROR,
                                     HAL_DRV_STATE_READY);
   (adcp)->grpp = NULL;
-  _adc_timeout_isr(adcp);
+  _adc_error_wakeup_isr(adcp);
 } while (false)]]></implementation>
         </macro>
       </group>
@@ -347,8 +347,7 @@ osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
               (self->state == HAL_DRV_STATE_ERROR),
               "invalid state");
 
-if ((self->state != HAL_DRV_STATE_READY) &&
-    (self->state != HAL_DRV_STATE_STOP)) {
+if (self->state != HAL_DRV_STATE_READY) {
   adc_lld_stop_conversion(self);
   self->samples = NULL;
   self->depth   = 0U;
@@ -371,8 +370,7 @@ osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
               (self->state == HAL_DRV_STATE_COMPLETE) ||
               (self->state == HAL_DRV_STATE_ERROR),
               "invalid state");
-if ((self->state != HAL_DRV_STATE_READY) &&
-    (self->state != HAL_DRV_STATE_STOP)) {
+if (self->state != HAL_DRV_STATE_READY) {
   adc_lld_stop_conversion(self);
   self->samples = NULL;
   self->depth   = 0U;

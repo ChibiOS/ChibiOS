@@ -138,17 +138,17 @@
   } while (false)
 
 /**
- * @brief       Wakes up a thread waiting for conversion completion with
- *              timeout.
+ * @brief       Wakes up a thread waiting for conversion termination because of
+ *              an error.
  *
  * @param[in]     adcp          Pointer to the ADC driver instance.
  *
  * @notapi
  */
-#define _adc_timeout_isr(adcp)                                              \
+#define _adc_error_wakeup_isr(adcp)                                         \
   do {                                                                      \
     osalSysLockFromISR();                                                   \
-    osalThreadResumeI(&(adcp)->thread, MSG_TIMEOUT);                        \
+    osalThreadResumeI(&(adcp)->thread, MSG_RESET);                          \
     osalSysUnlockFromISR();                                                 \
   } while (false)
 
@@ -156,7 +156,7 @@
 #define _adc_reset_i(adcp)
 #define _adc_reset_s(adcp)
 #define _adc_wakeup_isr(adcp)
-#define _adc_timeout_isr(adcp)
+#define _adc_error_wakeup_isr(adcp)
 #endif /* ADC_USE_WAIT == TRUE */
 
 /**
@@ -212,7 +212,7 @@
                                       HAL_DRV_STATE_ERROR,                  \
                                       HAL_DRV_STATE_READY);                 \
     (adcp)->grpp = NULL;                                                    \
-    _adc_timeout_isr(adcp);                                                 \
+    _adc_error_wakeup_isr(adcp);                                            \
   } while (false)
 /** @} */
 

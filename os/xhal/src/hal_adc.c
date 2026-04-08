@@ -332,8 +332,7 @@ void adcStopConversionI(void *ip) {
                 (self->state == HAL_DRV_STATE_ERROR),
                 "invalid state");
 
-  if ((self->state != HAL_DRV_STATE_READY) &&
-      (self->state != HAL_DRV_STATE_STOP)) {
+  if (self->state != HAL_DRV_STATE_READY) {
     adc_lld_stop_conversion(self);
     self->samples = NULL;
     self->depth   = 0U;
@@ -362,8 +361,7 @@ void adcStopConversion(void *ip) {
                 (self->state == HAL_DRV_STATE_COMPLETE) ||
                 (self->state == HAL_DRV_STATE_ERROR),
                 "invalid state");
-  if ((self->state != HAL_DRV_STATE_READY) &&
-      (self->state != HAL_DRV_STATE_STOP)) {
+  if (self->state != HAL_DRV_STATE_READY) {
     adc_lld_stop_conversion(self);
     self->samples = NULL;
     self->depth   = 0U;

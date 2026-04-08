@@ -48,14 +48,13 @@ void rtc_lld_stop(hal_rtc_driver_c *rtcp) {
 
 const hal_rtc_config_t *rtc_lld_setcfg(hal_rtc_driver_c *rtcp,
                                        const hal_rtc_config_t *config) {
+  (void)rtcp;
 
   if (config == NULL) {
     return rtc_lld_selcfg(rtcp, 0U);
   }
 
-  rtcp->config_buf = *config;
-
-  return &rtcp->config_buf;
+  return config;
 }
 
 const hal_rtc_config_t *rtc_lld_selcfg(hal_rtc_driver_c *rtcp, unsigned cfgnum) {

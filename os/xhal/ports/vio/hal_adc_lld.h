@@ -46,8 +46,7 @@ typedef uint32_t adcerror_t;
 #define ADC_ERR_AWD3                        16U
 
 #define adc_lld_driver_fields                                               \
-  uint32_t                  nvadc;                                          \
-  hal_adc_config_t          config_buf
+  uint32_t                  nvadc
 
 #define adc_lld_config_fields
 

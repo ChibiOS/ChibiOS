@@ -48,14 +48,13 @@ void adc_lld_stop(hal_adc_driver_c *adcp) {
 
 const hal_adc_config_t *adc_lld_setcfg(hal_adc_driver_c *adcp,
                                        const hal_adc_config_t *config) {
+  (void)adcp;
 
   if (config == NULL) {
     return adc_lld_selcfg(adcp, 0U);
   }
 
-  adcp->config_buf = *config;
-
-  return &adcp->config_buf;
+  return config;
 }
 
 const hal_adc_config_t *adc_lld_selcfg(hal_adc_driver_c *adcp,

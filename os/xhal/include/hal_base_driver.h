@@ -261,6 +261,10 @@ static inline void __drv_stop(void *ip) {
 
 /**
  * @brief       Configures the driver with a specified configuration.
+ * @note        The configuration pointer is retained by the driver, it is not
+ *              copied. The referenced object must be immutable and remain
+ *              valid until another configuration is selected or the driver is
+ *              stopped.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
  * @param[in]     config        New driver configuration.
@@ -280,6 +284,9 @@ static inline const void *__drv_set_cfg(void *ip, const void *config) {
  * @brief       Selects one of the pre-defined configurations.
  * @note        Only configuration zero is guaranteed to exists, it is the
  *              driver default configuration.
+ * @note        The returned configuration pointer can be retained by the
+ *              driver without copying and must remain valid for the whole time
+ *              it is in use.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
  * @param[in]     cfgnum        Driver configuration number.
