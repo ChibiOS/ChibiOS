@@ -184,6 +184,9 @@
 #define STM32_IRQ_I2C3_PRIORITY             5
 #define STM32_IRQ_I2C4_PRIORITY             5
 
+#define STM32_IRQ_RTC_GLOBAL_PRIORITY       6
+#define STM32_IRQ_RTC_TAMP_PRIORITY         6
+
 #define STM32_IRQ_SPI1_PRIORITY             10
 #define STM32_IRQ_SPI2_PRIORITY             10
 #define STM32_IRQ_SPI3_PRIORITY             10
@@ -225,8 +228,6 @@
 #define STM32_IRQ_USART11_PRIORITY          12
 #define STM32_IRQ_UART12_PRIORITY           12
 #define STM32_IRQ_LPUART1_PRIORITY          12
-#define STM32_IRQ_RTC_GLOBAL_PRIORITY       6
-#define STM32_IRQ_RTC_TAMP_PRIORITY         6
 
 #define STM32_IRQ_USB1_PRIORITY             13
 
