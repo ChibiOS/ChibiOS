@@ -45,16 +45,20 @@
 /*===========================================================================*/
 
 static void __bsio_update_tx_irq(BufferedSIODriver *bsiop, bool txdone) {
+  sioevents_t current;
   sioevents_t mask;
 
-  mask = sioGetEnableFlagsX(bsiop->siop) & ~(SIO_EV_TXNOTFULL | SIO_EV_TXDONE);
+  current = sioGetEnableFlagsX(bsiop->siop);
+  mask = current & ~(SIO_EV_TXNOTFULL | SIO_EV_TXDONE);
   if (!oqIsEmptyI(&bsiop->oqueue)) {
     mask |= SIO_EV_TXNOTFULL;
   }
   if (txdone) {
     mask |= SIO_EV_TXDONE;
   }
-  sioWriteEnableFlagsX(bsiop->siop, mask);
+  if (mask != current) {
+    sioWriteEnableFlagsX(bsiop->siop, mask);
+  }
 }
 
 static void __bsio_push_data(BufferedSIODriver *bsiop) {
