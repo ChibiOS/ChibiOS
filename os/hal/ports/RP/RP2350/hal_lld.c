@@ -116,13 +116,6 @@ void hal_lld_init(void) {
   rp_peripheral_unreset(RESETS_ALLREG_SYSCFG);
 #endif /* RP_NO_INIT */
 
-  /* Re-assert VTOR before NVIC init — a bootloader that soft-jumps
-   * (BX without SYSRESETREQ) may leave the bootrom table active.*/
-#if !defined(__ICCARM__)
-  extern uint32_t _vectors;
-  SCB->VTOR = (uint32_t)&_vectors;
-#endif
-
   /* NVIC initialization.*/
   nvicInit();
 
