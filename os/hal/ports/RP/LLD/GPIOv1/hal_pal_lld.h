@@ -371,8 +371,7 @@ typedef uint32_t iopadid_t;
   do {                                                                      \
     osalDbgAssert(((uint32_t)(bits) & ~(uint32_t)RP_PAL_VALID_MASK(port))   \
                   == 0U, "invalid port bits");                              \
-    RP_PAL_SIO_REG(GPIO_OUT_SET, (port)) =                                  \
-      (uint32_t)(bits) & (uint32_t)RP_PAL_VALID_MASK(port);                \
+    RP_PAL_SIO_REG(GPIO_OUT_SET, (port)) = (uint32_t)(bits);               \
   } while (false)
 
 /**
@@ -390,8 +389,7 @@ typedef uint32_t iopadid_t;
   do {                                                                      \
     osalDbgAssert(((uint32_t)(bits) & ~(uint32_t)RP_PAL_VALID_MASK(port))   \
                   == 0U, "invalid port bits");                              \
-    RP_PAL_SIO_REG(GPIO_OUT_CLR, (port)) =                                  \
-      (uint32_t)(bits) & (uint32_t)RP_PAL_VALID_MASK(port);                \
+    RP_PAL_SIO_REG(GPIO_OUT_CLR, (port)) = (uint32_t)(bits);               \
   } while (false)
 
 /**
@@ -409,8 +407,7 @@ typedef uint32_t iopadid_t;
   do {                                                                      \
     osalDbgAssert(((uint32_t)(bits) & ~(uint32_t)RP_PAL_VALID_MASK(port))   \
                   == 0U, "invalid port bits");                              \
-    RP_PAL_SIO_REG(GPIO_OUT_XOR, (port)) =                                  \
-      (uint32_t)(bits) & (uint32_t)RP_PAL_VALID_MASK(port);                \
+    RP_PAL_SIO_REG(GPIO_OUT_XOR, (port)) = (uint32_t)(bits);               \
   } while (false)
 
 /**
