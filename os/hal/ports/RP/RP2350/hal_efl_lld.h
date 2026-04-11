@@ -111,6 +111,23 @@
 #define RP_FLASH_WAIT_TIME_MS               1U
 #endif
 
+/**
+ * @brief   Enables PSRAM (CS1) cache handling in the EFL driver.
+ * @details When enabled, the XIP cache flush performs a clean-before-
+ *          invalidate sequence to write back dirty PSRAM cache lines
+ *          before invalidation. When disabled, only invalidation is
+ *          performed (flash cache lines are never dirty).
+ * @note    Set to @p TRUE in mcuconf.h for boards with PSRAM on QMI CS1.
+ * @note    PSRAM must be initialized (QMI M1 registers configured,
+ *          XIP_CTRL WRITABLE_M1 set) before the first EFL operation.
+ *          The EFL driver saves XIP_CTRL on entry to flash operations
+ *          and restores it on exit; if WRITABLE_M1 is not yet set at
+ *          the time of the first save, it will be cleared on restore.
+ */
+#if !defined(RP_EFL_HAS_PSRAM) || defined(__DOXYGEN__)
+#define RP_EFL_HAS_PSRAM                    FALSE
+#endif
+
 /** @} */
 
 /*===========================================================================*/

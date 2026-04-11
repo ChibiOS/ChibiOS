@@ -227,23 +227,23 @@ RAMFUNC static void rp_flash_flush_cache(EFlashDriver *eflp) {
   XIP_CTRL_TypeDef *xip_ctrl = XIP_CTRL;
   uint32_t offset;
 
-  /*
-   * Clean before invalidate: the XIP cache is shared with PSRAM (CS1),
-   * which may have dirty write-back lines. The last 16KB of the XIP
-   * address space covers all cache set/way combinations.
-   */
   for (offset = RP_XIP_SET_WAY_BASE;
        offset < RP_XIP_ADDRESS_SPACE_SIZE;
        offset += RP_XIP_CACHE_LINE_SIZE) {
+#if RP_EFL_HAS_PSRAM == TRUE
+    /*
+     * Write back dirty PSRAM (CS1) cache lines before invalidating.
+     * The XIP cache is shared between CS0 (flash, read-only) and
+     * CS1 (PSRAM, write-back). Without this clean step, cached
+     * PSRAM writes would be lost on invalidation.
+     *
+     * The clean and invalidate must be adjacent per-line: clean-by-
+     * set/way corrupts the cache tag, so a cleaned-but-not-yet-
+     * invalidated line can cause spurious cache hits.
+     */
     maint[offset + RP_XIP_CACHE_CLEAN_BY_SET_WAY] = 0U;
-  }
-
-  __DSB();
-  __ISB();
-
-  for (offset = RP_XIP_SET_WAY_BASE;
-       offset < RP_XIP_ADDRESS_SPACE_SIZE;
-       offset += RP_XIP_CACHE_LINE_SIZE) {
+    __DSB();
+#endif
     maint[offset + RP_XIP_CACHE_INVALIDATE_BY_SET_WAY] = 0U;
   }
 
@@ -351,7 +351,11 @@ RAMFUNC static void rp_flash_exit_xip(EFlashDriver *eflp) {
   pads_qspi->GPIO_QSPI_SD2 = padctrl_save;
   pads_qspi->GPIO_QSPI_SD3 = padctrl_save;
 
-  /* 3. QPI exit: F5h in quad width (exits PSRAM: LY68L, IS66WV, etc.). */
+  /* 3. QPI exit: F5h in quad width on CS0. Exits flash chips that use
+   *    this command to leave QPI mode (e.g. some Winbond, ISSI parts).
+   *    PSRAM on CS1 is unaffected — its CS is not asserted here and its
+   *    QPI state is preserved across the flash operation via M1
+   *    save/restore. */
   rp_flash_cs_force(eflp, false);
   qmi->DIRECT_TX = 0xF5U | QMI_DIRECT_TX_IWIDTH(QMI_DIRECT_TX_IWIDTH_Q) |
                    QMI_DIRECT_TX_OE | QMI_DIRECT_TX_NOPUSH;
