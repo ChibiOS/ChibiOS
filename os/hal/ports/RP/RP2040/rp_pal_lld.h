@@ -37,4 +37,18 @@
                                              PAL_RP_PAD_SCHMITT)
 /** @} */
 
+/**
+ * @brief   Access a SIO GPIO register by port.
+ * @details Given a register name (field of SIO) and port (0, 1), produce a
+ *          reference to the correct GPIO register for the port. On the RP2040
+ *          every "hi" output and output-enable register is eight uint32_t's
+ *          after the corresponding "low" register. The input registers
+ *          GPIO_IN / GPIO_HI_IN are only one apart, but port 1 does not exist
+ *          on RP2040 (only 30 GPIO lines) so the offset is never applied.
+ *
+ * @notapi
+ */
+#define RP_PAL_SIO_REG(reg, port)                                               \
+  (*(volatile uint32_t *)((uintptr_t)&SIO->reg + ((port) ? 8 : 0) * sizeof(uint32_t)))
+
 #endif /* RP2040_RP_PAL_LLD_H */

@@ -237,26 +237,20 @@ typedef uint32_t ioportid_t;
  */
 typedef uint32_t iopadid_t;
 
-/**
- * @brief   RP SIO-backed PAL port descriptor.
- */
-typedef struct rp_pal_port rp_pal_port_t;
-
-struct rp_pal_port {
-  const volatile uint32_t *in;
-  volatile uint32_t    *out;
-  volatile uint32_t    *out_set;
-  volatile uint32_t    *out_clr;
-  volatile uint32_t    *out_xor;
-  volatile uint32_t    *oe_set;
-  volatile uint32_t    *oe_clr;
-  uint32_t              valid_mask;
-};
-
 #define RP_PAL_IOPORTS_COUNT            ((RP_GPIO_NUM_LINES + 31U) / 32U)
 
-#if !defined(__DOXYGEN__)
-extern const rp_pal_port_t _pal_ports[RP_PAL_IOPORTS_COUNT];
+#if RP_GPIO_NUM_LINES >= 32U
+  #define RP_PAL_PORT0_VALID_MASK       0xFFFFFFFFU
+#else
+  #define RP_PAL_PORT0_VALID_MASK       ((1U << RP_GPIO_NUM_LINES) - 1U)
+#endif
+
+#if RP_GPIO_NUM_LINES > 32U
+  #define RP_PAL_PORT1_VALID_MASK       ((1U << (RP_GPIO_NUM_LINES - 32U)) - 1U)
+  #define RP_PAL_VALID_MASK(port)                                               \
+    ((uint32_t)(port) == 0U ? RP_PAL_PORT0_VALID_MASK : RP_PAL_PORT1_VALID_MASK)
+#else
+  #define RP_PAL_VALID_MASK(port)       RP_PAL_PORT0_VALID_MASK
 #endif
 
 /**
@@ -329,8 +323,7 @@ extern const rp_pal_port_t _pal_ports[RP_PAL_IOPORTS_COUNT];
  * @notapi
  */
 #define pal_lld_readport(port)                                              \
-  ((ioportmask_t)(*_pal_ports[(uint32_t)(port)].in) &                      \
-   (ioportmask_t)(_pal_ports[(uint32_t)(port)].valid_mask))
+  ((ioportmask_t)RP_PAL_SIO_REG(GPIO_IN, (port)))
 
 /**
  * @brief   Reads the output latch.
@@ -343,8 +336,7 @@ extern const rp_pal_port_t _pal_ports[RP_PAL_IOPORTS_COUNT];
  * @notapi
  */
 #define pal_lld_readlatch(port)                                             \
-  ((ioportmask_t)(*_pal_ports[(uint32_t)(port)].out) &                     \
-   (ioportmask_t)(_pal_ports[(uint32_t)(port)].valid_mask))
+  ((ioportmask_t)RP_PAL_SIO_REG(GPIO_OUT, (port)))
 
 /**
  * @brief   Writes a bits mask on a I/O port.
@@ -354,17 +346,14 @@ extern const rp_pal_port_t _pal_ports[RP_PAL_IOPORTS_COUNT];
  *
  * @notapi
  */
-/* @note    On RP2350, IOPORT2 maps to SIO GPIO_HI_OUT. That register is
- *          shared: GPIO32-47 use bits 15:0, while QSPI/USB outputs occupy
- *          bits 31:24. This macro performs a full write of the PAL-owned
- *          GPIO32-47 field and will clear any repurposed QSPI/USB output
- *          bits. Use palSetPort(), palClearPort(), or palTogglePort() when
- *          unrelated GPIO_HI bits must be preserved.
+/* @note    On RP2350, IOPORT2 maps to SIO GPIO_HI_OUT which is shared with
+ *          QSPI/USB outputs in bits 31:16. This is a raw full-register write;
+ *          use palSetPort()/palClearPort()/palTogglePort() when non-PAL high
+ *          bits must be preserved.
  */
 #define pal_lld_writeport(port, bits)                                       \
   do {                                                                      \
-    *_pal_ports[(uint32_t)(port)].out =                                     \
-      (uint32_t)(bits) & _pal_ports[(uint32_t)(port)].valid_mask;           \
+    RP_PAL_SIO_REG(GPIO_OUT, (port)) = (uint32_t)(bits);                    \
   } while (false)
 
 /**
@@ -380,8 +369,10 @@ extern const rp_pal_port_t _pal_ports[RP_PAL_IOPORTS_COUNT];
  */
 #define pal_lld_setport(port, bits)                                         \
   do {                                                                      \
-    *_pal_ports[(uint32_t)(port)].out_set =                                 \
-      (uint32_t)(bits) & _pal_ports[(uint32_t)(port)].valid_mask;           \
+    osalDbgAssert(((uint32_t)(bits) & ~(uint32_t)RP_PAL_VALID_MASK(port))   \
+                  == 0U, "invalid port bits");                              \
+    RP_PAL_SIO_REG(GPIO_OUT_SET, (port)) =                                  \
+      (uint32_t)(bits) & (uint32_t)RP_PAL_VALID_MASK(port);                \
   } while (false)
 
 /**
@@ -397,8 +388,10 @@ extern const rp_pal_port_t _pal_ports[RP_PAL_IOPORTS_COUNT];
  */
 #define pal_lld_clearport(port, bits)                                       \
   do {                                                                      \
-    *_pal_ports[(uint32_t)(port)].out_clr =                                 \
-      (uint32_t)(bits) & _pal_ports[(uint32_t)(port)].valid_mask;           \
+    osalDbgAssert(((uint32_t)(bits) & ~(uint32_t)RP_PAL_VALID_MASK(port))   \
+                  == 0U, "invalid port bits");                              \
+    RP_PAL_SIO_REG(GPIO_OUT_CLR, (port)) =                                  \
+      (uint32_t)(bits) & (uint32_t)RP_PAL_VALID_MASK(port);                \
   } while (false)
 
 /**
@@ -414,8 +407,10 @@ extern const rp_pal_port_t _pal_ports[RP_PAL_IOPORTS_COUNT];
  */
 #define pal_lld_toggleport(port, bits)                                      \
   do {                                                                      \
-    *_pal_ports[(uint32_t)(port)].out_xor =                                 \
-      (uint32_t)(bits) & _pal_ports[(uint32_t)(port)].valid_mask;           \
+    osalDbgAssert(((uint32_t)(bits) & ~(uint32_t)RP_PAL_VALID_MASK(port))   \
+                  == 0U, "invalid port bits");                              \
+    RP_PAL_SIO_REG(GPIO_OUT_XOR, (port)) =                                  \
+      (uint32_t)(bits) & (uint32_t)RP_PAL_VALID_MASK(port);                \
   } while (false)
 
 /**

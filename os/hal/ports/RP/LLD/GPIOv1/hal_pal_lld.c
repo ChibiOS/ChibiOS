@@ -40,41 +40,6 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-#if RP_GPIO_NUM_LINES >= 32U
-  #define RP_PAL_PORT0_VALID_MASK          0xFFFFFFFFU
-#else
-  #define RP_PAL_PORT0_VALID_MASK          ((1U << RP_GPIO_NUM_LINES) - 1U)
-#endif
-
-#if RP_GPIO_NUM_LINES > 32U
-  #define RP_PAL_PORT1_VALID_MASK          ((1U << (RP_GPIO_NUM_LINES - 32U)) - 1U)
-#endif
-
-const rp_pal_port_t _pal_ports[RP_PAL_IOPORTS_COUNT] = {
-  {
-    .in        = &SIO->GPIO_IN,
-    .out       = &SIO->GPIO_OUT,
-    .out_set   = &SIO->GPIO_OUT_SET,
-    .out_clr   = &SIO->GPIO_OUT_CLR,
-    .out_xor   = &SIO->GPIO_OUT_XOR,
-    .oe_set    = &SIO->GPIO_OE_SET,
-    .oe_clr    = &SIO->GPIO_OE_CLR,
-    .valid_mask = RP_PAL_PORT0_VALID_MASK,
-  },
-#if RP_GPIO_NUM_LINES > 32U
-  {
-    .in        = &SIO->GPIO_HI_IN,
-    .out       = &SIO->GPIO_HI_OUT,
-    .out_set   = &SIO->GPIO_HI_OUT_SET,
-    .out_clr   = &SIO->GPIO_HI_OUT_CLR,
-    .out_xor   = &SIO->GPIO_HI_OUT_XOR,
-    .oe_set    = &SIO->GPIO_HI_OE_SET,
-    .oe_clr    = &SIO->GPIO_HI_OE_CLR,
-    .valid_mask = RP_PAL_PORT1_VALID_MASK,
-  },
-#endif
-};
-
 #if (PAL_USE_WAIT == TRUE) || (PAL_USE_CALLBACKS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Event records for GPIO lines.
@@ -104,7 +69,6 @@ static void rp_pal_pad_set_mode(ioportid_t port,
                                 iopadid_t pad,
                                 iomode_t mode) {
   uint32_t ctrlbits, padbits, oebits, bit, abspad;
-  const rp_pal_port_t *rpp = &_pal_ports[(uint32_t)port];
 
   ctrlbits = mode & 0x007FFFFFU;
   oebits   = (mode >> 23U) & 1U;
@@ -113,19 +77,19 @@ static void rp_pal_pad_set_mode(ioportid_t port,
   abspad   = ((uint32_t)port << 5U) | (uint32_t)pad;
 
   if ((pad >= PAL_IOPORTS_WIDTH) ||
-      (((rpp->valid_mask >> pad) & 1U) == 0U) ||
+      (((RP_PAL_VALID_MASK(port) >> pad) & 1U) == 0U) ||
       (abspad >= RP_GPIO_NUM_LINES)) {
     return;
   }
 
   /* Release the output driver while reprogramming mux and pad control. */
-  *rpp->oe_clr = bit;
+  RP_PAL_SIO_REG(GPIO_OE_CLR, port) = bit;
 
   IO_BANK0->GPIO[abspad].CTRL = ctrlbits;
   PADS_BANK0->GPIO[abspad] = padbits;
 
   if (oebits != 0U) {
-    *rpp->oe_set = bit;
+    RP_PAL_SIO_REG(GPIO_OE_SET, port) = bit;
   }
 }
 
