@@ -242,6 +242,11 @@ const rp_dma_channel_t *dmaChannelAllocI(uint32_t id,
       dma.channels[i].func  = func;
       dma.channels[i].param = param;
 
+      /* Releasing DMA reset if it is the 1st channel taken.*/
+      if (prevmask == 0U) {
+        rp_peripheral_unreset(RESETS_ALLREG_DMA);
+      }
+
       if (SIO->CPUID == 0U) {
         /* Channel taken by core 0.*/
         if (dma.c0_allocated_mask == 0U) {
@@ -255,11 +260,6 @@ const rp_dma_channel_t *dmaChannelAllocI(uint32_t id,
           nvicEnableVector(RP_DMA_IRQ_1_NUMBER, priority);
         }
         dma.c1_allocated_mask |= dmachp->chnmask;
-      }
-
-      /* Releasing DMA reset if it is the 1st channel taken.*/
-      if (prevmask == 0U) {
-        rp_peripheral_unreset(RESETS_ALLREG_DMA);
       }
 
       return dmachp;

@@ -263,6 +263,11 @@ const rp_pio_sm_t *pioSmAllocI(const rp_pio_block_t *block,
       pio.blocks[b].sm[i].func  = func;
       pio.blocks[b].sm[i].param = param;
 
+      /* Releasing PIO reset if this is the first state machine taken.*/
+      if (prevmask == 0U) {
+        rp_peripheral_unreset(block->resets_mask);
+      }
+
       if (SIO->CPUID == 0U) {
         /* state machine taken by core 0.*/
         if (pio.blocks[b].c0_allocated_mask == 0U) {
@@ -304,11 +309,6 @@ const rp_pio_sm_t *pioSmAllocI(const rp_pio_block_t *block,
           }
         }
         pio.blocks[b].c1_allocated_mask |= smmask;
-      }
-
-      /* Releasing PIO reset if this is the first state machine taken.*/
-      if (prevmask == 0U) {
-        rp_peripheral_unreset(block->resets_mask);
       }
 
       return &pio_sms[b][i];
