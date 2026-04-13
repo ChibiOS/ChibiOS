@@ -305,66 +305,45 @@
 #endif
 
 /**
- * @brief   ADC1/ADC2 interrupt priority level setting.
+ * @brief   ADC1 interrupt priority level setting.
  */
-#if !defined(STM32_ADC_ADC12_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC12_IRQ_PRIORITY        5
+#if !defined(STM32_IRQ_ADC1_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_ADC1_PRIORITY             5
+#endif
+
+/**
+ * @brief   ADC1/ADC2 shared interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_ADC1_2_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_ADC1_2_PRIORITY           5
+#endif
+
+/**
+ * @brief   ADC2 interrupt priority level setting.
+ */
+#if !defined(STM32_IRQ_ADC2_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_ADC2_PRIORITY             5
 #endif
 
 /**
  * @brief   ADC3 interrupt priority level setting.
  */
-#if !defined(STM32_ADC_ADC3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC3_IRQ_PRIORITY         5
+#if !defined(STM32_IRQ_ADC3_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_ADC3_PRIORITY             5
 #endif
 
 /**
  * @brief   ADC4 interrupt priority level setting.
  */
-#if !defined(STM32_ADC_ADC4_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC4_IRQ_PRIORITY         5
+#if !defined(STM32_IRQ_ADC4_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_ADC4_PRIORITY             5
 #endif
 
 /**
  * @brief   ADC5 interrupt priority level setting.
  */
-#if !defined(STM32_ADC_ADC5_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC5_IRQ_PRIORITY         5
-#endif
-
-/**
- * @brief   ADC1 DMA interrupt priority level setting.
- */
-#if !defined(STM32_ADC_ADC1_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     5
-#endif
-
-/**
- * @brief   ADC2 DMA interrupt priority level setting.
- */
-#if !defined(STM32_ADC_ADC2_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC2_DMA_IRQ_PRIORITY     5
-#endif
-
-/**
- * @brief   ADC3 DMA interrupt priority level setting.
- */
-#if !defined(STM32_ADC_ADC3_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC3_DMA_IRQ_PRIORITY     5
-#endif
-
-/**
- * @brief   ADC4 DMA interrupt priority level setting.
- */
-#if !defined(STM32_ADC_ADC4_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC4_DMA_IRQ_PRIORITY     5
-#endif
-
-/**
- * @brief   ADC5 DMA interrupt priority level setting.
- */
-#if !defined(STM32_ADC_ADC5_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC5_DMA_IRQ_PRIORITY     5
+#if !defined(STM32_IRQ_ADC5_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_IRQ_ADC5_PRIORITY             5
 #endif
 
 #if defined(STM32F3XX) || defined(__DOXYGEN__)
@@ -471,14 +450,6 @@
 #error "STM32_HAS_ADCx not defined in registry"
 #endif
 
-#if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_HANDLER)) ||                 \
-    (STM32_ADC_USE_ADC2 && !defined(STM32_ADC2_HANDLER)) ||                 \
-    (STM32_ADC_USE_ADC3 && !defined(STM32_ADC3_HANDLER)) ||                 \
-    (STM32_ADC_USE_ADC4 && !defined(STM32_ADC4_HANDLER)) ||                 \
-    (STM32_ADC_USE_ADC5 && !defined(STM32_ADC5_HANDLER))
-#error "STM32_ADCx_HANDLER not defined in registry"
-#endif
-
 #if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_NUMBER)) ||                  \
     (STM32_ADC_USE_ADC2 && !defined(STM32_ADC2_NUMBER)) ||                  \
     (STM32_ADC_USE_ADC3 && !defined(STM32_ADC3_NUMBER)) ||                  \
@@ -557,56 +528,42 @@
 #endif
 #endif
 
+/* IRQ priorities mapping.*/
+#if STM32_HAS_ADC1 && STM32_HAS_ADC2
+#define STM32_ADCV3_ADC1_IRQ_PRIORITY       STM32_IRQ_ADC1_2_PRIORITY
+#define STM32_ADCV3_ADC2_IRQ_PRIORITY       STM32_IRQ_ADC1_2_PRIORITY
+#else
+#define STM32_ADCV3_ADC1_IRQ_PRIORITY       STM32_IRQ_ADC1_PRIORITY
+#define STM32_ADCV3_ADC2_IRQ_PRIORITY       STM32_IRQ_ADC2_PRIORITY
+#endif
+#define STM32_ADCV3_ADC3_IRQ_PRIORITY       STM32_IRQ_ADC3_PRIORITY
+#define STM32_ADCV3_ADC4_IRQ_PRIORITY       STM32_IRQ_ADC4_PRIORITY
+#define STM32_ADCV3_ADC5_IRQ_PRIORITY       STM32_IRQ_ADC5_PRIORITY
+
 /* ADC IRQ priority tests.*/
 #if STM32_ADC_USE_ADC1 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC12_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADCV3_ADC1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC1"
 #endif
 
 #if STM32_ADC_USE_ADC2 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC12_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADCV3_ADC2_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC2"
 #endif
 
 #if STM32_ADC_USE_ADC3 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC3_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADCV3_ADC3_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC3"
 #endif
 
 #if STM32_ADC_USE_ADC4 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC4_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADCV3_ADC4_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC4"
 #endif
 
 #if STM32_ADC_USE_ADC5 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC5_IRQ_PRIORITY)
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADCV3_ADC5_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC5"
-#endif
-
-/* DMA IRQ priority tests.*/
-#if STM32_ADC_USE_ADC1 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to ADC1 DMA"
-#endif
-
-#if STM32_ADC_USE_ADC2 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC2_DMA_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to ADC2 DMA"
-#endif
-
-#if STM32_ADC_USE_ADC3 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC3_DMA_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to ADC3 DMA"
-#endif
-
-#if STM32_ADC_USE_ADC4 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC4_DMA_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to ADC4 DMA"
-#endif
-
-#if STM32_ADC_USE_ADC5 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC5_DMA_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to ADC5 DMA"
 #endif
 
 /* DMA priority tests.*/

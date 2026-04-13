@@ -54,39 +54,35 @@
 #error "STM32_ADC2_HANDLER not defined in stm32_isr.h"
 #endif
 
-/* Checks for xhalconf.h correctness.*/
+/* Checks for xmcuconf.h correctness.*/
 #if !defined(STM32_ADC_USE_ADC1)
-#error "STM32_ADC_USE_ADC1 not defined in xhalconf.h"
+#error "STM32_ADC_USE_ADC1 not defined in xmcuconf.h"
 #endif
 #if !defined(STM32_ADC_USE_ADC2)
-#error "STM32_ADC_USE_ADC2 not defined in xhalconf.h"
+#error "STM32_ADC_USE_ADC2 not defined in xmcuconf.h"
 #endif
 #if !defined(STM32_ADC_DUAL_MODE)
-#error "STM32_ADC_DUAL_MODE not defined in xhalconf.h"
+#error "STM32_ADC_DUAL_MODE not defined in xmcuconf.h"
 #endif
 
 /* Priority definitions checks.*/
-#if !defined(STM32_ADC_ADC1_IRQ_PRIORITY) &&                                \
-    !defined(STM32_ADC_ADC12_IRQ_PRIORITY)
-#error "STM32_ADC_ADC1_IRQ_PRIORITY or STM32_ADC_ADC12_IRQ_PRIORITY not defined in xhalconf.h"
+#if (STM32_ADC1_NUMBER == STM32_ADC2_NUMBER) &&                             \
+    !defined(STM32_IRQ_ADC1_2_PRIORITY)
+#error "STM32_IRQ_ADC1_2_PRIORITY not defined in xmcuconf.h"
 #endif
-#if !defined(STM32_ADC_ADC2_IRQ_PRIORITY) &&                                \
-    !defined(STM32_ADC_ADC12_IRQ_PRIORITY)
-#error "STM32_ADC_ADC2_IRQ_PRIORITY or STM32_ADC_ADC12_IRQ_PRIORITY not defined in xhalconf.h"
+#if (STM32_ADC1_NUMBER != STM32_ADC2_NUMBER) &&                             \
+    !defined(STM32_IRQ_ADC2_PRIORITY)
+#error "STM32_IRQ_ADC2_PRIORITY not defined in xmcuconf.h"
 #endif
 
 /* Priority settings checks.*/
-#if defined(STM32_ADC_ADC1_IRQ_PRIORITY) &&                                 \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC1_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_ADC_ADC1_IRQ_PRIORITY"
+#if (STM32_ADC1_NUMBER == STM32_ADC2_NUMBER) &&                             \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_ADC1_2_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_ADC1_2_PRIORITY"
 #endif
-#if defined(STM32_ADC_ADC2_IRQ_PRIORITY) &&                                 \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC2_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_ADC_ADC2_IRQ_PRIORITY"
-#endif
-#if defined(STM32_ADC_ADC12_IRQ_PRIORITY) &&                                \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC12_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_ADC_ADC12_IRQ_PRIORITY"
+#if (STM32_ADC1_NUMBER != STM32_ADC2_NUMBER) &&                             \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_ADC2_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_ADC2_PRIORITY"
 #endif
 
 #endif /* STM32_HAS_ADC1 || STM32_HAS_ADC2 */
@@ -121,18 +117,10 @@
 
 static inline void adc1_adc2_irq_init(void) {
 #if STM32_ADC1_ADC2_SHARED_ISR_IS_USED
-#if defined(STM32_ADC_ADC1_IRQ_PRIORITY)
-  nvicEnableVector(STM32_ADC1_NUMBER, STM32_ADC_ADC1_IRQ_PRIORITY);
-#else
-  nvicEnableVector(STM32_ADC1_NUMBER, STM32_ADC_ADC12_IRQ_PRIORITY);
-#endif
+  nvicEnableVector(STM32_ADC1_NUMBER, STM32_IRQ_ADC1_2_PRIORITY);
 #endif
 #if STM32_ADC1_ADC2_SLAVE_ISR_IS_USED
-#if defined(STM32_ADC_ADC1_IRQ_PRIORITY)
-  nvicEnableVector(STM32_ADC2_NUMBER, STM32_ADC_ADC1_IRQ_PRIORITY);
-#else
-  nvicEnableVector(STM32_ADC2_NUMBER, STM32_ADC_ADC12_IRQ_PRIORITY);
-#endif
+  nvicEnableVector(STM32_ADC2_NUMBER, STM32_IRQ_ADC2_PRIORITY);
 #endif
 }
 
@@ -183,6 +171,7 @@ OSAL_IRQ_HANDLER(STM32_ADC1_HANDLER) {
   adc_lld_serve_interrupt(&ADCD2);
 #endif
 #endif
+  (void)isr;
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -204,6 +193,7 @@ OSAL_IRQ_HANDLER(STM32_ADC2_HANDLER) {
   STM32_ADC_ADC2_IRQ_HOOK
 #endif
   adc_lld_serve_interrupt(&ADCD1);
+  (void)isr;
 
   OSAL_IRQ_EPILOGUE();
 }

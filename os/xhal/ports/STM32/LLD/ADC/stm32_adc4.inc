@@ -45,19 +45,19 @@
 #error "STM32_ADC4_HANDLER not defined in stm32_isr.h"
 #endif
 
-/* Checks for xhalconf.h correctness.*/
+/* Checks for xmcuconf.h correctness.*/
 #if !defined(STM32_ADC_USE_ADC4)
-#error "STM32_ADC_USE_ADC4 not defined in xhalconf.h"
+#error "STM32_ADC_USE_ADC4 not defined in xmcuconf.h"
 #endif
 
 /* Priority definitions checks.*/
-#if !defined(STM32_ADC_ADC4_IRQ_PRIORITY)
-#error "STM32_ADC_ADC4_IRQ_PRIORITY not defined in xhalconf.h"
+#if !defined(STM32_IRQ_ADC4_PRIORITY)
+#error "STM32_IRQ_ADC4_PRIORITY not defined in xmcuconf.h"
 #endif
 
 /* Priority settings checks.*/
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC4_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_ADC_ADC4_IRQ_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_ADC4_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_ADC4_PRIORITY"
 #endif
 
 #endif /* STM32_HAS_ADC4 */
@@ -82,7 +82,7 @@
 
 static inline void adc4_irq_init(void) {
 #if STM32_ADC4_ISR_IS_USED
-  nvicEnableVector(STM32_ADC4_NUMBER, STM32_ADC_ADC4_IRQ_PRIORITY);
+  nvicEnableVector(STM32_ADC4_NUMBER, STM32_IRQ_ADC4_PRIORITY);
 #endif
 }
 
@@ -112,6 +112,7 @@ OSAL_IRQ_HANDLER(STM32_ADC4_HANDLER) {
   STM32_ADC_ADC4_IRQ_HOOK
 #endif
   adc_lld_serve_interrupt(&ADCD4);
+  (void)isr;
 
   OSAL_IRQ_EPILOGUE();
 }

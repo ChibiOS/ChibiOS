@@ -45,18 +45,18 @@
 #error "STM32_ADC5_HANDLER not defined in stm32_isr.h"
 #endif
 
-/* Checks for xhalconf.h correctness.*/
+/* Checks for xmcuconf.h correctness.*/
 #if !defined(STM32_ADC_USE_ADC5)
-#error "STM32_ADC_USE_ADC5 not defined in xhalconf.h"
+#error "STM32_ADC_USE_ADC5 not defined in xmcuconf.h"
 #endif
 
-#if !defined(STM32_ADC_ADC5_IRQ_PRIORITY)
-#error "STM32_ADC_ADC5_IRQ_PRIORITY not defined in xhalconf.h"
+#if !defined(STM32_IRQ_ADC5_PRIORITY)
+#error "STM32_IRQ_ADC5_PRIORITY not defined in xmcuconf.h"
 #endif
 
 /* Priority settings checks.*/
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC5_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_ADC_ADC5_IRQ_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_ADC5_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_ADC5_PRIORITY"
 #endif
 
 #endif /* STM32_HAS_ADC5 */
@@ -81,7 +81,7 @@
 
 static inline void adc5_irq_init(void) {
 #if STM32_ADC5_ISR_IS_USED
-  nvicEnableVector(STM32_ADC5_NUMBER, STM32_ADC_ADC5_IRQ_PRIORITY);
+  nvicEnableVector(STM32_ADC5_NUMBER, STM32_IRQ_ADC5_PRIORITY);
 #endif
 }
 
@@ -111,6 +111,7 @@ OSAL_IRQ_HANDLER(STM32_ADC5_HANDLER) {
   STM32_ADC_ADC5_IRQ_HOOK
 #endif
   adc_lld_serve_interrupt(&ADCD5);
+  (void)isr;
 
   OSAL_IRQ_EPILOGUE();
 }
