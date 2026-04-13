@@ -33,6 +33,11 @@
  * @name    ISRs suppressed in standard drivers
  * @{
  */
+#define STM32_ADC1_SUPPRESS_ISR
+#define STM32_ADC3_SUPPRESS_ISR
+#define STM32_ADC4_SUPPRESS_ISR
+#define STM32_ADC5_SUPPRESS_ISR
+
 #define STM32_TIM1_SUPPRESS_ISR
 #define STM32_TIM2_SUPPRESS_ISR
 #define STM32_TIM3_SUPPRESS_ISR

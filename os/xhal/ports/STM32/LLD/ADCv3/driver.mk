@@ -6,4 +6,5 @@ else
 PLATFORMSRC += $(CHIBIOS)/os/xhal/ports/STM32/LLD/ADCv3/hal_adc_lld.c
 endif
 
-PLATFORMINC += $(CHIBIOS)/os/xhal/ports/STM32/LLD/ADCv3
+PLATFORMINC += $(CHIBIOS)/os/xhal/ports/STM32/LLD/ADC \
+               $(CHIBIOS)/os/xhal/ports/STM32/LLD/ADCv3

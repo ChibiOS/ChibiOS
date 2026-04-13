@@ -284,9 +284,21 @@ static void adc_lld_serve_dma_interrupt(void *p, uint32_t csr) {
  * @brief   ADC IRQ service routine.
  *
  * @param[in] adcp      pointer to the @p hal_adc_driver_c object
- * @param[in] isr       content of the ISR register
  */
-static void adc_lld_serve_interrupt(hal_adc_driver_c *adcp, uint32_t isr) {
+void adc_lld_serve_interrupt(hal_adc_driver_c *adcp) {
+  uint32_t isr;
+
+  isr = adcp->adcm->ISR;
+  adcp->adcm->ISR = isr;
+#if STM32_ADC_DUAL_MODE
+  if (adcp->adcs != NULL) {
+    uint32_t sisr;
+
+    sisr = adcp->adcs->ISR;
+    adcp->adcs->ISR = sisr;
+    isr |= sisr;
+  }
+#endif
 
   /* It could be a spurious interrupt caused by overflows after DMA disabling,
      just ignore it in this case.*/
@@ -322,7 +334,8 @@ static void adc_lld_serve_interrupt(hal_adc_driver_c *adcp, uint32_t isr) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if STM32_ADC_USE_ADC1 || defined(__DOXYGEN__)
+#if (STM32_ADC_USE_ADC1 || defined(__DOXYGEN__)) &&                         \
+    !defined(STM32_ADC1_SUPPRESS_ISR)
 /**
  * @brief   ADC1 interrupt handler.
  *
@@ -334,16 +347,15 @@ OSAL_IRQ_HANDLER(STM32_ADC1_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   isr  = ADC1->ISR;
-  ADC1->ISR = isr;
 #if defined(STM32_ADC_ADC1_IRQ_HOOK)
   STM32_ADC_ADC1_IRQ_HOOK
 #endif
-  adc_lld_serve_interrupt(&ADCD1, isr);
+  adc_lld_serve_interrupt(&ADCD1);
 
   OSAL_IRQ_EPILOGUE();
 }
 
-#if STM32_ADC_DUAL_MODE
+#if STM32_ADC_DUAL_MODE && !defined(STM32_ADC2_SUPPRESS_ISR)
 /**
  * @brief   ADC2 interrupt handler (as ADC1 slave).
  *
@@ -355,16 +367,15 @@ OSAL_IRQ_HANDLER(STM32_ADC2_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   isr  = ADC2->ISR;
-  ADC2->ISR = isr;
-
-  adc_lld_serve_interrupt(&ADCD1, isr);
+  adc_lld_serve_interrupt(&ADCD1);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ADC_DUAL_MODE */
 #endif /* STM32_ADC_USE_ADC1 */
 
-#if STM32_ADC_USE_ADC2 || defined(__DOXYGEN__)
+#if (STM32_ADC_USE_ADC2 || defined(__DOXYGEN__)) &&                         \
+    !defined(STM32_ADC2_SUPPRESS_ISR)
 /**
  * @brief   ADC2 interrupt handler.
  *
@@ -376,15 +387,14 @@ OSAL_IRQ_HANDLER(STM32_ADC2_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   isr  = ADC2->ISR;
-  ADC2->ISR = isr;
-
-  adc_lld_serve_interrupt(&ADCD2, isr);
+  adc_lld_serve_interrupt(&ADCD2);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ADC_USE_ADC2 */
 
-#if STM32_ADC_USE_ADC3 || defined(__DOXYGEN__)
+#if (STM32_ADC_USE_ADC3 || defined(__DOXYGEN__)) &&                         \
+    !defined(STM32_ADC3_SUPPRESS_ISR)
 /**
  * @brief   ADC3 interrupt handler.
  *
@@ -396,16 +406,15 @@ OSAL_IRQ_HANDLER(STM32_ADC3_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   isr  = ADC3->ISR;
-  ADC3->ISR = isr;
 #if defined(STM32_ADC_ADC3_IRQ_HOOK)
   STM32_ADC_ADC3_IRQ_HOOK
 #endif
-  adc_lld_serve_interrupt(&ADCD3, isr);
+  adc_lld_serve_interrupt(&ADCD3);
 
   OSAL_IRQ_EPILOGUE();
 }
 
-#if STM32_ADC_DUAL_MODE
+#if STM32_ADC_DUAL_MODE && !defined(STM32_ADC4_SUPPRESS_ISR)
 /**
  * @brief   ADC4 interrupt handler (as ADC3 slave).
  *
@@ -417,19 +426,19 @@ OSAL_IRQ_HANDLER(STM32_ADC4_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   isr  = ADC4->ISR;
-  ADC4->ISR = isr;
 #if defined(STM32_ADC_ADC4_IRQ_HOOK)
   STM32_ADC_ADC4_IRQ_HOOK
 #endif
 
-  adc_lld_serve_interrupt(&ADCD3, isr);
+  adc_lld_serve_interrupt(&ADCD3);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif /* STM32_ADC_DUAL_MODE */
 #endif /* STM32_ADC_USE_ADC3 */
 
-#if STM32_ADC_USE_ADC4 || defined(__DOXYGEN__)
+#if (STM32_ADC_USE_ADC4 || defined(__DOXYGEN__)) &&                         \
+    !defined(STM32_ADC4_SUPPRESS_ISR)
 /**
  * @brief   ADC4 interrupt handler.
  *
@@ -441,12 +450,11 @@ OSAL_IRQ_HANDLER(STM32_ADC4_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   isr  = ADC4->ISR;
-  ADC4->ISR = isr;
 #if defined(STM32_ADC_ADC4_IRQ_HOOK)
   STM32_ADC_ADC4_IRQ_HOOK
 #endif
 
-  adc_lld_serve_interrupt(&ADCD4, isr);
+  adc_lld_serve_interrupt(&ADCD4);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -516,25 +524,25 @@ void adc_lld_init(void) {
 #endif /* STM32_ADC_USE_ADC4 */
 
   /* IRQs setup.*/
-#if STM32_ADC_USE_ADC1
+#if STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_SUPPRESS_ISR)
   nvicEnableVector(STM32_ADC1_NUMBER, STM32_ADC_ADC1_IRQ_PRIORITY);
-#if STM32_ADC_DUAL_MODE
+#if STM32_ADC_DUAL_MODE && !defined(STM32_ADC2_SUPPRESS_ISR)
   nvicEnableVector(STM32_ADC2_NUMBER, STM32_ADC_ADC1_IRQ_PRIORITY);
 #endif
 #endif /* STM32_ADC_USE_ADC1 */
 
-#if STM32_ADC_USE_ADC2
+#if STM32_ADC_USE_ADC2 && !defined(STM32_ADC2_SUPPRESS_ISR)
   nvicEnableVector(STM32_ADC2_NUMBER, STM32_ADC_ADC2_IRQ_PRIORITY);
 #endif /* STM32_ADC_USE_ADC2 */
 
-#if STM32_ADC_USE_ADC3
+#if STM32_ADC_USE_ADC3 && !defined(STM32_ADC3_SUPPRESS_ISR)
   nvicEnableVector(STM32_ADC3_NUMBER, STM32_ADC_ADC3_IRQ_PRIORITY);
-#if STM32_ADC_DUAL_MODE
+#if STM32_ADC_DUAL_MODE && !defined(STM32_ADC4_SUPPRESS_ISR)
   nvicEnableVector(STM32_ADC4_NUMBER, STM32_ADC_ADC3_IRQ_PRIORITY);
 #endif
 #endif /* STM32_ADC_USE_ADC3 */
 
-#if STM32_ADC_USE_ADC4
+#if STM32_ADC_USE_ADC4 && !defined(STM32_ADC4_SUPPRESS_ISR)
   nvicEnableVector(STM32_ADC4_NUMBER, STM32_ADC_ADC4_IRQ_PRIORITY);
 #endif /* STM32_ADC_USE_ADC4 */
 

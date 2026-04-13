@@ -1143,6 +1143,7 @@ extern hal_adc_driver_c ADCD5;
 extern "C" {
 #endif
   void adc_lld_init(void);
+  void adc_lld_serve_interrupt(hal_adc_driver_c *adcp);
   msg_t adc_lld_start(hal_adc_driver_c *adcp);
   void adc_lld_stop(hal_adc_driver_c *adcp);
   const hal_adc_config_t *adc_lld_setcfg(hal_adc_driver_c *adcp,
