@@ -2,7 +2,7 @@
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
   name="vfsnodes" descr="VFS Nodes" editcode="false">
-  <brief>Common ancestor class of all reference-counted objects.</brief>
+  <brief>Common ancestor class of all file system nodes.</brief>
   <imports>
     <import>oop_referenced_object.xml</import>
     <import>oop_random_stream.xml</import>

@@ -20,7 +20,7 @@
  * @note        This is a generated file, do not edit directly.
  *
  * @addtogroup  VFSNODES
- * @brief       Common ancestor class of all reference-counted objects.
+ * @brief       Common ancestor class of all file system nodes.
  * @{
  */
 
