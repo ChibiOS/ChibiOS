@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="vnsnetif" descr="VNS base classes." editcode="false">
+  <brief>VNS base classes.</brief>
+  <imports>
+    <import>oop_base_object.xml</import>
+  </imports>
+  <public>
+    <includes>
+    </includes>
+    <types>
+      <class type="abstract" name="vns_socket" namespace="vnssck"
+        ancestorname="base_object" descr="VNS socket">
+        <brief>Common ancestor class of all socket classes.</brief>
+        <fields></fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[ ]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[ ]]></implementation>
+          </dispose>
+          <virtual>
+            <method name="vnssckConnect" shortname="connects"
+              ctype="msg_t">
+              <brief>Connects the socket to a remote endpoint.</brief>
+              <param name="addr" ctype="const vns_address_t *"
+                dir="in">Pointer
+                to the remote endpoint address.
+              </param>
+              <param name="timeout" ctype="sysinterval_t" dir="in">Maximum
+                time
+                allowed for the operation to complete.
+              </param>
+              <return>The operation result.</return>
+              <api />
+              <implementation>
+
+(void)addr;
+(void)timeout;
+
+return CH_RET_ENOSYS;<![CDATA[]]></implementation>
+            </method>
+
+            <method name="vnssckBind" shortname="binds"
+              ctype="msg_t">
+              <brief>Binds the socket to a local endpoint.</brief>
+              <param name="addr" ctype="const vns_address_t *"
+                dir="in">Pointer
+                to the local endpoint address.
+              </param>
+              <return>The operation result.</return>
+              <api />
+              <implementation>
+
+(void)addr;
+
+return CH_RET_ENOSYS;<![CDATA[]]></implementation>
+            </method>
+
+            <method name="vnssckListen" shortname="listens"
+              ctype="msg_t">
+              <brief>Marks the socket as a passive listening socket.</brief>
+              <param name="backlog" ctype="unsigned" dir="in">Maximum
+                number of
+                pending incoming connections.
+              </param>
+              <return>The operation result.</return>
+              <api />
+              <implementation>
+
+(void)backlog;
+
+return CH_RET_ENOSYS;<![CDATA[]]></implementation>
+            </method>
+
+            <method name="vnssckAccept" shortname="accepts"
+              ctype="msg_t">
+              <brief>Accepts an incoming connection and creates a new
+                socket object.</brief>
+              <param name="spp" ctype="vns_socket_c **" dir="out">Pointer
+                to the
+                variable that will receive the accepted socket object.
+              </param>
+              <param name="timeout" ctype="sysinterval_t" dir="in">Maximum
+                time
+                allowed for the operation to complete.
+              </param>
+              <return>The operation result.</return>
+              <api />
+              <implementation>
+
+(void)spp;
+(void)timeout;
+
+return CH_RET_ENOSYS;<![CDATA[]]></implementation>
+            </method>
+
+            <method name="vnssckSend" shortname="sends"
+              ctype="ssize_t">
+              <brief>Sends data through the socket.</brief>
+              <param name="buf" ctype="const void *" dir="in">Pointer
+                to the data
+                buffer to be transmitted.
+              </param>
+              <param name="n" ctype="size_t" dir="in">Number of bytes
+                to
+                transmit.
+              </param>
+              <param name="timeout" ctype="sysinterval_t" dir="in">Maximum
+                time
+                allowed for the operation to complete.
+              </param>
+              <return>The number of bytes sent, or a negative error
+                code.</return>
+              <api />
+              <implementation>
+
+(void)buf;
+(void)n;
+(void)timeout;
+
+return CH_RET_ENOSYS;<![CDATA[]]></implementation>
+            </method>
+
+            <method name="vnssckReceive" shortname="receives"
+              ctype="ssize_t">
+              <brief>Receives data from the socket.</brief>
+              <param name="buf" ctype="void *" dir="out">Pointer to the
+                destination
+                buffer.
+              </param>
+              <param name="n" ctype="size_t" dir="in">Maximum number of
+                bytes to
+                receive.
+              </param>
+              <param name="timeout" ctype="sysinterval_t" dir="in">Maximum
+                time
+                allowed for the operation to complete.
+              </param>
+              <return>The number of bytes received, or a negative error
+                code.</return>
+              <api />
+              <implementation>
+
+(void)buf;
+(void)n;
+(void)timeout;
+
+return CH_RET_ENOSYS;<![CDATA[]]></implementation>
+            </method>
+
+            <method name="vnssckSendTo" shortname="sendsto"
+              ctype="ssize_t">
+              <brief>Sends data to a specified remote endpoint.</brief>
+              <param name="buf" ctype="const void *" dir="in">Pointer
+                to the data
+                buffer to be transmitted.
+              </param>
+              <param name="n" ctype="size_t" dir="in">Number of bytes
+                to
+                transmit.
+              </param>
+              <param name="addr" ctype="const vns_address_t *"
+                dir="in">Pointer
+                to the destination endpoint address.
+              </param>
+              <param name="timeout" ctype="sysinterval_t" dir="in">Maximum
+                time
+                allowed for the operation to complete.
+              </param>
+              <return>The number of bytes sent, or a negative error
+                code.</return>
+              <api />
+              <implementation>
+
+(void)buf;
+(void)n;
+(void)addr;
+(void)timeout;
+
+return CH_RET_ENOSYS;<![CDATA[]]></implementation>
+            </method>
+
+            <method name="vnssckReceiveFrom"
+              shortname="receivesfrom" ctype="ssize_t">
+              <brief>Receives data and returns the source endpoint
+                address.</brief>
+              <param name="buf" ctype="void *" dir="out">Pointer to the
+                destination
+                buffer.
+              </param>
+              <param name="n" ctype="size_t" dir="in">Maximum number of
+                bytes to receive.
+              </param>
+              <param name="addr" ctype="vns_address_t *" dir="out">Pointer
+                to the
+                variable that will receive the source endpoint address.
+              </param>
+              <param name="timeout" ctype="sysinterval_t" dir="in">Maximum
+                time allowed for the operation to complete.
+              </param>
+              <return>The number of bytes received, or a negative error
+                code.</return>
+              <api />
+              <implementation>
+
+(void)buf;
+(void)n;
+(void)addr;
+(void)timeout;
+
+return CH_RET_ENOSYS;<![CDATA[]]></implementation>
+            </method>
+
+            <method name="vnssckClose" shortname="closes"
+              ctype="msg_t">
+              <brief>Closes the socket endpoint.</brief>
+              <return>The operation result.</return>
+              <api />
+              <implementation>
+
+return CH_RET_ENOSYS;<![CDATA[]]></implementation>
+            </method>
+          </virtual>
+        </methods>
+      </class>
+      <class type="abstract" name="vns_netif" namespace="vnsif"
+        ancestorname="base_object" descr="VNS netif">
+        <brief>Common ancestor class of all network interface classes.</brief>
+        <fields></fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[ ]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[ ]]></implementation>
+          </dispose>
+          <virtual>
+            <method name="vnsifCreateSocket" shortname="creates"
+              ctype="msg_t">
+              <brief>Creates a socket object bound to this interface.</brief>
+              <param name="domain" ctype="vns_domain_t" dir="in">Address
+                family of the socket, for example @p AF_INET.
+              </param>
+              <param name="type" ctype="vns_socktype_t" dir="in">Communication
+                type of the socket, for example @p SOCK_STREAM or @p SOCK_DGRAM.
+              </param>
+              <param name="spp" ctype="vns_socket_c **" dir="out">Pointer
+                to
+                the variable that will receive the created socket
+                object.
+              </param>
+              <return>The operation result.</return>
+              <api />
+              <implementation>
+
+(void)domain;
+(void)type;
+(void)spp;
+
+return CH_RET_ENOSYS;<![CDATA[]]></implementation>
+            </method>
+          </virtual>
+        </methods>
+      </class>
+    </types>
+  </public>
+  <private>
+    <includes_always>
+      <include style="regular">vns.h</include>
+    </includes_always>
+  </private>
+</module>
