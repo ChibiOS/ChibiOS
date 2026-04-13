@@ -63,8 +63,9 @@
 //#include "stm32_fdcan2.inc"
 //#include "stm32_fdcan3.inc"
 
-#include "stm32_adc1.inc"
+#include "stm32_adc1_2.inc"
 #include "stm32_adc3.inc"
+#include "stm32_adc3_4.inc"
 #include "stm32_adc4.inc"
 #include "stm32_adc5.inc"
 
@@ -109,8 +110,9 @@ void irqInit(void) {
 //  fdcan2_irq_init();
 //  fdcan3_irq_init();
 
-  adc1_irq_init();
+  adc1_adc2_irq_init();
   adc3_irq_init();
+  adc3_adc4_irq_init();
   adc4_irq_init();
   adc5_irq_init();
 
@@ -152,8 +154,9 @@ void irqDeinit(void) {
 //  fdcan2_irq_deinit();
 //  fdcan3_irq_deinit();
 
-  adc1_irq_deinit();
+  adc1_adc2_irq_deinit();
   adc3_irq_deinit();
+  adc3_adc4_irq_deinit();
   adc4_irq_deinit();
   adc5_irq_deinit();
 

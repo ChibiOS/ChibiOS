@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    ADC/stm32_adc1.inc
- * @brief   Shared ADC1 handler.
+ * @file    ADC/stm32_adc3_4.inc
+ * @brief   Shared ADC3, ADC4 handler.
  *
- * @addtogroup STM32_ADC1_HANDLER
+ * @addtogroup STM32_ADC3_4_HANDLER
  * @{
  */
 
@@ -31,41 +31,45 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_ADC1)
-#error "STM32_HAS_ADC1 not defined in registry"
+#if !defined(STM32_HAS_ADC3)
+#error "STM32_HAS_ADC3 not defined in registry"
 #endif
-#if STM32_HAS_ADC1
+#if !defined(STM32_HAS_ADC4)
+#error "STM32_HAS_ADC4 not defined in registry"
+#endif
+
+#if STM32_HAS_ADC3 || STM32_HAS_ADC4
 
 /* Checks on vector names and numbers definitions.*/
-#if !defined(STM32_ADC1_NUMBER)
-#error "STM32_ADC1_NUMBER not defined in stm32_isr.h"
+#if !defined(STM32_ADC3_NUMBER)
+#error "STM32_ADC3_NUMBER not defined in stm32_isr.h"
 #endif
-#if !defined(STM32_ADC1_HANDLER)
-#error "STM32_ADC1_HANDLER not defined in stm32_isr.h"
+#if !defined(STM32_ADC4_NUMBER)
+#error "STM32_ADC4_NUMBER not defined in stm32_isr.h"
+#endif
+#if !defined(STM32_ADC4_HANDLER)
+#error "STM32_ADC4_HANDLER not defined in stm32_isr.h"
 #endif
 
 /* Checks for xhalconf.h correctness.*/
-#if !defined(STM32_ADC_USE_ADC1)
-#error "STM32_ADC_USE_ADC1 not defined in xhalconf.h"
+#if !defined(STM32_ADC_USE_ADC3)
+#error "STM32_ADC_USE_ADC3 not defined in xhalconf.h"
+#endif
+#if !defined(STM32_ADC_DUAL_MODE)
+#error "STM32_ADC_DUAL_MODE not defined in xhalconf.h"
 #endif
 
 /* Priority definitions checks.*/
-#if !defined(STM32_ADC_ADC1_IRQ_PRIORITY) &&                                \
-    !defined(STM32_ADC_ADC12_IRQ_PRIORITY)
-#error "STM32_ADC_ADC1_IRQ_PRIORITY or STM32_ADC_ADC12_IRQ_PRIORITY not defined in xhalconf.h"
+#if !defined(STM32_ADC_ADC3_IRQ_PRIORITY)
+#error "STM32_ADC_ADC3_IRQ_PRIORITY not defined in xhalconf.h"
 #endif
 
 /* Priority settings checks.*/
-#if defined(STM32_ADC_ADC1_IRQ_PRIORITY) &&                                 \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC1_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_ADC_ADC1_IRQ_PRIORITY"
-#endif
-#if defined(STM32_ADC_ADC12_IRQ_PRIORITY) &&                                \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC12_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_ADC_ADC12_IRQ_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC3_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_ADC_ADC3_IRQ_PRIORITY"
 #endif
 
-#endif /* STM32_HAS_ADC1 */
+#endif /* STM32_HAS_ADC3 || STM32_HAS_ADC4 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -79,26 +83,21 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-#if HAL_USE_ADC && STM32_ADC_USE_ADC1 &&                                    \
-    (!defined(STM32_ADC2_NUMBER) || (STM32_ADC1_NUMBER != STM32_ADC2_NUMBER))
-#define STM32_ADC1_ISR_IS_USED              TRUE
+#if HAL_USE_ADC && STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC3
+#define STM32_ADC3_ADC4_ISR_IS_USED         TRUE
 #else
-#define STM32_ADC1_ISR_IS_USED              FALSE
+#define STM32_ADC3_ADC4_ISR_IS_USED         FALSE
 #endif
 
-static inline void adc1_irq_init(void) {
-#if STM32_ADC1_ISR_IS_USED
-#if defined(STM32_ADC_ADC1_IRQ_PRIORITY)
-  nvicEnableVector(STM32_ADC1_NUMBER, STM32_ADC_ADC1_IRQ_PRIORITY);
-#else
-  nvicEnableVector(STM32_ADC1_NUMBER, STM32_ADC_ADC12_IRQ_PRIORITY);
-#endif
+static inline void adc3_adc4_irq_init(void) {
+#if STM32_ADC3_ADC4_ISR_IS_USED
+  nvicEnableVector(STM32_ADC4_NUMBER, STM32_ADC_ADC3_IRQ_PRIORITY);
 #endif
 }
 
-static inline void adc1_irq_deinit(void) {
-#if STM32_ADC1_ISR_IS_USED
-  nvicDisableVector(STM32_ADC1_NUMBER);
+static inline void adc3_adc4_irq_deinit(void) {
+#if STM32_ADC3_ADC4_ISR_IS_USED
+  nvicDisableVector(STM32_ADC4_NUMBER);
 #endif
 }
 
@@ -106,22 +105,22 @@ static inline void adc1_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if STM32_ADC1_ISR_IS_USED || defined(__DOXYGEN__)
+#if STM32_ADC3_ADC4_ISR_IS_USED || defined(__DOXYGEN__)
 /**
- * @brief   ADC1 interrupt handler.
+ * @brief   ADC4 interrupt handler (as ADC3 slave).
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_ADC1_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_ADC4_HANDLER) {
   uint32_t isr;
 
   OSAL_IRQ_PROLOGUE();
 
-  isr  = ADC1->ISR;
-#if defined(STM32_ADC_ADC1_IRQ_HOOK)
-  STM32_ADC_ADC1_IRQ_HOOK
+  isr  = ADC4->ISR;
+#if defined(STM32_ADC_ADC4_IRQ_HOOK)
+  STM32_ADC_ADC4_IRQ_HOOK
 #endif
-  adc_lld_serve_interrupt(&ADCD1);
+  adc_lld_serve_interrupt(&ADCD3);
 
   OSAL_IRQ_EPILOGUE();
 }
