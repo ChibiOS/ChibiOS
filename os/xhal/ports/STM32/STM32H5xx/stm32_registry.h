@@ -304,6 +304,13 @@
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
 
+/* OCTOSPI attributes.*/
+#define STM32_HAS_OCTOSPI1                  FALSE
+#define STM32_HAS_OCTOSPI2                  FALSE
+
+/* QUADSPI attributes.*/
+#define STM32_HAS_QUADSPI1                  FALSE
+
 /* RCC attributes.*/
 #define STM32_RCC_HAS_LSI                   TRUE
 #define STM32_RCC_HAS_LSI_PRESCALER         FALSE
@@ -479,6 +486,13 @@
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE
 #define STM32_HAS_I2C4                      TRUE
+
+/* OCTOSPI attributes.*/
+#define STM32_HAS_OCTOSPI1                  TRUE
+#define STM32_HAS_OCTOSPI2                  FALSE
+
+/* QUADSPI attributes.*/
+#define STM32_HAS_QUADSPI1                  FALSE
 
 /* RCC attributes.*/
 #define STM32_RCC_HAS_LSI                   TRUE

@@ -714,6 +714,34 @@
 /** @} */
 
 /**
+ * @name    OCTOSPI peripherals specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the OCTOSPI1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableOCTOSPI1(lp) rccEnableAHB4(RCC_AHB4ENR_OCTOSPI1EN, lp)
+
+/**
+ * @brief   Disables the OCTOSPI1 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableOCTOSPI1() rccDisableAHB4(RCC_AHB4ENR_OCTOSPI1EN)
+
+/**
+ * @brief   Resets the OCTOSPI1 peripheral.
+ *
+ * @api
+ */
+#define rccResetOCTOSPI1() rccResetAHB4(RCC_AHB4RSTR_OCTOSPI1RST)
+/** @} */
+
+/**
  * @name    SDMMC peripheral specific RCC operations
  * @{
  */

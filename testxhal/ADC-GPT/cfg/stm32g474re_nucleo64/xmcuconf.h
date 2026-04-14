@@ -41,7 +41,7 @@
  * HAL driver system settings.
  */
 #define STM32_NO_INIT                       FALSE
-#define STM32_CLOCK_DYNAMIC                 TRUE
+#define STM32_CLOCK_DYNAMIC                 FALSE
 #define STM32_VOS                           STM32_VOS_RANGE1
 #define STM32_PWR_BOOST                     TRUE
 #define STM32_PWR_CR2                       (PWR_CR2_PLS_LEV0)
@@ -143,6 +143,8 @@
 #define STM32_IRQ_TIM20_UP_PRIORITY         7
 #define STM32_IRQ_TIM20_CC_PRIORITY         7
 
+#define STM32_IRQ_QUADSPI1_PRIORITY         10
+
 #define STM32_IRQ_USART1_PRIORITY           12
 #define STM32_IRQ_USART2_PRIORITY           12
 #define STM32_IRQ_USART3_PRIORITY           12
@@ -155,7 +157,7 @@
  */
 #define STM32_ADC_DUAL_MODE                 FALSE
 #define STM32_ADC_COMPACT_SAMPLES           FALSE
-#define STM32_ADC_USE_ADC1                  TRUE
+#define STM32_ADC_USE_ADC1                  FALSE
 #define STM32_ADC_USE_ADC2                  FALSE
 #define STM32_ADC_USE_ADC3                  FALSE
 #define STM32_ADC_USE_ADC4                  FALSE
@@ -181,7 +183,7 @@
 #define STM32_GPT_USE_TIM1                  FALSE
 #define STM32_GPT_USE_TIM2                  FALSE
 #define STM32_GPT_USE_TIM3                  FALSE
-#define STM32_GPT_USE_TIM4                  TRUE
+#define STM32_GPT_USE_TIM4                  FALSE
 #define STM32_GPT_USE_TIM5                  FALSE
 #define STM32_GPT_USE_TIM6                  FALSE
 #define STM32_GPT_USE_TIM7                  FALSE
@@ -238,5 +240,15 @@
 #define STM32_RTC_PRESA_VALUE               32
 #define STM32_RTC_PRESS_VALUE               1024
 #define STM32_RTC_CR_INIT                   0U
+
+/*
+ * WSPI driver system settings.
+ */
+#define STM32_WSPI_USE_QUADSPI1             FALSE
+#define STM32_WSPI_QUADSPI1_DMA_STREAM      STM32_DMA_STREAM_ID_ANY
+#define STM32_WSPI_QUADSPI1_PRESCALER_VALUE 1
+#define STM32_WSPI_QUADSPI1_DMA_PRIORITY    1
+#define STM32_WSPI_QUADSPI1_DMA_IRQ_PRIORITY 10
+#define STM32_WSPI_DMA_ERROR_HOOK(wspip)    osalSysHalt("DMA failure")
 
 #endif /* XMCUCONF_H */

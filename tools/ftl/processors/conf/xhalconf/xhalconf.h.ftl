@@ -55,6 +55,7 @@
 #define HAL_USE_RTC                         ${doc.HAL_USE_RTC!"FALSE"}
 #define HAL_USE_SIO                         ${doc.HAL_USE_SIO!"FALSE"}
 #define HAL_USE_SPI                         ${doc.HAL_USE_SPI!"FALSE"}
+#define HAL_USE_WSPI                        ${doc.HAL_USE_WSPI!"FALSE"}
 
 /*===========================================================================*/
 /* ADC driver settings.                                                      */
@@ -100,6 +101,13 @@
 #define SPI_USE_SYNCHRONIZATION             ${doc.SPI_USE_SYNCHRONIZATION!"TRUE"}
 #define SPI_USE_ASSERT_ON_ERROR             ${doc.SPI_USE_ASSERT_ON_ERROR!"FALSE"}
 #define SPI_USE_CONFIGURATIONS              ${doc.SPI_USE_CONFIGURATIONS!"FALSE"}
+
+/*===========================================================================*/
+/* WSPI driver settings.                                                     */
+/*===========================================================================*/
+
+#define WSPI_USE_SYNCHRONIZATION            ${doc.WSPI_USE_SYNCHRONIZATION!"TRUE"}
+#define WSPI_USE_MUTUAL_EXCLUSION           ${doc.WSPI_USE_MUTUAL_EXCLUSION!"TRUE"}
 
 #endif /* XHALCONF_H */
 

@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_wspi" descr="WSPI Driver" check="HAL_USE_WSPI == TRUE"
+  editcode="false">
+  <brief>WSPI Driver macros and structures.</brief>
+  <imports>
+    <import>hal_cb_driver.xml</import>
+  </imports>
+  <public>
+    <includes_always>
+      <include style="regular">hal_cb_driver.h</include>
+    </includes_always>
+    <configs>
+      <config name="WSPI_USE_SYNCHRONIZATION" default="TRUE">
+        <brief>Support for blocking WSPI transfer APIs.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="WSPI_USE_MUTUAL_EXCLUSION" default="TRUE">
+        <brief>Support for WSPI bus locking APIs.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+    </configs>
+    <macros>
+      <macro name="__wspi_getconf">
+        <brief>Return a pointer to the configuration structure.</brief>
+        <param name="ip">Pointer to the @p hal_wspi_driver_c object.</param>
+        <return>A pointer to the configuration structure.</return>
+        <notapi />
+        <implementation><![CDATA[
+((const hal_wspi_config_t *)((ip)->config))]]></implementation>
+      </macro>
+      <macro name="__wspi_getfield">
+        <brief>Retrieves a configuration field.</brief>
+        <param name="ip">Pointer to the @p hal_wspi_driver_c object.</param>
+        <param name="field">Configuration field to be retrieved.</param>
+        <return>The field value.</return>
+        <notapi />
+        <implementation><![CDATA[
+(__wspi_getconf(ip)->field)]]></implementation>
+      </macro>
+      <group description="Low level driver helper macros">
+        <condition check="WSPI_USE_SYNCHRONIZATION == TRUE">
+          <macro name="_wspi_wakeup_isr">
+            <brief>Wakes up the waiting thread.</brief>
+            <param name="wspip" dir="in">Pointer to the WSPI driver instance.</param>
+            <param name="msg" dir="in">Wakeup message.</param>
+            <notapi />
+            <implementation><![CDATA[
+do {
+  osalThreadResumeI(&(wspip)->sync_transfer, msg);
+} while (false)]]></implementation>
+          </macro>
+        </condition>
+        <condition check="WSPI_USE_SYNCHRONIZATION != TRUE">
+          <macro name="_wspi_wakeup_isr">
+            <brief>Wakes up the waiting thread.</brief>
+            <param name="wspip" dir="in">Pointer to the WSPI driver instance.</param>
+            <param name="msg" dir="in">Wakeup message.</param>
+            <notapi />
+            <implementation><![CDATA[
+do {
+  (void)(wspip);
+  (void)(msg);
+} while (false)]]></implementation>
+          </macro>
+        </condition>
+        <macro name="_wspi_isr_complete_code">
+          <brief>Common ISR code for successful operation completion.</brief>
+          <param name="wspip" dir="both">Pointer to the WSPI driver instance.</param>
+          <notapi />
+          <implementation><![CDATA[
+do {
+  (wspip)->operation = WSPI_OPERATION_NONE;
+  __cbdrv_invoke_complete_cb(wspip);
+  _wspi_wakeup_isr(wspip, MSG_OK);
+} while (false)]]></implementation>
+        </macro>
+        <macro name="_wspi_isr_error_code">
+          <brief>Common ISR code for operation errors.</brief>
+          <param name="wspip" dir="both">Pointer to the WSPI driver instance.</param>
+          <notapi />
+          <implementation><![CDATA[
+do {
+  (wspip)->operation = WSPI_OPERATION_NONE;
+  if (__wspi_getfield(wspip, error_cb) != NULL) {
+    (wspip)->state = HAL_DRV_STATE_ERROR;
+    __wspi_getfield(wspip, error_cb)(wspip);
+    if ((wspip)->state == HAL_DRV_STATE_ERROR) {
+      (wspip)->state = HAL_DRV_STATE_READY;
+    }
+  }
+  else {
+    (wspip)->state = HAL_DRV_STATE_READY;
+  }
+  _wspi_wakeup_isr(wspip, MSG_RESET);
+} while (false)]]></implementation>
+        </macro>
+      </group>
+    </macros>
+    <types>
+      <typedef name="hal_wspi_driver_c">
+        <brief>Type of structure representing a WSPI driver.</brief>
+        <basetype ctype="struct hal_wspi_driver" />
+      </typedef>
+      <typedef name="hal_wspi_config_t">
+        <brief>Type of structure representing a WSPI configuration.</brief>
+        <basetype ctype="struct hal_wspi_config" />
+      </typedef>
+      <typedef name="WSPIConfig">
+        <brief>Type of structure representing a WSPI configuration
+          (legacy).</brief>
+        <basetype ctype="struct hal_wspi_config" />
+      </typedef>
+      <typedef name="WSPIDriver">
+        <brief>Type of structure representing a WSPI driver (legacy).</brief>
+        <basetype ctype="struct hal_wspi_driver" />
+      </typedef>
+      <typedef name="wspi_command_t">
+        <brief>Type of a WSPI command descriptor.</brief>
+        <basetype ctype="struct wspi_command" />
+      </typedef>
+      <verbatim><![CDATA[
+#if !defined(WSPI_USE_WAIT) || defined(__DOXYGEN__)
+#define WSPI_USE_WAIT WSPI_USE_SYNCHRONIZATION
+#endif
+
+typedef void (*wspicallback_t)(WSPIDriver *wspip);
+
+typedef enum {
+  WSPI_OPERATION_NONE = 0U,
+  WSPI_OPERATION_COMMAND = 1U,
+  WSPI_OPERATION_SEND = 2U,
+  WSPI_OPERATION_RECEIVE = 3U,
+  WSPI_OPERATION_MEMMAP = 4U
+} wspi_operation_t;
+
+/* Inclusion of LLD header.*/
+#include "hal_wspi_lld.h"
+
+#if !defined(WSPI_SUPPORTS_MEMMAP)
+#error "WSPI_SUPPORTS_MEMMAP not defined in WSPI LLD driver"
+#endif
+
+#if !defined(WSPI_DEFAULT_CFG_MASKS)
+#error "WSPI_DEFAULT_CFG_MASKS not defined in WSPI LLD driver"
+#endif]]></verbatim>
+      <struct name="wspi_command">
+        <brief>Type of a WSPI command descriptor.</brief>
+        <fields>
+          <field name="cfg" ctype="uint32_t">
+            <brief>Transfer configuration field.</brief>
+          </field>
+          <field name="cmd" ctype="uint32_t">
+            <brief>Command phase data.</brief>
+          </field>
+          <field name="addr" ctype="uint32_t">
+            <brief>Address phase data.</brief>
+          </field>
+          <field name="alt" ctype="uint32_t">
+            <brief>Alternate phase data.</brief>
+          </field>
+          <field name="dummy" ctype="uint32_t">
+            <brief>Number of dummy cycles to be inserted.</brief>
+          </field>
+        </fields>
+      </struct>
+      <struct name="hal_wspi_config">
+        <brief>Driver configuration structure.</brief>
+        <fields>
+          <field name="end_cb" ctype="wspicallback_t">
+            <brief>Operation completion callback or @p NULL.</brief>
+          </field>
+          <field name="error_cb" ctype="wspicallback_t">
+            <brief>Operation error callback or @p NULL.</brief>
+          </field>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+wspi_lld_config_fields;]]></verbatim>
+          <condition check="defined(WSPI_CONFIG_EXT_FIELDS)">
+            <verbatim><![CDATA[
+WSPI_CONFIG_EXT_FIELDS]]></verbatim>
+          </condition>
+        </fields>
+      </struct>
+      <class type="regular" name="hal_wspi_driver" namespace="wspi"
+        ancestorname="hal_cb_driver" descr="WSPI driver">
+        <brief>Class of a WSPI driver.</brief>
+        <fields>
+          <condition check="WSPI_USE_SYNCHRONIZATION == TRUE">
+            <field name="sync_transfer" ctype="thread_reference_t">
+              <brief>Synchronization point for blocking transfers.</brief>
+            </field>
+          </condition>
+          <field name="operation" ctype="wspi_operation_t">
+            <brief>Current WSPI operation selector.</brief>
+          </field>
+          <condition check="defined(WSPI_DRIVER_EXT_FIELDS)">
+            <verbatim><![CDATA[
+WSPI_DRIVER_EXT_FIELDS]]></verbatim>
+          </condition>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+wspi_lld_driver_fields;]]></verbatim>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+#if WSPI_USE_SYNCHRONIZATION == TRUE
+self->sync_transfer = NULL;
+#endif
+self->operation = WSPI_OPERATION_NONE;
+
+/* Optional, user-defined initializer.*/
+#if defined(WSPI_DRIVER_EXT_INIT_HOOK)
+WSPI_DRIVER_EXT_INIT_HOOK(self);
+#endif]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[
+]]></implementation>
+          </dispose>
+          <regular>
+            <method name="wspiStart" ctype="msg_t">
+              <brief>Configures and activates the WSPI peripheral.</brief>
+              <param name="config" ctype="const WSPIConfig *" dir="in">
+                Driver configuration or @p NULL.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+
+if (config != NULL) {
+  msg = drvSetCfgX(self, config);
+  if (msg != HAL_RET_SUCCESS) {
+    return msg;
+  }
+}
+
+return drvStart(self);]]></implementation>
+            </method>
+            <method name="wspiStop" ctype="void">
+              <brief>Deactivates the WSPI peripheral.</brief>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+drvStop(self);]]></implementation>
+            </method>
+            <method name="wspiStartCommandI" ctype="void">
+              <brief>Sends a command without data phase.</brief>
+              <param name="cmdp" ctype="const wspi_command_t *" dir="in">
+                Pointer to the WSPI command descriptor.
+              </param>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (cmdp != NULL));
+osalDbgCheck((cmdp->cfg & WSPI_CFG_DATA_MODE_MASK) == WSPI_CFG_DATA_MODE_NONE);
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+self->operation = WSPI_OPERATION_COMMAND;
+self->state = HAL_DRV_STATE_ACTIVE;
+wspi_lld_command(self, cmdp);]]></implementation>
+            </method>
+            <method name="wspiStartCommand" ctype="void">
+              <brief>Sends a command without data phase.</brief>
+              <param name="cmdp" ctype="const wspi_command_t *" dir="in">
+                Pointer to the WSPI command descriptor.
+              </param>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck((self != NULL) && (cmdp != NULL));
+
+osalSysLock();
+wspiStartCommandI(self, cmdp);
+osalSysUnlock();]]></implementation>
+            </method>
+            <method name="wspiStartSendI" ctype="void">
+              <brief>Sends a command with data over the WSPI bus.</brief>
+              <param name="cmdp" ctype="const wspi_command_t *" dir="in">
+                Pointer to the WSPI command descriptor.
+              </param>
+              <param name="n" ctype="size_t" dir="in">
+                Number of bytes to send.
+              </param>
+              <param name="txbuf" ctype="const uint8_t *" dir="in">
+                Pointer to the transmit buffer.
+              </param>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (cmdp != NULL) && (n > 0U) && (txbuf != NULL));
+osalDbgCheck((cmdp->cfg & WSPI_CFG_DATA_MODE_MASK) != WSPI_CFG_DATA_MODE_NONE);
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+self->operation = WSPI_OPERATION_SEND;
+self->state = HAL_DRV_STATE_ACTIVE;
+wspi_lld_send(self, cmdp, n, txbuf);]]></implementation>
+            </method>
+            <method name="wspiStartSend" ctype="void">
+              <brief>Sends a command with data over the WSPI bus.</brief>
+              <param name="cmdp" ctype="const wspi_command_t *" dir="in">
+                Pointer to the WSPI command descriptor.
+              </param>
+              <param name="n" ctype="size_t" dir="in">
+                Number of bytes to send.
+              </param>
+              <param name="txbuf" ctype="const uint8_t *" dir="in">
+                Pointer to the transmit buffer.
+              </param>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck((self != NULL) && (cmdp != NULL) && (n > 0U) && (txbuf != NULL));
+
+osalSysLock();
+wspiStartSendI(self, cmdp, n, txbuf);
+osalSysUnlock();]]></implementation>
+            </method>
+            <method name="wspiStartReceiveI" ctype="void">
+              <brief>Receives data from the WSPI bus.</brief>
+              <param name="cmdp" ctype="const wspi_command_t *" dir="in">
+                Pointer to the WSPI command descriptor.
+              </param>
+              <param name="n" ctype="size_t" dir="in">
+                Number of bytes to receive.
+              </param>
+              <param name="rxbuf" ctype="uint8_t *" dir="out">
+                Pointer to the receive buffer.
+              </param>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (cmdp != NULL) && (n > 0U) && (rxbuf != NULL));
+osalDbgCheck((cmdp->cfg & WSPI_CFG_DATA_MODE_MASK) != WSPI_CFG_DATA_MODE_NONE);
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+self->operation = WSPI_OPERATION_RECEIVE;
+self->state = HAL_DRV_STATE_ACTIVE;
+wspi_lld_receive(self, cmdp, n, rxbuf);]]></implementation>
+            </method>
+            <method name="wspiStartReceive" ctype="void">
+              <brief>Receives data from the WSPI bus.</brief>
+              <param name="cmdp" ctype="const wspi_command_t *" dir="in">
+                Pointer to the WSPI command descriptor.
+              </param>
+              <param name="n" ctype="size_t" dir="in">
+                Number of bytes to receive.
+              </param>
+              <param name="rxbuf" ctype="uint8_t *" dir="out">
+                Pointer to the receive buffer.
+              </param>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck((self != NULL) && (cmdp != NULL) && (n > 0U) && (rxbuf != NULL));
+
+osalSysLock();
+wspiStartReceiveI(self, cmdp, n, rxbuf);
+osalSysUnlock();]]></implementation>
+            </method>
+            <condition check="WSPI_USE_SYNCHRONIZATION == TRUE">
+              <method name="wspiCommand" ctype="bool">
+                <brief>Sends a command without data phase and waits for completion.</brief>
+                <param name="cmdp" ctype="const wspi_command_t *" dir="in">
+                  Pointer to the WSPI command descriptor.
+                </param>
+                <return>The operation status.</return>
+                <retval value="false">If the operation succeeded.</retval>
+                <retval value="true">If the operation failed because HW issues.</retval>
+                <api />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck((self != NULL) && (cmdp != NULL));
+osalDbgCheck((cmdp->cfg & WSPI_CFG_DATA_MODE_MASK) == WSPI_CFG_DATA_MODE_NONE);
+
+osalSysLock();
+osalDbgAssert(drvGetCallbackX(self) == NULL, "has callback");
+wspiStartCommandI(self, cmdp);
+msg = osalThreadSuspendS(&self->sync_transfer);
+osalSysUnlock();
+
+return (bool)(msg != MSG_OK);]]></implementation>
+              </method>
+              <method name="wspiSend" ctype="bool">
+                <brief>Sends a command with data over the WSPI bus and waits for completion.</brief>
+                <param name="cmdp" ctype="const wspi_command_t *" dir="in">
+                  Pointer to the WSPI command descriptor.
+                </param>
+                <param name="n" ctype="size_t" dir="in">
+                  Number of bytes to send.
+                </param>
+                <param name="txbuf" ctype="const uint8_t *" dir="in">
+                  Pointer to the transmit buffer.
+                </param>
+                <return>The operation status.</return>
+                <retval value="false">If the operation succeeded.</retval>
+                <retval value="true">If the operation failed because HW issues.</retval>
+                <api />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck((self != NULL) && (cmdp != NULL) && (n > 0U) && (txbuf != NULL));
+osalDbgCheck((cmdp->cfg & WSPI_CFG_DATA_MODE_MASK) != WSPI_CFG_DATA_MODE_NONE);
+
+osalSysLock();
+osalDbgAssert(drvGetCallbackX(self) == NULL, "has callback");
+wspiStartSendI(self, cmdp, n, txbuf);
+msg = osalThreadSuspendS(&self->sync_transfer);
+osalSysUnlock();
+
+return (bool)(msg != MSG_OK);]]></implementation>
+              </method>
+              <method name="wspiReceive" ctype="bool">
+                <brief>Receives data from the WSPI bus and waits for completion.</brief>
+                <param name="cmdp" ctype="const wspi_command_t *" dir="in">
+                  Pointer to the WSPI command descriptor.
+                </param>
+                <param name="n" ctype="size_t" dir="in">
+                  Number of bytes to receive.
+                </param>
+                <param name="rxbuf" ctype="uint8_t *" dir="out">
+                  Pointer to the receive buffer.
+                </param>
+                <return>The operation status.</return>
+                <retval value="false">If the operation succeeded.</retval>
+                <retval value="true">If the operation failed because HW issues.</retval>
+                <api />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck((self != NULL) && (cmdp != NULL) && (n > 0U) && (rxbuf != NULL));
+osalDbgCheck((cmdp->cfg & WSPI_CFG_DATA_MODE_MASK) != WSPI_CFG_DATA_MODE_NONE);
+
+osalSysLock();
+osalDbgAssert(drvGetCallbackX(self) == NULL, "has callback");
+wspiStartReceiveI(self, cmdp, n, rxbuf);
+msg = osalThreadSuspendS(&self->sync_transfer);
+osalSysUnlock();
+
+return (bool)(msg != MSG_OK);]]></implementation>
+              </method>
+            </condition>
+            <condition check="WSPI_SUPPORTS_MEMMAP == TRUE">
+              <method name="wspiMapFlashI" ctype="void">
+                <brief>Maps in memory space a WSPI flash device.</brief>
+                <param name="cmdp" ctype="const wspi_command_t *" dir="in">
+                  Pointer to the WSPI command descriptor.
+                </param>
+                <param name="addrp" ctype="uint8_t **" dir="out">
+                  Pointer to the mapped memory base address or @p NULL.
+                </param>
+                <iclass />
+                <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (cmdp != NULL));
+osalDbgCheck((cmdp->cfg & WSPI_CFG_DATA_MODE_MASK) != WSPI_CFG_DATA_MODE_NONE);
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+self->operation = WSPI_OPERATION_MEMMAP;
+self->state = HAL_DRV_STATE_ACTIVE;
+wspi_lld_map_flash(self, cmdp, addrp);]]></implementation>
+              </method>
+              <method name="wspiMapFlash" ctype="void">
+                <brief>Maps in memory space a WSPI flash device.</brief>
+                <param name="cmdp" ctype="const wspi_command_t *" dir="in">
+                  Pointer to the WSPI command descriptor.
+                </param>
+                <param name="addrp" ctype="uint8_t **" dir="out">
+                  Pointer to the mapped memory base address or @p NULL.
+                </param>
+                <api />
+                <implementation><![CDATA[
+osalDbgCheck((self != NULL) && (cmdp != NULL));
+
+osalSysLock();
+wspiMapFlashI(self, cmdp, addrp);
+osalSysUnlock();]]></implementation>
+              </method>
+              <method name="wspiUnmapFlashI" ctype="void">
+                <brief>Unmaps a WSPI flash device from memory space.</brief>
+                <iclass />
+                <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == HAL_DRV_STATE_ACTIVE) &&
+              (self->operation == WSPI_OPERATION_MEMMAP),
+              "not mapped");
+
+wspi_lld_unmap_flash(self);
+self->operation = WSPI_OPERATION_NONE;
+self->state = HAL_DRV_STATE_READY;]]></implementation>
+              </method>
+              <method name="wspiUnmapFlash" ctype="void">
+                <brief>Unmaps a WSPI flash device from memory space.</brief>
+                <api />
+                <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+wspiUnmapFlashI(self);
+osalSysUnlock();]]></implementation>
+              </method>
+            </condition>
+            <condition check="WSPI_USE_MUTUAL_EXCLUSION == TRUE">
+              <method name="wspiAcquireBus" ctype="void">
+                <brief>Gains exclusive access to the WSPI bus.</brief>
+                <api />
+                <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+drvLock(self);]]></implementation>
+              </method>
+              <method name="wspiReleaseBus" ctype="void">
+                <brief>Releases exclusive access to the WSPI bus.</brief>
+                <api />
+                <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+drvUnlock(self);]]></implementation>
+              </method>
+            </condition>
+          </regular>
+          <override>
+            <method shortname="start">
+              <implementation><![CDATA[
+msg_t msg;
+
+self->operation = WSPI_OPERATION_NONE;
+msg = wspi_lld_start(self);
+if (msg == HAL_RET_SUCCESS) {
+  if (self->config != NULL) {
+    __cbdrv_setcb_impl(self, (drv_cb_t)__wspi_getfield(self, end_cb));
+  }
+}
+else {
+  self->config = NULL;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[
+wspi_lld_stop(self);
+self->operation = WSPI_OPERATION_NONE;
+#if WSPI_USE_SYNCHRONIZATION == TRUE
+osalThreadResumeI(&self->sync_transfer, MSG_RESET);
+#endif]]></implementation>
+            </method>
+            <method shortname="setcfg">
+              <implementation><![CDATA[
+return (const void *)wspi_lld_setcfg(self, (const WSPIConfig *)config);]]></implementation>
+            </method>
+            <method shortname="selcfg">
+              <implementation><![CDATA[
+return (const void *)wspi_lld_selcfg(self, cfgnum);]]></implementation>
+            </method>
+          </override>
+        </methods>
+      </class>
+    </types>
+    <functions>
+      <function name="wspiInit" ctype="void">
+        <brief>WSPI Driver initialization.</brief>
+        <init />
+        <implementation><![CDATA[
+wspi_lld_init();]]></implementation>
+      </function>
+    </functions>
+  </public>
+  <private>
+    <includes_always>
+      <include style="regular">hal.h</include>
+    </includes_always>
+  </private>
+</module>

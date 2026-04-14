@@ -117,6 +117,9 @@ void halInit(void) {
 #if (HAL_USE_RTC == TRUE) || defined(__DOXYGEN__)
   rtcInit();
 #endif
+#if (HAL_USE_WSPI == TRUE) || defined(__DOXYGEN__)
+  wspiInit();
+#endif
 #if 0
 #if (HAL_USE_TRNG == TRUE) || defined(__DOXYGEN__)
   trngInit();
@@ -135,9 +138,6 @@ void halInit(void) {
 #endif
 #if (HAL_USE_WDG == TRUE) || defined(__DOXYGEN__)
   wdgInit();
-#endif
-#if (HAL_USE_WSPI == TRUE) || defined(__DOXYGEN__)
-  wspiInit();
 #endif
 #endif
 

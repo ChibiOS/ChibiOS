@@ -76,6 +76,7 @@
 #include "stm32_uart5.inc"
 #include "stm32_lpuart1.inc"
 
+#include "stm32_quadspi1.inc"
 #include "stm32_rtc_g4.inc"
 
 #include "stm32_tim1_15_16_17.inc"
@@ -116,6 +117,7 @@ void irqInit(void) {
   adc4_irq_init();
   adc5_irq_init();
 
+  quadspi1_irq_init();
   rtc_irq_init();
 
   tim1_tim15_tim16_tim17_irq_init();
@@ -160,6 +162,7 @@ void irqDeinit(void) {
   adc4_irq_deinit();
   adc5_irq_deinit();
 
+  quadspi1_irq_deinit();
   rtc_irq_deinit();
 
   tim1_tim15_tim16_tim17_irq_deinit();

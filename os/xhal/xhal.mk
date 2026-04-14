@@ -45,6 +45,9 @@ endif
 ifneq ($(findstring HAL_USE_SPI TRUE,$(XHALCONF)),)
 XHALSRC += $(CHIBIOS)/os/xhal/src/hal_spi.c
 endif
+ifneq ($(findstring HAL_USE_WSPI TRUE,$(XHALCONF)),)
+XHALSRC += $(CHIBIOS)/os/xhal/src/hal_wspi.c
+endif
 else
 XHALSRC = $(CHIBIOS)/os/xhal/src/hal.c \
           $(CHIBIOS)/os/xhal/src/hal_safety.c \
@@ -59,7 +62,8 @@ XHALSRC = $(CHIBIOS)/os/xhal/src/hal.c \
           $(CHIBIOS)/os/xhal/src/hal_pal.c \
           $(CHIBIOS)/os/xhal/src/hal_rtc.c \
           $(CHIBIOS)/os/xhal/src/hal_sio.c \
-          $(CHIBIOS)/os/xhal/src/hal_spi.c
+          $(CHIBIOS)/os/xhal/src/hal_spi.c \
+          $(CHIBIOS)/os/xhal/src/hal_wspi.c
 endif
 
 # Required include directories
