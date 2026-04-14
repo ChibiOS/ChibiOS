@@ -279,6 +279,8 @@ msg_t rtc_lld_start(hal_rtc_driver_c *rtcp) {
     return HAL_RET_CONFIG_ERROR;
   }
 
+  rtcp->config = cfg;
+
   rtc_wpr_unlock(rtcp);
 
   if ((rtcp->rtc->ICSR & RTC_ICSR_INITS) == 0U) {
