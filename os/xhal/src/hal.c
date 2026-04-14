@@ -73,6 +73,9 @@ void halInit(void) {
 #if (HAL_USE_ADC == TRUE) || defined(__DOXYGEN__)
   adcInit();
 #endif
+#if (HAL_USE_GPT == TRUE) || defined(__DOXYGEN__)
+  gptInit();
+#endif
 #if 0
 #if (HAL_USE_CAN == TRUE) || defined(__DOXYGEN__)
   canInit();
@@ -85,9 +88,6 @@ void halInit(void) {
 #endif
 #if (HAL_USE_EFL == TRUE) || defined(__DOXYGEN__)
   eflInit();
-#endif
-#if (HAL_USE_GPT == TRUE) || defined(__DOXYGEN__)
-  gptInit();
 #endif
 #if (HAL_USE_I2C == TRUE) || defined(__DOXYGEN__)
   i2cInit();

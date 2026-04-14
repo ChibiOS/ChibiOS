@@ -297,3 +297,147 @@ Implementation order:
 - Add a `testxhal/ADC` application early, focused on linear conversion,
   circular conversion, half/full callbacks, stop-while-active, and restart
   behavior.
+
+GPT proposal:
+- Add a generated XHAL GPT module (`hal_gpt.xml`) and keep the behavioral
+  model intentionally close to the legacy HAL GPT API.
+- GPT is already a good abstraction in HAL, therefore the XHAL port should
+  avoid unnecessary redesign and only apply the standard XHAL conventions:
+  object model, callback ownership, persistent config contract and generated
+  common layer.
+- Base the common driver on `hal_cb_driver_c` but keep a GPT-specific mode
+  field because GPT semantics still need to distinguish `READY`,
+  `CONTINUOUS` and `ONESHOT`.
+
+Source-of-truth rule:
+- The existing `os/xhal/ports/STM32/LLD/TIMv1/hal_gpt_lld.[ch]` must not be
+  assumed current.
+- The authoritative baseline is
+  `os/hal/ports/STM32/LLD/TIMv1/hal_gpt_lld.[ch]`.
+- Before any API adaptation, refresh the XHAL `TIMv1` GPT LLD from the HAL
+  `TIMv1` implementation and then reapply only the XHAL-specific deltas.
+- This step is required because the HAL `TIMv1` code may contain newer timer
+  support, bug fixes or register handling updates not present in the XHAL copy.
+
+Public model:
+- Driver class: `hal_gpt_driver_c`, ancestor `hal_cb_driver_c`.
+- Configuration type: `hal_gpt_config_t`.
+- Counter type: `gptcnt_t`, kept aligned with HAL for easy LLD reuse.
+- Frequency type: `gptfreq_t`, kept aligned with HAL.
+- Event flags type: `gpteventflags_t`.
+
+State and mode model:
+- Keep the user-visible GPT state model close to HAL:
+  `STOP`, `READY`, `CONTINUOUS`, `ONESHOT`.
+- Do not force GPT into a generic `ACTIVE/COMPLETE` shape. GPT is simpler and
+  mode-aware APIs are clearer.
+- Cache callback reasons as event flags in the driver object instead of
+  relying only on mode/state transitions.
+- Suggested event bits: `GPT_EVENT_PERIOD`, `GPT_EVENT_ONESHOT_DONE`.
+
+Callback policy:
+- Do not keep the legacy HAL callback inside the GPT configuration object if
+  full XHAL consistency is desired.
+- Reuse the single callback owned by `hal_cb_driver_c`.
+- On timer expiry, the LLD should update GPT event flags, adjust the GPT mode
+  as required, then invoke the generic callback if present.
+- This keeps callback replacement and event inspection consistent with RTC,
+  ADC and the other XHAL callback-based drivers.
+
+Configuration policy:
+- Keep `hal_gpt_config_t` small and close to HAL `GPTConfig`.
+- Mandatory generic fields should cover only the timer base frequency plus
+  clearly portable options.
+- Keep hardware-specific setup fields inside `gpt_lld_config_fields`.
+- Follow the current XHAL config ownership contract: configuration pointers are
+  retained, not copied, and must therefore reference immutable persistent data.
+- Supply a built-in default configuration so `drvStart()` can start GPT
+  without an application-provided config.
+
+Proposed public API:
+- `void gptInit(void);`
+- `msg_t gptStart(hal_gpt_driver_c *self);`
+- `void gptStop(hal_gpt_driver_c *self);`
+- `msg_t gptStartContinuous(hal_gpt_driver_c *self, gptcnt_t interval);`
+- `msg_t gptStartContinuousI(hal_gpt_driver_c *self, gptcnt_t interval);`
+- `msg_t gptStartOneShot(hal_gpt_driver_c *self, gptcnt_t interval);`
+- `msg_t gptStartOneShotI(hal_gpt_driver_c *self, gptcnt_t interval);`
+- `msg_t gptStopTimer(hal_gpt_driver_c *self);`
+- `msg_t gptStopTimerI(hal_gpt_driver_c *self);`
+- `msg_t gptChangeInterval(hal_gpt_driver_c *self, gptcnt_t interval);`
+- `msg_t gptChangeIntervalI(hal_gpt_driver_c *self, gptcnt_t interval);`
+- `gptcnt_t gptGetIntervalX(hal_gpt_driver_c *self);`
+- `gptcnt_t gptGetCounterX(hal_gpt_driver_c *self);`
+- `void gptPolledDelay(hal_gpt_driver_c *self, gptcnt_t interval);`
+- `gpteventflags_t gptGetEventsX(hal_gpt_driver_c *self);`
+- `gpteventflags_t gptGetAndClearEventsX(hal_gpt_driver_c *self,
+  gpteventflags_t mask);`
+
+Behavioral compatibility goals:
+- Preserve the HAL distinction between starting the peripheral and starting the
+  timer.
+- Preserve continuous and one-shot timer behavior.
+- Preserve interval change and counter read semantics.
+- Preserve polled delay support where the LLD can provide it.
+- Avoid introducing a queued request model or other abstraction layers that do
+  not materially improve GPT.
+
+LLD shape proposal:
+- `gpt_lld_init()`
+- `msg_t gpt_lld_start(hal_gpt_driver_c *self)`
+- `void gpt_lld_stop(hal_gpt_driver_c *self)`
+- `const hal_gpt_config_t *gpt_lld_setcfg(hal_gpt_driver_c *self,
+  const hal_gpt_config_t *config)`
+- `void gpt_lld_start_timer(hal_gpt_driver_c *self, gptcnt_t interval)`
+- `void gpt_lld_stop_timer(hal_gpt_driver_c *self)`
+- `void gpt_lld_change_interval(hal_gpt_driver_c *self, gptcnt_t interval)`
+- `gptcnt_t gpt_lld_get_interval(hal_gpt_driver_c *self)`
+- `gptcnt_t gpt_lld_get_counter(hal_gpt_driver_c *self)`
+- `void gpt_lld_polled_delay(hal_gpt_driver_c *self, gptcnt_t interval)`
+- `void gpt_lld_serve_interrupt(hal_gpt_driver_c *self)`
+
+Generated files and build integration:
+- Add `os/xhal/codegen/hal_gpt.xml`.
+- Register it in `os/xhal/codegen/modules.xml`.
+- Generate `os/xhal/include/hal_gpt.h` and `os/xhal/src/hal_gpt.c`.
+- Wire GPT into `os/xhal/include/hal.h`, `os/xhal/src/hal.c` and
+  `os/xhal/xhal.mk`.
+- Update `xhalconf.h.ftl` and the relevant `xmcuconf.h.ftl` templates so the
+  GPT options remain generator-owned.
+
+IRQ and config naming:
+- Move GPT interrupt priorities to the newer `IRQ system settings` section in
+  `xmcuconf.h`.
+- Rename GPT IRQ priority macros to the newer style,
+  `STM32_IRQ_TIMx_PRIORITY`, instead of keeping driver-private
+  `STM32_GPT_TIMx_IRQ_PRIORITY` names.
+- Reuse the timer IRQ naming already present in the platform ISR headers and
+  `.inc` infrastructure where possible.
+
+STM32 scope:
+- One shared `TIMv1` GPT LLD is the correct first target for the STM32 XHAL
+  port.
+- Validate the refreshed port at least on `STM32G4xx` and `STM32H5xx`.
+- Check timer availability masks, vector naming and `xmcuconf.h` coverage for
+  those families before considering the port complete.
+
+Implementation order:
+- First refresh the XHAL `TIMv1` GPT LLD from HAL `TIMv1`.
+- Then define the generated common XHAL GPT module and regenerate it from XML.
+- Next adapt the refreshed `TIMv1` LLD to the XHAL callback/event model and
+  persistent-config contract.
+- Then update templates and regenerate the affected `xmcuconf.h` files.
+- Finally add a `testxhal/GPT` application.
+
+Testing plan:
+- Add `testxhal/GPT` early, not after the port is considered complete.
+- Minimum tests:
+  - `gptStart()` / `gptStop()`
+  - one-shot callback path
+  - continuous callback path
+  - `gptStopTimer()`
+  - `gptChangeInterval()` during continuous mode
+  - `gptGetIntervalX()` / `gptGetCounterX()`
+  - `gptPolledDelay()`
+- In the callback tests, verify both the timer mode transition and the cached
+  event flags.

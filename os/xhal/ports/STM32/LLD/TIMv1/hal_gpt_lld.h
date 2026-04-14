@@ -194,6 +194,16 @@
 #define STM32_GPT_USE_TIM17                 FALSE
 #endif
 
+
+/**
+ * @brief   GPTD20 driver enable switch.
+ * @details If set to @p TRUE the support for GPTD20 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_GPT_USE_TIM20) || defined(__DOXYGEN__)
+#define STM32_GPT_USE_TIM20                 FALSE
+#endif
+
 /**
  * @brief   GPTD21 driver enable switch.
  * @details If set to @p TRUE the support for GPTD21 is included.
@@ -212,138 +222,6 @@
 #define STM32_GPT_USE_TIM22                 FALSE
 #endif
 
-/**
- * @brief   GPTD1 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM1_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   GPTD2 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM2_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   GPTD3 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM3_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   GPTD4 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM4_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM4_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   GPTD5 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM5_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM5_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   GPTD6 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM6_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM6_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   GPTD7 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM7_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM7_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   GPTD8 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM8_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM8_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   GPTD9 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM9_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM9_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   GPTD10 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM10_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM10_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   GPTD11 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM11_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM11_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   GPTD12 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM12_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM12_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   GPTD13 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM13_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM13_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   GPTD14 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM14_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM14_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   GPTD15 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM15_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM15_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   GPTD16 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM16_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM16_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   GPTD17 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM17_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM17_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   GPTD21 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM21_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM21_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   GPTD22 interrupt priority level setting.
- */
-#if !defined(STM32_GPT_TIM22_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_GPT_TIM22_IRQ_PRIORITY        7
-#endif
 /** @} */
 
 /*===========================================================================*/
@@ -416,6 +294,10 @@
 
 #if !defined(STM32_HAS_TIM17)
 #define STM32_HAS_TIM17                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM20)
+#define STM32_HAS_TIM20                     FALSE
 #endif
 
 #if !defined(STM32_HAS_TIM21)
@@ -494,6 +376,10 @@
 #error "TIM17 not present in the selected device"
 #endif
 
+#if STM32_GPT_USE_TIM20 && !STM32_HAS_TIM20
+#error "TIM20 not present in the selected device"
+#endif
+
 #if STM32_GPT_USE_TIM21 && !STM32_HAS_TIM21
 #error "TIM21 not present in the selected device"
 #endif
@@ -510,7 +396,7 @@
     !STM32_GPT_USE_TIM11 && !STM32_GPT_USE_TIM12 &&                         \
     !STM32_GPT_USE_TIM13 && !STM32_GPT_USE_TIM14 &&                         \
     !STM32_GPT_USE_TIM15 && !STM32_GPT_USE_TIM16 &&                         \
-    !STM32_GPT_USE_TIM17 &&                                                 \
+    !STM32_GPT_USE_TIM17 && !STM32_GPT_USE_TIM20 &&                         \
     !STM32_GPT_USE_TIM21 && !STM32_GPT_USE_TIM22
 #error "GPT driver activated but no TIM peripheral assigned"
 #endif
@@ -652,6 +538,14 @@
 #endif
 #endif
 
+#if STM32_GPT_USE_TIM20
+#if defined(STM32_TIM20_IS_USED)
+#error "GPTD20 requires TIM20 but the timer is already used"
+#else
+#define STM32_TIM20_IS_USED
+#endif
+#endif
+
 #if STM32_GPT_USE_TIM21
 #if defined(STM32_TIM21_IS_USED)
 #error "GPTD21 requires TIM21 but the timer is already used"
@@ -668,173 +562,17 @@
 #endif
 #endif
 
-/* IRQ priority checks.*/
-#if STM32_GPT_USE_TIM1 && !defined(STM32_TIM1_SUPPRESS_ISR) &&              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM1_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM1"
-#endif
-
-#if STM32_GPT_USE_TIM2 && !defined(STM32_TIM2_SUPPRESS_ISR) &&              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM2_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM2"
-#endif
-
-#if STM32_GPT_USE_TIM3 && !defined(STM32_TIM3_SUPPRESS_ISR) &&              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM3_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM3"
-#endif
-
-#if STM32_GPT_USE_TIM4 && !defined(STM32_TIM_SUPPRESS_ISR) &&               \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM4_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM4"
-#endif
-
-#if STM32_GPT_USE_TIM5 && !defined(STM32_TIM5_SUPPRESS_ISR) &&              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM5_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM5"
-#endif
-
-#if STM32_GPT_USE_TIM6 && !defined(STM32_TIM6_SUPPRESS_ISR) &&              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM6_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM6"
-#endif
-
-#if STM32_GPT_USE_TIM7 && !defined(STM32_TIM7_SUPPRESS_ISR) &&              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM7_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM7"
-#endif
-
-#if STM32_GPT_USE_TIM8 && !defined(STM32_TIM8_SUPPRESS_ISR) &&              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM8_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM8"
-#endif
-
-#if STM32_GPT_USE_TIM9 && !defined(STM32_TIM9_SUPPRESS_ISR) &&              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM9_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM9"
-#endif
-
-#if STM32_GPT_USE_TIM10 && !defined(STM32_TIM10_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM10_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM10"
-#endif
-
-#if STM32_GPT_USE_TIM11 && !defined(STM32_TIM11_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM11_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM11"
-#endif
-
-#if STM32_GPT_USE_TIM12 && !defined(STM32_TIM12_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM12_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM12"
-#endif
-
-#if STM32_GPT_USE_TIM13 && !defined(STM32_TIM13_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM13_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM13"
-#endif
-
-#if STM32_GPT_USE_TIM14 && !defined(STM32_TIM14_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM14_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM14"
-#endif
-
-#if STM32_GPT_USE_TIM15 && !defined(STM32_TIM15_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM15_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM15"
-#endif
-
-#if STM32_GPT_USE_TIM16 && !defined(STM32_TIM16_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM16_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM16"
-#endif
-
-#if STM32_GPT_USE_TIM17 && !defined(STM32_TIM17_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM17_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM17"
-#endif
-
-#if STM32_GPT_USE_TIM21 && !defined(STM32_TIM21_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM21_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM21"
-#endif
-
-#if STM32_GPT_USE_TIM22 && !defined(STM32_TIM22_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_GPT_TIM22_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM22"
-#endif
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   GPT frequency type.
- */
-typedef uint32_t gptfreq_t;
+#define gpt_lld_config_fields                                               \
+  uint32_t                  cr2;                                            \
+  uint32_t                  dier
 
-/**
- * @brief   GPT counter type.
- */
-typedef uint32_t gptcnt_t;
-
-/**
- * @brief   Driver configuration structure.
- * @note    It could be empty on some architectures.
- */
-typedef struct {
-  /**
-   * @brief   Timer clock in Hz.
-   * @note    The low level can use assertions in order to catch invalid
-   *          frequency specifications.
-   */
-  gptfreq_t                 frequency;
-  /**
-   * @brief   Timer callback pointer.
-   * @note    This callback is invoked on GPT counter events.
-   * @note    This callback can be set to @p NULL but in that case the
-   *          one-shot mode cannot be used.
-   */
-  gptcallback_t             callback;
-  /* End of the mandatory fields.*/
-  /**
-   * @brief TIM CR2 register initialization data.
-   * @note  The value of this field should normally be equal to zero.
-   */
-  uint32_t                  cr2;
-  /**
-   * @brief TIM DIER register initialization data.
-   * @note  The value of this field should normally be equal to zero.
-   * @note  Only the DMA-related bits can be specified in this field.
-   */
-  uint32_t                  dier;
-} GPTConfig;
-
-/**
- * @brief   Structure representing a GPT driver.
- */
-struct GPTDriver {
-  /**
-   * @brief Driver state.
-   */
-  gptstate_t                state;
-  /**
-   * @brief Current configuration data.
-   */
-  const GPTConfig           *config;
-#if defined(GPT_DRIVER_EXT_FIELDS)
-  GPT_DRIVER_EXT_FIELDS
-#endif
-  /* End of the mandatory fields.*/
-  /**
-   * @brief Timer base clock.
-   */
-  uint32_t                  clock;
-  /**
-   * @brief Pointer to the TIMx registers block.
-   */
-  stm32_tim_t               *tim;
-};
+#define gpt_lld_driver_fields                                               \
+  uint32_t                  clock;                                          \
+  stm32_tim_t               *tim
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -878,6 +616,16 @@ struct GPTDriver {
  * @notapi
  */
 #define gpt_lld_get_counter(gptp) ((gptcnt_t)(gptp)->tim->CNT)
+
+/**
+ * @brief   Returns the TIM associated with a GPT.
+ *
+ * @param[in] gptp      pointer to the @p GPTDriver object
+ * @return              The TIM reference.
+ *
+ * @notapi
+ */
+#define gpt_lld_get_timer(gptp) ((gptp)->tim)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -951,6 +699,10 @@ extern GPTDriver GPTD16;
 extern GPTDriver GPTD17;
 #endif
 
+#if STM32_GPT_USE_TIM20 && !defined(__DOXYGEN__)
+extern GPTDriver GPTD20;
+#endif
+
 #if STM32_GPT_USE_TIM21 && !defined(__DOXYGEN__)
 extern GPTDriver GPTD21;
 #endif
@@ -963,8 +715,11 @@ extern GPTDriver GPTD22;
 extern "C" {
 #endif
   void gpt_lld_init(void);
-  void gpt_lld_start(GPTDriver *gptp);
+  msg_t gpt_lld_start(GPTDriver *gptp);
   void gpt_lld_stop(GPTDriver *gptp);
+  const GPTConfig *gpt_lld_setcfg(GPTDriver *gptp, const GPTConfig *config);
+  const GPTConfig *gpt_lld_selcfg(GPTDriver *gptp, unsigned cfgnum);
+  void gpt_lld_set_callback(GPTDriver *gptp, drv_cb_t cb);
   void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t period);
   void gpt_lld_stop_timer(GPTDriver *gptp);
   void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval);

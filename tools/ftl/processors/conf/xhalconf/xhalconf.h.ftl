@@ -50,6 +50,7 @@
 #define HAL_USE_PAL                         ${doc.HAL_USE_PAL!"TRUE"}
 #define HAL_USE_ADC                         ${doc.HAL_USE_ADC!"FALSE"}
 #define HAL_USE_ETH                         ${doc.HAL_USE_ETH!"FALSE"}
+#define HAL_USE_GPT                         ${doc.HAL_USE_GPT!"FALSE"}
 #define HAL_USE_MMC_SPI                     ${doc.HAL_USE_MMC_SPI!"FALSE"}
 #define HAL_USE_RTC                         ${doc.HAL_USE_RTC!"FALSE"}
 #define HAL_USE_SIO                         ${doc.HAL_USE_SIO!"FALSE"}
@@ -60,6 +61,12 @@
 /*===========================================================================*/
 
 #define ADC_USE_WAIT                        ${doc.ADC_USE_WAIT!"TRUE"}
+
+/*===========================================================================*/
+/* GPT driver settings.                                                      */
+/*===========================================================================*/
+
+#define GPT_DEFAULT_FREQUENCY               ${doc.GPT_DEFAULT_FREQUENCY!"1000000U"}
 
 /*===========================================================================*/
 /* PAL driver settings.                                                      */
