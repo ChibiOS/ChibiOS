@@ -71,14 +71,14 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="XHAL-ADC.null.932840044" name="XHAL-ADC"/>
+		<project id="XHAL-ADC-GPT.null.932840044" name="XHAL-ADC-GPT"/>
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Build for STM32G474RE-Nucleo64">
-			<resource resourceType="PROJECT" workspacePath="/XHAL-ADC"/>
+			<resource resourceType="PROJECT" workspacePath="/XHAL-ADC-GPT"/>
 		</configuration>
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/XHAL-ADC"/>
+			<resource resourceType="PROJECT" workspacePath="/XHAL-ADC-GPT"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>

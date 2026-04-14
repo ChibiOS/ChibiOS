@@ -40,7 +40,7 @@
 #define HAL_USE_PAL                         TRUE
 #define HAL_USE_ADC                         TRUE
 #define HAL_USE_ETH                         FALSE
-#define HAL_USE_GPT                         FALSE
+#define HAL_USE_GPT                         TRUE
 #define HAL_USE_MMC_SPI                     FALSE
 #define HAL_USE_RTC                         FALSE
 #define HAL_USE_SIO                         FALSE
