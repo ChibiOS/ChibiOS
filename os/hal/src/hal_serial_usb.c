@@ -52,6 +52,7 @@ static cdc_linecoding_t linecoding = {
 
 static bool sdu_start_receive(SerialUSBDriver *sdup) {
   uint8_t *buf;
+  size_t n;
 
   /* If the USB driver is not in the appropriate state then transactions
      must not be started.*/
@@ -71,9 +72,17 @@ static bool sdu_start_receive(SerialUSBDriver *sdup) {
     return true;
   }
 
+#if (SERIAL_USB_RX_PACKET_MODE == TRUE)
+  n = (size_t)sdup->config->usbp->epc[sdup->config->bulk_out]->out_maxsize;
+  osalDbgAssert(n <= (size_t)SERIAL_USB_BUFFERS_SIZE,
+                "SERIAL_USB_BUFFERS_SIZE too small");
+#else
+  n = SERIAL_USB_BUFFERS_SIZE;
+#endif
+
   /* Buffer found, starting a new transaction.*/
   usbStartReceiveI(sdup->config->usbp, sdup->config->bulk_out,
-                   buf, SERIAL_USB_BUFFERS_SIZE);
+                   buf, n);
 
   return false;
 }
@@ -484,19 +493,23 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
        so it is safe to transmit without a check.*/
     usbStartTransmitI(usbp, ep, buf, n);
   }
-  else if ((usbp->epc[ep]->in_state->txsize > 0U) &&
-           ((usbp->epc[ep]->in_state->txsize &
-            ((size_t)usbp->epc[ep]->in_maxsize - 1U)) == 0U)) {
-    /* Transmit zero sized packet in case the last one has maximum allowed
-       size. Otherwise the recipient may expect more data coming soon and
-       not return buffered data to app. See section 5.8.3 Bulk Transfer
-       Packet Size Constraints of the USB Specification document.*/
-    usbStartTransmitI(usbp, ep, usbp->setup, 0);
-
-  }
   else {
-    /* Nothing further to transmit.*/
-    chnAddFlagsI(sdup, CHN_TRANSMISSION_END);
+#if (SERIAL_USB_SEND_ZLP == TRUE)
+    if ((usbp->epc[ep]->in_state->txsize > 0U) &&
+        ((usbp->epc[ep]->in_state->txsize %
+          (size_t)usbp->epc[ep]->in_maxsize) == 0U)) {
+      /* Optionally transmit a zero-sized packet when the queue drains on a
+         maximum-packet boundary. This is not required by CDC-ACM, it is a
+         compatibility policy for hosts that delay bulk IN delivery until a
+         short packet terminates the transfer.*/
+      usbStartTransmitI(usbp, ep, usbp->setup, 0);
+    }
+    else
+#endif
+    {
+      /* Nothing further to transmit.*/
+      chnAddFlagsI(sdup, CHN_TRANSMISSION_END);
+    }
   }
 
   osalSysUnlockFromISR();

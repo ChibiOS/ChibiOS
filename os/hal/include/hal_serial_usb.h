@@ -59,6 +59,40 @@
 #if !defined(SERIAL_USB_BUFFERS_NUMBER) || defined(__DOXYGEN__)
 #define SERIAL_USB_BUFFERS_NUMBER   2
 #endif
+
+/**
+ * @brief   Serial over USB transmit zero-length packet policy.
+ * @details If enabled then the driver emits a terminating zero-length packet
+ *          when the output queue becomes empty after an exact multiple of the
+ *          endpoint maximum packet size. This can be used as a low-latency
+ *          flush hint for hosts that complete bulk IN transfers on short
+ *          packets only.
+ * @note    CDC-ACM does not require this behavior, it is a compatibility
+ *          policy and can be disabled when a raw bulk stream is preferred.
+ * @note    The default is @p TRUE in order to preserve the historical
+ *          behavior of the driver.
+ */
+#if !defined(SERIAL_USB_SEND_ZLP) || defined(__DOXYGEN__)
+#define SERIAL_USB_SEND_ZLP         TRUE
+#endif
+
+/**
+ * @brief   Serial over USB receive transaction sizing policy.
+ * @details If enabled then bulk OUT transactions are armed for exactly one
+ *          endpoint maximum packet size, causing one receive callback per USB
+ *          packet. This is useful for stream-oriented CDC-ACM hosts that can
+ *          send exact-multiple writes without terminating them using a short
+ *          packet or a zero-length packet.
+ * @note    If enabled then the effective input queue depth becomes
+ *          @p SERIAL_USB_BUFFERS_NUMBER multiplied by the endpoint maximum
+ *          packet size instead of @p SERIAL_USB_BUFFERS_SIZE, because each
+ *          queue slot receives at most one USB packet per transaction.
+ * @note    The default is @p FALSE in order to preserve the historical
+ *          behavior of the driver.
+ */
+#if !defined(SERIAL_USB_RX_PACKET_MODE) || defined(__DOXYGEN__)
+#define SERIAL_USB_RX_PACKET_MODE   FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/
