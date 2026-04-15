@@ -143,7 +143,6 @@
  */
 #define _wspi_isr_complete_code(wspip)                                      \
   do {                                                                      \
-    (wspip)->operation = WSPI_OPERATION_NONE;                               \
     __cbdrv_invoke_complete_cb(wspip);                                      \
     _wspi_wakeup_isr(wspip, MSG_OK);                                        \
   } while (false)
@@ -157,17 +156,9 @@
  */
 #define _wspi_isr_error_code(wspip)                                         \
   do {                                                                      \
-    (wspip)->operation = WSPI_OPERATION_NONE;                               \
-    if (__wspi_getfield(wspip, error_cb) != NULL) {                         \
-      (wspip)->state = HAL_DRV_STATE_ERROR;                                 \
-      __wspi_getfield(wspip, error_cb)(wspip);                              \
-      if ((wspip)->state == HAL_DRV_STATE_ERROR) {                          \
-        (wspip)->state = HAL_DRV_STATE_READY;                               \
-      }                                                                     \
-    }                                                                       \
-    else {                                                                  \
-      (wspip)->state = HAL_DRV_STATE_READY;                                 \
-    }                                                                       \
+    __cbdrv_invoke_cb_with_transition(wspip,                                \
+                                      HAL_DRV_STATE_ERROR,                  \
+                                      HAL_DRV_STATE_READY);                 \
     _wspi_wakeup_isr(wspip, MSG_RESET);                                     \
   } while (false)
 /** @} */
@@ -187,16 +178,6 @@ typedef struct hal_wspi_driver hal_wspi_driver_c;
 typedef struct hal_wspi_config hal_wspi_config_t;
 
 /**
- * @brief       Type of structure representing a WSPI configuration (legacy).
- */
-typedef struct hal_wspi_config WSPIConfig;
-
-/**
- * @brief       Type of structure representing a WSPI driver (legacy).
- */
-typedef struct hal_wspi_driver WSPIDriver;
-
-/**
  * @brief       Type of a WSPI command descriptor.
  */
 typedef struct wspi_command wspi_command_t;
@@ -205,15 +186,15 @@ typedef struct wspi_command wspi_command_t;
 #define WSPI_USE_WAIT WSPI_USE_SYNCHRONIZATION
 #endif
 
-typedef void (*wspicallback_t)(WSPIDriver *wspip);
-
+/**
+ * @brief       WSPI driver specific states.
+ */
 typedef enum {
-  WSPI_OPERATION_NONE = 0U,
-  WSPI_OPERATION_COMMAND = 1U,
-  WSPI_OPERATION_SEND = 2U,
-  WSPI_OPERATION_RECEIVE = 3U,
-  WSPI_OPERATION_MEMMAP = 4U
-} wspi_operation_t;
+  WSPI_STATE_COMMAND = HAL_DRV_STATE_ERROR + 1U,
+  WSPI_STATE_SEND,
+  WSPI_STATE_RECEIVE,
+  WSPI_STATE_MEMMAP
+} wspistate_t;
 
 /* Inclusion of LLD header.*/
 #include "hal_wspi_lld.h"
@@ -256,14 +237,6 @@ struct wspi_command {
  * @brief       Driver configuration structure.
  */
 struct hal_wspi_config {
-  /**
-   * @brief       Operation completion callback or @p NULL.
-   */
-  wspicallback_t            end_cb;
-  /**
-   * @brief       Operation error callback or @p NULL.
-   */
-  wspicallback_t            error_cb;
   /* End of the mandatory fields.*/
   wspi_lld_config_fields;
 #if (defined(WSPI_CONFIG_EXT_FIELDS)) || defined (__DOXYGEN__)
@@ -353,10 +326,6 @@ struct hal_wspi_driver {
    */
   thread_reference_t        sync_transfer;
 #endif /* WSPI_USE_SYNCHRONIZATION == TRUE */
-  /**
-   * @brief       Current WSPI operation selector.
-   */
-  wspi_operation_t          operation;
 #if (defined(WSPI_DRIVER_EXT_FIELDS)) || defined (__DOXYGEN__)
   WSPI_DRIVER_EXT_FIELDS
 #endif /* defined(WSPI_DRIVER_EXT_FIELDS) */
@@ -379,7 +348,7 @@ extern "C" {
   void __wspi_stop_impl(void *ip);
   const void *__wspi_setcfg_impl(void *ip, const void *config);
   const void *__wspi_selcfg_impl(void *ip, unsigned cfgnum);
-  msg_t wspiStart(void *ip, const WSPIConfig *config);
+  msg_t wspiStart(void *ip, const hal_wspi_config_t *config);
   void wspiStop(void *ip);
   void wspiStartCommandI(void *ip, const wspi_command_t *cmdp);
   void wspiStartCommand(void *ip, const wspi_command_t *cmdp);

@@ -24,9 +24,8 @@
           <notapi />
           <implementation><![CDATA[
 do {
-  if ((gptp)->oneshot) {
+  if ((gptp)->state == GPT_ONESHOT) {
     gpt_lld_stop_timer(gptp);
-    (gptp)->oneshot = false;
     __cbdrv_invoke_complete_cb(gptp);
   }
   else {
@@ -54,18 +53,13 @@ do {
         <basetype ctype="struct hal_gpt_config" />
       </typedef>
       <verbatim><![CDATA[
-typedef hal_gpt_driver_c GPTDriver;
-typedef hal_gpt_config_t GPTConfig;
-
+/**
+ * @brief       GPT driver specific states.
+ */
 typedef enum {
-  GPT_UNINIT = HAL_DRV_STATE_UNINIT,
-  GPT_STOP = HAL_DRV_STATE_STOP,
-  GPT_READY = HAL_DRV_STATE_READY,
-  GPT_CONTINUOUS = HAL_DRV_STATE_ACTIVE,
-  GPT_ONESHOT = HAL_DRV_STATE_ACTIVE
+  GPT_CONTINUOUS = HAL_DRV_STATE_ERROR + 1U,
+  GPT_ONESHOT
 } gptstate_t;
-
-typedef void (*gptcallback_t)(GPTDriver *gptp);
 
 /* Inclusion of LLD header.*/
 #include "hal_gpt_lld.h"]]></verbatim>
@@ -74,9 +68,6 @@ typedef void (*gptcallback_t)(GPTDriver *gptp);
         <fields>
           <field name="frequency" ctype="gptfreq_t">
             <brief>Timer clock in Hz.</brief>
-          </field>
-          <field name="callback" ctype="gptcallback_t">
-            <brief>Initial timer callback pointer.</brief>
           </field>
           <verbatim><![CDATA[
 /* End of the mandatory fields.*/
@@ -91,9 +82,6 @@ GPT_CONFIG_EXT_FIELDS]]></verbatim>
         ancestorname="hal_cb_driver" descr="GPT driver">
         <brief>Class of a GPT driver.</brief>
         <fields>
-          <field name="oneshot" ctype="bool">
-            <brief>Current timer mode selector.</brief>
-          </field>
           <condition check="defined(GPT_DRIVER_EXT_FIELDS)">
             <verbatim><![CDATA[
 GPT_DRIVER_EXT_FIELDS]]></verbatim>
@@ -105,7 +93,7 @@ gpt_lld_driver_fields;]]></verbatim>
         <methods>
           <objinit callsuper="true">
             <implementation><![CDATA[
-self->oneshot = false;]]></implementation>
+]]></implementation>
           </objinit>
           <dispose>
             <implementation><![CDATA[
@@ -114,7 +102,7 @@ self->oneshot = false;]]></implementation>
           <regular>
             <method name="gptStart" ctype="msg_t">
               <brief>Configures and activates the GPT peripheral.</brief>
-              <param name="config" ctype="const GPTConfig *" dir="in">
+              <param name="config" ctype="const hal_gpt_config_t *" dir="in">
                 Driver configuration or @p NULL.
               </param>
               <return>The operation status.</return>
@@ -129,7 +117,6 @@ if (config != NULL) {
   if (msg != HAL_RET_SUCCESS) {
     return msg;
   }
-  drvSetCallbackX(self, (drv_cb_t)config->callback);
 }
 
 return drvStart(self);]]></implementation>
@@ -151,8 +138,7 @@ drvStop(self);]]></implementation>
               <implementation><![CDATA[
 osalDbgCheckClassI();
 osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == HAL_DRV_STATE_ACTIVE) && !self->oneshot,
-              "invalid state");
+osalDbgAssert(self->state == GPT_CONTINUOUS, "invalid state");
 
 gpt_lld_change_interval(self, interval);]]></implementation>
             </method>
@@ -180,8 +166,7 @@ osalDbgCheckClassI();
 osalDbgCheck(self != NULL);
 osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
 
-self->oneshot = false;
-self->state = HAL_DRV_STATE_ACTIVE;
+self->state = GPT_CONTINUOUS;
 gpt_lld_start_timer(self, interval);]]></implementation>
             </method>
             <method name="gptStartContinuous" ctype="void">
@@ -209,8 +194,7 @@ osalDbgCheck(self != NULL);
 osalDbgAssert(drvGetCallbackX(self) != NULL, "callback not set");
 osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
 
-self->oneshot = true;
-self->state = HAL_DRV_STATE_ACTIVE;
+self->state = GPT_ONESHOT;
 gpt_lld_start_timer(self, interval);]]></implementation>
             </method>
             <method name="gptStartOneShot" ctype="void">
@@ -233,11 +217,11 @@ osalSysUnlock();]]></implementation>
 osalDbgCheckClassI();
 osalDbgCheck(self != NULL);
 osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
-              (self->state == HAL_DRV_STATE_ACTIVE) ||
+              (self->state == GPT_CONTINUOUS) ||
+              (self->state == GPT_ONESHOT) ||
               (self->state == HAL_DRV_STATE_COMPLETE),
               "invalid state");
 
-self->oneshot = false;
 self->state = HAL_DRV_STATE_READY;
 gpt_lld_stop_timer(self);]]></implementation>
             </method>
@@ -285,7 +269,6 @@ return gpt_lld_get_counter(self);]]></implementation>
               <implementation><![CDATA[
 msg_t msg;
 
-self->oneshot = false;
 msg = gpt_lld_start(self);
 if (msg != HAL_RET_SUCCESS) {
   self->config = NULL;
@@ -295,12 +278,12 @@ return msg;]]></implementation>
             </method>
             <method shortname="stop">
               <implementation><![CDATA[
-gpt_lld_stop(self);
-self->oneshot = false;]]></implementation>
+gpt_lld_stop(self);]]></implementation>
             </method>
             <method shortname="setcfg">
               <implementation><![CDATA[
-return (const void *)gpt_lld_setcfg(self, (const GPTConfig *)config);]]></implementation>
+return (const void *)gpt_lld_setcfg(self,
+                                    (const hal_gpt_config_t *)config);]]></implementation>
             </method>
             <method shortname="selcfg">
               <implementation><![CDATA[

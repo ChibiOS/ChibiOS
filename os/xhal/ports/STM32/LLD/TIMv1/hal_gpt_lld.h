@@ -585,7 +585,7 @@
  * @post    The GPT unit interval is changed to the new value.
  * @note    The function has effect at the next cycle start.
  *
- * @param[in] gptp      pointer to a @p GPTDriver object
+ * @param[in] gptp      pointer to a @p hal_gpt_driver_c object
  * @param[in] interval  new cycle time in timer ticks
  *
  * @notapi
@@ -597,7 +597,7 @@
  * @brief   Returns the interval of GPT peripheral.
  * @pre     The GPT unit must be running in continuous mode.
  *
- * @param[in] gptp      pointer to a @p GPTDriver object
+ * @param[in] gptp      pointer to a @p hal_gpt_driver_c object
  * @return              The current interval.
  *
  * @notapi
@@ -610,7 +610,7 @@
  * @note    The nature of the counter is not defined, it may count upward
  *          or downward, it could be continuously running or not.
  *
- * @param[in] gptp      pointer to a @p GPTDriver object
+ * @param[in] gptp      pointer to a @p hal_gpt_driver_c object
  * @return              The current counter value.
  *
  * @notapi
@@ -620,7 +620,7 @@
 /**
  * @brief   Returns the TIM associated with a GPT.
  *
- * @param[in] gptp      pointer to the @p GPTDriver object
+ * @param[in] gptp      pointer to the @p hal_gpt_driver_c object
  * @return              The TIM reference.
  *
  * @notapi
@@ -632,98 +632,100 @@
 /*===========================================================================*/
 
 #if STM32_GPT_USE_TIM1 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD1;
+extern hal_gpt_driver_c GPTD1;
 #endif
 
 #if STM32_GPT_USE_TIM2 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD2;
+extern hal_gpt_driver_c GPTD2;
 #endif
 
 #if STM32_GPT_USE_TIM3 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD3;
+extern hal_gpt_driver_c GPTD3;
 #endif
 
 #if STM32_GPT_USE_TIM4 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD4;
+extern hal_gpt_driver_c GPTD4;
 #endif
 
 #if STM32_GPT_USE_TIM5 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD5;
+extern hal_gpt_driver_c GPTD5;
 #endif
 
 #if STM32_GPT_USE_TIM6 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD6;
+extern hal_gpt_driver_c GPTD6;
 #endif
 
 #if STM32_GPT_USE_TIM7 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD7;
+extern hal_gpt_driver_c GPTD7;
 #endif
 
 #if STM32_GPT_USE_TIM8 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD8;
+extern hal_gpt_driver_c GPTD8;
 #endif
 
 #if STM32_GPT_USE_TIM9 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD9;
+extern hal_gpt_driver_c GPTD9;
 #endif
 
 #if STM32_GPT_USE_TIM10 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD10;
+extern hal_gpt_driver_c GPTD10;
 #endif
 
 #if STM32_GPT_USE_TIM11 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD11;
+extern hal_gpt_driver_c GPTD11;
 #endif
 
 #if STM32_GPT_USE_TIM12 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD12;
+extern hal_gpt_driver_c GPTD12;
 #endif
 
 #if STM32_GPT_USE_TIM13 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD13;
+extern hal_gpt_driver_c GPTD13;
 #endif
 
 #if STM32_GPT_USE_TIM14 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD14;
+extern hal_gpt_driver_c GPTD14;
 #endif
 
 #if STM32_GPT_USE_TIM15 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD15;
+extern hal_gpt_driver_c GPTD15;
 #endif
 
 #if STM32_GPT_USE_TIM16 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD16;
+extern hal_gpt_driver_c GPTD16;
 #endif
 
 #if STM32_GPT_USE_TIM17 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD17;
+extern hal_gpt_driver_c GPTD17;
 #endif
 
 #if STM32_GPT_USE_TIM20 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD20;
+extern hal_gpt_driver_c GPTD20;
 #endif
 
 #if STM32_GPT_USE_TIM21 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD21;
+extern hal_gpt_driver_c GPTD21;
 #endif
 
 #if STM32_GPT_USE_TIM22 && !defined(__DOXYGEN__)
-extern GPTDriver GPTD22;
+extern hal_gpt_driver_c GPTD22;
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void gpt_lld_init(void);
-  msg_t gpt_lld_start(GPTDriver *gptp);
-  void gpt_lld_stop(GPTDriver *gptp);
-  const GPTConfig *gpt_lld_setcfg(GPTDriver *gptp, const GPTConfig *config);
-  const GPTConfig *gpt_lld_selcfg(GPTDriver *gptp, unsigned cfgnum);
-  void gpt_lld_set_callback(GPTDriver *gptp, drv_cb_t cb);
-  void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t period);
-  void gpt_lld_stop_timer(GPTDriver *gptp);
-  void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval);
-  void gpt_lld_serve_interrupt(GPTDriver *gptp);
+  msg_t gpt_lld_start(hal_gpt_driver_c *gptp);
+  void gpt_lld_stop(hal_gpt_driver_c *gptp);
+  const hal_gpt_config_t *gpt_lld_setcfg(hal_gpt_driver_c *gptp,
+                                         const hal_gpt_config_t *config);
+  const hal_gpt_config_t *gpt_lld_selcfg(hal_gpt_driver_c *gptp,
+                                         unsigned cfgnum);
+  void gpt_lld_set_callback(hal_gpt_driver_c *gptp, drv_cb_t cb);
+  void gpt_lld_start_timer(hal_gpt_driver_c *gptp, gptcnt_t period);
+  void gpt_lld_stop_timer(hal_gpt_driver_c *gptp);
+  void gpt_lld_polled_delay(hal_gpt_driver_c *gptp, gptcnt_t interval);
+  void gpt_lld_serve_interrupt(hal_gpt_driver_c *gptp);
 #ifdef __cplusplus
 }
 #endif

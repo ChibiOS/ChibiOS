@@ -72,9 +72,8 @@
  */
 #define _gpt_isr_invoke_cb(gptp)                                            \
   do {                                                                      \
-    if ((gptp)->oneshot) {                                                  \
+    if ((gptp)->state == GPT_ONESHOT) {                                     \
       gpt_lld_stop_timer(gptp);                                             \
-      (gptp)->oneshot = false;                                              \
       __cbdrv_invoke_complete_cb(gptp);                                     \
     }                                                                       \
     else {                                                                  \
@@ -107,18 +106,13 @@ typedef struct hal_gpt_driver hal_gpt_driver_c;
  */
 typedef struct hal_gpt_config hal_gpt_config_t;
 
-typedef hal_gpt_driver_c GPTDriver;
-typedef hal_gpt_config_t GPTConfig;
-
+/**
+ * @brief       GPT driver specific states.
+ */
 typedef enum {
-  GPT_UNINIT = HAL_DRV_STATE_UNINIT,
-  GPT_STOP = HAL_DRV_STATE_STOP,
-  GPT_READY = HAL_DRV_STATE_READY,
-  GPT_CONTINUOUS = HAL_DRV_STATE_ACTIVE,
-  GPT_ONESHOT = HAL_DRV_STATE_ACTIVE
+  GPT_CONTINUOUS = HAL_DRV_STATE_ERROR + 1U,
+  GPT_ONESHOT
 } gptstate_t;
-
-typedef void (*gptcallback_t)(GPTDriver *gptp);
 
 /* Inclusion of LLD header.*/
 #include "hal_gpt_lld.h"
@@ -131,10 +125,6 @@ struct hal_gpt_config {
    * @brief       Timer clock in Hz.
    */
   gptfreq_t                 frequency;
-  /**
-   * @brief       Initial timer callback pointer.
-   */
-  gptcallback_t             callback;
   /* End of the mandatory fields.*/
   gpt_lld_config_fields;
 #if (defined(GPT_CONFIG_EXT_FIELDS)) || defined (__DOXYGEN__)
@@ -218,10 +208,6 @@ struct hal_gpt_driver {
    * @note        Can be @p NULL.
    */
   drv_cb_t                  cb;
-  /**
-   * @brief       Current timer mode selector.
-   */
-  bool                      oneshot;
 #if (defined(GPT_DRIVER_EXT_FIELDS)) || defined (__DOXYGEN__)
   GPT_DRIVER_EXT_FIELDS
 #endif /* defined(GPT_DRIVER_EXT_FIELDS) */
@@ -245,7 +231,7 @@ extern "C" {
   const void *__gpt_setcfg_impl(void *ip, const void *config);
   const void *__gpt_selcfg_impl(void *ip, unsigned cfgnum);
   void __gpt_setcb_impl(void *ip, drv_cb_t cb);
-  msg_t gptStart(void *ip, const GPTConfig *config);
+  msg_t gptStart(void *ip, const hal_gpt_config_t *config);
   void gptStop(void *ip);
   void gptChangeIntervalI(void *ip, gptcnt_t interval);
   void gptChangeInterval(void *ip, gptcnt_t interval);

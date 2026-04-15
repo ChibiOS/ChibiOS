@@ -40,7 +40,7 @@
 
 /** @brief QUADSPI1 driver identifier.*/
 #if STM32_WSPI_USE_QUADSPI1 || defined(__DOXYGEN__)
-WSPIDriver WSPID1;
+hal_wspi_driver_c WSPID1;
 #endif
 
 /*===========================================================================*/
@@ -51,8 +51,6 @@ WSPIDriver WSPID1;
  * @brief   Driver default configuration.
  */
 static const hal_wspi_config_t wspi_default_config = {
-  .end_cb                    = NULL,
-  .error_cb                  = NULL,
   .dcr                       = STM32_WSPI_DEFAULT_DCR
 };
 
@@ -63,10 +61,11 @@ static const hal_wspi_config_t wspi_default_config = {
 /**
  * @brief   Shared DMA service routine.
  *
- * @param[in] wspip     pointer to the @p WSPIDriver object
+ * @param[in] wspip     pointer to the @p hal_wspi_driver_c object
  * @param[in] flags     pre-shifted content of the ISR register
  */
-static void wspi_lld_serve_dma_interrupt(WSPIDriver *wspip, uint32_t flags) {
+static void wspi_lld_serve_dma_interrupt(hal_wspi_driver_c *wspip,
+                                         uint32_t flags) {
 
   /* DMA errors handling.*/
   if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0U) {
@@ -107,12 +106,12 @@ void wspi_lld_init(void) {
 /**
  * @brief   Configures and activates the WSPI peripheral.
  *
- * @param[in] wspip     pointer to the @p WSPIDriver object
+ * @param[in] wspip     pointer to the @p hal_wspi_driver_c object
  * @return              The operation status.
  *
  * @notapi
  */
-msg_t wspi_lld_start(WSPIDriver *wspip) {
+msg_t wspi_lld_start(hal_wspi_driver_c *wspip) {
 
   if (wspip->config == NULL) {
     wspip->config = wspi_lld_setcfg(wspip, NULL);
@@ -153,11 +152,11 @@ msg_t wspi_lld_start(WSPIDriver *wspip) {
 /**
  * @brief   Deactivates the WSPI peripheral.
  *
- * @param[in] wspip     pointer to the @p WSPIDriver object
+ * @param[in] wspip     pointer to the @p hal_wspi_driver_c object
  *
  * @notapi
  */
-void wspi_lld_stop(WSPIDriver *wspip) {
+void wspi_lld_stop(hal_wspi_driver_c *wspip) {
 
   if (wspip->dma != NULL) {
     dmaStreamDisable(wspip->dma);
@@ -180,13 +179,13 @@ void wspi_lld_stop(WSPIDriver *wspip) {
 /**
  * @brief   Applies a WSPI configuration.
  *
- * @param[in] wspip     pointer to the @p WSPIDriver object
+ * @param[in] wspip     pointer to the @p hal_wspi_driver_c object
  * @param[in] config    pointer to the configuration structure
  * @return              The current configuration pointer.
  *
  * @notapi
  */
-const hal_wspi_config_t *wspi_lld_setcfg(WSPIDriver *wspip,
+const hal_wspi_config_t *wspi_lld_setcfg(hal_wspi_driver_c *wspip,
                                          const hal_wspi_config_t *config) {
 
   (void)wspip;
@@ -201,13 +200,13 @@ const hal_wspi_config_t *wspi_lld_setcfg(WSPIDriver *wspip,
 /**
  * @brief   Selects one of the pre-defined WSPI configurations.
  *
- * @param[in] wspip     pointer to the @p WSPIDriver object
+ * @param[in] wspip     pointer to the @p hal_wspi_driver_c object
  * @param[in] cfgnum    driver configuration number
  * @return              The configuration pointer.
  *
  * @notapi
  */
-const hal_wspi_config_t *wspi_lld_selcfg(WSPIDriver *wspip,
+const hal_wspi_config_t *wspi_lld_selcfg(hal_wspi_driver_c *wspip,
                                          unsigned cfgnum) {
 
   if (cfgnum > 0U) {
@@ -220,14 +219,14 @@ const hal_wspi_config_t *wspi_lld_selcfg(WSPIDriver *wspip,
 /**
  * @brief   Serves the QUADSPI interrupt.
  *
- * @param[in] wspip     pointer to the @p WSPIDriver object
+ * @param[in] wspip     pointer to the @p hal_wspi_driver_c object
  *
  * @notapi
  */
-void wspi_lld_serve_interrupt(WSPIDriver *wspip) {
+void wspi_lld_serve_interrupt(hal_wspi_driver_c *wspip) {
   bool was_receive;
 
-  was_receive = (wspip->operation == WSPI_OPERATION_RECEIVE);
+  was_receive = (wspip->state == WSPI_STATE_RECEIVE);
 
   wspip->qspi->FCR = QUADSPI_FCR_CTEF | QUADSPI_FCR_CTCF |
                      QUADSPI_FCR_CSMF | QUADSPI_FCR_CTOF;
@@ -258,12 +257,12 @@ void wspi_lld_serve_interrupt(WSPIDriver *wspip) {
 /**
  * @brief   Sends a command without data phase.
  *
- * @param[in] wspip     pointer to the @p WSPIDriver object
+ * @param[in] wspip     pointer to the @p hal_wspi_driver_c object
  * @param[in] cmdp      pointer to the command descriptor
  *
  * @notapi
  */
-void wspi_lld_command(WSPIDriver *wspip, const wspi_command_t *cmdp) {
+void wspi_lld_command(hal_wspi_driver_c *wspip, const wspi_command_t *cmdp) {
 
 #if STM32_USE_STM32_D1_WORKAROUND == TRUE
   if ((cmdp->cfg & (WSPI_CFG_ADDR_MODE_MASK | WSPI_CFG_ALT_MODE_MASK)) == 0U) {
@@ -285,14 +284,14 @@ void wspi_lld_command(WSPIDriver *wspip, const wspi_command_t *cmdp) {
 /**
  * @brief   Sends a command with data over the WSPI bus.
  *
- * @param[in] wspip     pointer to the @p WSPIDriver object
+ * @param[in] wspip     pointer to the @p hal_wspi_driver_c object
  * @param[in] cmdp      pointer to the command descriptor
  * @param[in] n         number of bytes to send
  * @param[in] txbuf     the pointer to the transmit buffer
  *
  * @notapi
  */
-void wspi_lld_send(WSPIDriver *wspip, const wspi_command_t *cmdp,
+void wspi_lld_send(hal_wspi_driver_c *wspip, const wspi_command_t *cmdp,
                    size_t n, const uint8_t *txbuf) {
 
   dmaStreamSetMemory0(wspip->dma, txbuf);
@@ -312,14 +311,14 @@ void wspi_lld_send(WSPIDriver *wspip, const wspi_command_t *cmdp,
 /**
  * @brief   Sends a command then receives data over the WSPI bus.
  *
- * @param[in] wspip     pointer to the @p WSPIDriver object
+ * @param[in] wspip     pointer to the @p hal_wspi_driver_c object
  * @param[in] cmdp      pointer to the command descriptor
  * @param[in] n         number of bytes to receive
  * @param[out] rxbuf    the pointer to the receive buffer
  *
  * @notapi
  */
-void wspi_lld_receive(WSPIDriver *wspip, const wspi_command_t *cmdp,
+void wspi_lld_receive(hal_wspi_driver_c *wspip, const wspi_command_t *cmdp,
                       size_t n, uint8_t *rxbuf) {
 
   dmaStreamSetMemory0(wspip->dma, rxbuf);
@@ -342,13 +341,13 @@ void wspi_lld_receive(WSPIDriver *wspip, const wspi_command_t *cmdp,
 /**
  * @brief   Maps in memory space a WSPI flash device.
  *
- * @param[in] wspip     pointer to the @p WSPIDriver object
+ * @param[in] wspip     pointer to the @p hal_wspi_driver_c object
  * @param[in] cmdp      pointer to the command descriptor
  * @param[out] addrp    pointer to the mapped flash base address or @p NULL
  *
  * @notapi
  */
-void wspi_lld_map_flash(WSPIDriver *wspip,
+void wspi_lld_map_flash(hal_wspi_driver_c *wspip,
                         const wspi_command_t *cmdp,
                         uint8_t **addrp) {
 
@@ -368,11 +367,11 @@ void wspi_lld_map_flash(WSPIDriver *wspip,
 /**
  * @brief   Unmaps from memory space a WSPI flash device.
  *
- * @param[in] wspip     pointer to the @p WSPIDriver object
+ * @param[in] wspip     pointer to the @p hal_wspi_driver_c object
  *
  * @notapi
  */
-void wspi_lld_unmap_flash(WSPIDriver *wspip) {
+void wspi_lld_unmap_flash(hal_wspi_driver_c *wspip) {
 
   wspip->qspi->CR |= QUADSPI_CR_ABORT;
   while ((wspip->qspi->CR & QUADSPI_CR_ABORT) != 0U) {

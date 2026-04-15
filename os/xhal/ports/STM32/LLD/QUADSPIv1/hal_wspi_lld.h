@@ -254,31 +254,31 @@
 /*===========================================================================*/
 
 #if STM32_WSPI_USE_QUADSPI1 && !defined(__DOXYGEN__)
-extern WSPIDriver WSPID1;
+extern hal_wspi_driver_c WSPID1;
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void wspi_lld_init(void);
-  msg_t wspi_lld_start(WSPIDriver *wspip);
-  void wspi_lld_stop(WSPIDriver *wspip);
-  const hal_wspi_config_t *wspi_lld_setcfg(WSPIDriver *wspip,
+  msg_t wspi_lld_start(hal_wspi_driver_c *wspip);
+  void wspi_lld_stop(hal_wspi_driver_c *wspip);
+  const hal_wspi_config_t *wspi_lld_setcfg(hal_wspi_driver_c *wspip,
                                            const hal_wspi_config_t *config);
-  const hal_wspi_config_t *wspi_lld_selcfg(WSPIDriver *wspip,
+  const hal_wspi_config_t *wspi_lld_selcfg(hal_wspi_driver_c *wspip,
                                            unsigned cfgnum);
-  void wspi_lld_command(WSPIDriver *wspip, const wspi_command_t *cmdp);
-  void wspi_lld_send(WSPIDriver *wspip, const wspi_command_t *cmdp,
+  void wspi_lld_command(hal_wspi_driver_c *wspip, const wspi_command_t *cmdp);
+  void wspi_lld_send(hal_wspi_driver_c *wspip, const wspi_command_t *cmdp,
                      size_t n, const uint8_t *txbuf);
-  void wspi_lld_receive(WSPIDriver *wspip, const wspi_command_t *cmdp,
+  void wspi_lld_receive(hal_wspi_driver_c *wspip, const wspi_command_t *cmdp,
                         size_t n, uint8_t *rxbuf);
 #if WSPI_SUPPORTS_MEMMAP == TRUE
-  void wspi_lld_map_flash(WSPIDriver *wspip,
+  void wspi_lld_map_flash(hal_wspi_driver_c *wspip,
                           const wspi_command_t *cmdp,
                           uint8_t **addrp);
-  void wspi_lld_unmap_flash(WSPIDriver *wspip);
+  void wspi_lld_unmap_flash(hal_wspi_driver_c *wspip);
 #endif
-  void wspi_lld_serve_interrupt(WSPIDriver *wspip);
+  void wspi_lld_serve_interrupt(hal_wspi_driver_c *wspip);
 #ifdef __cplusplus
 }
 #endif

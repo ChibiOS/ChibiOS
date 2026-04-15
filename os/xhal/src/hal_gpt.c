@@ -87,9 +87,6 @@ void *__gpt_objinit_impl(void *ip, const void *vmt) {
   /* Initialization of the ancestors-defined parts.*/
   __cbdrv_objinit_impl(self, vmt);
 
-  /* Initialization code.*/
-  self->oneshot = false;
-
   return self;
 }
 
@@ -120,7 +117,6 @@ msg_t __gpt_start_impl(void *ip) {
   hal_gpt_driver_c *self = (hal_gpt_driver_c *)ip;
   msg_t msg;
 
-  self->oneshot = false;
   msg = gpt_lld_start(self);
   if (msg != HAL_RET_SUCCESS) {
     self->config = NULL;
@@ -137,7 +133,6 @@ msg_t __gpt_start_impl(void *ip) {
 void __gpt_stop_impl(void *ip) {
   hal_gpt_driver_c *self = (hal_gpt_driver_c *)ip;
   gpt_lld_stop(self);
-  self->oneshot = false;
 }
 
 /**
@@ -149,7 +144,7 @@ void __gpt_stop_impl(void *ip) {
  */
 const void *__gpt_setcfg_impl(void *ip, const void *config) {
   hal_gpt_driver_c *self = (hal_gpt_driver_c *)ip;
-  return (const void *)gpt_lld_setcfg(self, (const GPTConfig *)config);
+  return (const void *)gpt_lld_setcfg(self, (const hal_gpt_config_t *)config);
 }
 
 /**
@@ -204,7 +199,7 @@ const struct hal_gpt_driver_vmt __hal_gpt_driver_vmt = {
  *
  * @api
  */
-msg_t gptStart(void *ip, const GPTConfig *config) {
+msg_t gptStart(void *ip, const hal_gpt_config_t *config) {
   hal_gpt_driver_c *self = (hal_gpt_driver_c *)ip;
   msg_t msg;
 
@@ -215,7 +210,6 @@ msg_t gptStart(void *ip, const GPTConfig *config) {
     if (msg != HAL_RET_SUCCESS) {
       return msg;
     }
-    drvSetCallbackX(self, (drv_cb_t)config->callback);
   }
 
   return drvStart(self);
@@ -247,8 +241,7 @@ void gptChangeIntervalI(void *ip, gptcnt_t interval) {
   hal_gpt_driver_c *self = (hal_gpt_driver_c *)ip;
   osalDbgCheckClassI();
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == HAL_DRV_STATE_ACTIVE) && !self->oneshot,
-                "invalid state");
+  osalDbgAssert(self->state == GPT_CONTINUOUS, "invalid state");
 
   gpt_lld_change_interval(self, interval);
 }
@@ -284,8 +277,7 @@ void gptStartContinuousI(void *ip, gptcnt_t interval) {
   osalDbgCheck(self != NULL);
   osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
 
-  self->oneshot = false;
-  self->state = HAL_DRV_STATE_ACTIVE;
+  self->state = GPT_CONTINUOUS;
   gpt_lld_start_timer(self, interval);
 }
 
@@ -321,8 +313,7 @@ void gptStartOneShotI(void *ip, gptcnt_t interval) {
   osalDbgAssert(drvGetCallbackX(self) != NULL, "callback not set");
   osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
 
-  self->oneshot = true;
-  self->state = HAL_DRV_STATE_ACTIVE;
+  self->state = GPT_ONESHOT;
   gpt_lld_start_timer(self, interval);
 }
 
@@ -355,11 +346,11 @@ void gptStopTimerI(void *ip) {
   osalDbgCheckClassI();
   osalDbgCheck(self != NULL);
   osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
-                (self->state == HAL_DRV_STATE_ACTIVE) ||
+                (self->state == GPT_CONTINUOUS) ||
+                (self->state == GPT_ONESHOT) ||
                 (self->state == HAL_DRV_STATE_COMPLETE),
                 "invalid state");
 
-  self->oneshot = false;
   self->state = HAL_DRV_STATE_READY;
   gpt_lld_stop_timer(self);
 }

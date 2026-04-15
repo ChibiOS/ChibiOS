@@ -71,7 +71,6 @@ do {
           <notapi />
           <implementation><![CDATA[
 do {
-  (wspip)->operation = WSPI_OPERATION_NONE;
   __cbdrv_invoke_complete_cb(wspip);
   _wspi_wakeup_isr(wspip, MSG_OK);
 } while (false)]]></implementation>
@@ -82,17 +81,9 @@ do {
           <notapi />
           <implementation><![CDATA[
 do {
-  (wspip)->operation = WSPI_OPERATION_NONE;
-  if (__wspi_getfield(wspip, error_cb) != NULL) {
-    (wspip)->state = HAL_DRV_STATE_ERROR;
-    __wspi_getfield(wspip, error_cb)(wspip);
-    if ((wspip)->state == HAL_DRV_STATE_ERROR) {
-      (wspip)->state = HAL_DRV_STATE_READY;
-    }
-  }
-  else {
-    (wspip)->state = HAL_DRV_STATE_READY;
-  }
+  __cbdrv_invoke_cb_with_transition(wspip,                               \
+                                    HAL_DRV_STATE_ERROR,                 \
+                                    HAL_DRV_STATE_READY);
   _wspi_wakeup_isr(wspip, MSG_RESET);
 } while (false)]]></implementation>
         </macro>
@@ -107,15 +98,6 @@ do {
         <brief>Type of structure representing a WSPI configuration.</brief>
         <basetype ctype="struct hal_wspi_config" />
       </typedef>
-      <typedef name="WSPIConfig">
-        <brief>Type of structure representing a WSPI configuration
-          (legacy).</brief>
-        <basetype ctype="struct hal_wspi_config" />
-      </typedef>
-      <typedef name="WSPIDriver">
-        <brief>Type of structure representing a WSPI driver (legacy).</brief>
-        <basetype ctype="struct hal_wspi_driver" />
-      </typedef>
       <typedef name="wspi_command_t">
         <brief>Type of a WSPI command descriptor.</brief>
         <basetype ctype="struct wspi_command" />
@@ -125,15 +107,15 @@ do {
 #define WSPI_USE_WAIT WSPI_USE_SYNCHRONIZATION
 #endif
 
-typedef void (*wspicallback_t)(WSPIDriver *wspip);
-
+/**
+ * @brief       WSPI driver specific states.
+ */
 typedef enum {
-  WSPI_OPERATION_NONE = 0U,
-  WSPI_OPERATION_COMMAND = 1U,
-  WSPI_OPERATION_SEND = 2U,
-  WSPI_OPERATION_RECEIVE = 3U,
-  WSPI_OPERATION_MEMMAP = 4U
-} wspi_operation_t;
+  WSPI_STATE_COMMAND = HAL_DRV_STATE_ERROR + 1U,
+  WSPI_STATE_SEND,
+  WSPI_STATE_RECEIVE,
+  WSPI_STATE_MEMMAP
+} wspistate_t;
 
 /* Inclusion of LLD header.*/
 #include "hal_wspi_lld.h"
@@ -168,12 +150,6 @@ typedef enum {
       <struct name="hal_wspi_config">
         <brief>Driver configuration structure.</brief>
         <fields>
-          <field name="end_cb" ctype="wspicallback_t">
-            <brief>Operation completion callback or @p NULL.</brief>
-          </field>
-          <field name="error_cb" ctype="wspicallback_t">
-            <brief>Operation error callback or @p NULL.</brief>
-          </field>
           <verbatim><![CDATA[
 /* End of the mandatory fields.*/
 wspi_lld_config_fields;]]></verbatim>
@@ -192,9 +168,6 @@ WSPI_CONFIG_EXT_FIELDS]]></verbatim>
               <brief>Synchronization point for blocking transfers.</brief>
             </field>
           </condition>
-          <field name="operation" ctype="wspi_operation_t">
-            <brief>Current WSPI operation selector.</brief>
-          </field>
           <condition check="defined(WSPI_DRIVER_EXT_FIELDS)">
             <verbatim><![CDATA[
 WSPI_DRIVER_EXT_FIELDS]]></verbatim>
@@ -209,7 +182,6 @@ wspi_lld_driver_fields;]]></verbatim>
 #if WSPI_USE_SYNCHRONIZATION == TRUE
 self->sync_transfer = NULL;
 #endif
-self->operation = WSPI_OPERATION_NONE;
 
 /* Optional, user-defined initializer.*/
 #if defined(WSPI_DRIVER_EXT_INIT_HOOK)
@@ -223,7 +195,7 @@ WSPI_DRIVER_EXT_INIT_HOOK(self);
           <regular>
             <method name="wspiStart" ctype="msg_t">
               <brief>Configures and activates the WSPI peripheral.</brief>
-              <param name="config" ctype="const WSPIConfig *" dir="in">
+              <param name="config" ctype="const hal_wspi_config_t *" dir="in">
                 Driver configuration or @p NULL.
               </param>
               <return>The operation status.</return>
@@ -262,8 +234,7 @@ osalDbgCheck((self != NULL) && (cmdp != NULL));
 osalDbgCheck((cmdp->cfg & WSPI_CFG_DATA_MODE_MASK) == WSPI_CFG_DATA_MODE_NONE);
 osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
 
-self->operation = WSPI_OPERATION_COMMAND;
-self->state = HAL_DRV_STATE_ACTIVE;
+self->state = WSPI_STATE_COMMAND;
 wspi_lld_command(self, cmdp);]]></implementation>
             </method>
             <method name="wspiStartCommand" ctype="void">
@@ -297,8 +268,7 @@ osalDbgCheck((self != NULL) && (cmdp != NULL) && (n > 0U) && (txbuf != NULL));
 osalDbgCheck((cmdp->cfg & WSPI_CFG_DATA_MODE_MASK) != WSPI_CFG_DATA_MODE_NONE);
 osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
 
-self->operation = WSPI_OPERATION_SEND;
-self->state = HAL_DRV_STATE_ACTIVE;
+self->state = WSPI_STATE_SEND;
 wspi_lld_send(self, cmdp, n, txbuf);]]></implementation>
             </method>
             <method name="wspiStartSend" ctype="void">
@@ -338,8 +308,7 @@ osalDbgCheck((self != NULL) && (cmdp != NULL) && (n > 0U) && (rxbuf != NULL));
 osalDbgCheck((cmdp->cfg & WSPI_CFG_DATA_MODE_MASK) != WSPI_CFG_DATA_MODE_NONE);
 osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
 
-self->operation = WSPI_OPERATION_RECEIVE;
-self->state = HAL_DRV_STATE_ACTIVE;
+self->state = WSPI_STATE_RECEIVE;
 wspi_lld_receive(self, cmdp, n, rxbuf);]]></implementation>
             </method>
             <method name="wspiStartReceive" ctype="void">
@@ -460,8 +429,7 @@ osalDbgCheck((self != NULL) && (cmdp != NULL));
 osalDbgCheck((cmdp->cfg & WSPI_CFG_DATA_MODE_MASK) != WSPI_CFG_DATA_MODE_NONE);
 osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
 
-self->operation = WSPI_OPERATION_MEMMAP;
-self->state = HAL_DRV_STATE_ACTIVE;
+self->state = WSPI_STATE_MEMMAP;
 wspi_lld_map_flash(self, cmdp, addrp);]]></implementation>
               </method>
               <method name="wspiMapFlash" ctype="void">
@@ -486,12 +454,9 @@ osalSysUnlock();]]></implementation>
                 <implementation><![CDATA[
 osalDbgCheckClassI();
 osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == HAL_DRV_STATE_ACTIVE) &&
-              (self->operation == WSPI_OPERATION_MEMMAP),
-              "not mapped");
+osalDbgAssert(self->state == WSPI_STATE_MEMMAP, "not mapped");
 
 wspi_lld_unmap_flash(self);
-self->operation = WSPI_OPERATION_NONE;
 self->state = HAL_DRV_STATE_READY;]]></implementation>
               </method>
               <method name="wspiUnmapFlash" ctype="void">
@@ -527,14 +492,8 @@ drvUnlock(self);]]></implementation>
               <implementation><![CDATA[
 msg_t msg;
 
-self->operation = WSPI_OPERATION_NONE;
 msg = wspi_lld_start(self);
-if (msg == HAL_RET_SUCCESS) {
-  if (self->config != NULL) {
-    __cbdrv_setcb_impl(self, (drv_cb_t)__wspi_getfield(self, end_cb));
-  }
-}
-else {
+if (msg != HAL_RET_SUCCESS) {
   self->config = NULL;
 }
 
@@ -543,14 +502,14 @@ return msg;]]></implementation>
             <method shortname="stop">
               <implementation><![CDATA[
 wspi_lld_stop(self);
-self->operation = WSPI_OPERATION_NONE;
 #if WSPI_USE_SYNCHRONIZATION == TRUE
 osalThreadResumeI(&self->sync_transfer, MSG_RESET);
 #endif]]></implementation>
             </method>
             <method shortname="setcfg">
               <implementation><![CDATA[
-return (const void *)wspi_lld_setcfg(self, (const WSPIConfig *)config);]]></implementation>
+return (const void *)wspi_lld_setcfg(self,
+                                     (const hal_wspi_config_t *)config);]]></implementation>
             </method>
             <method shortname="selcfg">
               <implementation><![CDATA[

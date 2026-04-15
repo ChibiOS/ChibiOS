@@ -30,9 +30,8 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-static const GPTConfig gpt_default_config = {
+static const hal_gpt_config_t gpt_default_config = {
   .frequency = GPT_DEFAULT_FREQUENCY,
-  .callback  = NULL,
   .cr2       = 0U,
   .dier      = 0U
 };
@@ -46,7 +45,7 @@ static const GPTConfig gpt_default_config = {
  * @note    The driver GPTD1 allocates the complex timer TIM1 when enabled.
  */
 #if STM32_GPT_USE_TIM1 || defined(__DOXYGEN__)
-GPTDriver GPTD1;
+hal_gpt_driver_c GPTD1;
 #endif
 
 /**
@@ -54,7 +53,7 @@ GPTDriver GPTD1;
  * @note    The driver GPTD2 allocates the timer TIM2 when enabled.
  */
 #if STM32_GPT_USE_TIM2 || defined(__DOXYGEN__)
-GPTDriver GPTD2;
+hal_gpt_driver_c GPTD2;
 #endif
 
 /**
@@ -62,7 +61,7 @@ GPTDriver GPTD2;
  * @note    The driver GPTD3 allocates the timer TIM3 when enabled.
  */
 #if STM32_GPT_USE_TIM3 || defined(__DOXYGEN__)
-GPTDriver GPTD3;
+hal_gpt_driver_c GPTD3;
 #endif
 
 /**
@@ -70,7 +69,7 @@ GPTDriver GPTD3;
  * @note    The driver GPTD4 allocates the timer TIM4 when enabled.
  */
 #if STM32_GPT_USE_TIM4 || defined(__DOXYGEN__)
-GPTDriver GPTD4;
+hal_gpt_driver_c GPTD4;
 #endif
 
 /**
@@ -78,7 +77,7 @@ GPTDriver GPTD4;
  * @note    The driver GPTD5 allocates the timer TIM5 when enabled.
  */
 #if STM32_GPT_USE_TIM5 || defined(__DOXYGEN__)
-GPTDriver GPTD5;
+hal_gpt_driver_c GPTD5;
 #endif
 
 /**
@@ -86,7 +85,7 @@ GPTDriver GPTD5;
  * @note    The driver GPTD6 allocates the timer TIM6 when enabled.
  */
 #if STM32_GPT_USE_TIM6 || defined(__DOXYGEN__)
-GPTDriver GPTD6;
+hal_gpt_driver_c GPTD6;
 #endif
 
 /**
@@ -94,7 +93,7 @@ GPTDriver GPTD6;
  * @note    The driver GPTD7 allocates the timer TIM7 when enabled.
  */
 #if STM32_GPT_USE_TIM7 || defined(__DOXYGEN__)
-GPTDriver GPTD7;
+hal_gpt_driver_c GPTD7;
 #endif
 
 /**
@@ -102,7 +101,7 @@ GPTDriver GPTD7;
  * @note    The driver GPTD8 allocates the timer TIM8 when enabled.
  */
 #if STM32_GPT_USE_TIM8 || defined(__DOXYGEN__)
-GPTDriver GPTD8;
+hal_gpt_driver_c GPTD8;
 #endif
 
 /**
@@ -110,7 +109,7 @@ GPTDriver GPTD8;
  * @note    The driver GPTD9 allocates the timer TIM9 when enabled.
  */
 #if STM32_GPT_USE_TIM9 || defined(__DOXYGEN__)
-GPTDriver GPTD9;
+hal_gpt_driver_c GPTD9;
 #endif
 
 /**
@@ -118,7 +117,7 @@ GPTDriver GPTD9;
  * @note    The driver GPTD10 allocates the timer TIM10 when enabled.
  */
 #if STM32_GPT_USE_TIM10 || defined(__DOXYGEN__)
-GPTDriver GPTD10;
+hal_gpt_driver_c GPTD10;
 #endif
 
 /**
@@ -126,7 +125,7 @@ GPTDriver GPTD10;
  * @note    The driver GPTD11 allocates the timer TIM11 when enabled.
  */
 #if STM32_GPT_USE_TIM11 || defined(__DOXYGEN__)
-GPTDriver GPTD11;
+hal_gpt_driver_c GPTD11;
 #endif
 
 /**
@@ -134,7 +133,7 @@ GPTDriver GPTD11;
  * @note    The driver GPTD12 allocates the timer TIM12 when enabled.
  */
 #if STM32_GPT_USE_TIM12 || defined(__DOXYGEN__)
-GPTDriver GPTD12;
+hal_gpt_driver_c GPTD12;
 #endif
 
 /**
@@ -142,7 +141,7 @@ GPTDriver GPTD12;
  * @note    The driver GPTD13 allocates the timer TIM13 when enabled.
  */
 #if STM32_GPT_USE_TIM13 || defined(__DOXYGEN__)
-GPTDriver GPTD13;
+hal_gpt_driver_c GPTD13;
 #endif
 
 /**
@@ -150,7 +149,7 @@ GPTDriver GPTD13;
  * @note    The driver GPTD14 allocates the timer TIM14 when enabled.
  */
 #if STM32_GPT_USE_TIM14 || defined(__DOXYGEN__)
-GPTDriver GPTD14;
+hal_gpt_driver_c GPTD14;
 #endif
 
 /**
@@ -158,7 +157,7 @@ GPTDriver GPTD14;
  * @note    The driver GPTD15 allocates the timer TIM15 when enabled.
  */
 #if STM32_GPT_USE_TIM15 || defined(__DOXYGEN__)
-GPTDriver GPTD15;
+hal_gpt_driver_c GPTD15;
 #endif
 
 /**
@@ -166,7 +165,7 @@ GPTDriver GPTD15;
  * @note    The driver GPTD16 allocates the timer TIM16 when enabled.
  */
 #if STM32_GPT_USE_TIM16 || defined(__DOXYGEN__)
-GPTDriver GPTD16;
+hal_gpt_driver_c GPTD16;
 #endif
 
 /**
@@ -174,7 +173,7 @@ GPTDriver GPTD16;
  * @note    The driver GPTD17 allocates the timer TIM17 when enabled.
  */
 #if STM32_GPT_USE_TIM17 || defined(__DOXYGEN__)
-GPTDriver GPTD17;
+hal_gpt_driver_c GPTD17;
 #endif
 
 /**
@@ -182,7 +181,7 @@ GPTDriver GPTD17;
  * @note    The driver GPTD20 allocates the timer TIM20 when enabled.
  */
 #if STM32_GPT_USE_TIM20 || defined(__DOXYGEN__)
-GPTDriver GPTD20;
+hal_gpt_driver_c GPTD20;
 #endif
 
 /**
@@ -190,7 +189,7 @@ GPTDriver GPTD20;
  * @note    The driver GPTD21 allocates the timer TIM21 when enabled.
  */
 #if STM32_GPT_USE_TIM21 || defined(__DOXYGEN__)
-GPTDriver GPTD21;
+hal_gpt_driver_c GPTD21;
 #endif
 
 /**
@@ -198,7 +197,7 @@ GPTDriver GPTD21;
  * @note    The driver GPTD22 allocates the timer TIM22 when enabled.
  */
 #if STM32_GPT_USE_TIM22 || defined(__DOXYGEN__)
-GPTDriver GPTD22;
+hal_gpt_driver_c GPTD22;
 #endif
 
 /*===========================================================================*/
@@ -324,16 +323,16 @@ void gpt_lld_init(void) {
 /**
  * @brief   Configures and activates the GPT peripheral.
  *
- * @param[in] gptp      pointer to the @p GPTDriver object
+ * @param[in] gptp      pointer to the @p hal_gpt_driver_c object
  * @return              The operation status.
  *
  * @notapi
  */
-msg_t gpt_lld_start(GPTDriver *gptp) {
-  const GPTConfig *cfg;
+msg_t gpt_lld_start(hal_gpt_driver_c *gptp) {
+  const hal_gpt_config_t *cfg;
   uint16_t psc;
 
-  cfg = (const GPTConfig *)gptp->config;
+  cfg = (const hal_gpt_config_t *)gptp->config;
   if (cfg == NULL) {
     cfg = gpt_lld_selcfg(gptp, 0U);
   }
@@ -601,11 +600,11 @@ msg_t gpt_lld_start(GPTDriver *gptp) {
 /**
  * @brief   Deactivates the GPT peripheral.
  *
- * @param[in] gptp      pointer to the @p GPTDriver object
+ * @param[in] gptp      pointer to the @p hal_gpt_driver_c object
  *
  * @notapi
  */
-void gpt_lld_stop(GPTDriver *gptp) {
+void gpt_lld_stop(hal_gpt_driver_c *gptp) {
 
   gptp->tim->CR1  = 0U;
   gptp->tim->DIER = 0U;
@@ -732,7 +731,8 @@ void gpt_lld_stop(GPTDriver *gptp) {
 #endif
 }
 
-const GPTConfig *gpt_lld_setcfg(GPTDriver *gptp, const GPTConfig *config) {
+const hal_gpt_config_t *gpt_lld_setcfg(hal_gpt_driver_c *gptp,
+                                       const hal_gpt_config_t *config) {
   (void)gptp;
 
   if (config == NULL) {
@@ -742,7 +742,8 @@ const GPTConfig *gpt_lld_setcfg(GPTDriver *gptp, const GPTConfig *config) {
   return config;
 }
 
-const GPTConfig *gpt_lld_selcfg(GPTDriver *gptp, unsigned cfgnum) {
+const hal_gpt_config_t *gpt_lld_selcfg(hal_gpt_driver_c *gptp,
+                                       unsigned cfgnum) {
   (void)gptp;
 
   if (cfgnum != 0U) {
@@ -752,7 +753,7 @@ const GPTConfig *gpt_lld_selcfg(GPTDriver *gptp, unsigned cfgnum) {
   return &gpt_default_config;
 }
 
-void gpt_lld_set_callback(GPTDriver *gptp, drv_cb_t cb) {
+void gpt_lld_set_callback(hal_gpt_driver_c *gptp, drv_cb_t cb) {
   (void)gptp;
   (void)cb;
 }
@@ -761,12 +762,12 @@ void gpt_lld_set_callback(GPTDriver *gptp, drv_cb_t cb) {
  * @brief   Starts the timer in continuous mode.
  * @note    Interval values 0 and 1 are invalid on this architecture.
  *
- * @param[in] gptp      pointer to the @p GPTDriver object
+ * @param[in] gptp      pointer to the @p hal_gpt_driver_c object
  * @param[in] interval  period in ticks
  *
  * @notapi
  */
-void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t interval) {
+void gpt_lld_start_timer(hal_gpt_driver_c *gptp, gptcnt_t interval) {
 
   osalDbgAssert(interval > (gptcnt_t)0, "invalid interval");
 
@@ -786,11 +787,11 @@ void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t interval) {
 /**
  * @brief   Stops the timer.
  *
- * @param[in] gptp      pointer to the @p GPTDriver object
+ * @param[in] gptp      pointer to the @p hal_gpt_driver_c object
  *
  * @notapi
  */
-void gpt_lld_stop_timer(GPTDriver *gptp) {
+void gpt_lld_stop_timer(hal_gpt_driver_c *gptp) {
 
   gptp->tim->CR1 = 0U;
   gptp->tim->SR  = 0U;
@@ -804,12 +805,12 @@ void gpt_lld_stop_timer(GPTDriver *gptp) {
  *          this function is only recommended for short delays.
  * @note    Interval values 0 and 1 are invalid on this architecture.
  *
- * @param[in] gptp      pointer to the @p GPTDriver object
+ * @param[in] gptp      pointer to the @p hal_gpt_driver_c object
  * @param[in] interval  time interval in ticks
  *
  * @notapi
  */
-void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval) {
+void gpt_lld_polled_delay(hal_gpt_driver_c *gptp, gptcnt_t interval) {
 
   osalDbgAssert(interval > (gptcnt_t)0, "invalid interval");
 
@@ -827,11 +828,11 @@ void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval) {
 /**
  * @brief   Shared IRQ handler.
  *
- * @param[in] gptp      pointer to a @p GPTDriver object
+ * @param[in] gptp      pointer to a @p hal_gpt_driver_c object
  *
  * @notapi
  */
-void gpt_lld_serve_interrupt(GPTDriver *gptp) {
+void gpt_lld_serve_interrupt(hal_gpt_driver_c *gptp) {
   uint32_t sr;
 
   sr  = gptp->tim->SR;
