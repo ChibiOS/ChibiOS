@@ -86,6 +86,8 @@
 //#include "stm32_spi5.inc"
 //#include "stm32_spi6.inc"
 
+#include "stm32_octospi1.inc"
+
 #include "stm32_tim1.inc"
 #include "stm32_tim2.inc"
 #include "stm32_tim3.inc"
@@ -165,6 +167,7 @@ void irqInit(void) {
 //  spi5_irq_init();
 //  spi6_irq_init();
 
+  octospi1_irq_init();
   rtc_irq_init();
 
   tim1_irq_init();
@@ -241,6 +244,7 @@ void irqDeinit(void) {
 //  spi5_irq_deinit();
 //  spi6_irq_deinit();
 
+  octospi1_irq_deinit();
   rtc_irq_deinit();
 
   tim1_irq_deinit();
