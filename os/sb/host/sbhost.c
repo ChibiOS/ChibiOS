@@ -80,9 +80,21 @@ static inline uint32_t get_next_po2(uint32_t v) {
 }
 
 static size_t get_mpu_alignment(memory_area_t *map) {
-  size_t basealign, sizealign;
+  size_t basealign, sizealign, regionsize;
 
-  sizealign = get_next_po2(map->size) / 4U;
+  regionsize = get_next_po2(map->size);
+  if (regionsize < 32U) {
+    regionsize = 32U;
+  }
+
+  /* Small ARMv7-M MPU regions must be mapped exactly because SRD is only
+     available from 256-byte regions upward.*/
+  if (regionsize < 256U) {
+    map->size = regionsize;
+    return regionsize;
+  }
+
+  sizealign = regionsize / 4U;
   map->size = MEM_ALIGN_NEXT(map->size, sizealign);
   basealign = get_next_po2(map->size);
 
@@ -109,7 +121,13 @@ static bool get_mpu_settings(const sb_memory_region_t *mrp,
   /* Area boundaries.*/
   area_base = (uint32_t)mrp->area.base;
   area_size = (uint32_t)mrp->area.size;
+  if (area_size < 32U) {
+    return true;
+  }
   area_end = area_base + area_size;
+  if (area_end < area_base) {
+    return true;
+  }
 
   /* Calculating the smallest region containing the requested area.
      The region size is the area size aligned to the next power of 2,
@@ -117,39 +135,52 @@ static bool get_mpu_settings(const sb_memory_region_t *mrp,
   region_size = get_next_po2(area_size);
   region_base = MEM_ALIGN_PREV(area_base, region_size);
 
-  /* Checking if the area fits entirely in the calculated region, if not then
-     region size is doubled.*/
-  if (area_end <= region_base + region_size) {
-    /* The area fits entirely in the region, calculating the sub-regions
-       size.*/
-    subregion_size = region_size / 8U;
+  /* Exact regions are always legal on ARMv7-M, even below the SRD threshold.*/
+  if ((region_size >= 32U) &&
+      (area_base == region_base) &&
+      (area_size == region_size)) {
+    srd = 0U;
   }
   else {
-    /* It does not fit, doubling the region size, re-basing the region.*/
-    region_size *= 2U;
-    region_base = MEM_ALIGN_PREV(area_base, region_size);
-    subregion_size = region_size / 8U;
-  }
+    /* Sub-region carving is only available for 256-byte regions and above.*/
+    if (region_size < 256U) {
+      return true;
+    }
 
-  /* Constraint, the area base address must be aligned to a sub-region
-     boundary.*/
-  if (!MEM_IS_ALIGNED(area_base, subregion_size)) {
-    return true;
-  }
+    /* Checking if the area fits entirely in the calculated region, if not then
+       region size is doubled.*/
+    if (area_end <= region_base + region_size) {
+      /* The area fits entirely in the region, calculating the sub-regions
+         size.*/
+      subregion_size = region_size / 8U;
+    }
+    else {
+      /* It does not fit, doubling the region size, re-basing the region.*/
+      region_size *= 2U;
+      region_base = MEM_ALIGN_PREV(area_base, region_size);
+      subregion_size = region_size / 8U;
+    }
 
-  /* Constraint, the area size must also be aligned to a sub-region
-     size.*/
-  if (!MEM_IS_ALIGNED(area_size, subregion_size)) {
-    return true;
-  }
+    /* Constraint, the area base address must be aligned to a sub-region
+       boundary.*/
+    if (!MEM_IS_ALIGNED(area_base, subregion_size)) {
+      return true;
+    }
 
-  /* Calculating the sub-regions disable mask.*/
-  static const uint8_t srd_lower[] = {0x00U, 0x01U, 0x03U, 0x07U,
-                                      0x0FU, 0x1FU, 0x3FU, 0x7FU};
-  static const uint8_t srd_upper[] = {0x00U, 0x80U, 0xC0U, 0xE0U,
-                                      0xF0U, 0xF8U, 0xFCU, 0xFEU};
-  srd = (uint32_t)srd_lower[(area_base - region_base) / subregion_size] |
-        (uint32_t)srd_upper[(region_base + region_size - area_end) / subregion_size];
+    /* Constraint, the area size must also be aligned to a sub-region
+       size.*/
+    if (!MEM_IS_ALIGNED(area_size, subregion_size)) {
+      return true;
+    }
+
+    /* Calculating the sub-regions disable mask.*/
+    static const uint8_t srd_lower[] = {0x00U, 0x01U, 0x03U, 0x07U,
+                                        0x0FU, 0x1FU, 0x3FU, 0x7FU};
+    static const uint8_t srd_upper[] = {0x00U, 0x80U, 0xC0U, 0xE0U,
+                                        0xF0U, 0xF8U, 0xFCU, 0xFEU};
+    srd = (uint32_t)srd_lower[(area_base - region_base) / subregion_size] |
+          (uint32_t)srd_upper[(region_base + region_size - area_end) / subregion_size];
+  }
 
   /* MPU registers settings.*/
   mpur->rbar = region_base;
@@ -212,7 +243,13 @@ static bool get_mpu_settings(const sb_memory_region_t *mrp,
   /* Area boundaries.*/
   area_base = (uint32_t)mrp->area.base;
   area_size = (uint32_t)mrp->area.size;
+  if (area_size < 32U) {
+    return true;
+  }
   area_end = area_base + area_size;
+  if (area_end < area_base) {
+    return true;
+  }
 
   if (!MEM_IS_ALIGNED(area_base, 32U) || !MEM_IS_ALIGNED(area_end, 32U)) {
     return true;
@@ -220,15 +257,15 @@ static bool get_mpu_settings(const sb_memory_region_t *mrp,
 
 
   /* MPU registers base settings.*/
-  mpur->rbar = area_base | MPU_RBAR_SH_OUTER;
-  mpur->rlar = area_end | MPU_RLAR_ENABLE;
+  mpur->rbar = (area_base & MPU_RBAR_BASE_MASK) | MPU_RBAR_SH_OUTER;
+  mpur->rlar = ((area_end - 1U) & MPU_RLAR_LIMIT_MASK) | MPU_RLAR_ENABLE;
 
   /* Region attributes.*/
   if (sb_reg_is_writable(mrp)) {
     mpur->rbar |= MPU_RBAR_AP_RW_RW;
   }
   else {
-    mpur->rbar |= MPU_RBAR_AP_RW_RO;
+    mpur->rbar |= MPU_RBAR_AP_RO_RO;
   }
   switch (sb_reg_get_type(mrp)) {
   case SB_REG_TYPE_DEVICE:

@@ -51,18 +51,18 @@
 #define MPU_RBAR_AP_RO_NA                   MPU_RBAR_AP(2U)
 #define MPU_RBAR_AP_RO_RO                   MPU_RBAR_AP(3U)
 #define MPU_RBAR_SH_MASK                    (3U << 3)
-#define MPU_RBAR_SH(n)                      ((n) << 1)
+#define MPU_RBAR_SH(n)                      ((n) << 3)
 #define MPU_RBAR_SH_NO                      MPU_RBAR_SH(0U)
-#define MPU_RBAR_SH_OUTER                   MPU_RBAR_SH(1U)
-#define MPU_RBAR_SH_INNER                   MPU_RBAR_SH(2U)
+#define MPU_RBAR_SH_OUTER                   MPU_RBAR_SH(2U)
+#define MPU_RBAR_SH_INNER                   MPU_RBAR_SH(3U)
 #define MPU_RBAR_BASE_MASK                  0xFFFFFFE0U
-#define MPU_RBAR_BASE(n)                    ((n) << 5)
+#define MPU_RBAR_BASE(n)                    ((n) & MPU_RBAR_BASE_MASK)
 
 #define MPU_RLAR_ENABLE                     (1U << 0)
 #define MPU_RLAR_ATTRINDX_MASK              (7U << 1)
 #define MPU_RLAR_ATTRINDX(n)                ((n) << 1)
-#define MPU_RLAR_LIMIT_MASK                 (0x0EFFFFFFU << 5)
-#define MPU_RLAR_LIMIT(n)                   ((n) << 5)
+#define MPU_RLAR_LIMIT_MASK                 0xFFFFFFE0U
+#define MPU_RLAR_LIMIT(n)                   ((n) & MPU_RLAR_LIMIT_MASK)
 
 #define MPU_MAIR0_ATTR0_MASK                ((uint32_t)0xFFU << 0)
 #define MPU_MAIR0_ATTR0(n)                  ((uint32_t)(n) << 0)
