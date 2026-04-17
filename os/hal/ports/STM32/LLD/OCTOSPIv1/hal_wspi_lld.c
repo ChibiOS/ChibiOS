@@ -219,7 +219,7 @@ void wspi_lld_init(void) {
  * @notapi
  */
 void wspi_lld_start(WSPIDriver *wspip) {
-  uint32_t dcr2;
+  uint32_t dcr2 = 0U;
 
   /* If in stopped state then full initialization.*/
   if (wspip->state == WSPI_STOP) {
