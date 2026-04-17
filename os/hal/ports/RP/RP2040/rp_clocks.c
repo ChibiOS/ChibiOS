@@ -95,7 +95,7 @@ void rp_clock_init(void) {
   /* Configure tick generator for ~1 us ticks. */
   WATCHDOG->TICK = WATCHDOG_TICK_ENABLE | (RP_ROSC_ASSUMED_HZ / 1000000U);
 
-  /* Clear clock resus that may be in an unkown state */
+  /* Clear clock resus that may be in an unknown state */
   CLOCKS->RESUS.CTRL = 0U;
 
   rp_xosc_init();
