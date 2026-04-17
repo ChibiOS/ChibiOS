@@ -49,6 +49,6 @@
  * @notapi
  */
 #define RP_PAL_SIO_REG(reg, port)                                               \
-  (*(volatile uint32_t *)((uintptr_t)&SIO->reg + ((port) ? 8 : 0) * sizeof(uint32_t)))
+  ((&SIO->reg)[(port) ? 8U : 0U])
 
 #endif /* RP2040_RP_PAL_LLD_H */

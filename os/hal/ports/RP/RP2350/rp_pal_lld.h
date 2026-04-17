@@ -52,6 +52,6 @@
  * @notapi
  */
 #define RP_PAL_SIO_REG(reg, port)                                               \
-  (*(volatile uint32_t *)((uintptr_t)&SIO->reg + (port) * sizeof(uint32_t)))
+  ((&SIO->reg)[(port)])
 
 #endif /* RP2350_RP_PAL_LLD_H */
