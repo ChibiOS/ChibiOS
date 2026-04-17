@@ -418,10 +418,10 @@ typedef struct {
  */
 #define mdmaChannelClearInterruptX(mdmachp) do {                            \
   (mdmachp)->channel->CIFCR = (STM32_MDMA_CIFCR_CTEIF  |                    \
-                               STM32_MDMA_CIFCR_CBRTIF |                    \
-                               STM32_MDMA_CIFCR_CBRTIF |                    \
                                STM32_MDMA_CIFCR_CCTCIF |                    \
-                               STM32_MDMA_CIFCR_CTEIF);                     \
+                               STM32_MDMA_CIFCR_CBRTIF |                    \
+                               STM32_MDMA_CIFCR_CBTIF  |                    \
+                               STM32_MDMA_CIFCR_CTCIF);                     \
 } while (0)
 
 /**
