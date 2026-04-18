@@ -119,6 +119,9 @@ size_t sb_check_strings_array(sb_class_t *sbp, const char *pp[], size_t max) {
     while ((s = *pp++) != NULL) {
       size_t sn;
 
+      if (n >= max) {
+        return (size_t)0;
+      }
       sn = sb_check_string(sbp, s, max - n);
       if (sn == (size_t)0) {
         return (size_t)0;
