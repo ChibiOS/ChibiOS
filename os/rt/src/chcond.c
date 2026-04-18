@@ -152,6 +152,10 @@ void chCondSignalI(condition_variable_t *cp) {
 
 /**
  * @brief   Signals all threads that are waiting on the condition variable.
+ * @note    CRITICAL: Threads calling chCondWait() MUST be queued
+ *          BEFORE calling chCondBroadcast(), otherwise they will
+ *          miss the broadcast and block indefinitely.
+
  *
  * @param[in] cp        pointer to a @p condition_variable_t object
  *
