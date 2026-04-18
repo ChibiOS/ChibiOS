@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 from pathlib import Path
 import re
@@ -25,19 +26,31 @@ C_KEYWORDS = {
 }
 
 IDENTIFIER_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+MANIFEST_FILENAME = "romfs.dynamic.json"
 
 
 @dataclass(frozen=True)
 class FileEntry:
     name: str
-    data: bytes
     mode: str
+    flags: str
+    size: str
+    data: bytes | None = None
+    ops: str | None = None
+    arg: str | None = None
 
 
 @dataclass(frozen=True)
 class DirEntry:
     path: str
     files: tuple[FileEntry, ...]
+
+
+@dataclass(frozen=True)
+class DynamicManifest:
+    includes: tuple[str, ...]
+    externs: tuple[str, ...]
+    files: tuple[tuple[str, FileEntry], ...]
 
 
 def fail(message: str) -> NoReturn:
@@ -93,6 +106,78 @@ def posix_path(root: Path, entry: Path) -> str:
     return "/" + relative.as_posix()
 
 
+def join_path(dir_path: str, name: str) -> str:
+    if dir_path == "/":
+        return "/" + name
+    return dir_path + "/" + name
+
+
+def split_path(path: str) -> tuple[str, str]:
+    if path == "/" or not path.startswith("/"):
+        fail(f"invalid dynamic file path: {path!r}")
+    dir_path, _, name = path.rpartition("/")
+    if not name:
+        fail(f"invalid dynamic file path: {path!r}")
+    if not dir_path:
+        dir_path = "/"
+    return dir_path, name
+
+
+def normalize_dynamic_path(raw_path: str) -> str:
+    if not isinstance(raw_path, str):
+        fail("dynamic entry path must be a string")
+    if not raw_path.startswith("/"):
+        fail(f"dynamic entry path must be absolute: {raw_path!r}")
+    if "\\" in raw_path:
+        fail(f"dynamic entry path must use '/' separators: {raw_path!r}")
+
+    parts = raw_path.split("/")
+    normalized: list[str] = []
+    for part in parts[1:]:
+        if part in ("", ".", ".."):
+            fail(f"invalid dynamic entry path component in {raw_path!r}")
+        if part == MANIFEST_FILENAME:
+            fail(f"dynamic entry path cannot use reserved name {MANIFEST_FILENAME!r}")
+        normalized.append(part)
+
+    if not normalized:
+        fail("dynamic entry path cannot refer to the root directory")
+
+    return "/" + "/".join(normalized)
+
+
+def normalize_c_expr(value: object, field_name: str, *, default: str | None = None) -> str:
+    if value is None:
+        if default is None:
+            fail(f"missing required field {field_name!r}")
+        return default
+    if isinstance(value, int):
+        return str(value)
+    if not isinstance(value, str):
+        fail(f"field {field_name!r} must be a string or integer")
+    expr = value.strip()
+    if not expr:
+        fail(f"field {field_name!r} cannot be empty")
+    return expr
+
+
+def normalize_string_list(values: object, field_name: str) -> tuple[str, ...]:
+    if values is None:
+        return ()
+    if not isinstance(values, list):
+        fail(f"field {field_name!r} must be a list")
+
+    normalized: list[str] = []
+    for index, value in enumerate(values):
+        if not isinstance(value, str):
+            fail(f"field {field_name!r}[{index}] must be a string")
+        text = value.strip()
+        if not text:
+            fail(f"field {field_name!r}[{index}] cannot be empty")
+        normalized.append(text)
+    return tuple(normalized)
+
+
 def file_mode(entry: Path) -> str:
     mode = "VFS_MODE_S_IRUSR"
     if os.access(entry, os.X_OK):
@@ -105,16 +190,23 @@ def scan_dir(root: Path, current: Path) -> list[DirEntry]:
     files: list[FileEntry] = []
 
     for entry in sorted(current.iterdir(), key=lambda item: item.name):
+        if current == root and entry.name == MANIFEST_FILENAME:
+            continue
         if entry.is_symlink():
             fail(f"symbolic links are not supported: {entry}")
         if entry.is_dir():
             subdirs.append(entry)
         elif entry.is_file():
+            data = entry.read_bytes()
             files.append(
                 FileEntry(
                     name=entry.name,
-                    data=entry.read_bytes(),
                     mode=file_mode(entry),
+                    flags="0U",
+                    size=str(len(data)),
+                    data=data,
+                    ops=None,
+                    arg="NULL",
                 )
             )
         else:
@@ -126,6 +218,100 @@ def scan_dir(root: Path, current: Path) -> list[DirEntry]:
     for subdir in subdirs:
         entries.extend(scan_dir(root, subdir))
     return entries
+
+
+def load_dynamic_manifest(root: Path) -> DynamicManifest:
+    manifest_path = root / MANIFEST_FILENAME
+    if not manifest_path.exists():
+        return DynamicManifest(includes=(), externs=(), files=())
+    if not manifest_path.is_file():
+        fail(f"manifest path is not a regular file: {manifest_path}")
+
+    try:
+        raw = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        fail(f"invalid JSON in {manifest_path}: {exc}")
+
+    if not isinstance(raw, dict):
+        fail(f"{manifest_path} must contain a JSON object")
+
+    includes = normalize_string_list(raw.get("includes"), "includes")
+    externs = normalize_string_list(raw.get("externs"), "externs")
+
+    raw_dynamic = raw.get("dynamic", [])
+    if not isinstance(raw_dynamic, list):
+        fail("field 'dynamic' must be a list")
+
+    files: list[tuple[str, FileEntry]] = []
+    for index, item in enumerate(raw_dynamic):
+        if not isinstance(item, dict):
+            fail(f"field 'dynamic'[{index}] must be an object")
+
+        path = normalize_dynamic_path(item.get("path"))
+        _, name = split_path(path)
+        files.append(
+            (
+                path,
+                FileEntry(
+                    name=name,
+                    mode=normalize_c_expr(item.get("mode"), "mode", default="VFS_MODE_S_IRUSR"),
+                    flags=normalize_c_expr(item.get("flags"), "flags", default="0U"),
+                    size=normalize_c_expr(item.get("size"), "size", default="0"),
+                    data=None,
+                    ops=normalize_c_expr(item.get("ops"), "ops"),
+                    arg=normalize_c_expr(item.get("arg"), "arg", default="NULL"),
+                ),
+            )
+        )
+
+    return DynamicManifest(
+        includes=includes,
+        externs=externs,
+        files=tuple(files),
+    )
+
+
+def merge_dirs(static_dirs: list[DirEntry], manifest: DynamicManifest) -> list[DirEntry]:
+    existing_dirs = {directory.path for directory in static_dirs}
+    static_file_paths = {
+        join_path(directory.path, file_entry.name)
+        for directory in static_dirs
+        for file_entry in directory.files
+    }
+    merged: dict[str, list[FileEntry]] = {
+        directory.path: list(directory.files)
+        for directory in static_dirs
+    }
+    dynamic_paths: set[str] = set()
+
+    for path, file_entry in manifest.files:
+        dir_path, _ = split_path(path)
+        if dir_path not in existing_dirs:
+            fail(
+                f"dynamic entry parent directory does not exist in source tree: "
+                f"{path!r}"
+            )
+        if path in existing_dirs:
+            fail(f"dynamic entry collides with directory path: {path!r}")
+        if path in static_file_paths:
+            fail(f"dynamic entry collides with static file path: {path!r}")
+        if path in dynamic_paths:
+            fail(f"duplicate dynamic entry path: {path!r}")
+
+        dynamic_paths.add(path)
+        merged[dir_path].append(file_entry)
+
+    result: list[DirEntry] = []
+    for directory in static_dirs:
+        files = tuple(sorted(merged[directory.path], key=lambda item: item.name))
+        result.append(DirEntry(path=directory.path, files=files))
+    return result
+
+
+def format_include(header: str) -> str:
+    if header.startswith("<") and header.endswith(">"):
+        return f"#include {header}"
+    return f'#include "{header}"'
 
 
 def emit_header(namespace: str) -> str:
@@ -154,7 +340,12 @@ extern const vfs_romfs_tree_t {namespace}_romfs;
 """
 
 
-def emit_source(namespace: str, header_name: str, dirs: list[DirEntry]) -> str:
+def emit_source(
+    namespace: str,
+    header_name: str,
+    dirs: list[DirEntry],
+    manifest: DynamicManifest,
+) -> str:
     lines: list[str] = []
 
     lines.append("/*")
@@ -162,7 +353,24 @@ def emit_source(namespace: str, header_name: str, dirs: list[DirEntry]) -> str:
     lines.append("*/")
     lines.append("")
     lines.append(f'#include "{header_name}"')
+    for include in manifest.includes:
+        lines.append(format_include(include))
     lines.append("")
+
+    dynamic_ops = sorted(
+        {
+            file_entry.ops
+            for directory in dirs
+            for file_entry in directory.files
+            if file_entry.ops is not None
+        }
+    )
+    for ops in dynamic_ops:
+        lines.append(f"extern const vfs_romfs_dynamic_ops_t {ops};")
+    for declaration in manifest.externs:
+        lines.append(declaration)
+    if dynamic_ops or manifest.externs:
+        lines.append("")
 
     for dir_index, directory in enumerate(dirs):
         for file_index, file_entry in enumerate(directory.files):
@@ -179,20 +387,21 @@ def emit_source(namespace: str, header_name: str, dirs: list[DirEntry]) -> str:
         )
         if directory.files:
             for file_index, file_entry in enumerate(directory.files):
+                data_symbol = "NULL"
                 if file_entry.data:
                     data_symbol = f"{namespace}_file_{dir_index}_{file_index}_data"
-                else:
-                    data_symbol = "NULL"
+                ops_expr = "NULL"
+                if file_entry.ops is not None:
+                    ops_expr = f"&{file_entry.ops}"
+
                 lines.append("  {")
-                lines.append(
-                    f"    .name = {escape_c_string(file_entry.name)},"
-                )
+                lines.append(f"    .name = {escape_c_string(file_entry.name)},")
                 lines.append(f"    .mode = {file_entry.mode},")
-                lines.append("    .flags = 0U,")
-                lines.append(f"    .size = (vfs_offset_t){len(file_entry.data)},")
+                lines.append(f"    .flags = {file_entry.flags},")
+                lines.append(f"    .size = (vfs_offset_t){file_entry.size},")
                 lines.append(f"    .data = {data_symbol},")
-                lines.append("    .ops = NULL,")
-                lines.append("    .arg = NULL,")
+                lines.append(f"    .ops = {ops_expr},")
+                lines.append(f"    .arg = {file_entry.arg},")
                 lines.append("  },")
         lines.append("};")
         lines.append("")
@@ -242,7 +451,9 @@ def main(argv: list[str]) -> int:
     output_dir = Path(args.output_dir).resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    dirs = sorted(scan_dir(input_dir, input_dir), key=lambda item: item.path)
+    static_dirs = sorted(scan_dir(input_dir, input_dir), key=lambda item: item.path)
+    manifest = load_dynamic_manifest(input_dir)
+    dirs = merge_dirs(static_dirs, manifest)
     header_name = f"{namespace}_romfs.h"
     source_name = f"{namespace}_romfs.c"
 
@@ -251,7 +462,7 @@ def main(argv: list[str]) -> int:
 
     header_path.write_text(emit_header(namespace), encoding="utf-8", newline="\n")
     source_path.write_text(
-        emit_source(namespace, header_name, dirs),
+        emit_source(namespace, header_name, dirs, manifest),
         encoding="utf-8",
         newline="\n",
     )
