@@ -423,7 +423,7 @@ static inline time_usecs_t chTimeI2US(sysinterval_t interval) {
            (time_conv_t)CH_CFG_ST_FREQUENCY - (time_conv_t)1) /
           (time_conv_t)CH_CFG_ST_FREQUENCY;
 
-  chDbgAssert(usecs <= (time_conv_t)((time_usecs_t)-1),
+  chDbgAssert(usecs < (time_conv_t)((time_usecs_t)-1),
               "conversion overflow");
 
   return (time_usecs_t)usecs;
