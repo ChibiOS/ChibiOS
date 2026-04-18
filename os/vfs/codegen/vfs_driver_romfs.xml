@@ -222,6 +222,10 @@
         ctype="const vfs_romfs_compressed_ops_t">
         <brief>ROMFS chunked stored backend.</brief>
       </variable>
+      <variable name="vfs_romfs_chunked_packbits_ops"
+        ctype="const vfs_romfs_compressed_ops_t">
+        <brief>ROMFS chunked PackBits backend.</brief>
+      </variable>
     </variables>
     <functions>
       <function name="__drv_rom_init" ctype="void">

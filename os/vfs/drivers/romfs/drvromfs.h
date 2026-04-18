@@ -264,6 +264,7 @@ struct vfs_rom_driver {
 
 extern struct vfs_rom_driver_static_struct vfs_rom_driver_static;
 extern const vfs_romfs_compressed_ops_t vfs_romfs_chunked_stored_ops;
+extern const vfs_romfs_compressed_ops_t vfs_romfs_chunked_packbits_ops;
 
 #ifdef __cplusplus
 extern "C" {

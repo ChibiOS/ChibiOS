@@ -51,6 +51,38 @@ class DynamicManifest:
     includes: tuple[str, ...]
     externs: tuple[str, ...]
     files: tuple[tuple[str, FileEntry], ...]
+    compression: "CompressionSettings"
+
+
+@dataclass(frozen=True)
+class CompressionRule:
+    selector_kind: str
+    selector_value: str
+    mode: str
+
+
+@dataclass(frozen=True)
+class CompressionSettings:
+    default_mode: str
+    rules: tuple[CompressionRule, ...]
+
+
+@dataclass(frozen=True)
+class StaticPayload:
+    kind: str
+    flags_expr: str
+    size_expr: str
+    raw_data: bytes | None = None
+    compressed_data: bytes | None = None
+    chunk_offsets: tuple[int, ...] | None = None
+    chunk_size: int = 0
+
+
+COMPRESSION_MODES = {"off", "force", "auto"}
+COMPRESSED_KIND_RAW = "raw"
+COMPRESSED_KIND_PACKBITS = "packbits"
+PACKBITS_CHUNK_SIZE = 256
+PACKBITS_OPS_SYMBOL = "vfs_romfs_chunked_packbits_ops"
 
 
 def fail(message: str) -> NoReturn:
@@ -146,6 +178,255 @@ def normalize_dynamic_path(raw_path: str) -> str:
     return "/" + "/".join(normalized)
 
 
+def normalize_dir_path(raw_path: object, field_name: str) -> str:
+    if not isinstance(raw_path, str):
+        fail(f"field {field_name!r} must be a string")
+    if not raw_path.startswith("/"):
+        fail(f"field {field_name!r} must be absolute: {raw_path!r}")
+    if "\\" in raw_path:
+        fail(f"field {field_name!r} must use '/' separators: {raw_path!r}")
+
+    parts = raw_path.split("/")
+    normalized: list[str] = []
+    for part in parts[1:]:
+        if part in ("", "."):
+            continue
+        if part == "..":
+            fail(f"invalid directory path component in {raw_path!r}")
+        if part == MANIFEST_FILENAME:
+            fail(f"directory path cannot use reserved name {MANIFEST_FILENAME!r}")
+        normalized.append(part)
+
+    if not normalized:
+        return "/"
+    return "/" + "/".join(normalized)
+
+
+def normalize_suffix(value: object, field_name: str) -> str:
+    if not isinstance(value, str):
+        fail(f"field {field_name!r} must be a string")
+    suffix = value.strip()
+    if not suffix:
+        fail(f"field {field_name!r} cannot be empty")
+    if "/" in suffix or "\\" in suffix:
+        fail(f"field {field_name!r} must not contain path separators")
+    return suffix
+
+
+def normalize_compression_mode(value: object, field_name: str, *, default: str) -> str:
+    if value is None:
+        return default
+    if not isinstance(value, str):
+        fail(f"field {field_name!r} must be a string")
+    mode = value.strip().lower()
+    if mode not in COMPRESSION_MODES:
+        fail(
+            f"field {field_name!r} must be one of: "
+            + ", ".join(sorted(COMPRESSION_MODES))
+        )
+    return mode
+
+
+def load_compression_settings(raw: object) -> CompressionSettings:
+    if raw is None:
+        return CompressionSettings(default_mode="off", rules=())
+    if not isinstance(raw, dict):
+        fail("field 'compression' must be an object")
+
+    raw_default = raw.get("default")
+    if raw_default is None:
+        default_mode = "off"
+    else:
+        if not isinstance(raw_default, dict):
+            fail("field 'compression.default' must be an object")
+        default_mode = normalize_compression_mode(
+            raw_default.get("mode"),
+            "compression.default.mode",
+            default="off",
+        )
+
+    raw_rules = raw.get("rules", [])
+    if not isinstance(raw_rules, list):
+        fail("field 'compression.rules' must be a list")
+
+    rules: list[CompressionRule] = []
+    for index, item in enumerate(raw_rules):
+        if not isinstance(item, dict):
+            fail(f"field 'compression.rules'[{index}] must be an object")
+
+        selectors: list[tuple[str, str]] = []
+        if "path" in item:
+            selectors.append(
+                ("path", normalize_dynamic_path(item.get("path")))
+            )
+        if "dir" in item:
+            selectors.append(
+                ("dir", normalize_dir_path(item.get("dir"), f"compression.rules[{index}].dir"))
+            )
+        if "suffix" in item:
+            selectors.append(
+                ("suffix", normalize_suffix(item.get("suffix"), f"compression.rules[{index}].suffix"))
+            )
+        if len(selectors) != 1:
+            fail(
+                f"field 'compression.rules'[{index}] must contain exactly one of "
+                "'path', 'dir' or 'suffix'"
+            )
+
+        selector_kind, selector_value = selectors[0]
+        rules.append(
+            CompressionRule(
+                selector_kind=selector_kind,
+                selector_value=selector_value,
+                mode=normalize_compression_mode(
+                    item.get("mode"),
+                    f"compression.rules[{index}].mode",
+                    default=default_mode,
+                ),
+            )
+        )
+
+    return CompressionSettings(default_mode=default_mode, rules=tuple(rules))
+
+
+def compression_rule_matches(rule: CompressionRule, path: str) -> bool:
+    if rule.selector_kind == "path":
+        return path == rule.selector_value
+    if rule.selector_kind == "dir":
+        if rule.selector_value == "/":
+            return True
+        return path.startswith(rule.selector_value + "/")
+    if rule.selector_kind == "suffix":
+        return path.endswith(rule.selector_value)
+    fail(f"unsupported compression selector kind: {rule.selector_kind}")
+
+
+def resolve_compression_mode(path: str, settings: CompressionSettings) -> str:
+    path_mode: str | None = None
+    general_mode: str | None = None
+
+    for rule in settings.rules:
+        if not compression_rule_matches(rule, path):
+            continue
+        if rule.selector_kind == "path":
+            path_mode = rule.mode
+        else:
+            general_mode = rule.mode
+
+    if path_mode is not None:
+        return path_mode
+    if general_mode is not None:
+        return general_mode
+    return settings.default_mode
+
+
+def get_repeated_run_size(data: bytes, offset: int) -> int:
+    run_size = 1
+
+    while ((offset + run_size) < len(data)) and (run_size < 128):
+        if data[offset + run_size] != data[offset]:
+            break
+        run_size += 1
+
+    return run_size
+
+
+def encode_packbits_chunk(data: bytes) -> bytes:
+    encoded = bytearray()
+    offset = 0
+
+    while offset < len(data):
+        run_size = get_repeated_run_size(data, offset)
+        if run_size >= 3:
+            encoded.append(257 - run_size)
+            encoded.append(data[offset])
+            offset += run_size
+            continue
+
+        literal_start = offset
+        literal_size = 0
+        while offset < len(data):
+            run_size = get_repeated_run_size(data, offset)
+            if run_size >= 3:
+                break
+            if literal_size + run_size > 128:
+                break
+            offset += run_size
+            literal_size += run_size
+
+        encoded.append(literal_size - 1)
+        encoded.extend(data[literal_start:literal_start + literal_size])
+
+    return bytes(encoded)
+
+
+def encode_packbits_file(data: bytes, chunk_size: int) -> tuple[bytes, tuple[int, ...]]:
+    encoded = bytearray()
+    offsets = [0]
+
+    for offset in range(0, len(data), chunk_size):
+        chunk = data[offset:offset + chunk_size]
+        encoded.extend(encode_packbits_chunk(chunk))
+        offsets.append(len(encoded))
+
+    return bytes(encoded), tuple(offsets)
+
+
+def get_effective_compressed_size(compressed_data: bytes, chunk_offsets: tuple[int, ...]) -> int:
+    return len(compressed_data) + len(chunk_offsets) * 4
+
+
+def build_static_payload(path: str,
+                         file_entry: FileEntry,
+                         settings: CompressionSettings) -> StaticPayload:
+    mode = resolve_compression_mode(path, settings)
+
+    if mode == "off":
+        return StaticPayload(
+            kind=COMPRESSED_KIND_RAW,
+            flags_expr=file_entry.flags,
+            size_expr=f"(vfs_offset_t){file_entry.size}",
+            raw_data=file_entry.data,
+        )
+
+    if file_entry.data is None:
+        fail(f"static compression requested for non-static file: {path!r}")
+
+    compressed_data, chunk_offsets = encode_packbits_file(file_entry.data,
+                                                          PACKBITS_CHUNK_SIZE)
+    if mode == "auto":
+        if get_effective_compressed_size(compressed_data, chunk_offsets) >= len(file_entry.data):
+            return StaticPayload(
+                kind=COMPRESSED_KIND_RAW,
+                flags_expr=file_entry.flags,
+                size_expr=f"(vfs_offset_t){file_entry.size}",
+                raw_data=file_entry.data,
+            )
+
+    return StaticPayload(
+        kind=COMPRESSED_KIND_PACKBITS,
+        flags_expr=f"({file_entry.flags}) | VFS_ROMFS_FILE_TYPE_COMPRESSED",
+        size_expr=f"(vfs_offset_t){file_entry.size}",
+        compressed_data=compressed_data,
+        chunk_offsets=chunk_offsets,
+        chunk_size=PACKBITS_CHUNK_SIZE,
+    )
+
+
+def build_static_payloads(dirs: list[DirEntry],
+                          settings: CompressionSettings) -> dict[tuple[int, int], StaticPayload]:
+    payloads: dict[tuple[int, int], StaticPayload] = {}
+
+    for dir_index, directory in enumerate(dirs):
+        for file_index, file_entry in enumerate(directory.files):
+            path = join_path(directory.path, file_entry.name)
+            if file_entry.ops is not None:
+                continue
+            payloads[(dir_index, file_index)] = build_static_payload(path, file_entry, settings)
+
+    return payloads
+
+
 def normalize_c_expr(value: object, field_name: str, *, default: str | None = None) -> str:
     if value is None:
         if default is None:
@@ -229,7 +510,12 @@ def scan_dir(root: Path, current: Path) -> list[DirEntry]:
 def load_dynamic_manifest(root: Path) -> DynamicManifest:
     manifest_path = root / MANIFEST_FILENAME
     if not manifest_path.exists():
-        return DynamicManifest(includes=(), externs=(), files=())
+        return DynamicManifest(
+            includes=(),
+            externs=(),
+            files=(),
+            compression=CompressionSettings(default_mode="off", rules=()),
+        )
     if not manifest_path.is_file():
         fail(f"manifest path is not a regular file: {manifest_path}")
 
@@ -243,6 +529,7 @@ def load_dynamic_manifest(root: Path) -> DynamicManifest:
 
     includes = normalize_string_list(raw.get("includes"), "includes")
     externs = normalize_string_list(raw.get("externs"), "externs")
+    compression = load_compression_settings(raw.get("compression"))
 
     raw_dynamic = raw.get("dynamic", [])
     if not isinstance(raw_dynamic, list):
@@ -274,6 +561,7 @@ def load_dynamic_manifest(root: Path) -> DynamicManifest:
         includes=includes,
         externs=externs,
         files=tuple(files),
+        compression=compression,
     )
 
 
@@ -353,6 +641,7 @@ def emit_source(
     manifest: DynamicManifest,
 ) -> str:
     lines: list[str] = []
+    static_payloads = build_static_payloads(dirs, manifest.compression)
 
     lines.append("/*")
     lines.append("    Generated by tools/mkromfs/mkromfs.py. Do not edit manually.")
@@ -380,32 +669,85 @@ def emit_source(
 
     for dir_index, directory in enumerate(dirs):
         for file_index, file_entry in enumerate(directory.files):
-            if file_entry.data:
+            payload = static_payloads.get((dir_index, file_index))
+            if payload is None:
+                continue
+
+            if payload.kind == COMPRESSED_KIND_RAW:
                 lines.append(
                     f"static const uint8_t {namespace}_file_{dir_index}_{file_index}_data[] = {{"
                 )
-                lines.append(format_data_array(file_entry.data))
+                lines.append(format_data_array(payload.raw_data or b""))
                 lines.append("};")
                 lines.append("")
+            elif payload.kind == COMPRESSED_KIND_PACKBITS:
+                offsets_values = payload.chunk_offsets or ()
+
+                lines.append(
+                    f"static const uint8_t {namespace}_file_{dir_index}_{file_index}_packbits_data[] = {{"
+                )
+                lines.append(format_data_array(payload.compressed_data or b""))
+                lines.append("};")
+                lines.append("")
+                lines.append(
+                    f"static const uint32_t {namespace}_file_{dir_index}_{file_index}_packbits_offsets[] = {{"
+                )
+                lines.append(
+                    "  "
+                    + ", ".join(f"{value}U" for value in offsets_values)
+                )
+                lines.append("};")
+                lines.append("")
+                lines.append(
+                    f"static const vfs_romfs_chunked_desc_t {namespace}_file_{dir_index}_{file_index}_packbits_desc = {{"
+                )
+                lines.append(f"  .size = {payload.size_expr},")
+                lines.append(f"  .chunk_size = {payload.chunk_size}U,")
+                lines.append(f"  .chunks_num = {len(offsets_values) - 1}U,")
+                lines.append(
+                    f"  .offsets = {namespace}_file_{dir_index}_{file_index}_packbits_offsets,"
+                )
+                lines.append(
+                    f"  .data = {namespace}_file_{dir_index}_{file_index}_packbits_data,"
+                )
+                lines.append("};")
+                lines.append("")
+            else:
+                fail(f"unsupported static payload kind: {payload.kind}")
 
         lines.append(
             f"static const vfs_romfs_file_desc_t {namespace}_dir_{dir_index}_files[] = {{"
         )
         if directory.files:
             for file_index, file_entry in enumerate(directory.files):
-                data_symbol = "NULL"
-                if file_entry.data:
-                    data_symbol = f"{namespace}_file_{dir_index}_{file_index}_data"
-                flags_expr = render_file_flags(file_entry)
-
                 lines.append("  {")
                 lines.append(f"    .name = {escape_c_string(file_entry.name)},")
                 lines.append(f"    .mode = {file_entry.mode},")
-                lines.append(f"    .flags = {flags_expr},")
-                lines.append(f"    .size = (vfs_offset_t){file_entry.size},")
                 if file_entry.ops is None:
-                    lines.append(f"    .content = {{ .data = {data_symbol} }},")
+                    payload = static_payloads[(dir_index, file_index)]
+
+                    lines.append(f"    .flags = {payload.flags_expr},")
+                    lines.append(f"    .size = {payload.size_expr},")
+                    if payload.kind == COMPRESSED_KIND_RAW:
+                        lines.append(
+                            f"    .content = {{ .data = {namespace}_file_{dir_index}_{file_index}_data }},"
+                        )
+                    elif payload.kind == COMPRESSED_KIND_PACKBITS:
+                        lines.append("    .content = {")
+                        lines.append("      .compressed = {")
+                        lines.append(f"        .ops = &{PACKBITS_OPS_SYMBOL},")
+                        lines.append(
+                            f"        .arg = &{namespace}_file_{dir_index}_{file_index}_packbits_desc,"
+                        )
+                        lines.append("      },")
+                        lines.append("    },")
+                    else:
+                        fail(f"unsupported static payload kind: {payload.kind}")
                 else:
+                    flags_expr = render_file_flags(file_entry)
+
+                    lines.append(f"    .flags = {flags_expr},")
+                    lines.append(f"    .size = (vfs_offset_t){file_entry.size},")
                     lines.append("    .content = {")
                     lines.append("      .dynamic = {")
                     lines.append(f"        .ops = &{file_entry.ops},")

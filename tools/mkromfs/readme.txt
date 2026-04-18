@@ -37,6 +37,11 @@ The file must contain a JSON object. Supported top-level fields are:
   dynamic
     List of dynamic file entries.
 
+  compression
+    Optional compression policy for static files. The policy is evaluated on
+    normalized ROMFS paths using deterministic exact path, directory prefix
+    and filename suffix selectors.
+
   includes
     Optional list of headers to include in the generated .c file.
     Each item can be either a plain header name such as "proc_dyn.h" or a
@@ -53,6 +58,25 @@ Example:
   "externs": [
     "extern const proc_file_arg_t proc_version_arg;"
   ],
+  "compression": {
+    "default": {
+      "mode": "off"
+    },
+    "rules": [
+      {
+        "dir": "/web",
+        "mode": "off"
+      },
+      {
+        "suffix": ".html",
+        "mode": "auto"
+      },
+      {
+        "path": "/index.html",
+        "mode": "force"
+      }
+    ]
+  },
   "dynamic": [
     {
       "path": "/proc/version",
@@ -109,6 +133,78 @@ If "arg" references external symbols, add the necessary declarations through
 "includes" or "externs".
 
 
+Compression Policy
+------------------
+
+The optional "compression" object controls how static files are emitted.
+
+Supported fields:
+
+  default
+    Optional object containing:
+
+      mode
+        Default policy applied when no rule matches.
+        Supported values: off, force, auto
+        Default: off
+
+  rules
+    Optional ordered list of rule objects.
+
+Each rule must contain exactly one selector:
+
+  path
+    Exact absolute ROMFS path, for example "/index.html".
+
+  dir
+    Absolute ROMFS directory prefix, for example "/assets" or "/".
+    A rule with dir "/assets" matches files under "/assets/...".
+
+  suffix
+    Filename or path suffix without path separators, for example ".html".
+
+Rule objects may also contain:
+
+  mode
+    Policy selected by the rule.
+    Supported values: off, force, auto
+    Default: compression.default.mode
+
+Rule resolution is deterministic:
+
+  - Exact "path" rules have higher precedence than "dir" and "suffix" rules.
+  - Within the same selector class, the last matching rule wins.
+  - If no rule matches, compression.default.mode is used.
+
+Rules are evaluated on normalized ROMFS paths only. Matching is
+case-sensitive and always uses '/' separators, independent from the host
+platform.
+
+Current implementation:
+
+  - The tool currently supports a chunked PackBits stream for compressed
+    static files.
+  - Compression is applied independently on fixed 256-byte chunks.
+  - For each compressed file the generated C source emits:
+      - a compressed payload array
+      - a chunk offset table
+      - a chunk descriptor
+      - a file descriptor referencing the ROMFS compressed backend ops table
+  - "force" always emits the compressed representation.
+  - "auto" emits the compressed representation only if:
+      compressed_payload_size + chunk_offset_table_size < raw_file_size
+    otherwise the file is emitted as a normal raw ROMFS file.
+
+Notes:
+
+  - Compression selection only applies to static files.
+  - Dynamic entries are never compressed by mkromfs.
+  - The generated ROMFS image can contain a mix of raw and compressed files.
+  - Runtime support for compressed files in the ROMFS driver must be enabled
+    through DRV_CFG_ROM_ENABLE_COMPRESSION. If support is disabled, opening a
+    compressed file fails cleanly.
+
+
 Validation Rules
 ----------------
 
@@ -120,6 +216,8 @@ The tool rejects:
   - Dynamic paths colliding with static files.
   - Dynamic paths colliding with directories.
   - Dynamic paths whose parent directory does not exist in the source tree.
+  - Compression rules not using exactly one of "path", "dir" or "suffix".
+  - Compression modes outside: off, force, auto.
 
 Parent directories for dynamic files must exist as real directories in the
 input tree. For example, a dynamic file "/proc/uptime" requires a "proc/"

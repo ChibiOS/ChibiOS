@@ -78,6 +78,21 @@ static msg_t validate_file_descriptor(const vfs_romfs_file_desc_t *filep) {
 /* Compression backends are optional, keep the helper code out of the
    binary when the feature is disabled. */
 #if DRV_CFG_ROM_ENABLE_COMPRESSION == TRUE
+static size_t get_chunk_uncompressed_size(const vfs_romfs_chunked_desc_t *descp,
+                                          size_t chunk_index) {
+  size_t remaining_size;
+  size_t chunk_size;
+
+  remaining_size = (size_t)(descp->size -
+                            (vfs_offset_t)(chunk_index * descp->chunk_size));
+  chunk_size = descp->chunk_size;
+  if (chunk_size > remaining_size) {
+    chunk_size = remaining_size;
+  }
+
+  return chunk_size;
+}
+
 static msg_t validate_chunked_desc(const vfs_romfs_chunked_desc_t *descp) {
   size_t expected_chunks;
   size_t i;
@@ -116,22 +131,32 @@ static msg_t validate_chunked_desc(const vfs_romfs_chunked_desc_t *descp) {
 
   i = 0U;
   while (i < descp->chunks_num) {
-    uint32_t start;
-    uint32_t end;
-    size_t expected_size;
-    size_t remaining_size;
-
-    start = descp->offsets[i];
-    end = descp->offsets[i + 1U];
-    if (end < start) {
+    if (descp->offsets[i + 1U] < descp->offsets[i]) {
       return CH_RET_EINVAL;
     }
 
-    remaining_size = (size_t)(descp->size - (vfs_offset_t)(i * descp->chunk_size));
-    expected_size = descp->chunk_size;
-    if (expected_size > remaining_size) {
-      expected_size = remaining_size;
-    }
+    i++;
+  }
+
+  return CH_RET_SUCCESS;
+}
+
+static msg_t validate_chunked_stored_desc(const vfs_romfs_chunked_desc_t *descp) {
+  size_t i;
+
+  if (CH_RET_IS_ERROR(validate_chunked_desc(descp))) {
+    return CH_RET_EINVAL;
+  }
+
+  i = 0U;
+  while (i < descp->chunks_num) {
+    uint32_t start;
+    uint32_t end;
+    size_t expected_size;
+
+    start = descp->offsets[i];
+    end = descp->offsets[i + 1U];
+    expected_size = get_chunk_uncompressed_size(descp, i);
     if ((size_t)(end - start) != expected_size) {
       return CH_RET_EINVAL;
     }
@@ -151,7 +176,7 @@ static msg_t romfs_chunked_stored_open(const void *arg, int flags,
 
   (void)flags;
 
-  ret = validate_chunked_desc(descp);
+  ret = validate_chunked_stored_desc(descp);
   if (CH_RET_IS_ERROR(ret)) {
     return ret;
   }
@@ -216,6 +241,187 @@ static ssize_t romfs_chunked_stored_read(void *session, vfs_offset_t offset,
 }
 
 static msg_t romfs_chunked_stored_stat(const void *arg, vfs_offset_t *sizep) {
+  const vfs_romfs_chunked_desc_t *descp =
+    (const vfs_romfs_chunked_desc_t *)arg;
+  msg_t ret;
+
+  ret = validate_chunked_stored_desc(descp);
+  if (CH_RET_IS_ERROR(ret)) {
+    return ret;
+  }
+
+  *sizep = descp->size;
+
+  return CH_RET_SUCCESS;
+}
+
+static msg_t romfs_chunked_packbits_open(const void *arg, int flags,
+                                         void **sessionp,
+                                         vfs_offset_t *sizep) {
+  const vfs_romfs_chunked_desc_t *descp =
+    (const vfs_romfs_chunked_desc_t *)arg;
+  msg_t ret;
+
+  (void)flags;
+
+  ret = validate_chunked_desc(descp);
+  if (CH_RET_IS_ERROR(ret)) {
+    return ret;
+  }
+
+  *sessionp = (void *)descp;
+  *sizep = descp->size;
+
+  return CH_RET_SUCCESS;
+}
+
+static void romfs_chunked_packbits_close(void *session) {
+
+  (void)session;
+}
+
+static ssize_t romfs_chunked_packbits_read_chunk(
+    const vfs_romfs_chunked_desc_t *descp,
+    size_t chunk_index,
+    size_t chunk_offset,
+    uint8_t *buf,
+    size_t n) {
+  const uint8_t *scanp;
+  const uint8_t *endp;
+  size_t chunk_size;
+  size_t outpos;
+  size_t copied;
+
+  scanp = &descp->data[descp->offsets[chunk_index]];
+  endp = &descp->data[descp->offsets[chunk_index + 1U]];
+  chunk_size = get_chunk_uncompressed_size(descp, chunk_index);
+  outpos = 0U;
+  copied = 0U;
+
+  while (scanp < endp) {
+    uint8_t control;
+
+    control = *scanp++;
+    if (control <= 127U) {
+      size_t literal_size;
+      size_t take_from;
+      size_t take_to;
+
+      literal_size = (size_t)control + 1U;
+      if (((size_t)(endp - scanp) < literal_size) ||
+          (outpos + literal_size > chunk_size)) {
+        return CH_RET_EINVAL;
+      }
+
+      take_from = chunk_offset;
+      if (take_from < outpos) {
+        take_from = outpos;
+      }
+      take_to = chunk_offset + n;
+      if (take_to > outpos + literal_size) {
+        take_to = outpos + literal_size;
+      }
+      if (take_from < take_to) {
+        size_t copy_size;
+
+        copy_size = take_to - take_from;
+        memcpy(buf + copied,
+               scanp + (take_from - outpos),
+               copy_size);
+        copied += copy_size;
+      }
+
+      scanp += literal_size;
+      outpos += literal_size;
+    }
+    else if (control >= 129U) {
+      size_t repeat_size;
+      size_t take_from;
+      size_t take_to;
+      uint8_t value;
+
+      repeat_size = (size_t)257U - (size_t)control;
+      if ((scanp >= endp) || (outpos + repeat_size > chunk_size)) {
+        return CH_RET_EINVAL;
+      }
+      value = *scanp++;
+
+      take_from = chunk_offset;
+      if (take_from < outpos) {
+        take_from = outpos;
+      }
+      take_to = chunk_offset + n;
+      if (take_to > outpos + repeat_size) {
+        take_to = outpos + repeat_size;
+      }
+      if (take_from < take_to) {
+        size_t copy_size;
+
+        copy_size = take_to - take_from;
+        memset(buf + copied, value, copy_size);
+        copied += copy_size;
+      }
+
+      outpos += repeat_size;
+    }
+    else {
+      continue;
+    }
+  }
+
+  if ((outpos != chunk_size) || (copied != n)) {
+    return CH_RET_EINVAL;
+  }
+
+  return (ssize_t)copied;
+}
+
+static ssize_t romfs_chunked_packbits_read(void *session, vfs_offset_t offset,
+                                           uint8_t *buf, size_t n) {
+  const vfs_romfs_chunked_desc_t *descp =
+    (const vfs_romfs_chunked_desc_t *)session;
+  size_t transferred;
+
+  if ((descp == NULL) || (offset < (vfs_offset_t)0) ||
+      (offset > descp->size)) {
+    return CH_RET_EINVAL;
+  }
+
+  transferred = 0U;
+  while (n > 0U) {
+    size_t chunk_index;
+    size_t chunk_offset;
+    size_t chunk_available;
+    ssize_t copied;
+
+    chunk_index = (size_t)offset / descp->chunk_size;
+    chunk_offset = (size_t)offset % descp->chunk_size;
+    chunk_available = get_chunk_uncompressed_size(descp, chunk_index);
+    if (chunk_offset > chunk_available) {
+      return CH_RET_EINVAL;
+    }
+    chunk_available -= chunk_offset;
+    if (chunk_available > n) {
+      chunk_available = n;
+    }
+
+    copied = romfs_chunked_packbits_read_chunk(descp, chunk_index,
+                                               chunk_offset, buf,
+                                               chunk_available);
+    if (CH_RET_IS_ERROR(copied)) {
+      return copied;
+    }
+
+    transferred += (size_t)copied;
+    buf += copied;
+    n -= (size_t)copied;
+    offset += (vfs_offset_t)copied;
+  }
+
+  return (ssize_t)transferred;
+}
+
+static msg_t romfs_chunked_packbits_stat(const void *arg, vfs_offset_t *sizep) {
   const vfs_romfs_chunked_desc_t *descp =
     (const vfs_romfs_chunked_desc_t *)arg;
   msg_t ret;
@@ -459,6 +665,20 @@ const vfs_romfs_compressed_ops_t vfs_romfs_chunked_stored_ops = {
   .close                    = romfs_chunked_stored_close,
   .read                     = romfs_chunked_stored_read,
   .stat                     = romfs_chunked_stored_stat
+#else
+  .open                     = NULL,
+  .close                    = NULL,
+  .read                     = NULL,
+  .stat                     = NULL
+#endif
+};
+
+const vfs_romfs_compressed_ops_t vfs_romfs_chunked_packbits_ops = {
+#if DRV_CFG_ROM_ENABLE_COMPRESSION == TRUE
+  .open                     = romfs_chunked_packbits_open,
+  .close                    = romfs_chunked_packbits_close,
+  .read                     = romfs_chunked_packbits_read,
+  .stat                     = romfs_chunked_packbits_stat
 #else
   .open                     = NULL,
   .close                    = NULL,
