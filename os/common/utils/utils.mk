@@ -11,6 +11,9 @@ ifndef UTILSSRC
     ifneq ($(filter sglob,$(UTILSSELECT)),)
       UTILSSRC += ${CHIBIOS}/os/common/utils/src/sglob.c
     endif
+    ifneq ($(filter packbits,$(UTILSSELECT)),)
+      UTILSSRC += ${CHIBIOS}/os/common/utils/src/packbits.c
+    endif
   endif
   ALLCSRC += $(UTILSSRC)
 endif
