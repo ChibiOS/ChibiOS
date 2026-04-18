@@ -757,7 +757,7 @@
 #elif defined(__STM32G473xx) && !defined(__STM32G473_XMCUCONF__)
 #error "Using a wrong xmcuconf.h file, STM32G473_XMCUCONF__ not defined"
 
-#elif defined(__STM32G483xx) && !defined(__STM32G473_XMCUCONF__)
+#elif defined(__STM32G483xx) && !defined(__STM32G483_XMCUCONF__)
 #error "Using a wrong xmcuconf.h file, STM32G483_XMCUCONF__ not defined"
 
 #elif defined(__STM32G474xx) && !defined(__STM32G474_XMCUCONF__)
@@ -1444,7 +1444,7 @@
   #define STM32_I2C1CLK             STM32_HSI16CLK
 
 #else
-  #error "invalid source selected for I2C1 clock"
+  #error "invalid source selected for I2C2 clock"
 #endif
 
 /**
@@ -1539,8 +1539,8 @@
 #if (STM32_I2S23SEL == STM32_I2S23SEL_SYSCLK) || defined(__DOXYGEN__)
   #define STM32_I2S23CLK            hal_lld_get_clock_point(CLK_SYSCLK)
 
-#elif STM32_I2S23SEL == STM32_I2S23SEL_PLLPCLK
-  #define STM32_I2S23CLK            hal_lld_get_clock_point(CLK_PLLPCLK)
+#elif STM32_I2S23SEL == STM32_I2S23SEL_PLLQCLK
+  #define STM32_I2S23CLK            hal_lld_get_clock_point(CLK_PLLQCLK)
 
 #elif STM32_I2S23SEL == STM32_I2S23SEL_HSI16
   #define STM32_I2S23CLK            STM32_HSI16CLK
@@ -1549,7 +1549,7 @@
   #define STM32_I2S23CLK            0 /* Unknown, would require a board value */
 
 #else
-  #error "invalid source selected for SAI1 clock"
+  #error "invalid source selected for I2S23 clock"
 #endif
 
 /**
@@ -1702,9 +1702,26 @@ typedef struct {
 } halclkcfg_t;
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
+/**
+ * @brief   Type of a timeout counter.
+ */
+typedef uint32_t halcnt_t;
+
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Real time counter frequency exported to the safety module.
+ * @note    The counter is the internal DWT cycles counter so it runs at
+ *          the same frequency of CPU.
+ */
+#define HAL_LLD_GET_CNT_FREQUENCY()         SystemCoreClock
+
+/**
+ * @brief   Real time counter value exported to the safety module.
+ */
+#define HAL_LLD_GET_CNT_VALUE()             (DWT->CYCCNT)
 
 #if !defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
 /**
@@ -1718,16 +1735,19 @@ typedef struct {
  * @notapi
  */
 #define hal_lld_get_clock_point(clkpt)                                      \
-  ((clkpt) == CLK_SYSCLK   ? STM32_SYSCLK        :                          \
-   (clkpt) == CLK_PLLPCLK  ? STM32_PLL_P_CLKOUT  :                          \
-   (clkpt) == CLK_PLLQCLK  ? STM32_PLL_Q_CLKOUT  :                          \
-   (clkpt) == CLK_PLLRCLK  ? STM32_PLL_R_CLKOUT  :                          \
-   (clkpt) == CLK_HCLK     ? STM32_HCLK          :                          \
-   (clkpt) == CLK_PCLK1    ? STM32_PCLK1         :                          \
-   (clkpt) == CLK_PCLK1TIM ? STM32_TIMP1CLK      :                          \
-   (clkpt) == CLK_PCLK2    ? STM32_PCLK2         :                          \
-   (clkpt) == CLK_PCLK2TIM ? STM32_TIMP2CLK      :                          \
-   (clkpt) == CLK_MCO      ? STM32_MCOCLK        :                          \
+  ((clkpt) == CLK_HSI16     ? STM32_HSI16CLK        :                       \
+   (clkpt) == CLK_HSI48     ? STM32_HSI48CLK        :                       \
+   (clkpt) == CLK_HSE       ? STM32_HSECLK          :                       \
+   (clkpt) == CLK_SYSCLK    ? STM32_SYSCLK          :                       \
+   (clkpt) == CLK_PLLPCLK   ? STM32_PLL_P_CLKOUT    :                       \
+   (clkpt) == CLK_PLLQCLK   ? STM32_PLL_Q_CLKOUT    :                       \
+   (clkpt) == CLK_PLLRCLK   ? STM32_PLL_R_CLKOUT    :                       \
+   (clkpt) == CLK_HCLK      ? STM32_HCLK            :                       \
+   (clkpt) == CLK_PCLK1     ? STM32_PCLK1           :                       \
+   (clkpt) == CLK_PCLK1TIM  ? STM32_TIMP1CLK        :                       \
+   (clkpt) == CLK_PCLK2     ? STM32_PCLK2           :                       \
+   (clkpt) == CLK_PCLK2TIM  ? STM32_TIMP2CLK        :                       \
+   (clkpt) == CLK_MCO       ? STM32_MCOCLK          :                       \
    0U)
 #endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 

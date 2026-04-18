@@ -323,13 +323,13 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
   /* System limits based on desired VOS settings.*/
   if ((ccp->pwr_cr1 & PWR_CR1_VOS_Msk) == PWR_CR1_VOS_1) {
-    if ((ccp->pwr_cr1 & PWR_CR5_R1MODE) != 0U) {
+    if ((ccp->pwr_cr5 & PWR_CR5_R1MODE) != 0U) {
       return true;
     }
     slp = &vos_range2;
   }
   else if ((ccp->pwr_cr1 & PWR_CR1_VOS_Msk) == PWR_CR1_VOS_0) {
-    if ((ccp->pwr_cr1 & PWR_CR5_R1MODE) != 0U) {
+    if ((ccp->pwr_cr5 & PWR_CR5_R1MODE) != 0U) {
       slp = &vos_range1_boost;
     }
     else {
@@ -445,7 +445,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     sysclk = 0U;
   }
 
-  if (sysclk > slp->sysclk_max) {
+  if ((sysclk == 0U) || (sysclk > slp->sysclk_max)) {
     return true;
   }
 
@@ -463,7 +463,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
   /* PPRE2 frequency.*/
   pclk2 = hclk / pprediv[(ccp->rcc_cfgr & RCC_CFGR_PPRE2_Msk) >> RCC_CFGR_PPRE2_Pos];
-  if ((ccp->rcc_cfgr & RCC_CFGR_PPRE1_Msk) < RCC_CFGR_PPRE2_DIV2) {
+  if ((ccp->rcc_cfgr & RCC_CFGR_PPRE2_Msk) < RCC_CFGR_PPRE2_DIV2) {
     pclk2tim = pclk2;
   }
   else {
@@ -676,6 +676,10 @@ void hal_lld_init(void) {
  * @special
  */
 void stm32_clock_init(void) {
+
+  /* DWT cycles counter enabled, used for timeouts.*/
+  halRegSet32X(&CoreDebug->DEMCR, CoreDebug_DEMCR_TRCENA_Msk, true);
+  halRegSet32X(&DWT->CTRL, DWT_CTRL_CYCCNTENA_Msk, true);
 
 #if !STM32_NO_INIT
   /* Reset of all peripherals.
