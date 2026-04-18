@@ -43,6 +43,13 @@
  * @{
  */
 /**
+ * @brief       Enables support for compressed ROMFS file content.
+ */
+#if !defined(DRV_CFG_ROM_ENABLE_COMPRESSION) || defined(__DOXYGEN__)
+#define DRV_CFG_ROM_ENABLE_COMPRESSION     FALSE
+#endif
+
+/**
  * @brief       Number of directory nodes pre-allocated in the pool.
  */
 #if !defined(DRV_CFG_ROM_DIR_NODES_NUM) || defined(__DOXYGEN__)
@@ -69,6 +76,12 @@
 /* Checks on DRV_CFG_ROM_FILE_NODES_NUM configuration.*/
 #if DRV_CFG_ROM_FILE_NODES_NUM < 1
 #error "invalid DRV_CFG_ROM_FILE_NODES_NUM value"
+#endif
+
+/* Checks on DRV_CFG_ROM_ENABLE_COMPRESSION configuration.*/
+#if (DRV_CFG_ROM_ENABLE_COMPRESSION != FALSE) && \
+    (DRV_CFG_ROM_ENABLE_COMPRESSION != TRUE)
+#error "invalid DRV_CFG_ROM_ENABLE_COMPRESSION value"
 #endif
 
 /*===========================================================================*/

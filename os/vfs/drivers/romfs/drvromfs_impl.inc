@@ -75,6 +75,9 @@ static msg_t validate_file_descriptor(const vfs_romfs_file_desc_t *filep) {
   return CH_RET_SUCCESS;
 }
 
+/* Compression backends are optional, keep the helper code out of the
+   binary when the feature is disabled. */
+#if DRV_CFG_ROM_ENABLE_COMPRESSION == TRUE
 static msg_t validate_chunked_desc(const vfs_romfs_chunked_desc_t *descp) {
   size_t expected_chunks;
   size_t i;
@@ -226,6 +229,7 @@ static msg_t romfs_chunked_stored_stat(const void *arg, vfs_offset_t *sizep) {
 
   return CH_RET_SUCCESS;
 }
+#endif /* DRV_CFG_ROM_ENABLE_COMPRESSION == TRUE */
 
 static const char *get_dir_path(const vfs_rom_dir_node_c *dp) {
 
@@ -373,6 +377,7 @@ static msg_t get_file_stat(const vfs_romfs_file_desc_t *filep,
       return ret;
     }
   }
+#if DRV_CFG_ROM_ENABLE_COMPRESSION == TRUE
   else if (is_compressed_file(filep) &&
            (filep->content.compressed.ops->stat != NULL)) {
     ret = filep->content.compressed.ops->stat(filep->content.compressed.arg,
@@ -381,6 +386,7 @@ static msg_t get_file_stat(const vfs_romfs_file_desc_t *filep,
       return ret;
     }
   }
+#endif
 
   return CH_RET_SUCCESS;
 }
@@ -448,10 +454,17 @@ static msg_t __romdir_next_impl(void *ip, vfs_direntry_info_t *dip);
 /*===========================================================================*/
 
 const vfs_romfs_compressed_ops_t vfs_romfs_chunked_stored_ops = {
+#if DRV_CFG_ROM_ENABLE_COMPRESSION == TRUE
   .open                     = romfs_chunked_stored_open,
   .close                    = romfs_chunked_stored_close,
   .read                     = romfs_chunked_stored_read,
   .stat                     = romfs_chunked_stored_stat
+#else
+  .open                     = NULL,
+  .close                    = NULL,
+  .read                     = NULL,
+  .stat                     = NULL
+#endif
 };
 
 /**
@@ -1179,6 +1192,10 @@ msg_t __romdrv_openfile_impl(void *ip, const char *path, int flags,
         }
       }
       else if (is_compressed_file(filep)) {
+#if DRV_CFG_ROM_ENABLE_COMPRESSION == FALSE
+        ret = CH_RET_ENOSYS;
+        goto romdrv_openfile_done;
+#else
         if (filep->content.compressed.ops->open == NULL) {
           ret = CH_RET_ENOSYS;
           goto romdrv_openfile_done;
@@ -1189,6 +1206,7 @@ msg_t __romdrv_openfile_impl(void *ip, const char *path, int flags,
         if (CH_RET_IS_ERROR(ret)) {
           goto romdrv_openfile_done;
         }
+#endif
       }
 
       rfnp = chPoolAlloc(&vfs_rom_driver_static.file_nodes_pool);

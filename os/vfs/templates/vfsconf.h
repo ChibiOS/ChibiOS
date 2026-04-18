@@ -245,6 +245,10 @@
  */
 /*===========================================================================*/
 
+#if !defined(DRV_CFG_ROM_ENABLE_COMPRESSION) || defined(__DOXYGEN__)
+#define DRV_CFG_ROM_ENABLE_COMPRESSION      FALSE
+#endif
+
 #if !defined(DRV_CFG_ROM_DIR_NODES_NUM) || defined(__DOXYGEN__)
 #define DRV_CFG_ROM_DIR_NODES_NUM           1
 #endif

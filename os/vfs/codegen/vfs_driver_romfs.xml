@@ -30,6 +30,9 @@
       </group>
     </definitions_early>
     <configs>
+      <config name="DRV_CFG_ROM_ENABLE_COMPRESSION" default="FALSE">
+        <brief>Enables support for compressed ROMFS file content.</brief>
+      </config>
       <config name="DRV_CFG_ROM_DIR_NODES_NUM" default="1">
         <brief>Number of directory nodes pre-allocated in the pool.</brief>
         <assert invalid="$N &lt; 1" />
