@@ -2108,7 +2108,7 @@
   #define STM32_PLL1IN              STM32_CSICLK
 
 #elif STM32_PLL1SRC == RCC_PLL1CFGR_PLL1SRC_HSI
-  #define STM32_PLL1IN              hal_lld_get_clock_point(CLK_HSI)
+  #define STM32_PLL1IN              STM32_HSICLK
 
 #elif STM32_PLL1SRC == RCC_PLL1CFGR_PLL1SRC_NOCLOCK
   #define STM32_PLL1IN              0
@@ -2127,7 +2127,7 @@
   #define STM32_PLL2IN              STM32_CSICLK
 
 #elif STM32_PLL2SRC == RCC_PLL2CFGR_PLL2SRC_HSI
-  #define STM32_PLL2IN              hal_lld_get_clock_point(CLK_HSI)
+  #define STM32_PLL2IN              STM32_HSICLK
 
 #elif STM32_PLL2SRC == RCC_PLL2CFGR_PLL2SRC_NOCLOCK
   #define STM32_PLL2IN              0

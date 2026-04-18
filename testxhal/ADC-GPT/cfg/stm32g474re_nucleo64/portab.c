@@ -28,7 +28,6 @@
 
 const hal_gpt_config_t portab_gptcfg1 = {
   .frequency                   = 1000000U,
-  .callback                    = NULL,
   .cr2                         = TIM_CR2_MMS_1,
   .dier                        = 0U
 };
