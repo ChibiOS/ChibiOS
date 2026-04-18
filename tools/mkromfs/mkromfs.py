@@ -185,6 +185,12 @@ def file_mode(entry: Path) -> str:
     return mode
 
 
+def render_file_flags(file_entry: FileEntry) -> str:
+    if file_entry.ops is None:
+        return file_entry.flags
+    return f"({file_entry.flags}) | VFS_ROMFS_FILE_TYPE_DYNAMIC"
+
+
 def scan_dir(root: Path, current: Path) -> list[DirEntry]:
     subdirs: list[Path] = []
     files: list[FileEntry] = []
@@ -390,18 +396,22 @@ def emit_source(
                 data_symbol = "NULL"
                 if file_entry.data:
                     data_symbol = f"{namespace}_file_{dir_index}_{file_index}_data"
-                ops_expr = "NULL"
-                if file_entry.ops is not None:
-                    ops_expr = f"&{file_entry.ops}"
+                flags_expr = render_file_flags(file_entry)
 
                 lines.append("  {")
                 lines.append(f"    .name = {escape_c_string(file_entry.name)},")
                 lines.append(f"    .mode = {file_entry.mode},")
-                lines.append(f"    .flags = {file_entry.flags},")
+                lines.append(f"    .flags = {flags_expr},")
                 lines.append(f"    .size = (vfs_offset_t){file_entry.size},")
-                lines.append(f"    .data = {data_symbol},")
-                lines.append(f"    .ops = {ops_expr},")
-                lines.append(f"    .arg = {file_entry.arg},")
+                if file_entry.ops is None:
+                    lines.append(f"    .content = {{ .data = {data_symbol} }},")
+                else:
+                    lines.append("    .content = {")
+                    lines.append("      .dynamic = {")
+                    lines.append(f"        .ops = &{file_entry.ops},")
+                    lines.append(f"        .arg = {file_entry.arg},")
+                    lines.append("      },")
+                    lines.append("    },")
                 lines.append("  },")
         lines.append("};")
         lines.append("")

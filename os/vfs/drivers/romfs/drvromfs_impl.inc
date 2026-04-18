@@ -30,6 +30,203 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+static uint32_t get_file_type(const vfs_romfs_file_desc_t *filep) {
+
+  return filep->flags & VFS_ROMFS_FILE_TYPE_MASK;
+}
+
+static bool is_raw_file(const vfs_romfs_file_desc_t *filep) {
+
+  return get_file_type(filep) == VFS_ROMFS_FILE_TYPE_RAW;
+}
+
+static bool is_dynamic_file(const vfs_romfs_file_desc_t *filep) {
+
+  return get_file_type(filep) == VFS_ROMFS_FILE_TYPE_DYNAMIC;
+}
+
+static bool is_compressed_file(const vfs_romfs_file_desc_t *filep) {
+
+  return get_file_type(filep) == VFS_ROMFS_FILE_TYPE_COMPRESSED;
+}
+
+static msg_t validate_file_descriptor(const vfs_romfs_file_desc_t *filep) {
+
+  switch (get_file_type(filep)) {
+  case VFS_ROMFS_FILE_TYPE_RAW:
+    if ((filep->size != (vfs_offset_t)0) && (filep->content.data == NULL)) {
+      return CH_RET_EINVAL;
+    }
+    break;
+  case VFS_ROMFS_FILE_TYPE_DYNAMIC:
+    if (filep->content.dynamic.ops == NULL) {
+      return CH_RET_EINVAL;
+    }
+    break;
+  case VFS_ROMFS_FILE_TYPE_COMPRESSED:
+    if (filep->content.compressed.ops == NULL) {
+      return CH_RET_EINVAL;
+    }
+    break;
+  default:
+    return CH_RET_EINVAL;
+  }
+
+  return CH_RET_SUCCESS;
+}
+
+static msg_t validate_chunked_desc(const vfs_romfs_chunked_desc_t *descp) {
+  size_t expected_chunks;
+  size_t i;
+
+  if (descp == NULL) {
+    return CH_RET_EINVAL;
+  }
+
+  if (descp->size < (vfs_offset_t)0) {
+    return CH_RET_EINVAL;
+  }
+
+  if (descp->size == (vfs_offset_t)0) {
+    if (descp->chunks_num != 0U) {
+      return CH_RET_EINVAL;
+    }
+
+    return CH_RET_SUCCESS;
+  }
+
+  if ((descp->chunk_size == 0U) ||
+      (descp->offsets == NULL) ||
+      (descp->data == NULL)) {
+    return CH_RET_EINVAL;
+  }
+
+  expected_chunks = ((size_t)descp->size + descp->chunk_size - 1U) /
+                    descp->chunk_size;
+  if (descp->chunks_num != expected_chunks) {
+    return CH_RET_EINVAL;
+  }
+
+  if (descp->offsets[0] != 0U) {
+    return CH_RET_EINVAL;
+  }
+
+  i = 0U;
+  while (i < descp->chunks_num) {
+    uint32_t start;
+    uint32_t end;
+    size_t expected_size;
+    size_t remaining_size;
+
+    start = descp->offsets[i];
+    end = descp->offsets[i + 1U];
+    if (end < start) {
+      return CH_RET_EINVAL;
+    }
+
+    remaining_size = (size_t)(descp->size - (vfs_offset_t)(i * descp->chunk_size));
+    expected_size = descp->chunk_size;
+    if (expected_size > remaining_size) {
+      expected_size = remaining_size;
+    }
+    if ((size_t)(end - start) != expected_size) {
+      return CH_RET_EINVAL;
+    }
+
+    i++;
+  }
+
+  return CH_RET_SUCCESS;
+}
+
+static msg_t romfs_chunked_stored_open(const void *arg, int flags,
+                                       void **sessionp,
+                                       vfs_offset_t *sizep) {
+  const vfs_romfs_chunked_desc_t *descp =
+    (const vfs_romfs_chunked_desc_t *)arg;
+  msg_t ret;
+
+  (void)flags;
+
+  ret = validate_chunked_desc(descp);
+  if (CH_RET_IS_ERROR(ret)) {
+    return ret;
+  }
+
+  *sessionp = (void *)descp;
+  *sizep = descp->size;
+
+  return CH_RET_SUCCESS;
+}
+
+static void romfs_chunked_stored_close(void *session) {
+
+  (void)session;
+}
+
+static ssize_t romfs_chunked_stored_read(void *session, vfs_offset_t offset,
+                                         uint8_t *buf, size_t n) {
+  const vfs_romfs_chunked_desc_t *descp =
+    (const vfs_romfs_chunked_desc_t *)session;
+  size_t transferred;
+
+  if ((descp == NULL) || (offset < (vfs_offset_t)0) ||
+      (offset > descp->size)) {
+    return CH_RET_EINVAL;
+  }
+
+  transferred = 0U;
+  while (n > 0U) {
+    size_t chunk_index;
+    size_t chunk_offset;
+    uint32_t chunk_start;
+    uint32_t chunk_end;
+    size_t chunk_available;
+    size_t remaining_size;
+
+    chunk_index = (size_t)offset / descp->chunk_size;
+    chunk_offset = (size_t)offset % descp->chunk_size;
+    chunk_start = descp->offsets[chunk_index];
+    chunk_end = descp->offsets[chunk_index + 1U];
+    chunk_available = (size_t)(chunk_end - chunk_start);
+    if (chunk_offset > chunk_available) {
+      return CH_RET_EINVAL;
+    }
+
+    chunk_available -= chunk_offset;
+    remaining_size = (size_t)(descp->size - offset);
+    if (chunk_available > remaining_size) {
+      chunk_available = remaining_size;
+    }
+    if (chunk_available > n) {
+      chunk_available = n;
+    }
+
+    memcpy(buf, &descp->data[chunk_start + chunk_offset], chunk_available);
+    transferred += chunk_available;
+    buf += chunk_available;
+    n -= chunk_available;
+    offset += (vfs_offset_t)chunk_available;
+  }
+
+  return (ssize_t)transferred;
+}
+
+static msg_t romfs_chunked_stored_stat(const void *arg, vfs_offset_t *sizep) {
+  const vfs_romfs_chunked_desc_t *descp =
+    (const vfs_romfs_chunked_desc_t *)arg;
+  msg_t ret;
+
+  ret = validate_chunked_desc(descp);
+  if (CH_RET_IS_ERROR(ret)) {
+    return ret;
+  }
+
+  *sizep = descp->size;
+
+  return CH_RET_SUCCESS;
+}
+
 static const char *get_dir_path(const vfs_rom_dir_node_c *dp) {
 
   if (dp->dir == NULL) {
@@ -161,11 +358,25 @@ static msg_t get_file_stat(const vfs_romfs_file_desc_t *filep,
                            vfs_stat_t *sp) {
   msg_t ret;
 
+  ret = validate_file_descriptor(filep);
+  if (CH_RET_IS_ERROR(ret)) {
+    return ret;
+  }
+
   sp->mode = VFS_MODE_S_IFREG | filep->mode;
   sp->size = filep->size;
 
-  if ((filep->ops != NULL) && (filep->ops->stat != NULL)) {
-    ret = filep->ops->stat(filep->arg, &sp->size);
+  if (is_dynamic_file(filep) && (filep->content.dynamic.ops->stat != NULL)) {
+    ret = filep->content.dynamic.ops->stat(filep->content.dynamic.arg,
+                                           &sp->size);
+    if (CH_RET_IS_ERROR(ret)) {
+      return ret;
+    }
+  }
+  else if (is_compressed_file(filep) &&
+           (filep->content.compressed.ops->stat != NULL)) {
+    ret = filep->content.compressed.ops->stat(filep->content.compressed.arg,
+                                              &sp->size);
     if (CH_RET_IS_ERROR(ret)) {
       return ret;
     }
@@ -235,6 +446,13 @@ static msg_t __romdir_next_impl(void *ip, vfs_direntry_info_t *dip);
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
+
+const vfs_romfs_compressed_ops_t vfs_romfs_chunked_stored_ops = {
+  .open                     = romfs_chunked_stored_open,
+  .close                    = romfs_chunked_stored_close,
+  .read                     = romfs_chunked_stored_read,
+  .stat                     = romfs_chunked_stored_stat
+};
 
 /**
  * @brief       Module initialization.
@@ -477,10 +695,15 @@ static void *__romfile_objinit_impl(void *ip, const void *vmt,
 static void __romfile_dispose_impl(void *ip) {
   vfs_rom_file_node_c *self = (vfs_rom_file_node_c *)ip;
 
-  if ((self->file != NULL) &&
-      (self->file->ops != NULL) &&
-      (self->file->ops->close != NULL)) {
-    self->file->ops->close(self->session);
+  if (self->file != NULL) {
+    if (is_dynamic_file(self->file) &&
+        (self->file->content.dynamic.ops->close != NULL)) {
+      self->file->content.dynamic.ops->close(self->session);
+    }
+    else if (is_compressed_file(self->file) &&
+             (self->file->content.compressed.ops->close != NULL)) {
+      self->file->content.compressed.ops->close(self->session);
+    }
   }
 
   __vfsfile_dispose_impl(self);
@@ -515,6 +738,10 @@ static ssize_t __romfile_read_impl(void *ip, uint8_t *buf, size_t n) {
   vfs_rom_file_node_c *self = (vfs_rom_file_node_c *)ip;
   size_t available;
 
+  if (CH_RET_IS_ERROR(validate_file_descriptor(self->file))) {
+    return CH_RET_EINVAL;
+  }
+
   if (self->position >= self->size) {
     return (ssize_t)0;
   }
@@ -524,20 +751,44 @@ static ssize_t __romfile_read_impl(void *ip, uint8_t *buf, size_t n) {
     n = available;
   }
 
-  if (self->file->ops == NULL) {
-    memcpy(buf, &self->file->data[self->position], n);
+  if (is_raw_file(self->file)) {
+    memcpy(buf, &self->file->content.data[self->position], n);
     self->position += (vfs_offset_t)n;
 
     return (ssize_t)n;
   }
 
-  if (self->file->ops->read == NULL) {
+  if (is_dynamic_file(self->file)) {
+    if (self->file->content.dynamic.ops->read == NULL) {
+      return CH_RET_ENOSYS;
+    }
+    else {
+      ssize_t ret;
+
+      ret = self->file->content.dynamic.ops->read(self->session,
+                                                  self->position,
+                                                  buf, n);
+      if (CH_RET_IS_ERROR(ret)) {
+        return ret;
+      }
+      if ((size_t)ret > n) {
+        ret = (ssize_t)n;
+      }
+      self->position += (vfs_offset_t)ret;
+
+      return ret;
+    }
+  }
+
+  if (self->file->content.compressed.ops->read == NULL) {
     return CH_RET_ENOSYS;
   }
   else {
     ssize_t ret;
 
-    ret = self->file->ops->read(self->session, self->position, buf, n);
+    ret = self->file->content.compressed.ops->read(self->session,
+                                                   self->position,
+                                                   buf, n);
     if (CH_RET_IS_ERROR(ret)) {
       return ret;
     }
@@ -907,16 +1158,34 @@ msg_t __romdrv_openfile_impl(void *ip, const char *path, int flags,
       vfs_offset_t size;
       void *session;
 
+      ret = validate_file_descriptor(filep);
+      if (CH_RET_IS_ERROR(ret)) {
+        goto romdrv_openfile_done;
+      }
+
       size = filep->size;
       session = NULL;
 
-      if (filep->ops != NULL) {
-        if (filep->ops->open == NULL) {
+      if (is_dynamic_file(filep)) {
+        if (filep->content.dynamic.ops->open == NULL) {
           ret = CH_RET_ENOSYS;
           goto romdrv_openfile_done;
         }
 
-        ret = filep->ops->open(filep->arg, flags, &session, &size);
+        ret = filep->content.dynamic.ops->open(filep->content.dynamic.arg,
+                                               flags, &session, &size);
+        if (CH_RET_IS_ERROR(ret)) {
+          goto romdrv_openfile_done;
+        }
+      }
+      else if (is_compressed_file(filep)) {
+        if (filep->content.compressed.ops->open == NULL) {
+          ret = CH_RET_ENOSYS;
+          goto romdrv_openfile_done;
+        }
+
+        ret = filep->content.compressed.ops->open(
+                filep->content.compressed.arg, flags, &session, &size);
         if (CH_RET_IS_ERROR(ret)) {
           goto romdrv_openfile_done;
         }
@@ -931,8 +1200,13 @@ msg_t __romdrv_openfile_impl(void *ip, const char *path, int flags,
         ret = CH_RET_SUCCESS;
       }
       else {
-        if ((filep->ops != NULL) && (filep->ops->close != NULL)) {
-          filep->ops->close(session);
+        if (is_dynamic_file(filep) &&
+            (filep->content.dynamic.ops->close != NULL)) {
+          filep->content.dynamic.ops->close(session);
+        }
+        else if (is_compressed_file(filep) &&
+                 (filep->content.compressed.ops->close != NULL)) {
+          filep->content.compressed.ops->close(session);
         }
         ret = CH_RET_ENOMEM;
       }
