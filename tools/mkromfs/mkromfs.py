@@ -26,7 +26,7 @@ C_KEYWORDS = {
 }
 
 IDENTIFIER_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
-MANIFEST_FILENAME = "romfs.dynamic.json"
+MANIFEST_FILENAME = "romfs_settings.json"
 
 
 @dataclass(frozen=True)

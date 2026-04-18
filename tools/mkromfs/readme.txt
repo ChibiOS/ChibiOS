@@ -9,8 +9,8 @@ made of C source and header files.
 
 Static files are taken directly from the input directory tree.
 
-Dynamic files can be declared through a reserved manifest file named
-"romfs.dynamic.json" placed in the root of the input directory. The manifest
+Dynamic files can be declared through a reserved settings manifest named
+"romfs_settings.json" placed in the root of the input directory. The manifest
 is tool metadata only and is not emitted as a ROMFS file.
 
 
@@ -25,12 +25,12 @@ the generated tree and can be used as parents for dynamic files.
 Symbolic links are not supported.
 
 
-Dynamic Manifest
-----------------
+ROMFS Settings Manifest
+-----------------------
 
 The reserved manifest filename is:
 
-  romfs.dynamic.json
+  romfs_settings.json
 
 The file must contain a JSON object. Supported top-level fields are:
 
