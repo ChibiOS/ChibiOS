@@ -322,11 +322,11 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
 
   /* CCIPR registers initialization, note.*/
   RCC->CCIPR1 = STM32_TIMICSEL    | STM32_USART10SEL  |
-                STM32_UART9SEL    | STM32_UART9SEL    |
-                STM32_UART8SEL    | STM32_UART7SEL    |
-                STM32_USART6SEL   | STM32_UART5SEL    |
-                STM32_UART4SEL    | STM32_USART3SEL   |
-                STM32_USART2SEL   | STM32_USART1SEL;
+                STM32_UART9SEL    | STM32_UART8SEL    |
+                STM32_UART7SEL    | STM32_USART6SEL   |
+                STM32_UART5SEL    | STM32_UART4SEL    |
+                STM32_USART3SEL   | STM32_USART2SEL   |
+                STM32_USART1SEL;
   RCC->CCIPR2 = STM32_LPTIM6SEL   | STM32_LPTIM5SEL   |
                 STM32_LPTIM4SEL   | STM32_LPTIM3SEL   |
                 STM32_LPTIM2SEL   | STM32_LPTIM1SEL   |
