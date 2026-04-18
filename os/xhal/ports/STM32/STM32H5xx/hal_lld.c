@@ -62,7 +62,7 @@
  * @brief   CMSIS system core clock variable.
  * @note    It is declared in system_stm32h5xx.h.
  */
-uint32_t SystemCoreClock = STM32_HCLK;
+uint32_t SystemCoreClock;
 
 /**
  * @brief   Post-reset clock configuration.
@@ -213,8 +213,8 @@ static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
   [CLK_PCLK2]           = STM32_PCLK2,
   [CLK_PCLK2TIM]        = STM32_TIMP2CLK,
   [CLK_PCLK3]           = STM32_PCLK3,
-  [CLK_MCO1]            = STM32_MCO2CLK,
-  [CLK_MCO2]            = STM32_MCO1CLK
+  [CLK_MCO1]            = STM32_MCO1CLK,
+  [CLK_MCO2]            = STM32_MCO2CLK
 };
 
 /**
@@ -271,6 +271,11 @@ static const system_limits_t vos_range3 = {
 /*===========================================================================*/
 
 #include "stm32_bd.inc"
+
+__STATIC_INLINE void hal_lld_set_coreclock(halfreq_t coreclock) {
+
+  SystemCoreClock = (uint32_t)coreclock;
+}
 
 /**
  * @brief   Configures the PWR unit.
@@ -406,6 +411,9 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
                           STM32_HSIDIV_PROPAGATION_TIME, NULL)) {
     return true;
   }
+
+  /* Updating the current system clock setting value.*/
+  hal_lld_set_coreclock(STM32_HSICLK_RESET);
 
   /* Resetting flash ACR settings to the default value.*/
   halRegWrite32X(&FLASH->ACR, STM32_FLASH_ACR_RESET, true);
@@ -751,7 +759,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     sysclk = 0U;
   }
 
-  if (sysclk > slp->sysclk_max) {
+  if ((sysclk == 0U) || (sysclk > slp->sysclk_max)) {
     return true;
   }
 
@@ -895,6 +903,10 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
  */
 void hal_lld_init(void) {
 
+  /* Frequency after applying the default configuration or ->assumed<- set
+     by the bootloader in case of NO_INIT.*/
+  hal_lld_set_coreclock(STM32_HCLK);
+
   /* DMA subsystems initialization.*/
 #if defined(STM32_DMA3_REQUIRED)
   dma3Init();
@@ -921,6 +933,9 @@ void stm32_clock_init(void) {
   halRegSet32X(&DWT->CTRL, DWT_CTRL_CYCCNTENA_Msk, true);
 
 #if !STM32_NO_INIT
+  /* Assuming HSI/2 as initial clock.*/
+  hal_lld_set_coreclock(STM32_HSICLK_RESET);
+
   /* Reset of all peripherals.
      Note, GPIOs are not reset because initialized before this point in
      board files.*/
@@ -1062,8 +1077,8 @@ bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
     return true;
   }
 
-  /* Updating the CMSIS variable.*/
-  SystemCoreClock = hal_lld_get_clock_point(CLK_HCLK);
+  /* Updating the current system clock setting value.*/
+  hal_lld_set_coreclock(hal_lld_get_clock_point(CLK_HCLK));
 
   return false;
 }
