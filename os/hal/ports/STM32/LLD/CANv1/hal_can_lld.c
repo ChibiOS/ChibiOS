@@ -424,7 +424,7 @@ OSAL_IRQ_HANDLER(STM32_CAN1_SCE_HANDLER) {
 #if STM32_CAN_USE_CAN2 || defined(__DOXYGEN__)
 #if defined(STM32_CAN2_UNIFIED_HANDLER)
 /**
- * @brief   CAN1 unified interrupt handler.
+ * @brief   CAN2 unified interrupt handler.
  *
  * @isr
  */
@@ -515,7 +515,7 @@ OSAL_IRQ_HANDLER(STM32_CAN2_SCE_HANDLER) {
 #if STM32_CAN_USE_CAN3 || defined(__DOXYGEN__)
 #if defined(STM32_CAN3_UNIFIED_HANDLER)
 /**
- * @brief   CAN1 unified interrupt handler.
+ * @brief   CAN3 unified interrupt handler.
  *
  * @isr
  */
@@ -574,7 +574,7 @@ OSAL_IRQ_HANDLER(STM32_CAN3_RX0_HANDLER) {
 }
 
 /**
- * @brief   CAN1 RX3 interrupt handler.
+ * @brief   CAN3 RX1 interrupt handler.
  *
  * @isr
  */
@@ -588,7 +588,7 @@ OSAL_IRQ_HANDLER(STM32_CAN3_RX1_HANDLER) {
 }
 
 /**
- * @brief   CAN1 SCE interrupt handler.
+ * @brief   CAN3 SCE interrupt handler.
  *
  * @isr
  */
