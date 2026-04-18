@@ -318,11 +318,11 @@ eventflags_t chEvtGetAndClearFlags(event_listener_t *elp) {
   chDbgCheck(elp != NULL);
 
   chSysLock();
-  flags = elp->flags;
+  flags = elp->flags & elp->wflags;
   elp->flags = (eventflags_t)0;
   chSysUnlock();
 
-  return flags & elp->wflags;
+  return flags;
 }
 
 /**
