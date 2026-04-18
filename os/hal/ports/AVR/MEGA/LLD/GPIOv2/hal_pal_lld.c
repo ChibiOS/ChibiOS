@@ -91,7 +91,7 @@ volatile uint8_t _pin_state_pcint4`;
 #endif
 #define PCINT4_BASE (PCINT3_BASE + PCINT3_EVENT_COUNT)
 
-#endif /* PAL_USE_WAIT || PAL_USE_CALLBACKS */
+#endif /* PAL_USE_CALLBACKS || PAL_USE_WAIT */
 
 /*==========================================================================*/
 /* Driver local functions.                                                  */
@@ -223,7 +223,7 @@ OSAL_IRQ_HANDLER(PCINT4_vect) {
 }
 #endif
 
-#endif /* PAL_USE_WAIT || PAL_USE_CALLBACKS */
+#endif /* PAL_USE_CALLBACKS || PAL_USE_WAIT */
 
 /*==========================================================================*/
 /* Driver exported functions.                                               */

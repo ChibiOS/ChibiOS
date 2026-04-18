@@ -600,8 +600,8 @@ OSAL_IRQ_HANDLER(STM32_CAN3_SCE_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* !defined(STM32_CAN1_UNIFIED_HANDLER) */
-#endif /* STM32_CAN_USE_CAN1 */
+#endif /* !defined(STM32_CAN3_UNIFIED_HANDLER) */
+#endif /* STM32_CAN_USE_CAN3 */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
