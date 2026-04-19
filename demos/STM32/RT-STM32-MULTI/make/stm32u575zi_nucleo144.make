@@ -99,20 +99,20 @@ include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32u5xx.mk
 # HAL-OSAL files (optional).
-#include $(CHIBIOS)/os/hal/hal.mk
-#include $(CHIBIOS)/os/hal/ports/STM32/STM32U3xx/platform.mk
-#include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_U385RG/board.mk
-#include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32U5xx/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_NUCLEO144_U575ZI_Q/board.mk
+include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
-#include $(CHIBIOS)/os/rt/rt.mk
+include $(CHIBIOS)/os/rt/rt.mk
 #include $(CHIBIOS)/os/common/ports/ARMv8-M-ML/compilers/GCC/mk/port.mk
-#include $(CHIBIOS)/os/common/ports/ARMv8-M-ML-ALT/compilers/GCC/mk/port.mk
+include $(CHIBIOS)/os/common/ports/ARMv8-M-ML-ALT/compilers/GCC/mk/port.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
-#include $(CHIBIOS)/os/test/test.mk
-#include $(CHIBIOS)/test/rt/rt_test.mk
-#include $(CHIBIOS)/test/oslib/oslib_test.mk
+include $(CHIBIOS)/os/test/test.mk
+include $(CHIBIOS)/test/rt/rt_test.mk
+include $(CHIBIOS)/test/oslib/oslib_test.mk
 #include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 #include $(CHIBIOS)/os/various/shell/shell.mk
 
@@ -124,7 +124,7 @@ LDSCRIPT= $(STARTUPLD)/STM32U575xI.ld
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
        $(CONFDIR)/portab.c \
-       main_naked.c
+       main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
