@@ -18,16 +18,16 @@
  * @file    TIMv1/hal_icu_lld.h
  * @brief   STM32 ICU subsystem low level driver header.
  *
- * @addtogroup ICU
+ * @addtogroup HAL_ICU
  * @{
  */
 
 #ifndef HAL_ICU_LLD_H
 #define HAL_ICU_LLD_H
 
-#if HAL_USE_ICU || defined(__DOXYGEN__)
-
 #include "stm32_tim.h"
+
+#if HAL_USE_ICU || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -41,260 +41,76 @@
  * @name    Configuration options
  * @{
  */
-/**
- * @brief   ICUD1 driver enable switch.
- * @details If set to @p TRUE the support for ICUD1 is included.
- * @note    The default is @p FALSE.
- */
 #if !defined(STM32_ICU_USE_TIM1) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM1                  FALSE
 #endif
 
-/**
- * @brief   ICUD2 driver enable switch.
- * @details If set to @p TRUE the support for ICUD2 is included.
- * @note    The default is @p FALSE.
- */
 #if !defined(STM32_ICU_USE_TIM2) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM2                  FALSE
 #endif
 
-/**
- * @brief   ICUD3 driver enable switch.
- * @details If set to @p TRUE the support for ICUD3 is included.
- * @note    The default is @p FALSE.
- */
 #if !defined(STM32_ICU_USE_TIM3) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM3                  FALSE
 #endif
 
-/**
- * @brief   ICUD4 driver enable switch.
- * @details If set to @p TRUE the support for ICUD4 is included.
- * @note    The default is @p FALSE.
- */
 #if !defined(STM32_ICU_USE_TIM4) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM4                  FALSE
 #endif
 
-/**
- * @brief   ICUD5 driver enable switch.
- * @details If set to @p TRUE the support for ICUD5 is included.
- * @note    The default is @p FALSE.
- */
 #if !defined(STM32_ICU_USE_TIM5) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM5                  FALSE
 #endif
 
-/**
- * @brief   ICUD8 driver enable switch.
- * @details If set to @p TRUE the support for ICUD8 is included.
- * @note    The default is @p FALSE.
- */
 #if !defined(STM32_ICU_USE_TIM8) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM8                  FALSE
 #endif
 
-/**
- * @brief   ICUD9 driver enable switch.
- * @details If set to @p TRUE the support for ICUD9 is included.
- * @note    The default is @p FALSE.
- */
 #if !defined(STM32_ICU_USE_TIM9) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM9                  FALSE
 #endif
 
-/**
- * @brief   ICUD10 driver enable switch.
- * @details If set to @p TRUE the support for ICUD10 is included.
- * @note    The default is @p FALSE.
- */
 #if !defined(STM32_ICU_USE_TIM10) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM10                 FALSE
 #endif
 
-/**
- * @brief   ICUD11 driver enable switch.
- * @details If set to @p TRUE the support for ICUD11 is included.
- * @note    The default is @p FALSE.
- */
 #if !defined(STM32_ICU_USE_TIM11) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM11                 FALSE
 #endif
 
-/**
- * @brief   ICUD12 driver enable switch.
- * @details If set to @p TRUE the support for ICUD12 is included.
- * @note    The default is @p FALSE.
- */
 #if !defined(STM32_ICU_USE_TIM12) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM12                 FALSE
 #endif
 
-/**
- * @brief   ICUD13 driver enable switch.
- * @details If set to @p TRUE the support for ICUD13 is included.
- * @note    The default is @p FALSE.
- */
 #if !defined(STM32_ICU_USE_TIM13) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM13                 FALSE
 #endif
 
-/**
- * @brief   ICUD14 driver enable switch.
- * @details If set to @p TRUE the support for ICUD14 is included.
- * @note    The default is @p FALSE.
- */
 #if !defined(STM32_ICU_USE_TIM14) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM14                 FALSE
 #endif
 
-/**
- * @brief   ICUD15 driver enable switch.
- * @details If set to @p TRUE the support for ICUD15 is included.
- * @note    The default is @p FALSE.
- */
 #if !defined(STM32_ICU_USE_TIM15) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM15                 FALSE
 #endif
 
-/**
- * @brief   ICUD20 driver enable switch.
- * @details If set to @p TRUE the support for ICUD20 is included.
- * @note    The default is @p FALSE.
- */
+#if !defined(STM32_ICU_USE_TIM16) || defined(__DOXYGEN__)
+#define STM32_ICU_USE_TIM16                 FALSE
+#endif
+
+#if !defined(STM32_ICU_USE_TIM17) || defined(__DOXYGEN__)
+#define STM32_ICU_USE_TIM17                 FALSE
+#endif
+
 #if !defined(STM32_ICU_USE_TIM20) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM20                 FALSE
 #endif
 
-/**
- * @brief   ICUD21 driver enable switch.
- * @details If set to @p TRUE the support for ICUD21 is included.
- * @note    The default is @p FALSE.
- */
 #if !defined(STM32_ICU_USE_TIM21) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM21                 FALSE
 #endif
 
-/**
- * @brief   ICUD22 driver enable switch.
- * @details If set to @p TRUE the support for ICUD22 is included.
- * @note    The default is @p FALSE.
- */
 #if !defined(STM32_ICU_USE_TIM22) || defined(__DOXYGEN__)
 #define STM32_ICU_USE_TIM22                 FALSE
-#endif
-
-/**
- * @brief   ICUD1 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM1_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   ICUD2 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM2_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   ICUD3 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM3_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM3_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   ICUD4 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM4_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM4_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   ICUD5 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM5_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM5_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   ICUD8 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM8_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM8_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   ICUD9 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM9_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM9_IRQ_PRIORITY         7
-#endif
-
-/**
- * @brief   ICUD10 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM10_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM10_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   ICUD11 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM11_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM11_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   ICUD12 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM12_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM12_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   ICUD13 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM13_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM13_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   ICUD14 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM14_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM14_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   ICUD15 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM15_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM15_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   ICUD20 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM20_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM20_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   ICUD21 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM21_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM21_IRQ_PRIORITY        7
-#endif
-
-/**
- * @brief   ICUD22 interrupt priority level setting.
- */
-#if !defined(STM32_ICU_TIM22_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ICU_TIM22_IRQ_PRIORITY        7
 #endif
 /** @} */
 
@@ -416,6 +232,14 @@
 
 #if STM32_ICU_USE_TIM15 && !STM32_HAS_TIM15
 #error "TIM15 not present in the selected device"
+#endif
+
+#if STM32_ICU_USE_TIM16
+#error "TIM16 is not supported by ICU TIMv1"
+#endif
+
+#if STM32_ICU_USE_TIM17
+#error "TIM17 is not supported by ICU TIMv1"
 #endif
 
 #if STM32_ICU_USE_TIM20 && !STM32_HAS_TIM20
@@ -570,196 +394,20 @@
 #endif
 #endif
 
-/* IRQ priority checks.*/
-#if STM32_ICU_USE_TIM1 && !defined(STM32_TIM1_SUPPRESS_ISR) &&              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM1_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM1"
-#endif
-
-#if STM32_ICU_USE_TIM2 && !defined(STM32_TIM2_SUPPRESS_ISR) &&              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM2_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM2"
-#endif
-
-#if STM32_ICU_USE_TIM3 && !defined(STM32_TIM3_SUPPRESS_ISR) &&              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM3_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM3"
-#endif
-
-#if STM32_ICU_USE_TIM4 && !defined(STM32_TIM4_SUPPRESS_ISR) &&              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM4_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM4"
-#endif
-
-#if STM32_ICU_USE_TIM5 && !defined(STM32_TIM5_SUPPRESS_ISR) &&              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM5_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM5"
-#endif
-
-#if STM32_ICU_USE_TIM8 && !defined(STM32_TIM8_SUPPRESS_ISR) &&              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM8_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM8"
-#endif
-
-#if STM32_ICU_USE_TIM9 && !defined(STM32_TIM9_SUPPRESS_ISR) &&              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM9_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM9"
-#endif
-
-#if STM32_ICU_USE_TIM10 && !defined(STM32_TIM10_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM10_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM10"
-#endif
-
-#if STM32_ICU_USE_TIM11 && !defined(STM32_TIM11_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM11_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM11"
-#endif
-
-#if STM32_ICU_USE_TIM12 && !defined(STM32_TIM12_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM12_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM12"
-#endif
-
-#if STM32_ICU_USE_TIM13 && !defined(STM32_TIM13_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM13_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM13"
-#endif
-
-#if STM32_ICU_USE_TIM14 && !defined(STM32_TIM14_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM14_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM14"
-#endif
-
-#if STM32_ICU_USE_TIM15 && !defined(STM32_TIM15_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM15_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM15"
-#endif
-
-#if STM32_ICU_USE_TIM20 && !defined(STM32_TIM20_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM20_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM20"
-#endif
-
-#if STM32_ICU_USE_TIM21 && !defined(STM32_TIM21_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM21_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM21"
-#endif
-
-#if STM32_ICU_USE_TIM22 && !defined(STM32_TIM22_SUPPRESS_ISR) &&            \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ICU_TIM22_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to TIM22"
-#endif
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   ICU driver mode.
- */
-typedef enum {
-  ICU_INPUT_ACTIVE_HIGH = 0,        /**< Trigger on rising edge.            */
-  ICU_INPUT_ACTIVE_LOW = 1,         /**< Trigger on falling edge.           */
-} icumode_t;
+#define icu_lld_config_fields                                               \
+  icuchannel_t              channel;                                        \
+  uint32_t                  dier;                                           \
+  uint32_t                  arr
 
-/**
- * @brief   ICU frequency type.
- */
-typedef uint32_t icufreq_t;
-
-/**
- * @brief   ICU channel type.
- */
-typedef enum {
-  ICU_CHANNEL_1 = 0,              /**< Use TIMxCH1.      */
-  ICU_CHANNEL_2 = 1,              /**< Use TIMxCH2.      */
-} icuchannel_t;
-
-/**
- * @brief   ICU counter type.
- */
-typedef uint32_t icucnt_t;
-
-/**
- * @brief   Driver configuration structure.
- * @note    It could be empty on some architectures.
- */
-typedef struct {
-  /**
-   * @brief   Driver mode.
-   */
-  icumode_t                 mode;
-  /**
-   * @brief   Timer clock in Hz.
-   * @note    The low level can use assertions in order to catch invalid
-   *          frequency specifications.
-   */
-  icufreq_t                 frequency;
-  /**
-   * @brief   Callback for pulse width measurement.
-   */
-  icucallback_t             width_cb;
-  /**
-   * @brief   Callback for cycle period measurement.
-   */
-  icucallback_t             period_cb;
-  /**
-   * @brief   Callback for timer overflow.
-   */
-  icucallback_t             overflow_cb;
-  /* End of the mandatory fields.*/
-  /**
-   * @brief   Timer input channel to be used.
-   * @note    Only inputs TIMx 1 and 2 are supported.
-   */
-  icuchannel_t              channel;
-  /**
-   * @brief TIM DIER register initialization data.
-   * @note  The value of this field should normally be equal to zero.
-   * @note  Only the DMA-related bits can be specified in this field.
-   */
-  uint32_t                  dier;
-  /**
-   * @brief TIM ARR register initialization data.
-   * @note  The value of this field should normally be equal to 0xFFFFFFFFU.
-   */
-  uint32_t                  arr;
-} ICUConfig;
-
-/**
- * @brief   Structure representing an ICU driver.
- */
-struct ICUDriver {
-  /**
-   * @brief Driver state.
-   */
-  icustate_t                state;
-  /**
-   * @brief Current configuration data.
-   */
-  const ICUConfig           *config;
-#if defined(ICU_DRIVER_EXT_FIELDS)
-  ICU_DRIVER_EXT_FIELDS
-#endif
-  /* End of the mandatory fields.*/
-  /**
-   * @brief Timer base clock.
-   */
-  uint32_t                  clock;
-  /**
-   * @brief Pointer to the TIMx registers block.
-   */
-  stm32_tim_t               *tim;
-  /**
-   * @brief CCR register used for width capture.
-   */
-  volatile uint32_t         *wccrp;
-  /**
-   * @brief CCR register used for period capture.
-   */
-  volatile uint32_t         *pccrp;
-};
+#define icu_lld_driver_fields                                               \
+  uint32_t                  clock;                                          \
+  stm32_tim_t               *tim;                                           \
+  volatile uint32_t         *wccrp;                                         \
+  volatile uint32_t         *pccrp
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -767,121 +415,122 @@ struct ICUDriver {
 
 /**
  * @brief   Returns the width of the latest pulse.
- * @details The pulse width is defined as number of ticks between the start
- *          edge and the stop edge.
  *
- * @param[in] icup      pointer to the @p ICUDriver object
+ * @param[in] icup      pointer to the @p hal_icu_driver_c object
  * @return              The number of ticks.
  *
  * @notapi
  */
-#define icu_lld_get_width(icup) (*((icup)->wccrp) + 1)
+#define icu_lld_get_width(icup)                                             \
+  ((icucnt_t)(*((icup)->wccrp) + 1U))
 
 /**
  * @brief   Returns the width of the latest cycle.
- * @details The cycle width is defined as number of ticks between a start
- *          edge and the next start edge.
  *
- * @param[in] icup      pointer to the @p ICUDriver object
+ * @param[in] icup      pointer to the @p hal_icu_driver_c object
  * @return              The number of ticks.
  *
  * @notapi
  */
-#define icu_lld_get_period(icup) (*((icup)->pccrp) + 1)
+#define icu_lld_get_period(icup)                                            \
+  ((icucnt_t)(*((icup)->pccrp) + 1U))
 
 /**
  * @brief   Check on notifications status.
  *
- * @param[in] icup      pointer to the @p ICUDriver object
+ * @param[in] icup      pointer to the @p hal_icu_driver_c object
  * @return              The notifications status.
- * @retval false        if notifications are not enabled.
- * @retval true         if notifications are enabled.
  *
  * @notapi
  */
 #define icu_lld_are_notifications_enabled(icup)                             \
-  (bool)(((icup)->tim->DIER & STM32_TIM_DIER_IRQ_MASK) != 0)
+  (bool)(((icup)->tim->DIER & STM32_TIM_DIER_IRQ_MASK) != 0U)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
 #if STM32_ICU_USE_TIM1 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD1;
+extern hal_icu_driver_c ICUD1;
 #endif
 
 #if STM32_ICU_USE_TIM2 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD2;
+extern hal_icu_driver_c ICUD2;
 #endif
 
 #if STM32_ICU_USE_TIM3 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD3;
+extern hal_icu_driver_c ICUD3;
 #endif
 
 #if STM32_ICU_USE_TIM4 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD4;
+extern hal_icu_driver_c ICUD4;
 #endif
 
 #if STM32_ICU_USE_TIM5 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD5;
+extern hal_icu_driver_c ICUD5;
 #endif
 
 #if STM32_ICU_USE_TIM8 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD8;
+extern hal_icu_driver_c ICUD8;
 #endif
 
 #if STM32_ICU_USE_TIM9 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD9;
+extern hal_icu_driver_c ICUD9;
 #endif
 
 #if STM32_ICU_USE_TIM10 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD10;
+extern hal_icu_driver_c ICUD10;
 #endif
 
 #if STM32_ICU_USE_TIM11 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD11;
+extern hal_icu_driver_c ICUD11;
 #endif
 
 #if STM32_ICU_USE_TIM12 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD12;
+extern hal_icu_driver_c ICUD12;
 #endif
 
 #if STM32_ICU_USE_TIM13 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD13;
+extern hal_icu_driver_c ICUD13;
 #endif
 
 #if STM32_ICU_USE_TIM14 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD14;
+extern hal_icu_driver_c ICUD14;
 #endif
 
 #if STM32_ICU_USE_TIM15 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD15;
+extern hal_icu_driver_c ICUD15;
 #endif
 
 #if STM32_ICU_USE_TIM20 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD20;
+extern hal_icu_driver_c ICUD20;
 #endif
 
 #if STM32_ICU_USE_TIM21 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD21;
+extern hal_icu_driver_c ICUD21;
 #endif
 
 #if STM32_ICU_USE_TIM22 && !defined(__DOXYGEN__)
-extern ICUDriver ICUD22;
+extern hal_icu_driver_c ICUD22;
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void icu_lld_init(void);
-  void icu_lld_start(ICUDriver *icup);
-  void icu_lld_stop(ICUDriver *icup);
-  void icu_lld_start_capture(ICUDriver *icup);
-  bool icu_lld_wait_capture(ICUDriver *icup);
-  void icu_lld_stop_capture(ICUDriver *icup);
-  void icu_lld_enable_notifications(ICUDriver *icup);
-  void icu_lld_disable_notifications(ICUDriver *icup);
-  void icu_lld_serve_interrupt(ICUDriver *icup);
+  msg_t icu_lld_start(hal_icu_driver_c *icup);
+  void icu_lld_stop(hal_icu_driver_c *icup);
+  const hal_icu_config_t *icu_lld_setcfg(hal_icu_driver_c *icup,
+                                         const hal_icu_config_t *config);
+  const hal_icu_config_t *icu_lld_selcfg(hal_icu_driver_c *icup,
+                                         unsigned cfgnum);
+  void icu_lld_set_callback(hal_icu_driver_c *icup, drv_cb_t cb);
+  void icu_lld_start_capture(hal_icu_driver_c *icup);
+  bool icu_lld_wait_capture(hal_icu_driver_c *icup);
+  void icu_lld_stop_capture(hal_icu_driver_c *icup);
+  void icu_lld_enable_events(hal_icu_driver_c *icup, icu_events_t events);
+  void icu_lld_disable_events(hal_icu_driver_c *icup, icu_events_t events);
+  void icu_lld_serve_interrupt(hal_icu_driver_c *icup);
 #ifdef __cplusplus
 }
 #endif

@@ -336,7 +336,7 @@ static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
 #include "hal_gpt.h"
 //#include "hal_i2c.h"
 //#include "hal_i2s.h"
-//#include "hal_icu.h"
+#include "hal_icu.h"
 #include "hal_pwm.h"
 #include "hal_rtc.h"
 //#include "hal_serial.h"

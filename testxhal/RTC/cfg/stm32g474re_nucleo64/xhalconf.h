@@ -41,6 +41,7 @@
 #define HAL_USE_ADC                         FALSE
 #define HAL_USE_ETH                         FALSE
 #define HAL_USE_GPT                         FALSE
+#define HAL_USE_ICU                         FALSE
 #define HAL_USE_MMC_SPI                     FALSE
 #define HAL_USE_PWM                         FALSE
 #define HAL_USE_RTC                         TRUE
@@ -59,6 +60,15 @@
 /*===========================================================================*/
 
 #define GPT_DEFAULT_FREQUENCY               1000000U
+
+/*===========================================================================*/
+/* ICU driver settings.                                                      */
+/*===========================================================================*/
+
+#define ICU_USE_OVERFLOW_SCALING            FALSE
+#define ICU_USE_CONFIGURATIONS              FALSE
+#define ICU_DEFAULT_FREQUENCY               1000000U
+#define ICU_DEFAULT_ARR                     0xFFFFFFFFU
 
 /*===========================================================================*/
 /* PWM driver settings.                                                      */

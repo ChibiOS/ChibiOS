@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_icu" descr="ICU Driver" check="HAL_USE_ICU == TRUE"
+  editcode="false">
+  <brief>ICU Driver macros and structures.</brief>
+  <imports>
+    <import>hal_cb_driver.xml</import>
+  </imports>
+  <public>
+    <includes_always>
+      <include style="regular">hal_cb_driver.h</include>
+    </includes_always>
+    <definitions_early>
+      <group description="ICU event flags">
+        <define name="ICU_EVENT_WIDTH" value="(1U &lt;&lt; 0)">
+          <brief>Pulse width capture event flag.</brief>
+        </define>
+        <define name="ICU_EVENT_PERIOD" value="(1U &lt;&lt; 1)">
+          <brief>Cycle period capture event flag.</brief>
+        </define>
+        <define name="ICU_EVENT_OVERFLOW" value="(1U &lt;&lt; 2)">
+          <brief>Timer overflow event flag.</brief>
+        </define>
+        <define name="ICU_EVENT_ALL" value="(ICU_EVENT_WIDTH | ICU_EVENT_PERIOD | ICU_EVENT_OVERFLOW)">
+          <brief>All ICU event flags.</brief>
+        </define>
+      </group>
+    </definitions_early>
+    <configs>
+      <config name="ICU_USE_OVERFLOW_SCALING" default="FALSE">
+        <brief>Enables overflow events while capture is active.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="ICU_USE_CONFIGURATIONS" default="FALSE">
+        <brief>Support for ICU user configurations.</brief>
+        <note>When enabled the user must provide a variable named
+          @p icu_configurations of type @p icu_configurations_t.</note>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="ICU_DEFAULT_FREQUENCY" default="1000000U">
+        <brief>Default ICU timer frequency.</brief>
+      </config>
+      <config name="ICU_DEFAULT_ARR" default="0xFFFFFFFFU">
+        <brief>Default ICU timer period register value.</brief>
+      </config>
+    </configs>
+    <macros>
+      <group description="Low level driver helper macros">
+        <macro name="_icu_isr_invoke_cb">
+          <brief>Common ISR code, ICU event.</brief>
+          <param name="icup" dir="both">Pointer to the ICU driver instance.</param>
+          <param name="events" dir="in">ICU event flags.</param>
+          <notapi />
+          <implementation><![CDATA[
+do {
+  (icup)->events |= (events);
+  __cbdrv_invoke_cb(icup);
+} while (false)]]></implementation>
+        </macro>
+      </group>
+    </macros>
+    <types>
+      <typedef name="icufreq_t">
+        <brief>ICU frequency type.</brief>
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="icucnt_t">
+        <brief>ICU counter type.</brief>
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="icu_events_t">
+        <brief>Type of ICU event flags.</brief>
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="icustate_t">
+        <brief>Type of ICU driver state.</brief>
+        <basetype ctype="driver_state_t" />
+      </typedef>
+      <typedef name="hal_icu_driver_c">
+        <brief>Type of structure representing an ICU driver.</brief>
+        <basetype ctype="struct hal_icu_driver" />
+      </typedef>
+      <typedef name="hal_icu_config_t">
+        <brief>Type of structure representing an ICU configuration.</brief>
+        <basetype ctype="struct hal_icu_config" />
+      </typedef>
+      <typedef name="ICUDriver">
+        <brief>Type of structure representing an ICU driver (legacy).</brief>
+        <basetype ctype="struct hal_icu_driver" />
+      </typedef>
+      <typedef name="ICUConfig">
+        <brief>Type of structure representing an ICU configuration (legacy).</brief>
+        <basetype ctype="struct hal_icu_config" />
+      </typedef>
+      <verbatim><![CDATA[
+/**
+ * @brief       ICU input active level.
+ */
+typedef enum {
+  ICU_INPUT_ACTIVE_HIGH = 0U,       /**< Trigger on rising edge.            */
+  ICU_INPUT_ACTIVE_LOW  = 1U        /**< Trigger on falling edge.           */
+} icumode_t;
+
+/**
+ * @brief       ICU input channel.
+ */
+typedef enum {
+  ICU_CHANNEL_1 = 0U,               /**< Use TIMxCH1.                      */
+  ICU_CHANNEL_2 = 1U                /**< Use TIMxCH2.                      */
+} icuchannel_t;
+
+#define ICU_UNINIT                         HAL_DRV_STATE_UNINIT
+#define ICU_STOP                           HAL_DRV_STATE_STOP
+#define ICU_READY                          HAL_DRV_STATE_READY
+#define ICU_WAITING                        (HAL_DRV_STATE_ERROR + 1U)
+#define ICU_ACTIVE                         (HAL_DRV_STATE_ERROR + 2U)
+
+/* Inclusion of LLD header.*/
+#include "hal_icu_lld.h"]]></verbatim>
+      <struct name="hal_icu_config">
+        <brief>Driver configuration structure.</brief>
+        <fields>
+          <field name="mode" ctype="icumode_t">
+            <brief>Input active level.</brief>
+          </field>
+          <field name="frequency" ctype="icufreq_t">
+            <brief>Timer clock in Hz.</brief>
+          </field>
+          <field name="enabled_events" ctype="icu_events_t">
+            <brief>Initially enabled ICU event flags.</brief>
+          </field>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+icu_lld_config_fields;]]></verbatim>
+          <condition check="defined(ICU_CONFIG_EXT_FIELDS)">
+            <verbatim><![CDATA[
+ICU_CONFIG_EXT_FIELDS]]></verbatim>
+          </condition>
+        </fields>
+      </struct>
+      <typedef name="icu_configurations_t">
+        <brief>Type of user-provided ICU configurations.</brief>
+        <basetype ctype="struct icu_configurations" />
+      </typedef>
+      <struct name="icu_configurations">
+        <brief>Structure representing user-provided ICU configurations.</brief>
+        <fields>
+          <field name="cfgsnum" ctype="unsigned">
+            <brief>Number of configurations in the open array.</brief>
+          </field>
+          <field name="cfgs" ctype="hal_icu_config_t$I$N[]">
+            <brief>User ICU configurations.</brief>
+          </field>
+        </fields>
+      </struct>
+      <class type="regular" name="hal_icu_driver" namespace="icu"
+        ancestorname="hal_cb_driver" descr="ICU driver">
+        <brief>Class of an ICU driver.</brief>
+        <fields>
+          <field name="width" ctype="icucnt_t">
+            <brief>Latest captured pulse width in ticks.</brief>
+          </field>
+          <field name="period" ctype="icucnt_t">
+            <brief>Latest captured cycle period in ticks.</brief>
+          </field>
+          <field name="enabled_events" ctype="icu_events_t">
+            <brief>Mask of the enabled ICU events.</brief>
+          </field>
+          <field name="events" ctype="volatile icu_events_t">
+            <brief>Cached ICU event flags.</brief>
+          </field>
+          <condition check="defined(ICU_DRIVER_EXT_FIELDS)">
+            <verbatim><![CDATA[
+ICU_DRIVER_EXT_FIELDS]]></verbatim>
+          </condition>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+icu_lld_driver_fields;]]></verbatim>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+self->width          = 0U;
+self->period         = 0U;
+self->enabled_events = 0U;
+self->events         = 0U;
+
+#if defined(ICU_DRIVER_EXT_INIT_HOOK)
+ICU_DRIVER_EXT_INIT_HOOK(self);
+#endif]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[
+]]></implementation>
+          </dispose>
+          <regular>
+            <method name="icuStart" ctype="msg_t">
+              <brief>Configures and activates the ICU peripheral.</brief>
+              <param name="config" ctype="const hal_icu_config_t *" dir="in">
+                Driver configuration or @p NULL.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == HAL_DRV_STATE_STOP) ||
+              (self->state == HAL_DRV_STATE_READY),
+              "invalid state");
+
+if (config != NULL) {
+  if (self->state == HAL_DRV_STATE_READY) {
+    icuStop(self);
+  }
+
+  msg = drvSetCfgX(self, config);
+  if (msg != HAL_RET_SUCCESS) {
+    return msg;
+  }
+}
+
+return drvStart(self);]]></implementation>
+            </method>
+            <method name="icuStop" ctype="void">
+              <brief>Deactivates the ICU peripheral.</brief>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+drvStop(self);]]></implementation>
+            </method>
+            <method name="icuStartCaptureI" ctype="void">
+              <brief>Starts the input capture.</brief>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+self->width  = 0U;
+self->period = 0U;
+self->events = 0U;
+self->state  = ICU_WAITING;
+icu_lld_start_capture(self);]]></implementation>
+            </method>
+            <method name="icuStartCapture" ctype="void">
+              <brief>Starts the input capture.</brief>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+icuStartCaptureI(self);
+osalSysUnlock();]]></implementation>
+            </method>
+            <method name="icuWaitCapture" ctype="bool">
+              <brief>Waits for a completed capture.</brief>
+              <return>The capture status.</return>
+              <retval value="false">If the capture is successful.</retval>
+              <retval value="true">If a timer overflow occurred.</retval>
+              <api />
+              <implementation><![CDATA[
+bool status;
+
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+osalDbgAssert((self->state == ICU_WAITING) ||
+              (self->state == ICU_ACTIVE),
+              "invalid state");
+osalDbgAssert(icuAreNotificationsEnabledX(self) == false,
+              "notifications enabled");
+
+status = icu_lld_wait_capture(self);
+if (status) {
+  self->state = ICU_WAITING;
+}
+else {
+  self->width  = icu_lld_get_width(self);
+  self->period = icu_lld_get_period(self);
+  self->state  = ICU_ACTIVE;
+}
+osalSysUnlock();
+
+return status;]]></implementation>
+            </method>
+            <method name="icuStopCaptureI" ctype="void">
+              <brief>Stops the input capture.</brief>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == ICU_WAITING) ||
+              (self->state == ICU_ACTIVE),
+              "invalid state");
+
+icu_lld_stop_capture(self);
+self->enabled_events = 0U;
+self->state = HAL_DRV_STATE_READY;]]></implementation>
+            </method>
+            <method name="icuStopCapture" ctype="void">
+              <brief>Stops the input capture.</brief>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+icuStopCaptureI(self);
+osalSysUnlock();]]></implementation>
+            </method>
+            <method name="icuEnableEventsI" ctype="void">
+              <brief>Enables ICU event notifications.</brief>
+              <param name="events" ctype="icu_events_t" dir="in">
+                Event mask to be enabled.
+              </param>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == ICU_WAITING) ||
+              (self->state == ICU_ACTIVE),
+              "invalid state");
+osalDbgAssert(drvGetCallbackX(self) != NULL, "undefined callback");
+
+events &= ICU_EVENT_ALL;
+self->enabled_events |= events;
+icu_lld_enable_events(self, events);]]></implementation>
+            </method>
+            <method name="icuEnableEvents" ctype="void">
+              <brief>Enables ICU event notifications.</brief>
+              <param name="events" ctype="icu_events_t" dir="in">
+                Event mask to be enabled.
+              </param>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+icuEnableEventsI(self, events);
+osalSysUnlock();]]></implementation>
+            </method>
+            <method name="icuDisableEventsI" ctype="void">
+              <brief>Disables ICU event notifications.</brief>
+              <param name="events" ctype="icu_events_t" dir="in">
+                Event mask to be disabled.
+              </param>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == ICU_WAITING) ||
+              (self->state == ICU_ACTIVE),
+              "invalid state");
+
+events &= ICU_EVENT_ALL;
+self->enabled_events &= ~events;
+icu_lld_disable_events(self, events);]]></implementation>
+            </method>
+            <method name="icuDisableEvents" ctype="void">
+              <brief>Disables ICU event notifications.</brief>
+              <param name="events" ctype="icu_events_t" dir="in">
+                Event mask to be disabled.
+              </param>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+icuDisableEventsI(self, events);
+osalSysUnlock();]]></implementation>
+            </method>
+            <method name="icuEnableNotifications" ctype="void">
+              <brief>Enables ICU notifications for all event kinds.</brief>
+              <api />
+              <implementation><![CDATA[
+icuEnableEvents(self, ICU_EVENT_ALL);]]></implementation>
+            </method>
+            <method name="icuDisableNotifications" ctype="void">
+              <brief>Disables ICU notifications.</brief>
+              <api />
+              <implementation><![CDATA[
+icuDisableEvents(self, ICU_EVENT_ALL);]]></implementation>
+            </method>
+          </regular>
+          <inline>
+            <method name="icuEnableNotificationsI" ctype="void">
+              <brief>Enables ICU notifications for all event kinds.</brief>
+              <iclass />
+              <implementation><![CDATA[
+icuEnableEventsI(self, ICU_EVENT_ALL);]]></implementation>
+            </method>
+            <method name="icuDisableNotificationsI" ctype="void">
+              <brief>Disables ICU notifications.</brief>
+              <iclass />
+              <implementation><![CDATA[
+icuDisableEventsI(self, ICU_EVENT_ALL);]]></implementation>
+            </method>
+            <method name="icuAreNotificationsEnabledX" ctype="bool">
+              <brief>Checks if ICU notifications are enabled.</brief>
+              <return>The notifications status.</return>
+              <xclass />
+              <implementation><![CDATA[
+return icu_lld_are_notifications_enabled(self);]]></implementation>
+            </method>
+            <method name="icuGetWidthX" ctype="icucnt_t">
+              <brief>Returns the latest captured pulse width.</brief>
+              <return>The number of ticks.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->width;]]></implementation>
+            </method>
+            <method name="icuGetPeriodX" ctype="icucnt_t">
+              <brief>Returns the latest captured cycle period.</brief>
+              <return>The number of ticks.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->period;]]></implementation>
+            </method>
+            <method name="icuGetEventsX" ctype="icu_events_t">
+              <brief>Returns the cached ICU event flags.</brief>
+              <return>The current cached event flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->events;]]></implementation>
+            </method>
+            <method name="icuGetAndClearEventsX" ctype="icu_events_t">
+              <brief>Gets and clears cached ICU event flags.</brief>
+              <param name="mask" ctype="icu_events_t" dir="in">
+                Mask of events to be returned and cleared.
+              </param>
+              <return>The selected pending event flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+icu_events_t events;
+syssts_t sts;
+
+sts = osalSysGetStatusAndLockX();
+events = self->events & mask;
+self->events &= ~mask;
+osalSysRestoreStatusX(sts);
+
+return events;]]></implementation>
+            </method>
+          </inline>
+          <override>
+            <method shortname="start">
+              <implementation><![CDATA[
+msg_t msg;
+
+msg = icu_lld_start(self);
+if (msg != HAL_RET_SUCCESS) {
+  self->config = NULL;
+  self->width = 0U;
+  self->period = 0U;
+  self->enabled_events = 0U;
+  self->events = 0U;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[
+icu_lld_stop(self);
+self->width = 0U;
+self->period = 0U;
+self->enabled_events = 0U;
+self->events = 0U;]]></implementation>
+            </method>
+            <method shortname="setcfg">
+              <implementation><![CDATA[
+return (const void *)icu_lld_setcfg(self,
+                                    (const hal_icu_config_t *)config);]]></implementation>
+            </method>
+            <method shortname="selcfg">
+              <implementation><![CDATA[
+return (const void *)icu_lld_selcfg(self, cfgnum);]]></implementation>
+            </method>
+            <method shortname="setcb">
+              <implementation><![CDATA[
+__cbdrv_setcb_impl(self, cb);
+icu_lld_set_callback(self, cb);]]></implementation>
+            </method>
+          </override>
+        </methods>
+      </class>
+    </types>
+    <functions>
+      <function name="icuInit" ctype="void">
+        <brief>ICU Driver initialization.</brief>
+        <init />
+        <implementation><![CDATA[
+icu_lld_init();]]></implementation>
+      </function>
+    </functions>
+  </public>
+  <private>
+    <includes_always>
+      <include style="regular">hal.h</include>
+    </includes_always>
+  </private>
+</module>

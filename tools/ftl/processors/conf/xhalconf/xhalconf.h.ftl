@@ -51,6 +51,7 @@
 #define HAL_USE_ADC                         ${doc.HAL_USE_ADC!"FALSE"}
 #define HAL_USE_ETH                         ${doc.HAL_USE_ETH!"FALSE"}
 #define HAL_USE_GPT                         ${doc.HAL_USE_GPT!"FALSE"}
+#define HAL_USE_ICU                         ${doc.HAL_USE_ICU!"FALSE"}
 #define HAL_USE_MMC_SPI                     ${doc.HAL_USE_MMC_SPI!"FALSE"}
 #define HAL_USE_PWM                         ${doc.HAL_USE_PWM!"FALSE"}
 #define HAL_USE_RTC                         ${doc.HAL_USE_RTC!"FALSE"}
@@ -69,6 +70,15 @@
 /*===========================================================================*/
 
 #define GPT_DEFAULT_FREQUENCY               ${doc.GPT_DEFAULT_FREQUENCY!"1000000U"}
+
+/*===========================================================================*/
+/* ICU driver settings.                                                      */
+/*===========================================================================*/
+
+#define ICU_USE_OVERFLOW_SCALING            ${doc.ICU_USE_OVERFLOW_SCALING!"FALSE"}
+#define ICU_USE_CONFIGURATIONS              ${doc.ICU_USE_CONFIGURATIONS!"FALSE"}
+#define ICU_DEFAULT_FREQUENCY               ${doc.ICU_DEFAULT_FREQUENCY!"1000000U"}
+#define ICU_DEFAULT_ARR                     ${doc.ICU_DEFAULT_ARR!"0xFFFFFFFFU"}
 
 /*===========================================================================*/
 /* PWM driver settings.                                                      */

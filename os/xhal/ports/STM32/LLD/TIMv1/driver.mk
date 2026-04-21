@@ -1,11 +1,11 @@
 ifeq ($(USE_SMART_BUILD),yes)
-ifneq ($(findstring HAL_USE_GPT TRUE,$(HALCONF)),)
+ifneq ($(findstring HAL_USE_GPT TRUE,$(XHALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/xhal/ports/STM32/LLD/TIMv1/hal_gpt_lld.c
 endif
-ifneq ($(findstring HAL_USE_ICU TRUE,$(HALCONF)),)
+ifneq ($(findstring HAL_USE_ICU TRUE,$(XHALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/xhal/ports/STM32/LLD/TIMv1/hal_icu_lld.c
 endif
-ifneq ($(findstring HAL_USE_PWM TRUE,$(HALCONF)),)
+ifneq ($(findstring HAL_USE_PWM TRUE,$(XHALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/xhal/ports/STM32/LLD/TIMv1/hal_pwm_lld.c
 endif
 else
