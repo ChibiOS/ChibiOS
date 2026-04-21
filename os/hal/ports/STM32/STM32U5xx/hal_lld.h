@@ -128,6 +128,10 @@
  * @{
  */
 #define PWR_VOSR_VOS_FIELD(n)               ((n) << PWR_VOSR_VOS_Pos)
+#define PWR_VOSR_VOS_RANGE4                 PWR_VOSR_VOS_FIELD(0U)
+#define PWR_VOSR_VOS_RANGE3                 PWR_VOSR_VOS_FIELD(1U)
+#define PWR_VOSR_VOS_RANGE2                 PWR_VOSR_VOS_FIELD(2U)
+#define PWR_VOSR_VOS_RANGE1                 PWR_VOSR_VOS_FIELD(3U)
 /** @} */
 
 /**
@@ -317,6 +321,10 @@
 #define STM32_NO_INIT                       FALSE
 #endif
 
+#if !defined(STM32_PWR_VOSR) || defined(__DOXYGEN__)
+#define STM32_PWR_VOSR                      PWR_VOSR_VOS_RANGE1
+#endif
+
 #if !defined(STM32_HSI16_ENABLED) || defined(__DOXYGEN__)
 #define STM32_HSI16_ENABLED                 FALSE
 #endif
@@ -503,6 +511,7 @@ typedef uint32_t halcnt_t;
 #include "stm32_isr.h"
 #include "stm32_exti.h"
 #include "stm32_rcc.h"
+#include "stm32_limits.h"
 #include "stm32_tim.h"
 
 #if HAL_USE_ADC || HAL_USE_DAC || HAL_USE_I2C || HAL_USE_SPI ||             \

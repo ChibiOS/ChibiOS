@@ -39,7 +39,7 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#if defined(GPDMA1_Channel0)
+#if defined(GPDMA1_Channel0) && defined(GPDMA2_Channel0)
 /* DMA3 is named GPDMA in this device.*/
 #define STM32_DMA31_CH0                 GPDMA1_Channel0
 #define STM32_DMA31_CH1                 GPDMA1_Channel1
@@ -57,6 +57,26 @@
 #define STM32_DMA32_CH5                 GPDMA2_Channel5
 #define STM32_DMA32_CH6                 GPDMA2_Channel6
 #define STM32_DMA32_CH7                 GPDMA2_Channel7
+
+#elif defined(GPDMA1_Channel0) && defined(GPDMA1_Channel8)
+/* DMA3 is named GPDMA in this device, all channels are on GPDMA1.*/
+#define STM32_DMA3_SHARED_GPDMA1        TRUE
+#define STM32_DMA31_CH0                 GPDMA1_Channel0
+#define STM32_DMA31_CH1                 GPDMA1_Channel1
+#define STM32_DMA31_CH2                 GPDMA1_Channel2
+#define STM32_DMA31_CH3                 GPDMA1_Channel3
+#define STM32_DMA31_CH4                 GPDMA1_Channel4
+#define STM32_DMA31_CH5                 GPDMA1_Channel5
+#define STM32_DMA31_CH6                 GPDMA1_Channel6
+#define STM32_DMA31_CH7                 GPDMA1_Channel7
+#define STM32_DMA32_CH0                 GPDMA1_Channel8
+#define STM32_DMA32_CH1                 GPDMA1_Channel9
+#define STM32_DMA32_CH2                 GPDMA1_Channel10
+#define STM32_DMA32_CH3                 GPDMA1_Channel11
+#define STM32_DMA32_CH4                 GPDMA1_Channel12
+#define STM32_DMA32_CH5                 GPDMA1_Channel13
+#define STM32_DMA32_CH6                 GPDMA1_Channel14
+#define STM32_DMA32_CH7                 GPDMA1_Channel15
 
 #else
 #error "DMA3 definitions not found or not recognized"
@@ -577,11 +597,23 @@ void dma3ChannelFreeI(const stm32_dma3_channel_t *dmachp) {
 
   /* Shutting down clocks that are no more required, if any.*/
   if ((dma3.allocated_mask & STM32_DMA31_MASK_ANY) == 0U) {
+#if defined(STM32_DMA3_SHARED_GPDMA1)
+    if ((dma3.allocated_mask & STM32_DMA32_MASK_ANY) == 0U) {
+      rccDisableDMA31();
+    }
+#else
     rccDisableDMA31();
+#endif
   }
 #if STM32_DMA32_NUM_CHANNELS > 0
   if ((dma3.allocated_mask & STM32_DMA32_MASK_ANY) == 0U) {
+#if defined(STM32_DMA3_SHARED_GPDMA1)
+    if ((dma3.allocated_mask & STM32_DMA31_MASK_ANY) == 0U) {
+      rccDisableDMA32();
+    }
+#else
     rccDisableDMA32();
+#endif
   }
 #endif
 }

@@ -426,9 +426,22 @@
 #define rccDisableDMA31() rccDisableAHB1(RCC_AHB1ENR_GPDMA1EN)
 #define rccResetDMA31() rccResetAHB1(RCC_AHB1RSTR_GPDMA1RST)
 
+#define rccEnableDMA32(lp) rccEnableAHB1(RCC_AHB1ENR_GPDMA1EN, lp)
+#define rccDisableDMA32() rccDisableAHB1(RCC_AHB1ENR_GPDMA1EN)
+#define rccResetDMA32() rccResetAHB1(RCC_AHB1RSTR_GPDMA1RST)
+
 #define rccEnableLPDMA1(lp) rccEnableAHB3(RCC_AHB3ENR_LPDMA1EN, lp)
 #define rccDisableLPDMA1() rccDisableAHB3(RCC_AHB3ENR_LPDMA1EN)
 #define rccResetLPDMA1() rccResetAHB3(RCC_AHB3RSTR_LPDMA1RST)
+/** @} */
+
+/**
+ * @name    FDCAN peripherals specific RCC operations
+ * @{
+ */
+#define rccEnableFDCAN1(lp) rccEnableAPB1R2(RCC_APB1ENR2_FDCAN1EN, lp)
+#define rccDisableFDCAN1() rccDisableAPB1R2(RCC_APB1ENR2_FDCAN1EN)
+#define rccResetFDCAN1() rccResetAPB1R2(RCC_APB1RSTR2_FDCAN1RST)
 /** @} */
 
 /**
@@ -474,9 +487,26 @@
 /** @} */
 
 /**
+ * @name    OCTOSPI peripherals specific RCC operations
+ * @{
+ */
+#define rccEnableOCTOSPI1(lp) rccEnableAHB2R2(RCC_AHB2ENR2_OCTOSPI1EN, lp)
+#define rccDisableOCTOSPI1() rccDisableAHB2R2(RCC_AHB2ENR2_OCTOSPI1EN)
+#define rccResetOCTOSPI1() rccResetAHB2R2(RCC_AHB2RSTR2_OCTOSPI1RST)
+
+#define rccEnableOCTOSPI2(lp) rccEnableAHB2R2(RCC_AHB2ENR2_OCTOSPI2EN, lp)
+#define rccDisableOCTOSPI2() rccDisableAHB2R2(RCC_AHB2ENR2_OCTOSPI2EN)
+#define rccResetOCTOSPI2() rccResetAHB2R2(RCC_AHB2RSTR2_OCTOSPI2RST)
+/** @} */
+
+/**
  * @name    Power and system specific RCC operations
  * @{
  */
+#define rccEnableDMA2D(lp) rccEnableAHB1(RCC_AHB1ENR_DMA2DEN, lp)
+#define rccDisableDMA2D() rccDisableAHB1(RCC_AHB1ENR_DMA2DEN)
+#define rccResetDMA2D() rccResetAHB1(RCC_AHB1RSTR_DMA2DRST)
+
 #define rccEnablePWRInterface(lp) rccEnableAHB3(RCC_AHB3ENR_PWREN, lp)
 #define rccDisablePWRInterface() rccDisableAHB3(RCC_AHB3ENR_PWREN)
 #define rccResetPWRInterface() do { } while (0)
@@ -488,6 +518,49 @@
 #define rccEnableSYSCFG(lp) rccEnableAPB3(RCC_APB3ENR_SYSCFGEN, lp)
 #define rccDisableSYSCFG() rccDisableAPB3(RCC_APB3ENR_SYSCFGEN)
 #define rccResetSYSCFG() rccResetAPB3(RCC_APB3RSTR_SYSCFGRST)
+
+#define rccEnableTSC(lp) rccEnableAHB1(RCC_AHB1ENR_TSCEN, lp)
+#define rccDisableTSC() rccDisableAHB1(RCC_AHB1ENR_TSCEN)
+#define rccResetTSC() rccResetAHB1(RCC_AHB1RSTR_TSCRST)
+/** @} */
+
+/**
+ * @name    RNG and HASH specific RCC operations
+ * @{
+ */
+#define rccEnableHASH(lp) rccEnableAHB2R1(RCC_AHB2ENR1_HASHEN, lp)
+#define rccDisableHASH() rccDisableAHB2R1(RCC_AHB2ENR1_HASHEN)
+#define rccResetHASH() rccResetAHB2R1(RCC_AHB2RSTR1_HASHRST)
+
+#define rccEnableRNG(lp) rccEnableAHB2R1(RCC_AHB2ENR1_RNGEN, lp)
+#define rccDisableRNG() rccDisableAHB2R1(RCC_AHB2ENR1_RNGEN)
+#define rccResetRNG() rccResetAHB2R1(RCC_AHB2RSTR1_RNGRST)
+/** @} */
+
+/**
+ * @name    SAI peripherals specific RCC operations
+ * @{
+ */
+#define rccEnableSAI1(lp) rccEnableAPB2(RCC_APB2ENR_SAI1EN, lp)
+#define rccDisableSAI1() rccDisableAPB2(RCC_APB2ENR_SAI1EN)
+#define rccResetSAI1() rccResetAPB2(RCC_APB2RSTR_SAI1RST)
+
+#define rccEnableSAI2(lp) rccEnableAPB2(RCC_APB2ENR_SAI2EN, lp)
+#define rccDisableSAI2() rccDisableAPB2(RCC_APB2ENR_SAI2EN)
+#define rccResetSAI2() rccResetAPB2(RCC_APB2RSTR_SAI2RST)
+/** @} */
+
+/**
+ * @name    SDMMC peripherals specific RCC operations
+ * @{
+ */
+#define rccEnableSDMMC1(lp) rccEnableAHB2R1(RCC_AHB2ENR1_SDMMC1EN, lp)
+#define rccDisableSDMMC1() rccDisableAHB2R1(RCC_AHB2ENR1_SDMMC1EN)
+#define rccResetSDMMC1() rccResetAHB2R1(RCC_AHB2RSTR1_SDMMC1RST)
+
+#define rccEnableSDMMC2(lp) rccEnableAHB2R1(RCC_AHB2ENR1_SDMMC2EN, lp)
+#define rccDisableSDMMC2() rccDisableAHB2R1(RCC_AHB2ENR1_SDMMC2EN)
+#define rccResetSDMMC2() rccResetAHB2R1(RCC_AHB2RSTR1_SDMMC2RST)
 /** @} */
 
 /**
@@ -523,10 +596,6 @@
 #define rccDisableUSART3() rccDisableAPB1R1(RCC_APB1ENR1_USART3EN)
 #define rccResetUSART3() rccResetAPB1R1(RCC_APB1RSTR1_USART3RST)
 
-#define rccEnableUSART6(lp) rccEnableAPB1R1(RCC_APB1ENR1_USART6EN, lp)
-#define rccDisableUSART6() rccDisableAPB1R1(RCC_APB1ENR1_USART6EN)
-#define rccResetUSART6() rccResetAPB1R1(RCC_APB1RSTR1_USART6RST)
-
 #define rccEnableUART4(lp) rccEnableAPB1R1(RCC_APB1ENR1_UART4EN, lp)
 #define rccDisableUART4() rccDisableAPB1R1(RCC_APB1ENR1_UART4EN)
 #define rccResetUART4() rccResetAPB1R1(RCC_APB1RSTR1_UART4RST)
@@ -538,6 +607,32 @@
 #define rccEnableLPUART1(lp) rccEnableAPB3(RCC_APB3ENR_LPUART1EN, lp)
 #define rccDisableLPUART1() rccDisableAPB3(RCC_APB3ENR_LPUART1EN)
 #define rccResetLPUART1() rccResetAPB3(RCC_APB3RSTR_LPUART1RST)
+/** @} */
+
+/**
+ * @name    USB and UCPD specific RCC operations
+ * @{
+ */
+#define rccEnableUSB(lp) rccEnableAHB2R1(RCC_AHB2ENR1_OTGEN, lp)
+#define rccDisableUSB() rccDisableAHB2R1(RCC_AHB2ENR1_OTGEN)
+#define rccResetUSB() rccResetAHB2R1(RCC_AHB2RSTR1_OTGRST)
+
+#define rccEnableUCPD1(lp) rccEnableAPB1R2(RCC_APB1ENR2_UCPD1EN, lp)
+#define rccDisableUCPD1() rccDisableAPB1R2(RCC_APB1ENR2_UCPD1EN)
+#define rccResetUCPD1() rccResetAPB1R2(RCC_APB1RSTR2_UCPD1RST)
+/** @} */
+
+/**
+ * @name    DCMI/PSSI specific RCC operations
+ * @{
+ */
+#define rccEnableDCMI_PSSI(lp) rccEnableAHB2R1(RCC_AHB2ENR1_DCMI_PSSIEN, lp)
+#define rccDisableDCMI_PSSI() rccDisableAHB2R1(RCC_AHB2ENR1_DCMI_PSSIEN)
+#define rccResetDCMI_PSSI() rccResetAHB2R1(RCC_AHB2RSTR1_DCMI_PSSIRST)
+
+#define rccEnableDCMI(lp) rccEnableDCMI_PSSI(lp)
+#define rccDisableDCMI() rccDisableDCMI_PSSI()
+#define rccResetDCMI() rccResetDCMI_PSSI()
 /** @} */
 
 #endif /* STM32_RCC_H */
