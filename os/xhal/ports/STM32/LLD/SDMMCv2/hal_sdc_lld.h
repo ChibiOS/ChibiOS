@@ -161,10 +161,6 @@ extern "C" {
                                  uint32_t arg, uint32_t *resp);
   bool sdc_lld_read_special(hal_sdc_driver_c *sdcp, uint8_t *buf, size_t bytes,
                             uint8_t cmd, uint32_t arg);
-  bool sdc_lld_read(hal_sdc_driver_c *sdcp, uint32_t startblk,
-                    uint8_t *buf, uint32_t blocks);
-  bool sdc_lld_write(hal_sdc_driver_c *sdcp, uint32_t startblk,
-                     const uint8_t *buf, uint32_t blocks);
   msg_t sdc_lld_start_read(hal_sdc_driver_c *sdcp, uint32_t startblk,
                            uint8_t *buf, uint32_t blocks);
   msg_t sdc_lld_start_write(hal_sdc_driver_c *sdcp, uint32_t startblk,

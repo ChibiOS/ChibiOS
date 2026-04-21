@@ -593,6 +593,56 @@ static bool _sdc_wait_for_transfer_state_nocrc(hal_sdc_driver_c *sdcp) {
   }
 }
 
+#if (SDC_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
+/**
+ * @brief       Performs a synchronous aligned block read.
+ *
+ * @param[in]     sdcp          Pointer to the SDC driver instance.
+ * @param[in]     startblk      Initial block number.
+ * @param[out]    buf           Pointer to the read buffer.
+ * @param[in]     n             Number of blocks to read.
+ * @return                      The operation status.
+ * @retval false                Operation succeeded.
+ * @retval true                 Operation failed.
+ */
+static bool sdc_sync_read_aligned(hal_sdc_driver_c *sdcp, uint32_t startblk,
+                                  uint8_t *buf, uint32_t n) {
+  if (sdcStartRead(sdcp, startblk, buf, n) != HAL_RET_SUCCESS) {
+    return HAL_FAILED;
+  }
+
+  if (sdcSynchronize(sdcp, TIME_INFINITE) != MSG_OK) {
+    return HAL_FAILED;
+  }
+
+  return HAL_SUCCESS;
+}
+
+/**
+ * @brief       Performs a synchronous aligned block write.
+ *
+ * @param[in]     sdcp          Pointer to the SDC driver instance.
+ * @param[in]     startblk      Initial block number.
+ * @param[in]     buf           Pointer to the write buffer.
+ * @param[in]     n             Number of blocks to write.
+ * @return                      The operation status.
+ * @retval false                Operation succeeded.
+ * @retval true                 Operation failed.
+ */
+static bool sdc_sync_write_aligned(hal_sdc_driver_c *sdcp, uint32_t startblk,
+                                   const uint8_t *buf, uint32_t n) {
+  if (sdcStartWrite(sdcp, startblk, buf, n) != HAL_RET_SUCCESS) {
+    return HAL_FAILED;
+  }
+
+  if (sdcSynchronize(sdcp, TIME_INFINITE) != MSG_OK) {
+    return HAL_FAILED;
+  }
+
+  return HAL_SUCCESS;
+}
+#endif /* SDC_USE_SYNCHRONIZATION == TRUE */
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -1122,8 +1172,6 @@ msg_t sdcSynchronize(void *ip, sysinterval_t timeout) {
  */
 bool sdcRead(void *ip, uint32_t startblk, uint8_t *buf, uint32_t n) {
   hal_sdc_driver_c *self = (hal_sdc_driver_c *)ip;
-  bool status;
-
   osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
   osalDbgAssert(self->state == SDC_READY, "invalid state");
 
@@ -1133,11 +1181,24 @@ bool sdcRead(void *ip, uint32_t startblk, uint8_t *buf, uint32_t n) {
   }
 
   self->errors = SDC_NO_ERROR;
-  self->state = SDC_READING;
-  status = sdc_lld_read(self, startblk, buf, n);
-  self->state = SDC_READY;
+#if STM32_SDC_SDMMC_UNALIGNED_SUPPORT
+  if ((((uintptr_t)buf) & 3U) != 0U) {
+    while (n > 0U) {
+      if (sdc_sync_read_aligned(self, startblk, self->buf, 1U)) {
+        return HAL_FAILED;
+      }
+      memcpy(buf, self->buf, MMCSD_BLOCK_SIZE);
+      buf += MMCSD_BLOCK_SIZE;
+      startblk++;
+      n--;
+    }
+    return HAL_SUCCESS;
+  }
+#else
+  osalDbgAssert((((uintptr_t)buf & 3U) == 0U), "unaligned buffer");
+#endif
 
-  return status;
+  return sdc_sync_read_aligned(self, startblk, buf, n);
 }
 
 /**
@@ -1155,8 +1216,6 @@ bool sdcRead(void *ip, uint32_t startblk, uint8_t *buf, uint32_t n) {
  */
 bool sdcWrite(void *ip, uint32_t startblk, const uint8_t *buf, uint32_t n) {
   hal_sdc_driver_c *self = (hal_sdc_driver_c *)ip;
-  bool status;
-
   osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
   osalDbgAssert(self->state == SDC_READY, "invalid state");
 
@@ -1166,11 +1225,24 @@ bool sdcWrite(void *ip, uint32_t startblk, const uint8_t *buf, uint32_t n) {
   }
 
   self->errors = SDC_NO_ERROR;
-  self->state = SDC_WRITING;
-  status = sdc_lld_write(self, startblk, buf, n);
-  self->state = SDC_READY;
+#if STM32_SDC_SDMMC_UNALIGNED_SUPPORT
+  if ((((uintptr_t)buf) & 3U) != 0U) {
+    while (n > 0U) {
+      memcpy(self->buf, buf, MMCSD_BLOCK_SIZE);
+      if (sdc_sync_write_aligned(self, startblk, self->buf, 1U)) {
+        return HAL_FAILED;
+      }
+      buf += MMCSD_BLOCK_SIZE;
+      startblk++;
+      n--;
+    }
+    return HAL_SUCCESS;
+  }
+#else
+  osalDbgAssert((((uintptr_t)buf & 3U) == 0U), "unaligned buffer");
+#endif
 
-  return status;
+  return sdc_sync_write_aligned(self, startblk, buf, n);
 }
 #endif /* SDC_USE_SYNCHRONIZATION == TRUE */
 

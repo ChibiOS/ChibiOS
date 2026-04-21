@@ -22,8 +22,6 @@
  * @{
  */
 
-#include <string.h>
-
 #include "hal.h"
 
 #if HAL_USE_SDC || defined(__DOXYGEN__)
@@ -340,40 +338,6 @@ static msg_t sdc_lld_start_transfer(hal_sdc_driver_c *sdcp, uint32_t startblk,
   return HAL_RET_SUCCESS;
 }
 
-static bool sdc_lld_read_aligned(hal_sdc_driver_c *sdcp, uint32_t startblk,
-                                 uint8_t *buf, uint32_t blocks) {
-
-  if (sdc_lld_start_transfer(sdcp, startblk, buf, blocks, true) != HAL_RET_SUCCESS) {
-    return HAL_FAILED;
-  }
-
-  if (sdc_lld_wait_transaction_end_poll(sdcp, blocks, sdcp->resp)) {
-    sdc_lld_error_cleanup(sdcp, blocks, sdcp->resp);
-    sdcp->transfer_blocks = 0U;
-    return HAL_FAILED;
-  }
-
-  sdcp->transfer_blocks = 0U;
-  return HAL_SUCCESS;
-}
-
-static bool sdc_lld_write_aligned(hal_sdc_driver_c *sdcp, uint32_t startblk,
-                                  const uint8_t *buf, uint32_t blocks) {
-
-  if (sdc_lld_start_transfer(sdcp, startblk, buf, blocks, false) != HAL_RET_SUCCESS) {
-    return HAL_FAILED;
-  }
-
-  if (sdc_lld_wait_transaction_end_poll(sdcp, blocks, sdcp->resp)) {
-    sdc_lld_error_cleanup(sdcp, blocks, sdcp->resp);
-    sdcp->transfer_blocks = 0U;
-    return HAL_FAILED;
-  }
-
-  sdcp->transfer_blocks = 0U;
-  return HAL_SUCCESS;
-}
-
 static msg_t sdc_lld_finish_transfer(hal_sdc_driver_c *sdcp) {
   uint32_t sta;
   uint32_t blocks = sdcp->transfer_blocks;
@@ -669,54 +633,6 @@ bool sdc_lld_read_special(hal_sdc_driver_c *sdcp, uint8_t *buf, size_t bytes,
 error:
   sdc_lld_error_cleanup(sdcp, 1U, sdcp->resp);
   return HAL_FAILED;
-}
-
-bool sdc_lld_read(hal_sdc_driver_c *sdcp, uint32_t startblk,
-                  uint8_t *buf, uint32_t blocks) {
-
-#if STM32_SDC_SDMMC_UNALIGNED_SUPPORT
-  if ((((uintptr_t)buf) & 3U) != 0U) {
-    uint32_t i;
-
-    for (i = 0U; i < blocks; i++) {
-      if (sdc_lld_read_aligned(sdcp, startblk, sdcp->buf, 1U)) {
-        return HAL_FAILED;
-      }
-      memcpy(buf, sdcp->buf, MMCSD_BLOCK_SIZE);
-      buf += MMCSD_BLOCK_SIZE;
-      startblk++;
-    }
-    return HAL_SUCCESS;
-  }
-#else
-  osalDbgAssert((((uintptr_t)buf & 3U) == 0U), "unaligned buffer");
-#endif
-
-  return sdc_lld_read_aligned(sdcp, startblk, buf, blocks);
-}
-
-bool sdc_lld_write(hal_sdc_driver_c *sdcp, uint32_t startblk,
-                   const uint8_t *buf, uint32_t blocks) {
-
-#if STM32_SDC_SDMMC_UNALIGNED_SUPPORT
-  if ((((uintptr_t)buf) & 3U) != 0U) {
-    uint32_t i;
-
-    for (i = 0U; i < blocks; i++) {
-      memcpy(sdcp->buf, buf, MMCSD_BLOCK_SIZE);
-      buf += MMCSD_BLOCK_SIZE;
-      if (sdc_lld_write_aligned(sdcp, startblk, sdcp->buf, 1U)) {
-        return HAL_FAILED;
-      }
-      startblk++;
-    }
-    return HAL_SUCCESS;
-  }
-#else
-  osalDbgAssert((((uintptr_t)buf & 3U) == 0U), "unaligned buffer");
-#endif
-
-  return sdc_lld_write_aligned(sdcp, startblk, buf, blocks);
 }
 
 msg_t sdc_lld_start_read(hal_sdc_driver_c *sdcp, uint32_t startblk,

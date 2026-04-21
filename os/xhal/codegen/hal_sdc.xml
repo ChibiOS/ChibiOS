@@ -641,8 +641,6 @@ return msg;]]></implementation>
                 <retval value="true">Operation failed.</retval>
                 <api />
                 <implementation><![CDATA[
-bool status;
-
 osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
 osalDbgAssert(self->state == SDC_READY, "invalid state");
 
@@ -652,11 +650,24 @@ if ((startblk >= self->capacity) || (n > (self->capacity - startblk))) {
 }
 
 self->errors = SDC_NO_ERROR;
-self->state = SDC_READING;
-status = sdc_lld_read(self, startblk, buf, n);
-self->state = SDC_READY;
+#if STM32_SDC_SDMMC_UNALIGNED_SUPPORT
+if ((((uintptr_t)buf) & 3U) != 0U) {
+  while (n > 0U) {
+    if (sdc_sync_read_aligned(self, startblk, self->buf, 1U)) {
+      return HAL_FAILED;
+    }
+    memcpy(buf, self->buf, MMCSD_BLOCK_SIZE);
+    buf += MMCSD_BLOCK_SIZE;
+    startblk++;
+    n--;
+  }
+  return HAL_SUCCESS;
+}
+#else
+osalDbgAssert((((uintptr_t)buf & 3U) == 0U), "unaligned buffer");
+#endif
 
-return status;]]></implementation>
+return sdc_sync_read_aligned(self, startblk, buf, n);]]></implementation>
               </method>
               <method name="sdcWrite" ctype="bool">
                 <brief>Writes one or more logical blocks.</brief>
@@ -674,8 +685,6 @@ return status;]]></implementation>
                 <retval value="true">Operation failed.</retval>
                 <api />
                 <implementation><![CDATA[
-bool status;
-
 osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
 osalDbgAssert(self->state == SDC_READY, "invalid state");
 
@@ -685,11 +694,24 @@ if ((startblk >= self->capacity) || (n > (self->capacity - startblk))) {
 }
 
 self->errors = SDC_NO_ERROR;
-self->state = SDC_WRITING;
-status = sdc_lld_write(self, startblk, buf, n);
-self->state = SDC_READY;
+#if STM32_SDC_SDMMC_UNALIGNED_SUPPORT
+if ((((uintptr_t)buf) & 3U) != 0U) {
+  while (n > 0U) {
+    memcpy(self->buf, buf, MMCSD_BLOCK_SIZE);
+    if (sdc_sync_write_aligned(self, startblk, self->buf, 1U)) {
+      return HAL_FAILED;
+    }
+    buf += MMCSD_BLOCK_SIZE;
+    startblk++;
+    n--;
+  }
+  return HAL_SUCCESS;
+}
+#else
+osalDbgAssert((((uintptr_t)buf & 3U) == 0U), "unaligned buffer");
+#endif
 
-return status;]]></implementation>
+return sdc_sync_write_aligned(self, startblk, buf, n);]]></implementation>
               </method>
             </condition>
             <method name="sdcGetAndClearErrors" ctype="sdcflags_t">
@@ -1410,6 +1432,64 @@ while (true) {
 #endif
 }]]></implementation>
       </function>
+      <condition check="SDC_USE_SYNCHRONIZATION == TRUE">
+        <function name="sdc_sync_read_aligned" ctype="bool">
+          <brief>Performs a synchronous aligned block read.</brief>
+          <param name="sdcp" ctype="hal_sdc_driver_c *" dir="in">
+            Pointer to the SDC driver instance.
+          </param>
+          <param name="startblk" ctype="uint32_t" dir="in">
+            Initial block number.
+          </param>
+          <param name="buf" ctype="uint8_t *" dir="out">
+            Pointer to the read buffer.
+          </param>
+          <param name="n" ctype="uint32_t" dir="in">
+            Number of blocks to read.
+          </param>
+          <return>The operation status.</return>
+          <retval value="false">Operation succeeded.</retval>
+          <retval value="true">Operation failed.</retval>
+          <implementation><![CDATA[
+if (sdcStartRead(sdcp, startblk, buf, n) != HAL_RET_SUCCESS) {
+  return HAL_FAILED;
+}
+
+if (sdcSynchronize(sdcp, TIME_INFINITE) != MSG_OK) {
+  return HAL_FAILED;
+}
+
+return HAL_SUCCESS;]]></implementation>
+        </function>
+        <function name="sdc_sync_write_aligned" ctype="bool">
+          <brief>Performs a synchronous aligned block write.</brief>
+          <param name="sdcp" ctype="hal_sdc_driver_c *" dir="in">
+            Pointer to the SDC driver instance.
+          </param>
+          <param name="startblk" ctype="uint32_t" dir="in">
+            Initial block number.
+          </param>
+          <param name="buf" ctype="const uint8_t *" dir="in">
+            Pointer to the write buffer.
+          </param>
+          <param name="n" ctype="uint32_t" dir="in">
+            Number of blocks to write.
+          </param>
+          <return>The operation status.</return>
+          <retval value="false">Operation succeeded.</retval>
+          <retval value="true">Operation failed.</retval>
+          <implementation><![CDATA[
+if (sdcStartWrite(sdcp, startblk, buf, n) != HAL_RET_SUCCESS) {
+  return HAL_FAILED;
+}
+
+if (sdcSynchronize(sdcp, TIME_INFINITE) != MSG_OK) {
+  return HAL_FAILED;
+}
+
+return HAL_SUCCESS;]]></implementation>
+        </function>
+      </condition>
     </functions>
   </private>
 </module>
