@@ -13,6 +13,7 @@
   <!ENTITY hal_icu             SYSTEM "hal_icu.xml">
   <!ENTITY hal_pwm             SYSTEM "hal_pwm.xml">
   <!ENTITY hal_rtc             SYSTEM "hal_rtc.xml">
+  <!ENTITY hal_sdc             SYSTEM "hal_sdc.xml">
   <!ENTITY hal_sio             SYSTEM "hal_sio.xml">
   <!ENTITY hal_spi             SYSTEM "hal_spi.xml">
   <!ENTITY hal_wspi            SYSTEM "hal_wspi.xml">
@@ -36,6 +37,7 @@
     &hal_icu;
     &hal_pwm;
     &hal_rtc;
+    &hal_sdc;
     &hal_sio;
     &hal_spi;
     &hal_wspi;

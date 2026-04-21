@@ -190,6 +190,9 @@
 #define STM32_IRQ_I2C3_PRIORITY             5
 #define STM32_IRQ_I2C4_PRIORITY             5
 
+#define STM32_IRQ_SDMMC1_PRIORITY           10
+#define STM32_IRQ_SDMMC2_PRIORITY           10
+
 #define STM32_IRQ_RTC_GLOBAL_PRIORITY       6
 #define STM32_IRQ_RTC_TAMP_PRIORITY         6
 
@@ -384,6 +387,17 @@
 #define STM32_RTC_PRESA_VALUE               32
 #define STM32_RTC_PRESS_VALUE               1024
 #define STM32_RTC_CR_INIT                   0U
+
+/*
+ * SDC driver system settings.
+ */
+#define STM32_SDC_USE_SDMMC1                FALSE
+#define STM32_SDC_USE_SDMMC2                FALSE
+#define STM32_SDC_SDMMC_UNALIGNED_SUPPORT   TRUE
+#define STM32_SDC_SDMMC_WRITE_TIMEOUT       10000
+#define STM32_SDC_SDMMC_READ_TIMEOUT        10000
+#define STM32_SDC_SDMMC_CLOCK_DELAY         10
+#define STM32_SDC_SDMMC_PWRSAV              TRUE
 
 /*
  * WSPI driver system settings.

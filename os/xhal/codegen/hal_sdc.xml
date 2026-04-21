@@ -1,0 +1,1415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_sdc" descr="SDC Driver" check="HAL_USE_SDC == TRUE"
+  editcode="false">
+  <brief>SDC Driver macros and structures.</brief>
+  <imports>
+    <import>hal_cb_driver.xml</import>
+  </imports>
+  <public>
+    <includes_always>
+      <include style="regular">hal_cb_driver.h</include>
+      <include style="regular">hal_block_io.h</include>
+    </includes_always>
+    <definitions_early>
+      <group description="SD card types">
+        <define name="SDC_MODE_CARDTYPE_MASK" value="0x0FU">
+          <brief>Mask of card type bits.</brief>
+        </define>
+        <define name="SDC_MODE_CARDTYPE_SDV11" value="0U">
+          <brief>SD version 1.1 card.</brief>
+        </define>
+        <define name="SDC_MODE_CARDTYPE_SDV20" value="1U">
+          <brief>SD version 2.0 card.</brief>
+        </define>
+        <define name="SDC_MODE_CARDTYPE_MMC" value="2U">
+          <brief>MMC card.</brief>
+        </define>
+        <define name="SDC_MODE_HIGH_CAPACITY" value="0x10U">
+          <brief>High-capacity card flag.</brief>
+        </define>
+      </group>
+      <group description="SDC bus error conditions">
+        <define name="SDC_NO_ERROR" value="0U">
+          <brief>No error.</brief>
+        </define>
+        <define name="SDC_CMD_CRC_ERROR" value="1U">
+          <brief>Command CRC error.</brief>
+        </define>
+        <define name="SDC_DATA_CRC_ERROR" value="2U">
+          <brief>Data CRC error.</brief>
+        </define>
+        <define name="SDC_DATA_TIMEOUT" value="4U">
+          <brief>Data timeout.</brief>
+        </define>
+        <define name="SDC_COMMAND_TIMEOUT" value="8U">
+          <brief>Command timeout.</brief>
+        </define>
+        <define name="SDC_TX_UNDERRUN" value="16U">
+          <brief>Transmit underrun.</brief>
+        </define>
+        <define name="SDC_RX_OVERRUN" value="32U">
+          <brief>Receive overrun.</brief>
+        </define>
+        <define name="SDC_STARTBIT_ERROR" value="64U">
+          <brief>Start bit error.</brief>
+        </define>
+        <define name="SDC_OVERFLOW_ERROR" value="128U">
+          <brief>Address range overflow.</brief>
+        </define>
+        <define name="SDC_UNHANDLED_ERROR" value="0xFFFFFFFFU">
+          <brief>Unhandled error condition.</brief>
+        </define>
+      </group>
+    </definitions_early>
+    <configs>
+      <config name="SDC_USE_SYNCHRONIZATION" default="TRUE">
+        <brief>Support for blocking SDC transfer APIs.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="SDC_USE_MUTUAL_EXCLUSION" default="TRUE">
+        <brief>Support for SDC bus locking APIs.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="SDC_USE_CONFIGURATIONS" default="FALSE">
+        <brief>Support for user-defined SDC configurations.</brief>
+        <note>When enabled the user must provide a variable named
+          @p sdc_configurations of type @p sdc_configurations_t.</note>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="SDC_INIT_RETRY" default="100">
+        <brief>Number of initialization attempts before rejecting a card.</brief>
+      </config>
+      <config name="SDC_MMC_SUPPORT" default="FALSE">
+        <brief>Include support for MMC cards.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="SDC_NICE_WAITING" default="TRUE">
+        <brief>Insert small waits in polling loops.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="SDC_INIT_OCR_V20" default="0x50FF8000U">
+        <brief>OCR initialization constant for SD V2.0 cards.</brief>
+      </config>
+      <config name="SDC_INIT_OCR" default="0x80100000U">
+        <brief>OCR initialization constant for non-V2.0 cards.</brief>
+      </config>
+    </configs>
+    <macros>
+      <group description="Macro functions">
+        <macro name="sdcIsCardInserted">
+          <brief>Returns the card insertion status.</brief>
+          <param name="sdcp" dir="in">Pointer to the SDC driver instance.</param>
+          <return>The card state.</return>
+          <retval value="false">Card not inserted.</retval>
+          <retval value="true">Card inserted.</retval>
+          <api />
+          <implementation><![CDATA[(sdc_lld_is_card_inserted(sdcp))]]></implementation>
+        </macro>
+        <macro name="sdcIsWriteProtected">
+          <brief>Returns the card write-protect status.</brief>
+          <param name="sdcp" dir="in">Pointer to the SDC driver instance.</param>
+          <return>The card state.</return>
+          <retval value="false">Card is writable.</retval>
+          <retval value="true">Card is write protected.</retval>
+          <api />
+          <implementation><![CDATA[(sdc_lld_is_write_protected(sdcp))]]></implementation>
+        </macro>
+      </group>
+      <group description="Low level driver helper macros">
+        <condition check="SDC_USE_SYNCHRONIZATION == TRUE">
+          <macro name="_sdc_wakeup_isr">
+            <brief>Wakes up the thread waiting for transfer completion.</brief>
+            <param name="sdcp" dir="in">Pointer to the SDC driver instance.</param>
+            <param name="msg" dir="in">Wakeup message.</param>
+            <notapi />
+            <implementation><![CDATA[
+do {
+  osalThreadResumeI(&(sdcp)->sync_transfer, msg);
+} while (false)]]></implementation>
+          </macro>
+        </condition>
+        <condition check="SDC_USE_SYNCHRONIZATION != TRUE">
+          <macro name="_sdc_wakeup_isr">
+            <brief>Wakes up the thread waiting for transfer completion.</brief>
+            <param name="sdcp" dir="in">Pointer to the SDC driver instance.</param>
+            <param name="msg" dir="in">Wakeup message.</param>
+            <notapi />
+            <implementation><![CDATA[
+do {
+  (void)(sdcp);
+  (void)(msg);
+} while (false)]]></implementation>
+          </macro>
+        </condition>
+        <macro name="_sdc_isr_complete_code">
+          <brief>Common ISR code for successful transfer completion.</brief>
+          <param name="sdcp" dir="in">Pointer to the SDC driver instance.</param>
+          <notapi />
+          <implementation><![CDATA[
+do {
+  __cbdrv_invoke_cb_with_transition(sdcp,
+                                    HAL_DRV_STATE_COMPLETE,
+                                    SDC_READY);
+  _sdc_wakeup_isr(sdcp, MSG_OK);
+} while (false)]]></implementation>
+        </macro>
+        <macro name="_sdc_isr_error_code">
+          <brief>Common ISR code for transfer errors.</brief>
+          <param name="sdcp" dir="in">Pointer to the SDC driver instance.</param>
+          <notapi />
+          <implementation><![CDATA[
+do {
+  __cbdrv_invoke_cb_with_transition(sdcp,
+                                    HAL_DRV_STATE_ERROR,
+                                    SDC_READY);
+  _sdc_wakeup_isr(sdcp, MSG_RESET);
+} while (false)]]></implementation>
+        </macro>
+      </group>
+    </macros>
+    <types>
+      <verbatim><![CDATA[
+/**
+ * @brief       Type of an SDC bus width configuration.
+ */
+typedef enum {
+  SDC_MODE_1BIT = 0,
+  SDC_MODE_4BIT,
+  SDC_MODE_8BIT
+} sdcbusmode_t;
+
+/**
+ * @brief       Type of an SDC bus clock selection.
+ */
+typedef enum {
+  SDC_CLK_25MHz = 0,
+  SDC_CLK_50MHz
+} sdcbusclk_t;]]></verbatim>
+      <typedef name="sdcmode_t">
+        <brief>Type of card mode flags.</brief>
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="sdcflags_t">
+        <brief>Type of SDC error flags.</brief>
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="sdcstate_t">
+        <brief>Type of SDC driver state.</brief>
+        <basetype ctype="driver_state_t" />
+      </typedef>
+      <typedef name="hal_sdc_driver_c">
+        <brief>Type of structure representing an SDC driver.</brief>
+        <basetype ctype="struct hal_sdc_driver" />
+      </typedef>
+      <typedef name="hal_sdc_config_t">
+        <brief>Type of structure representing an SDC configuration.</brief>
+        <basetype ctype="struct hal_sdc_config" />
+      </typedef>
+      <typedef name="SDCDriver">
+        <brief>Type of structure representing an SDC driver (legacy).</brief>
+        <basetype ctype="struct hal_sdc_driver" />
+      </typedef>
+      <typedef name="SDCConfig">
+        <brief>Type of structure representing an SDC configuration (legacy).</brief>
+        <basetype ctype="struct hal_sdc_config" />
+      </typedef>
+      <verbatim><![CDATA[
+#define SDC_UNINIT                         HAL_DRV_STATE_UNINIT
+#define SDC_STOP                           HAL_DRV_STATE_STOP
+#define SDC_ACTIVE                         HAL_DRV_STATE_ACTIVE
+#define SDC_READY                          HAL_DRV_STATE_READY
+#define SDC_CONNECTING                     (HAL_DRV_STATE_ERROR + 1U)
+#define SDC_DISCONNECTING                  (HAL_DRV_STATE_ERROR + 2U)
+#define SDC_READING                        (HAL_DRV_STATE_ERROR + 3U)
+#define SDC_WRITING                        (HAL_DRV_STATE_ERROR + 4U)
+#define SDC_SYNCING                        (HAL_DRV_STATE_ERROR + 5U)
+
+/* Inclusion of LLD header.*/
+#include "hal_sdc_lld.h"]]></verbatim>
+      <struct name="hal_sdc_config">
+        <brief>Driver configuration structure.</brief>
+        <fields>
+          <field name="bus_width" ctype="sdcbusmode_t">
+            <brief>Data bus width to be used after card initialization.</brief>
+          </field>
+          <field name="slowdown" ctype="uint32_t">
+            <brief>Additional divider value applied to the bus clock.</brief>
+          </field>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+sdc_lld_config_fields;]]></verbatim>
+          <condition check="defined(SDC_CONFIG_EXT_FIELDS)">
+            <verbatim><![CDATA[
+SDC_CONFIG_EXT_FIELDS]]></verbatim>
+          </condition>
+        </fields>
+      </struct>
+      <typedef name="sdc_configurations_t">
+        <brief>Type of user-provided SDC configurations.</brief>
+        <basetype ctype="struct sdc_configurations" />
+      </typedef>
+      <struct name="sdc_configurations">
+        <brief>Structure representing user-provided SDC configurations.</brief>
+        <fields>
+          <field name="cfgsnum" ctype="unsigned">
+            <brief>Number of configurations in the open array.</brief>
+          </field>
+          <field name="cfgs" ctype="hal_sdc_config_t$I$N[]">
+            <brief>User SDC configurations.</brief>
+          </field>
+        </fields>
+      </struct>
+      <class type="regular" name="hal_sdc_driver" namespace="sdc"
+        ancestorname="hal_cb_driver" descr="SDC driver">
+        <brief>Class of an SDC driver.</brief>
+        <fields>
+          <field name="errors" ctype="volatile sdcflags_t">
+            <brief>Cached SDC error flags.</brief>
+          </field>
+          <field name="cardmode" ctype="sdcmode_t">
+            <brief>Various flags describing the attached card.</brief>
+          </field>
+          <field name="rca" ctype="uint32_t">
+            <brief>Card RCA value.</brief>
+          </field>
+          <field name="capacity" ctype="uint32_t">
+            <brief>Card capacity expressed in logical blocks.</brief>
+          </field>
+          <field name="cid" ctype="uint32_t[4]">
+            <brief>Card CID register image.</brief>
+          </field>
+          <field name="csd" ctype="uint32_t[4]">
+            <brief>Card CSD register image.</brief>
+          </field>
+          <condition check="SDC_USE_SYNCHRONIZATION == TRUE">
+            <field name="sync_transfer" ctype="thread_reference_t">
+              <brief>Synchronization point for transfer completion.</brief>
+            </field>
+          </condition>
+          <condition check="defined(SDC_DRIVER_EXT_FIELDS)">
+            <verbatim><![CDATA[
+SDC_DRIVER_EXT_FIELDS]]></verbatim>
+          </condition>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+sdc_lld_driver_fields;]]></verbatim>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+self->errors = SDC_NO_ERROR;
+self->cardmode = 0U;
+self->rca = 0U;
+self->capacity = 0U;
+memset(self->cid, 0, sizeof(self->cid));
+memset(self->csd, 0, sizeof(self->csd));
+#if SDC_USE_SYNCHRONIZATION == TRUE
+self->sync_transfer = NULL;
+#endif
+#if defined(SDC_DRIVER_EXT_INIT_HOOK)
+SDC_DRIVER_EXT_INIT_HOOK(self);
+#endif]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[
+]]></implementation>
+          </dispose>
+          <regular>
+            <method name="sdcStart" ctype="msg_t">
+              <brief>Configures and activates the SDC peripheral.</brief>
+              <param name="config" ctype="const hal_sdc_config_t *" dir="in">
+                Driver configuration or @p NULL.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == SDC_STOP) || (self->state == SDC_ACTIVE) ||
+              (self->state == SDC_READY), "invalid state");
+
+if (config != NULL) {
+  msg = drvSetCfgX(self, config);
+  if (msg != HAL_RET_SUCCESS) {
+    return msg;
+  }
+}
+
+return drvStart(self);]]></implementation>
+            </method>
+            <method name="sdcStop" ctype="void">
+              <brief>Deactivates the SDC peripheral.</brief>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == SDC_STOP) || (self->state == SDC_ACTIVE) ||
+              (self->state == SDC_READY), "invalid state");
+
+drvStop(self);]]></implementation>
+            </method>
+            <method name="sdcConnect" ctype="bool">
+              <brief>Performs the card initialization procedure.</brief>
+              <return>The operation status.</return>
+              <retval value="false">Operation succeeded.</retval>
+              <retval value="true">Operation failed.</retval>
+              <api />
+              <implementation><![CDATA[
+uint32_t resp[1];
+sdcbusclk_t clk = SDC_CLK_25MHz;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == SDC_ACTIVE) || (self->state == SDC_READY),
+              "invalid state");
+
+self->errors = SDC_NO_ERROR;
+self->state = SDC_CONNECTING;
+
+sdc_lld_start_clk(self);
+sdc_lld_send_cmd_none(self, MMCSD_CMD_GO_IDLE_STATE, 0U);
+
+if (sdc_mode_detect(self)) {
+  goto failed;
+}
+
+if ((self->cardmode & SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_MMC) {
+  if (sdc_mmc_init(self)) {
+    goto failed;
+  }
+}
+else {
+  if (sdc_sd_init(self)) {
+    goto failed;
+  }
+}
+
+if (sdc_lld_send_cmd_long_crc(self, MMCSD_CMD_ALL_SEND_CID, 0U, self->cid)) {
+  goto failed;
+}
+
+if (sdc_lld_send_cmd_short_crc(self, MMCSD_CMD_SEND_RELATIVE_ADDR, 0U,
+                               &self->rca)) {
+  goto failed;
+}
+
+if (sdc_lld_send_cmd_long_crc(self, MMCSD_CMD_SEND_CSD, self->rca,
+                              self->csd)) {
+  goto failed;
+}
+
+if (sdc_lld_send_cmd_short_crc(self, MMCSD_CMD_SEL_DESEL_CARD, self->rca,
+                               resp)) {
+  goto failed;
+}
+
+if (sdc_detect_bus_clk(self, &clk)) {
+  goto failed;
+}
+sdc_lld_set_data_clk(self, clk);
+
+if (_sdc_wait_for_transfer_state_nocrc(self)) {
+  goto failed;
+}
+
+if ((self->cardmode & SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_MMC) {
+  if (sdc_get_slice(self->csd, MMCSD_CSD_MMC_CSD_STRUCTURE_END,
+                    MMCSD_CSD_MMC_CSD_STRUCTURE_START) > 1U) {
+    uint8_t *ext_csd = self->buf;
+
+    if (sdc_lld_read_special(self, ext_csd, 512U, MMCSD_CMD_SEND_EXT_CSD, 0U)) {
+      goto failed;
+    }
+    self->capacity = sdc_get_capacity_ext(ext_csd);
+  }
+  else {
+    self->capacity = sdc_get_capacity(self->csd);
+  }
+}
+else {
+  self->capacity = sdc_get_capacity(self->csd);
+}
+
+if (sdc_lld_send_cmd_short_crc(self, MMCSD_CMD_SET_BLOCKLEN,
+                               MMCSD_BLOCK_SIZE, resp) ||
+    sdc_r1_error(resp[0])) {
+  goto failed;
+}
+
+switch (self->cardmode & SDC_MODE_CARDTYPE_MASK) {
+  case SDC_MODE_CARDTYPE_SDV11:
+  case SDC_MODE_CARDTYPE_SDV20:
+    if (sdc_set_bus_width(self)) {
+      goto failed;
+    }
+    break;
+  case SDC_MODE_CARDTYPE_MMC:
+    if (sdc_mmc_set_bus_width(self)) {
+      goto failed;
+    }
+    break;
+  default:
+    goto failed;
+}
+
+self->state = SDC_READY;
+return HAL_SUCCESS;
+
+failed:
+sdc_lld_stop_clk(self);
+self->state = SDC_ACTIVE;
+return HAL_FAILED;]]></implementation>
+            </method>
+            <method name="sdcDisconnect" ctype="bool">
+              <brief>Brings the driver in a state safe for card removal.</brief>
+              <return>The operation status.</return>
+              <retval value="false">Operation succeeded.</retval>
+              <retval value="true">Operation failed.</retval>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == SDC_ACTIVE) || (self->state == SDC_READY),
+              "invalid state");
+
+if (self->state == SDC_ACTIVE) {
+  return HAL_SUCCESS;
+}
+
+self->state = SDC_DISCONNECTING;
+if (_sdc_wait_for_transfer_state(self)) {
+  sdc_lld_stop_clk(self);
+  self->state = SDC_ACTIVE;
+  return HAL_FAILED;
+}
+
+sdc_lld_stop_clk(self);
+self->state = SDC_ACTIVE;
+return HAL_SUCCESS;]]></implementation>
+            </method>
+            <method name="sdcStartRead" ctype="msg_t">
+              <brief>Starts an asynchronous block read operation.</brief>
+              <param name="startblk" ctype="uint32_t" dir="in">
+                Initial block number.
+              </param>
+              <param name="buf" ctype="uint8_t *" dir="out">
+                Pointer to the read buffer.
+              </param>
+              <param name="n" ctype="uint32_t" dir="in">
+                Number of blocks to read.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
+osalDbgAssert(self->state == SDC_READY, "not ready");
+
+if ((startblk >= self->capacity) || (n > (self->capacity - startblk))) {
+  self->errors |= SDC_OVERFLOW_ERROR;
+  return HAL_RET_CONFIG_ERROR;
+}
+
+self->errors = SDC_NO_ERROR;
+self->state = SDC_READING;
+msg = sdc_lld_start_read(self, startblk, buf, n);
+if (msg != HAL_RET_SUCCESS) {
+  self->state = SDC_READY;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method name="sdcStartWrite" ctype="msg_t">
+              <brief>Starts an asynchronous block write operation.</brief>
+              <param name="startblk" ctype="uint32_t" dir="in">
+                Initial block number.
+              </param>
+              <param name="buf" ctype="const uint8_t *" dir="in">
+                Pointer to the write buffer.
+              </param>
+              <param name="n" ctype="uint32_t" dir="in">
+                Number of blocks to write.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
+osalDbgAssert(self->state == SDC_READY, "not ready");
+
+if ((startblk >= self->capacity) || (n > (self->capacity - startblk))) {
+  self->errors |= SDC_OVERFLOW_ERROR;
+  return HAL_RET_CONFIG_ERROR;
+}
+
+self->errors = SDC_NO_ERROR;
+self->state = SDC_WRITING;
+msg = sdc_lld_start_write(self, startblk, buf, n);
+if (msg != HAL_RET_SUCCESS) {
+  self->state = SDC_READY;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method name="sdcStopTransfer" ctype="msg_t">
+              <brief>Stops an ongoing data transfer.</brief>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg = HAL_RET_SUCCESS;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == SDC_READY) ||
+              (self->state == SDC_READING) ||
+              (self->state == SDC_WRITING),
+              "invalid state");
+
+if ((self->state == SDC_READING) || (self->state == SDC_WRITING)) {
+  osalSysLock();
+  msg = sdc_lld_stop_transfer(self);
+  self->state = SDC_READY;
+#if SDC_USE_SYNCHRONIZATION == TRUE
+  osalThreadResumeI(&self->sync_transfer, MSG_RESET);
+#endif
+  osalOsRescheduleS();
+  osalSysUnlock();
+}
+
+return msg;]]></implementation>
+            </method>
+            <condition check="SDC_USE_SYNCHRONIZATION == TRUE">
+              <method name="sdcSynchronizeS" ctype="msg_t">
+                <brief>Waits for transfer completion.</brief>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Synchronization timeout.
+                </param>
+                <return>The synchronization result.</return>
+                <sclass />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == SDC_READY) ||
+              (self->state == SDC_READING) ||
+              (self->state == SDC_WRITING),
+              "invalid state");
+
+if ((self->state == SDC_READING) || (self->state == SDC_WRITING)) {
+  msg = osalThreadSuspendTimeoutS(&self->sync_transfer, timeout);
+  if (msg == MSG_TIMEOUT) {
+    (void)sdc_lld_stop_transfer(self);
+    self->state = SDC_READY;
+  }
+}
+else {
+  msg = MSG_OK;
+}
+
+return msg;]]></implementation>
+              </method>
+              <method name="sdcSynchronize" ctype="msg_t">
+                <brief>Waits for transfer completion.</brief>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Synchronization timeout.
+                </param>
+                <return>The synchronization result.</return>
+                <api />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalSysLock();
+msg = sdcSynchronizeS(self, timeout);
+osalSysUnlock();
+
+return msg;]]></implementation>
+              </method>
+              <method name="sdcRead" ctype="bool">
+                <brief>Reads one or more logical blocks.</brief>
+                <param name="startblk" ctype="uint32_t" dir="in">
+                  Initial block number.
+                </param>
+                <param name="buf" ctype="uint8_t *" dir="out">
+                  Pointer to the read buffer.
+                </param>
+                <param name="n" ctype="uint32_t" dir="in">
+                  Number of blocks to read.
+                </param>
+                <return>The operation status.</return>
+                <retval value="false">Operation succeeded.</retval>
+                <retval value="true">Operation failed.</retval>
+                <api />
+                <implementation><![CDATA[
+bool status;
+
+osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
+osalDbgAssert(self->state == SDC_READY, "invalid state");
+
+if ((startblk >= self->capacity) || (n > (self->capacity - startblk))) {
+  self->errors |= SDC_OVERFLOW_ERROR;
+  return HAL_FAILED;
+}
+
+self->errors = SDC_NO_ERROR;
+self->state = SDC_READING;
+status = sdc_lld_read(self, startblk, buf, n);
+self->state = SDC_READY;
+
+return status;]]></implementation>
+              </method>
+              <method name="sdcWrite" ctype="bool">
+                <brief>Writes one or more logical blocks.</brief>
+                <param name="startblk" ctype="uint32_t" dir="in">
+                  Initial block number.
+                </param>
+                <param name="buf" ctype="const uint8_t *" dir="in">
+                  Pointer to the write buffer.
+                </param>
+                <param name="n" ctype="uint32_t" dir="in">
+                  Number of blocks to write.
+                </param>
+                <return>The operation status.</return>
+                <retval value="false">Operation succeeded.</retval>
+                <retval value="true">Operation failed.</retval>
+                <api />
+                <implementation><![CDATA[
+bool status;
+
+osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
+osalDbgAssert(self->state == SDC_READY, "invalid state");
+
+if ((startblk >= self->capacity) || (n > (self->capacity - startblk))) {
+  self->errors |= SDC_OVERFLOW_ERROR;
+  return HAL_FAILED;
+}
+
+self->errors = SDC_NO_ERROR;
+self->state = SDC_WRITING;
+status = sdc_lld_write(self, startblk, buf, n);
+self->state = SDC_READY;
+
+return status;]]></implementation>
+              </method>
+            </condition>
+            <method name="sdcGetAndClearErrors" ctype="sdcflags_t">
+              <brief>Gets and clears the cached driver errors.</brief>
+              <return>The selected pending error flags.</return>
+              <api />
+              <implementation><![CDATA[
+sdcflags_t flags;
+syssts_t sts;
+
+osalDbgCheck(self != NULL);
+
+sts = osalSysGetStatusAndLockX();
+flags = self->errors;
+self->errors = SDC_NO_ERROR;
+osalSysRestoreStatusX(sts);
+
+return flags;]]></implementation>
+            </method>
+            <method name="sdcSync" ctype="bool">
+              <brief>Waits for the card to become idle.</brief>
+              <return>The operation status.</return>
+              <retval value="false">Operation succeeded.</retval>
+              <retval value="true">Operation failed.</retval>
+              <api />
+              <implementation><![CDATA[
+bool result;
+
+osalDbgCheck(self != NULL);
+if (self->state != SDC_READY) {
+  return HAL_FAILED;
+}
+
+self->state = SDC_SYNCING;
+result = sdc_lld_sync(self);
+self->state = SDC_READY;
+
+return result;]]></implementation>
+            </method>
+            <method name="sdcGetInfo" ctype="bool">
+              <brief>Returns media information.</brief>
+              <param name="bdip" ctype="hal_blk_info_t *" dir="out">
+                Media information buffer.
+              </param>
+              <return>The operation status.</return>
+              <retval value="false">Operation succeeded.</retval>
+              <retval value="true">Operation failed.</retval>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck((self != NULL) && (bdip != NULL));
+
+if (self->state != SDC_READY) {
+  return HAL_FAILED;
+}
+
+bdip->blk_num = self->capacity;
+bdip->blk_size = MMCSD_BLOCK_SIZE;
+
+return HAL_SUCCESS;]]></implementation>
+            </method>
+            <method name="sdcErase" ctype="bool">
+              <brief>Erases a range of logical blocks.</brief>
+              <param name="startblk" ctype="uint32_t" dir="in">
+                Starting block.
+              </param>
+              <param name="endblk" ctype="uint32_t" dir="in">
+                Ending block.
+              </param>
+              <return>The operation status.</return>
+              <retval value="false">Operation succeeded.</retval>
+              <retval value="true">Operation failed.</retval>
+              <api />
+              <implementation><![CDATA[
+uint32_t resp[1];
+uint32_t start;
+uint32_t end;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert(self->state == SDC_READY, "invalid state");
+
+if ((startblk >= self->capacity) || (endblk >= self->capacity) ||
+    (endblk < startblk)) {
+  self->errors |= SDC_OVERFLOW_ERROR;
+  return HAL_FAILED;
+}
+
+self->state = SDC_WRITING;
+
+start = startblk;
+end = endblk;
+if ((self->cardmode & SDC_MODE_HIGH_CAPACITY) == 0U) {
+  start *= MMCSD_BLOCK_SIZE;
+  end *= MMCSD_BLOCK_SIZE;
+}
+
+if (_sdc_wait_for_transfer_state(self)) {
+  goto failed;
+}
+
+if (sdc_lld_send_cmd_short_crc(self, MMCSD_CMD_ERASE_RW_BLK_START, start,
+                               resp) || sdc_r1_error(resp[0])) {
+  goto failed;
+}
+
+if (sdc_lld_send_cmd_short_crc(self, MMCSD_CMD_ERASE_RW_BLK_END, end,
+                               resp) || sdc_r1_error(resp[0])) {
+  goto failed;
+}
+
+if (sdc_lld_send_cmd_short_crc(self, MMCSD_CMD_ERASE, 0U, resp) ||
+    sdc_r1_error(resp[0])) {
+  goto failed;
+}
+
+if (_sdc_wait_for_transfer_state(self)) {
+  goto failed;
+}
+
+self->state = SDC_READY;
+return HAL_SUCCESS;
+
+failed:
+self->state = SDC_READY;
+return HAL_FAILED;]]></implementation>
+            </method>
+            <condition check="SDC_USE_MUTUAL_EXCLUSION == TRUE">
+              <method name="sdcAcquireBus" ctype="void">
+                <brief>Gains exclusive access to the SDC bus.</brief>
+                <api />
+                <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+drvLock(self);]]></implementation>
+              </method>
+              <method name="sdcReleaseBus" ctype="void">
+                <brief>Releases exclusive access to the SDC bus.</brief>
+                <api />
+                <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+drvUnlock(self);]]></implementation>
+              </method>
+            </condition>
+          </regular>
+          <inline>
+            <method name="sdcGetErrorsX" ctype="sdcflags_t">
+              <brief>Returns the cached SDC error flags.</brief>
+              <return>The current cached error flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->errors;]]></implementation>
+            </method>
+            <method name="sdcGetAndClearErrorsX" ctype="sdcflags_t">
+              <brief>Gets and clears cached SDC error flags.</brief>
+              <param name="mask" ctype="sdcflags_t" dir="in">
+                Mask of error flags to be returned and cleared.
+              </param>
+              <return>The selected pending error flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+sdcflags_t flags;
+syssts_t sts;
+
+sts = osalSysGetStatusAndLockX();
+flags = self->errors & mask;
+self->errors &= ~mask;
+osalSysRestoreStatusX(sts);
+
+return flags;]]></implementation>
+            </method>
+          </inline>
+          <override>
+            <method shortname="start">
+              <implementation><![CDATA[
+msg_t msg;
+
+msg = sdc_lld_start(self);
+if (msg == HAL_RET_SUCCESS) {
+  if (self->state == SDC_STOP) {
+    self->state = SDC_ACTIVE;
+  }
+}
+else {
+  self->config = NULL;
+  self->errors = SDC_NO_ERROR;
+  self->cardmode = 0U;
+  self->rca = 0U;
+  self->capacity = 0U;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[
+sdc_lld_stop(self);
+self->errors = SDC_NO_ERROR;
+self->cardmode = 0U;
+self->rca = 0U;
+self->capacity = 0U;
+#if SDC_USE_SYNCHRONIZATION == TRUE
+osalThreadResumeI(&self->sync_transfer, MSG_RESET);
+#endif]]></implementation>
+            </method>
+            <method shortname="setcfg">
+              <implementation><![CDATA[
+return (const void *)sdc_lld_setcfg(self, (const hal_sdc_config_t *)config);]]></implementation>
+            </method>
+            <method shortname="selcfg">
+              <implementation><![CDATA[
+return (const void *)sdc_lld_selcfg(self, cfgnum);]]></implementation>
+            </method>
+            <method shortname="setcb">
+              <implementation><![CDATA[
+__cbdrv_setcb_impl(self, cb);
+sdc_lld_set_callback(self, cb);]]></implementation>
+            </method>
+          </override>
+        </methods>
+      </class>
+      <verbatim><![CDATA[
+#if !defined(__DOXYGEN__)
+#if STM32_SDC_USE_SDMMC1
+extern hal_sdc_driver_c SDCD1;
+#endif
+#if STM32_SDC_USE_SDMMC2
+extern hal_sdc_driver_c SDCD2;
+#endif
+#endif]]></verbatim>
+    </types>
+    <functions>
+      <function name="sdcInit" ctype="void">
+        <brief>SDC Driver initialization.</brief>
+        <init />
+        <implementation><![CDATA[
+sdc_lld_init();]]></implementation>
+      </function>
+    </functions>
+  </public>
+  <private>
+    <includes_always>
+      <include style="regular">string.h</include>
+      <include style="regular">hal.h</include>
+    </includes_always>
+    <definitions>
+      <define name="MMCSD_BLOCK_SIZE" value="512U" />
+      <define name="MMCSD_R1_ERROR_MASK" value="0xFDFFE008U" />
+      <define name="MMCSD_CMD8_PATTERN" value="0x000001AAU" />
+      <define name="MMCSD_STS_TRAN" value="4U" />
+      <define name="MMCSD_CMD_GO_IDLE_STATE" value="0U" />
+      <define name="MMCSD_CMD_INIT" value="1U" />
+      <define name="MMCSD_CMD_ALL_SEND_CID" value="2U" />
+      <define name="MMCSD_CMD_SEND_RELATIVE_ADDR" value="3U" />
+      <define name="MMCSD_CMD_SET_BUS_WIDTH" value="6U" />
+      <define name="MMCSD_CMD_SWITCH" value="6U" />
+      <define name="MMCSD_CMD_SEL_DESEL_CARD" value="7U" />
+      <define name="MMCSD_CMD_SEND_IF_COND" value="8U" />
+      <define name="MMCSD_CMD_SEND_EXT_CSD" value="8U" />
+      <define name="MMCSD_CMD_SEND_CSD" value="9U" />
+      <define name="MMCSD_CMD_STOP_TRANSMISSION" value="12U" />
+      <define name="MMCSD_CMD_SEND_STATUS" value="13U" />
+      <define name="MMCSD_CMD_SET_BLOCKLEN" value="16U" />
+      <define name="MMCSD_CMD_READ_SINGLE_BLOCK" value="17U" />
+      <define name="MMCSD_CMD_READ_MULTIPLE_BLOCK" value="18U" />
+      <define name="MMCSD_CMD_WRITE_BLOCK" value="24U" />
+      <define name="MMCSD_CMD_WRITE_MULTIPLE_BLOCK" value="25U" />
+      <define name="MMCSD_CMD_ERASE_RW_BLK_START" value="32U" />
+      <define name="MMCSD_CMD_ERASE_RW_BLK_END" value="33U" />
+      <define name="MMCSD_CMD_ERASE" value="38U" />
+      <define name="MMCSD_CMD_APP_OP_COND" value="41U" />
+      <define name="MMCSD_CMD_APP_CMD" value="55U" />
+      <define name="MMCSD_CMD_READ_OCR" value="58U" />
+      <define name="MMCSD_CSD_MMC_CSD_STRUCTURE_END" value="127U" />
+      <define name="MMCSD_CSD_MMC_CSD_STRUCTURE_START" value="126U" />
+      <define name="MMCSD_CSD_10_CSD_STRUCTURE_END" value="127U" />
+      <define name="MMCSD_CSD_10_CSD_STRUCTURE_START" value="126U" />
+      <define name="MMCSD_CSD_10_C_SIZE_END" value="73U" />
+      <define name="MMCSD_CSD_10_C_SIZE_START" value="62U" />
+      <define name="MMCSD_CSD_10_C_SIZE_MULT_END" value="49U" />
+      <define name="MMCSD_CSD_10_C_SIZE_MULT_START" value="47U" />
+      <define name="MMCSD_CSD_10_READ_BL_LEN_END" value="83U" />
+      <define name="MMCSD_CSD_10_READ_BL_LEN_START" value="80U" />
+      <define name="MMCSD_CSD_20_C_SIZE_END" value="69U" />
+      <define name="MMCSD_CSD_20_C_SIZE_START" value="48U" />
+      <define name="MMCSD_ACMD6_BUS_WIDTH_4" value="2U" />
+    </definitions>
+    <types>
+      <verbatim><![CDATA[
+/**
+ * @brief       MMC switch mode.
+ */
+typedef enum {
+  MMC_SWITCH_COMMAND_SET = 0,
+  MMC_SWITCH_SET_BITS    = 1,
+  MMC_SWITCH_CLEAR_BITS  = 2,
+  MMC_SWITCH_WRITE_BYTE  = 3
+} mmc_switch_t;
+
+/**
+ * @brief       SD switch mode.
+ */
+typedef enum {
+  SD_SWITCH_CHECK = 0,
+  SD_SWITCH_SET   = 1
+} sd_switch_t;
+
+/**
+ * @brief       SD switch function selector.
+ */
+typedef enum {
+  SD_SWITCH_FUNCTION_SPEED            = 0,
+  SD_SWITCH_FUNCTION_CMD_SYSTEM       = 1,
+  SD_SWITCH_FUNCTION_DRIVER_STRENGTH  = 2,
+  SD_SWITCH_FUNCTION_CURRENT_LIMIT    = 3
+} sd_switch_function_t;]]></verbatim>
+    </types>
+    <functions>
+      <function name="sdc_r1_error" ctype="bool">
+        <brief>Checks if a response contains R1 error bits.</brief>
+        <param name="resp" ctype="uint32_t" dir="in">Response word.</param>
+        <return>The error check result.</return>
+        <implementation><![CDATA[
+return ((resp & MMCSD_R1_ERROR_MASK) != 0U);]]></implementation>
+      </function>
+      <function name="sdc_get_slice" ctype="uint32_t">
+        <brief>Extracts a bit slice from a CSD/CID image.</brief>
+        <param name="data" ctype="const uint32_t *" dir="in">Input words.</param>
+        <param name="end" ctype="uint32_t" dir="in">End bit.</param>
+        <param name="start" ctype="uint32_t" dir="in">Start bit.</param>
+        <return>The selected bit slice.</return>
+        <implementation><![CDATA[
+unsigned startidx, endidx, startoff;
+uint32_t endmask;
+
+osalDbgCheck((data != NULL) && (end >= start) && ((end - start) < 32U));
+
+startidx = start / 32U;
+startoff = start % 32U;
+endidx   = end / 32U;
+endmask  = ((uint32_t)1U << ((end % 32U) + 1U)) - 1U;
+
+if (startidx < endidx) {
+  return (data[startidx] >> startoff) |
+         ((data[endidx] & endmask) << (32U - startoff));
+}
+
+return (data[startidx] & endmask) >> startoff;]]></implementation>
+      </function>
+      <function name="sdc_get_capacity" ctype="uint32_t">
+        <brief>Extracts the card capacity from a CSD record.</brief>
+        <param name="csd" ctype="const uint32_t *" dir="in">CSD record.</param>
+        <return>The card capacity in logical blocks.</return>
+        <implementation><![CDATA[
+uint32_t a, b, c;
+
+osalDbgCheck(csd != NULL);
+
+switch (sdc_get_slice(csd, MMCSD_CSD_10_CSD_STRUCTURE_END,
+                      MMCSD_CSD_10_CSD_STRUCTURE_START)) {
+  case 0U:
+    a = sdc_get_slice(csd, MMCSD_CSD_10_C_SIZE_END,
+                      MMCSD_CSD_10_C_SIZE_START);
+    b = sdc_get_slice(csd, MMCSD_CSD_10_C_SIZE_MULT_END,
+                      MMCSD_CSD_10_C_SIZE_MULT_START);
+    c = sdc_get_slice(csd, MMCSD_CSD_10_READ_BL_LEN_END,
+                      MMCSD_CSD_10_READ_BL_LEN_START);
+    return ((a + 1U) << (b + 2U)) << (c - 9U);
+  case 1U:
+    return 1024U * (sdc_get_slice(csd, MMCSD_CSD_20_C_SIZE_END,
+                                  MMCSD_CSD_20_C_SIZE_START) + 1U);
+  default:
+    break;
+}
+
+return 0U;]]></implementation>
+      </function>
+      <function name="sdc_get_capacity_ext" ctype="uint32_t">
+        <brief>Extracts the card capacity from an MMC EXT_CSD record.</brief>
+        <param name="ext_csd" ctype="const uint8_t *" dir="in">
+          EXT_CSD record.
+        </param>
+        <return>The card capacity in logical blocks.</return>
+        <implementation><![CDATA[
+osalDbgCheck(ext_csd != NULL);
+
+return ((uint32_t)ext_csd[215] << 24U) +
+       ((uint32_t)ext_csd[214] << 16U) +
+       ((uint32_t)ext_csd[213] << 8U)  +
+       (uint32_t)ext_csd[212];]]></implementation>
+      </function>
+      <function name="sdc_mode_detect" ctype="bool">
+        <brief>Detects the inserted card type.</brief>
+        <param name="sdcp" ctype="hal_sdc_driver_c *" dir="in">
+          Pointer to the SDC driver instance.
+        </param>
+        <return>The operation status.</return>
+        <retval value="false">Operation succeeded.</retval>
+        <retval value="true">Operation failed.</retval>
+        <implementation><![CDATA[
+uint32_t resp[1];
+
+if (!sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SEND_IF_COND,
+                                MMCSD_CMD8_PATTERN, resp)) {
+  sdcp->cardmode = SDC_MODE_CARDTYPE_SDV20;
+  if (((resp[0] >> 8U) & 0xFU) != 1U) {
+    return HAL_FAILED;
+  }
+  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_APP_CMD, 0U, resp) ||
+      sdc_r1_error(resp[0])) {
+    return HAL_FAILED;
+  }
+}
+else {
+    if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_APP_CMD, 0U, resp) ||
+        sdc_r1_error(resp[0])) {
+    sdcp->cardmode = SDC_MODE_CARDTYPE_MMC;
+  }
+  else {
+    sdcp->cardmode = SDC_MODE_CARDTYPE_SDV11;
+    sdc_lld_send_cmd_none(sdcp, MMCSD_CMD_GO_IDLE_STATE, 0U);
+  }
+}
+
+return HAL_SUCCESS;]]></implementation>
+      </function>
+      <function name="sdc_mmc_init" ctype="bool">
+        <brief>Performs MMC-specific card initialization.</brief>
+        <param name="sdcp" ctype="hal_sdc_driver_c *" dir="in">
+          Pointer to the SDC driver instance.
+        </param>
+        <return>The operation status.</return>
+        <implementation><![CDATA[
+uint32_t ocr = 0xC0FF8000U;
+unsigned i = 0U;
+uint32_t resp[1];
+
+while (true) {
+  if (sdc_lld_send_cmd_short(sdcp, MMCSD_CMD_INIT, ocr, resp)) {
+    return HAL_FAILED;
+  }
+  if ((resp[0] & 0x80000000U) != 0U) {
+    if ((resp[0] & 0x40000000U) != 0U) {
+      sdcp->cardmode |= SDC_MODE_HIGH_CAPACITY;
+    }
+    break;
+  }
+  if (++i >= (unsigned)SDC_INIT_RETRY) {
+    return HAL_FAILED;
+  }
+  osalThreadSleepMilliseconds(10);
+}
+
+return HAL_SUCCESS;]]></implementation>
+      </function>
+      <function name="sdc_sd_init" ctype="bool">
+        <brief>Performs SD-specific card initialization.</brief>
+        <param name="sdcp" ctype="hal_sdc_driver_c *" dir="in">
+          Pointer to the SDC driver instance.
+        </param>
+        <return>The operation status.</return>
+        <implementation><![CDATA[
+unsigned i = 0U;
+uint32_t ocr;
+uint32_t resp[1];
+
+if ((sdcp->cardmode & SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_SDV20) {
+  ocr = SDC_INIT_OCR_V20;
+}
+else {
+  ocr = SDC_INIT_OCR;
+}
+
+while (true) {
+  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_APP_CMD, 0U, resp) ||
+      sdc_r1_error(resp[0])) {
+    return HAL_FAILED;
+  }
+    if (sdc_lld_send_cmd_short(sdcp, MMCSD_CMD_APP_OP_COND, ocr, resp)) {
+    return HAL_FAILED;
+  }
+  if ((resp[0] & 0x80000000U) != 0U) {
+    if ((resp[0] & 0x40000000U) != 0U) {
+      sdcp->cardmode |= SDC_MODE_HIGH_CAPACITY;
+    }
+    break;
+  }
+  if (++i >= (unsigned)SDC_INIT_RETRY) {
+    return HAL_FAILED;
+  }
+  osalThreadSleepMilliseconds(10);
+}
+
+return HAL_SUCCESS;]]></implementation>
+      </function>
+      <function name="sdc_mmc_cmd6_construct" ctype="uint32_t">
+        <brief>Constructs an MMC CMD6 argument.</brief>
+        <param name="access" ctype="mmc_switch_t" dir="in">Access mode.</param>
+        <param name="idx" ctype="uint32_t" dir="in">Field index.</param>
+        <param name="value" ctype="uint32_t" dir="in">Field value.</param>
+        <param name="cmd_set" ctype="uint32_t" dir="in">Command set.</param>
+        <return>The CMD6 argument.</return>
+        <implementation><![CDATA[
+osalDbgAssert(idx <= 191U, "field is not writable");
+osalDbgAssert(cmd_set < 8U, "field has only 3 bits");
+
+return ((uint32_t)access << 24U) | (idx << 16U) | (value << 8U) | cmd_set;]]></implementation>
+      </function>
+      <function name="sdc_sd_cmd6_construct" ctype="uint32_t">
+        <brief>Constructs an SD CMD6 argument.</brief>
+        <param name="mode" ctype="sd_switch_t" dir="in">Switch mode.</param>
+        <param name="function" ctype="sd_switch_function_t" dir="in">
+          Switch function.
+        </param>
+        <param name="value" ctype="uint32_t" dir="in">Requested value.</param>
+        <return>The CMD6 argument.</return>
+        <implementation><![CDATA[
+uint32_t ret = 0xFFFFFFU;
+
+osalDbgAssert(value < 16U, "field has only 4 bits");
+
+ret &= ~((uint32_t)0xFU << ((uint32_t)function * 4U));
+ret |= value << ((uint32_t)function * 4U);
+
+return ret | ((uint32_t)mode << 31U);]]></implementation>
+      </function>
+      <function name="sdc_sd_cmd6_extract_info" ctype="uint16_t">
+        <brief>Extracts information from an SD CMD6 reply.</brief>
+        <param name="function" ctype="sd_switch_function_t" dir="in">
+          Switch function.
+        </param>
+        <param name="buf" ctype="const uint8_t *" dir="in">Reply buffer.</param>
+        <return>The extracted information.</return>
+        <implementation><![CDATA[
+unsigned start = 12U - ((unsigned)function * 2U);
+
+return ((uint16_t)buf[start] << 8U) | (uint16_t)buf[start + 1U];]]></implementation>
+      </function>
+      <function name="sdc_sd_cmd6_check_status" ctype="bool">
+        <brief>Checks the status bits in an SD CMD6 reply.</brief>
+        <param name="function" ctype="sd_switch_function_t" dir="in">
+          Switch function.
+        </param>
+        <param name="buf" ctype="const uint8_t *" dir="in">Reply buffer.</param>
+        <return>The operation status.</return>
+        <implementation><![CDATA[
+uint32_t tmp;
+uint32_t status;
+
+tmp = ((uint32_t)buf[14] << 16U) |
+      ((uint32_t)buf[15] << 8U)  |
+      (uint32_t)buf[16];
+status = (tmp >> ((uint32_t)function * 4U)) & 0xFU;
+
+if (status != 0xFU) {
+  return HAL_SUCCESS;
+}
+
+return HAL_FAILED;]]></implementation>
+      </function>
+      <function name="sdc_detect_bus_clk" ctype="bool">
+        <brief>Detects and selects the best supported data clock.</brief>
+        <param name="sdcp" ctype="hal_sdc_driver_c *" dir="in">
+          Pointer to the SDC driver instance.
+        </param>
+        <param name="clk" ctype="sdcbusclk_t *" dir="out">
+          Selected bus clock.
+        </param>
+        <return>The operation status.</return>
+        <implementation><![CDATA[
+uint32_t cmdarg;
+uint16_t info;
+uint32_t resp[1];
+uint8_t *buf = sdcp->buf;
+
+if ((sdcp->cardmode & SDC_MODE_CARDTYPE_MASK) == SDC_MODE_CARDTYPE_MMC) {
+  cmdarg = sdc_mmc_cmd6_construct(MMC_SWITCH_WRITE_BYTE, 185U, 1U, 0U);
+  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SWITCH, cmdarg, resp) ||
+      sdc_r1_error(resp[0])) {
+    return HAL_FAILED;
+  }
+  *clk = SDC_CLK_50MHz;
+  return HAL_SUCCESS;
+}
+
+cmdarg = sdc_sd_cmd6_construct(SD_SWITCH_CHECK, SD_SWITCH_FUNCTION_SPEED, 1U);
+    if (sdc_lld_read_special(sdcp, buf, 64U, MMCSD_CMD_SWITCH, cmdarg)) {
+  return HAL_FAILED;
+}
+
+info = sdc_sd_cmd6_extract_info(SD_SWITCH_FUNCTION_SPEED, buf);
+if ((info & 0x0200U) != 0U) {
+  cmdarg = sdc_sd_cmd6_construct(SD_SWITCH_SET, SD_SWITCH_FUNCTION_SPEED, 1U);
+  if (sdc_lld_read_special(sdcp, buf, 64U, MMCSD_CMD_SWITCH, cmdarg)) {
+    return HAL_FAILED;
+  }
+  if (sdc_sd_cmd6_check_status(SD_SWITCH_FUNCTION_SPEED, buf)) {
+    return HAL_FAILED;
+  }
+  *clk = SDC_CLK_50MHz;
+}
+else {
+  *clk = SDC_CLK_25MHz;
+}
+
+return HAL_SUCCESS;]]></implementation>
+      </function>
+      <function name="sdc_set_bus_width" ctype="bool">
+        <brief>Switches an SD card to the configured bus width.</brief>
+        <param name="sdcp" ctype="hal_sdc_driver_c *" dir="in">
+          Pointer to the SDC driver instance.
+        </param>
+        <return>The operation status.</return>
+        <implementation><![CDATA[
+uint32_t arg;
+uint32_t resp[1];
+
+switch (((const hal_sdc_config_t *)sdcp->config)->bus_width) {
+  case SDC_MODE_4BIT:
+    arg = MMCSD_ACMD6_BUS_WIDTH_4;
+    break;
+  case SDC_MODE_1BIT:
+    return HAL_SUCCESS;
+  default:
+    return HAL_FAILED;
+}
+
+  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_APP_CMD, sdcp->rca, resp) ||
+      sdc_r1_error(resp[0])) {
+  return HAL_FAILED;
+}
+
+  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SET_BUS_WIDTH, arg, resp) ||
+      sdc_r1_error(resp[0])) {
+  return HAL_FAILED;
+}
+
+sdc_lld_set_bus_mode(sdcp, ((const hal_sdc_config_t *)sdcp->config)->bus_width);
+
+return HAL_SUCCESS;]]></implementation>
+      </function>
+      <function name="sdc_mmc_set_bus_width" ctype="bool">
+        <brief>Switches an MMC card to the configured bus width.</brief>
+        <param name="sdcp" ctype="hal_sdc_driver_c *" dir="in">
+          Pointer to the SDC driver instance.
+        </param>
+        <return>The operation status.</return>
+        <implementation><![CDATA[
+uint32_t cmdarg;
+uint32_t resp[1];
+
+switch (((const hal_sdc_config_t *)sdcp->config)->bus_width) {
+  case SDC_MODE_1BIT:
+    return HAL_SUCCESS;
+  case SDC_MODE_4BIT:
+    cmdarg = sdc_mmc_cmd6_construct(MMC_SWITCH_WRITE_BYTE, 183U, 1U, 0U);
+    break;
+  case SDC_MODE_8BIT:
+    cmdarg = sdc_mmc_cmd6_construct(MMC_SWITCH_WRITE_BYTE, 183U, 2U, 0U);
+    break;
+  default:
+    return HAL_FAILED;
+}
+
+  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SWITCH, cmdarg, resp) ||
+      sdc_r1_error(resp[0])) {
+  return HAL_FAILED;
+}
+
+sdc_lld_set_bus_mode(sdcp, ((const hal_sdc_config_t *)sdcp->config)->bus_width);
+
+return HAL_SUCCESS;]]></implementation>
+      </function>
+      <function name="_sdc_wait_for_transfer_state" ctype="bool">
+        <brief>Waits for the card transfer state.</brief>
+        <param name="sdcp" ctype="hal_sdc_driver_c *" dir="in">
+          Pointer to the SDC driver instance.
+        </param>
+        <return>The operation status.</return>
+        <implementation><![CDATA[
+uint32_t resp[1];
+
+while (true) {
+  if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SEND_STATUS, sdcp->rca,
+                                 resp)) {
+    return HAL_FAILED;
+  }
+  if (sdc_r1_error(resp[0])) {
+    return HAL_FAILED;
+  }
+  if (((resp[0] >> 9U) & 0xFU) == MMCSD_STS_TRAN) {
+    return HAL_SUCCESS;
+  }
+#if SDC_NICE_WAITING == TRUE
+  osalThreadSleepMilliseconds(1);
+#endif
+}]]></implementation>
+      </function>
+      <function name="_sdc_wait_for_transfer_state_nocrc" ctype="bool">
+        <brief>Waits for the card transfer state ignoring CRC in the status command.</brief>
+        <param name="sdcp" ctype="hal_sdc_driver_c *" dir="in">
+          Pointer to the SDC driver instance.
+        </param>
+        <return>The operation status.</return>
+        <implementation><![CDATA[
+uint32_t resp[1];
+
+while (true) {
+  if (sdc_lld_send_cmd_short(sdcp, MMCSD_CMD_SEND_STATUS, sdcp->rca, resp)) {
+    return HAL_FAILED;
+  }
+  if (sdc_r1_error(resp[0])) {
+    return HAL_FAILED;
+  }
+  if (((resp[0] >> 9U) & 0xFU) == MMCSD_STS_TRAN) {
+    return HAL_SUCCESS;
+  }
+#if SDC_NICE_WAITING == TRUE
+  osalThreadSleepMilliseconds(1);
+#endif
+}]]></implementation>
+      </function>
+    </functions>
+  </private>
+</module>

@@ -99,15 +99,15 @@ void halInit(void) {
 #if (HAL_USE_I2C == TRUE) || defined(__DOXYGEN__)
   i2cInit();
 #endif
+#if (HAL_USE_SDC == TRUE) || defined(__DOXYGEN__)
+  sdcInit();
+#endif
 #if 0
 #if (HAL_USE_I2S == TRUE) || defined(__DOXYGEN__)
   i2sInit();
 #endif
 #if (HAL_USE_SERIAL == TRUE) || defined(__DOXYGEN__)
   sdInit();
-#endif
-#if (HAL_USE_SDC == TRUE) || defined(__DOXYGEN__)
-  sdcInit();
 #endif
 #endif
 #if (HAL_USE_SIO == TRUE) || defined(__DOXYGEN__)

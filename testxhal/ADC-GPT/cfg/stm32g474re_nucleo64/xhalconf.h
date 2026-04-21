@@ -47,6 +47,7 @@
 #define HAL_USE_MMC_SPI                     FALSE
 #define HAL_USE_PWM                         FALSE
 #define HAL_USE_RTC                         FALSE
+#define HAL_USE_SDC                         FALSE
 #define HAL_USE_SIO                         FALSE
 #define HAL_USE_SPI                         FALSE
 #define HAL_USE_WSPI                        FALSE
@@ -110,6 +111,19 @@
 #define ETH_USE_SYNCHRONIZATION             TRUE
 #define ETH_USE_EVENTS                      FALSE
 #define ETH_USE_CONFIGURATIONS              FALSE
+
+/*===========================================================================*/
+/* SDC driver settings.                                                      */
+/*===========================================================================*/
+
+#define SDC_USE_SYNCHRONIZATION             TRUE
+#define SDC_USE_MUTUAL_EXCLUSION            TRUE
+#define SDC_USE_CONFIGURATIONS              FALSE
+#define SDC_INIT_RETRY                      100
+#define SDC_MMC_SUPPORT                     FALSE
+#define SDC_NICE_WAITING                    TRUE
+#define SDC_INIT_OCR_V20                    0x50FF8000U
+#define SDC_INIT_OCR                        0x80100000U
 
 /*===========================================================================*/
 /* SIO driver settings.                                                      */
