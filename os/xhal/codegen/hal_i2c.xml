@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_i2c" descr="I2C Driver" check="HAL_USE_I2C == TRUE"
+  editcode="false">
+  <brief>I2C Driver macros and structures.</brief>
+  <imports>
+    <import>hal_cb_driver.xml</import>
+  </imports>
+  <public>
+    <includes_always>
+      <include style="regular">hal_cb_driver.h</include>
+    </includes_always>
+    <definitions_early>
+      <group description="I2C bus error flags">
+        <define name="I2C_NO_ERROR" value="0x00U">
+          <brief>No error.</brief>
+        </define>
+        <define name="I2C_BUS_ERROR" value="0x01U">
+          <brief>Bus error.</brief>
+        </define>
+        <define name="I2C_ARBITRATION_LOST" value="0x02U">
+          <brief>Arbitration lost.</brief>
+        </define>
+        <define name="I2C_ACK_FAILURE" value="0x04U">
+          <brief>Acknowledge failure.</brief>
+        </define>
+        <define name="I2C_OVERRUN" value="0x08U">
+          <brief>Overrun or underrun.</brief>
+        </define>
+        <define name="I2C_PEC_ERROR" value="0x10U">
+          <brief>PEC error in reception.</brief>
+        </define>
+        <define name="I2C_TIMEOUT" value="0x20U">
+          <brief>Hardware timeout.</brief>
+        </define>
+        <define name="I2C_SMB_ALERT" value="0x40U">
+          <brief>SMBus alert.</brief>
+        </define>
+      </group>
+    </definitions_early>
+    <configs>
+      <config name="I2C_USE_SYNCHRONIZATION" default="TRUE">
+        <brief>Support for synchronous I2C master APIs.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="I2C_USE_MUTUAL_EXCLUSION" default="TRUE">
+        <brief>Support for mutual exclusion APIs on the I2C bus.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="I2C_USE_CONFIGURATIONS" default="FALSE">
+        <brief>Support for I2C user configurations.</brief>
+        <note>When enabled the user must provide a variable named
+          @p i2c_configurations of type @p i2c_configurations_t.</note>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+    </configs>
+    <macros>
+      <group description="Macro functions">
+        <macro name="i2cMasterTransmit">
+          <brief>Legacy name for @p i2cMasterTransmitTimeout().</brief>
+          <param name="i2cp" dir="in">Pointer to the I2C driver instance.</param>
+          <param name="addr" dir="in">Slave address.</param>
+          <param name="txbuf" dir="in">Transmit buffer.</param>
+          <param name="txbytes" dir="in">Number of bytes to transmit.</param>
+          <param name="rxbuf" dir="out">Receive buffer.</param>
+          <param name="rxbytes" dir="in">Number of bytes to receive.</param>
+          <api />
+          <implementation><![CDATA[i2cMasterTransmitTimeout(i2cp, addr, txbuf, txbytes, rxbuf, rxbytes, TIME_INFINITE)]]></implementation>
+        </macro>
+        <macro name="i2cMasterReceive">
+          <brief>Legacy name for @p i2cMasterReceiveTimeout().</brief>
+          <param name="i2cp" dir="in">Pointer to the I2C driver instance.</param>
+          <param name="addr" dir="in">Slave address.</param>
+          <param name="rxbuf" dir="out">Receive buffer.</param>
+          <param name="rxbytes" dir="in">Number of bytes to receive.</param>
+          <api />
+          <implementation><![CDATA[i2cMasterReceiveTimeout(i2cp, addr, rxbuf, rxbytes, TIME_INFINITE)]]></implementation>
+        </macro>
+      </group>
+    </macros>
+    <types>
+      <typedef name="i2caddr_t">
+        <brief>Type of an I2C address.</brief>
+        <basetype ctype="uint16_t" />
+      </typedef>
+      <typedef name="i2cflags_t">
+        <brief>Type of I2C error flags.</brief>
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="i2cstate_t">
+        <brief>Type of I2C driver state.</brief>
+        <basetype ctype="driver_state_t" />
+      </typedef>
+      <typedef name="hal_i2c_driver_c">
+        <brief>Type of structure representing an I2C driver.</brief>
+        <basetype ctype="struct hal_i2c_driver" />
+      </typedef>
+      <typedef name="hal_i2c_config_t">
+        <brief>Type of structure representing an I2C configuration.</brief>
+        <basetype ctype="struct hal_i2c_config" />
+      </typedef>
+      <typedef name="I2CDriver">
+        <brief>Type of structure representing an I2C driver (legacy).</brief>
+        <basetype ctype="struct hal_i2c_driver" />
+      </typedef>
+      <typedef name="I2CConfig">
+        <brief>Type of structure representing an I2C configuration (legacy).</brief>
+        <basetype ctype="struct hal_i2c_config" />
+      </typedef>
+      <verbatim><![CDATA[
+#define I2C_UNINIT                         HAL_DRV_STATE_UNINIT
+#define I2C_STOP                           HAL_DRV_STATE_STOP
+#define I2C_READY                          HAL_DRV_STATE_READY
+#define I2C_ACTIVE_TX                      HAL_DRV_STATE_ACTIVE
+#define I2C_ACTIVE_RX                      (HAL_DRV_STATE_ERROR + 1U)
+#define I2C_LOCKED                         (HAL_DRV_STATE_ERROR + 2U)
+
+/* Inclusion of LLD header.*/
+#include "hal_i2c_lld.h"]]></verbatim>
+      <struct name="hal_i2c_config">
+        <brief>Driver configuration structure.</brief>
+        <fields>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+i2c_lld_config_fields;]]></verbatim>
+          <condition check="defined(I2C_CONFIG_EXT_FIELDS)">
+            <verbatim><![CDATA[
+I2C_CONFIG_EXT_FIELDS]]></verbatim>
+          </condition>
+        </fields>
+      </struct>
+      <typedef name="i2c_configurations_t">
+        <brief>Type of user-provided I2C configurations.</brief>
+        <basetype ctype="struct i2c_configurations" />
+      </typedef>
+      <struct name="i2c_configurations">
+        <brief>Structure representing user-provided I2C configurations.</brief>
+        <fields>
+          <field name="cfgsnum" ctype="unsigned">
+            <brief>Number of configurations in the open array.</brief>
+          </field>
+          <field name="cfgs" ctype="hal_i2c_config_t$I$N[]">
+            <brief>User I2C configurations.</brief>
+          </field>
+        </fields>
+      </struct>
+      <class type="regular" name="hal_i2c_driver" namespace="i2c"
+        ancestorname="hal_cb_driver" descr="I2C driver">
+        <brief>Class of an I2C driver.</brief>
+        <fields>
+          <field name="errors" ctype="volatile i2cflags_t">
+            <brief>Cached I2C error flags.</brief>
+          </field>
+          <condition check="I2C_USE_SYNCHRONIZATION == TRUE">
+            <field name="sync_transfer" ctype="thread_reference_t">
+              <brief>Synchronization point for transfer completion.</brief>
+            </field>
+          </condition>
+          <condition check="defined(I2C_DRIVER_EXT_FIELDS)">
+            <verbatim><![CDATA[
+I2C_DRIVER_EXT_FIELDS]]></verbatim>
+          </condition>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+i2c_lld_driver_fields;]]></verbatim>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+self->errors = I2C_NO_ERROR;
+#if I2C_USE_SYNCHRONIZATION == TRUE
+self->sync_transfer = NULL;
+#endif
+#if defined(I2C_DRIVER_EXT_INIT_HOOK)
+I2C_DRIVER_EXT_INIT_HOOK(self);
+#endif]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[
+]]></implementation>
+          </dispose>
+          <regular>
+            <method name="i2cStart" ctype="msg_t">
+              <brief>Configures and activates the I2C peripheral.</brief>
+              <param name="config" ctype="const hal_i2c_config_t *" dir="in">
+                Driver configuration.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == I2C_STOP) || (self->state == I2C_READY) ||
+              (self->state == I2C_LOCKED), "invalid state");
+
+if (config != NULL) {
+  msg = drvSetCfgX(self, config);
+  if (msg != HAL_RET_SUCCESS) {
+    return msg;
+  }
+}
+
+return drvStart(self);]]></implementation>
+            </method>
+            <method name="i2cStop" ctype="void">
+              <brief>Deactivates the I2C peripheral.</brief>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == I2C_STOP) || (self->state == I2C_READY) ||
+              (self->state == I2C_LOCKED), "invalid state");
+
+drvStop(self);]]></implementation>
+            </method>
+            <method name="i2cStartMasterTransmitI" ctype="msg_t">
+              <brief>Starts an I2C master transmit transaction.</brief>
+              <details>When @p rxbytes is greater than zero, a receive phase
+                follows the transmit phase using a repeated start.</details>
+              <param name="addr" ctype="i2caddr_t" dir="in">Slave address.</param>
+              <param name="txbuf" ctype="const uint8_t *" dir="in">Transmit buffer.</param>
+              <param name="txbytes" ctype="size_t" dir="in">Number of bytes to transmit.</param>
+              <param name="rxbuf" ctype="uint8_t *" dir="out">Receive buffer.</param>
+              <param name="rxbytes" ctype="size_t" dir="in">Number of bytes to receive.</param>
+              <return>The operation status.</return>
+              <iclass />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) &&
+             (txbytes > 0U) && (txbuf != NULL) &&
+             ((rxbytes == 0U) || ((rxbytes > 0U) && (rxbuf != NULL))));
+osalDbgAssert(self->state == I2C_READY, "not ready");
+
+self->errors = I2C_NO_ERROR;
+self->state  = I2C_ACTIVE_TX;
+msg = i2c_lld_start_master_transmit(self, addr, txbuf, txbytes,
+                                    rxbuf, rxbytes);
+if (msg != HAL_RET_SUCCESS) {
+  self->state = I2C_READY;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method name="i2cStartMasterReceiveI" ctype="msg_t">
+              <brief>Starts an I2C master receive transaction.</brief>
+              <param name="addr" ctype="i2caddr_t" dir="in">Slave address.</param>
+              <param name="rxbuf" ctype="uint8_t *" dir="out">Receive buffer.</param>
+              <param name="rxbytes" ctype="size_t" dir="in">Number of bytes to receive.</param>
+              <return>The operation status.</return>
+              <iclass />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (addr != 0U) &&
+             (rxbytes > 0U) && (rxbuf != NULL));
+osalDbgAssert(self->state == I2C_READY, "not ready");
+
+self->errors = I2C_NO_ERROR;
+self->state  = I2C_ACTIVE_RX;
+msg = i2c_lld_start_master_receive(self, addr, rxbuf, rxbytes);
+if (msg != HAL_RET_SUCCESS) {
+  self->state = I2C_READY;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method name="i2cStopTransferI" ctype="msg_t">
+              <brief>Stops an ongoing I2C master transaction.</brief>
+              <return>The operation status.</return>
+              <iclass />
+              <implementation><![CDATA[
+msg_t msg = HAL_RET_SUCCESS;
+
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == I2C_READY) ||
+              (self->state == I2C_ACTIVE_TX) ||
+              (self->state == I2C_ACTIVE_RX),
+              "invalid state");
+
+if ((self->state == I2C_ACTIVE_TX) || (self->state == I2C_ACTIVE_RX)) {
+  msg = i2c_lld_stop_transfer(self);
+  self->state = I2C_READY;
+#if I2C_USE_SYNCHRONIZATION == TRUE
+  osalThreadResumeI(&self->sync_transfer, MSG_RESET);
+#endif
+}
+
+return msg;]]></implementation>
+            </method>
+            <method name="i2cStopTransfer" ctype="msg_t">
+              <brief>Stops an ongoing I2C master transaction.</brief>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalSysLock();
+msg = i2cStopTransferI(self);
+osalOsRescheduleS();
+osalSysUnlock();
+
+return msg;]]></implementation>
+            </method>
+            <condition check="I2C_USE_SYNCHRONIZATION == TRUE">
+              <method name="i2cSynchronizeS" ctype="msg_t">
+                <brief>Waits for I2C transfer completion.</brief>
+                <note>This function can only be called by a single thread at time.</note>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Synchronization timeout.
+                </param>
+                <return>The synchronization result.</return>
+                <sclass />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == I2C_ACTIVE_TX) ||
+              (self->state == I2C_ACTIVE_RX) ||
+              (self->state == I2C_READY),
+              "invalid state");
+
+if ((self->state == I2C_ACTIVE_TX) || (self->state == I2C_ACTIVE_RX)) {
+  msg = osalThreadSuspendTimeoutS(&self->sync_transfer, timeout);
+  if (msg == MSG_TIMEOUT) {
+    (void)i2c_lld_stop_transfer(self);
+    self->state = I2C_LOCKED;
+  }
+}
+else {
+  msg = MSG_OK;
+}
+
+return msg;]]></implementation>
+              </method>
+              <method name="i2cSynchronize" ctype="msg_t">
+                <brief>Waits for I2C transfer completion.</brief>
+                <note>This function can only be called by a single thread at time.</note>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Synchronization timeout.
+                </param>
+                <return>The synchronization result.</return>
+                <api />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalSysLock();
+msg = i2cSynchronizeS(self, timeout);
+osalSysUnlock();
+
+return msg;]]></implementation>
+              </method>
+              <method name="i2cMasterTransmitTimeout" ctype="msg_t">
+                <brief>Performs an I2C master transmit transaction.</brief>
+                <param name="addr" ctype="i2caddr_t" dir="in">Slave address.</param>
+                <param name="txbuf" ctype="const uint8_t *" dir="in">Transmit buffer.</param>
+                <param name="txbytes" ctype="size_t" dir="in">Number of bytes to transmit.</param>
+                <param name="rxbuf" ctype="uint8_t *" dir="out">Receive buffer.</param>
+                <param name="rxbytes" ctype="size_t" dir="in">Number of bytes to receive.</param>
+                <param name="timeout" ctype="sysinterval_t" dir="in">Synchronization timeout.</param>
+                <return>The operation status.</return>
+                <api />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalSysLock();
+msg = i2cStartMasterTransmitI(self, addr, txbuf, txbytes, rxbuf, rxbytes);
+if (msg == HAL_RET_SUCCESS) {
+  msg = i2cSynchronizeS(self, timeout);
+}
+osalSysUnlock();
+
+return msg;]]></implementation>
+              </method>
+              <method name="i2cMasterReceiveTimeout" ctype="msg_t">
+                <brief>Performs an I2C master receive transaction.</brief>
+                <param name="addr" ctype="i2caddr_t" dir="in">Slave address.</param>
+                <param name="rxbuf" ctype="uint8_t *" dir="out">Receive buffer.</param>
+                <param name="rxbytes" ctype="size_t" dir="in">Number of bytes to receive.</param>
+                <param name="timeout" ctype="sysinterval_t" dir="in">Synchronization timeout.</param>
+                <return>The operation status.</return>
+                <api />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalSysLock();
+msg = i2cStartMasterReceiveI(self, addr, rxbuf, rxbytes);
+if (msg == HAL_RET_SUCCESS) {
+  msg = i2cSynchronizeS(self, timeout);
+}
+osalSysUnlock();
+
+return msg;]]></implementation>
+              </method>
+            </condition>
+            <condition check="I2C_USE_MUTUAL_EXCLUSION == TRUE">
+              <method name="i2cAcquireBus" ctype="void">
+                <brief>Gains exclusive access to the I2C bus.</brief>
+                <api />
+                <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+drvLock(self);]]></implementation>
+              </method>
+              <method name="i2cReleaseBus" ctype="void">
+                <brief>Releases exclusive access to the I2C bus.</brief>
+                <api />
+                <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+drvUnlock(self);]]></implementation>
+              </method>
+            </condition>
+          </regular>
+          <inline>
+            <method name="i2cGetErrorsX" ctype="i2cflags_t">
+              <brief>Returns cached I2C errors.</brief>
+              <return>The cached error flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->errors;]]></implementation>
+            </method>
+            <method name="i2cGetAndClearErrorsX" ctype="i2cflags_t">
+              <brief>Gets and clears cached I2C errors.</brief>
+              <return>The pending error flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+i2cflags_t errors;
+syssts_t sts;
+
+sts = osalSysGetStatusAndLockX();
+errors = self->errors;
+self->errors = I2C_NO_ERROR;
+osalSysRestoreStatusX(sts);
+
+return errors;]]></implementation>
+            </method>
+            <condition check="I2C_USE_SYNCHRONIZATION == TRUE">
+              <method name="__i2c_wakeup_isr" ctype="void">
+                <brief>Wakes up the waiting thread.</brief>
+                <note>This function is meant to be used in low level drivers.</note>
+                <param name="msg" ctype="msg_t" dir="in">The wakeup message.</param>
+                <notapi />
+                <implementation><![CDATA[
+osalSysLockFromISR();
+osalThreadResumeI(&self->sync_transfer, msg);
+__cbdrv_invoke_cb(self);
+osalSysUnlockFromISR();]]></implementation>
+              </method>
+              <elseif />
+              <method name="__i2c_wakeup_isr" ctype="void">
+                <param name="msg" ctype="msg_t" dir="in" />
+                <implementation><![CDATA[
+(void)msg;
+
+osalSysLockFromISR();
+__cbdrv_invoke_cb(self);
+osalSysUnlockFromISR();]]></implementation>
+              </method>
+            </condition>
+            <method name="__i2c_complete_isr" ctype="void">
+              <brief>Signals I2C transfer completion.</brief>
+              <notapi />
+              <implementation><![CDATA[
+self->state = I2C_READY;
+__i2c_wakeup_isr(self, MSG_OK);]]></implementation>
+            </method>
+            <method name="__i2c_error_isr" ctype="void">
+              <brief>Signals I2C transfer error.</brief>
+              <notapi />
+              <implementation><![CDATA[
+self->state = I2C_READY;
+__i2c_wakeup_isr(self, MSG_RESET);]]></implementation>
+            </method>
+          </inline>
+          <override>
+            <method shortname="start">
+              <implementation><![CDATA[
+msg_t msg;
+
+msg = i2c_lld_start(self);
+if (msg != HAL_RET_SUCCESS) {
+  self->config = NULL;
+  self->errors = I2C_NO_ERROR;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[
+i2c_lld_stop(self);
+self->errors = I2C_NO_ERROR;
+#if I2C_USE_SYNCHRONIZATION == TRUE
+osalThreadResumeI(&self->sync_transfer, MSG_RESET);
+#endif]]></implementation>
+            </method>
+            <method shortname="setcfg">
+              <implementation><![CDATA[
+return (const void *)i2c_lld_setcfg(self,
+                                    (const hal_i2c_config_t *)config);]]></implementation>
+            </method>
+            <method shortname="selcfg">
+              <implementation><![CDATA[
+return (const void *)i2c_lld_selcfg(self, cfgnum);]]></implementation>
+            </method>
+            <method shortname="setcb">
+              <implementation><![CDATA[
+__cbdrv_setcb_impl(self, cb);
+i2c_lld_set_callback(self, cb);]]></implementation>
+            </method>
+          </override>
+        </methods>
+      </class>
+    </types>
+    <functions>
+      <function name="i2cInit" ctype="void">
+        <brief>I2C Driver initialization.</brief>
+        <init />
+        <implementation><![CDATA[
+i2c_lld_init();]]></implementation>
+      </function>
+    </functions>
+  </public>
+  <private>
+    <includes_always>
+      <include style="regular">hal.h</include>
+    </includes_always>
+  </private>
+</module>

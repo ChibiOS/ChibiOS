@@ -77,10 +77,10 @@
 #include "stm32_fdcan1.inc"
 #include "stm32_fdcan2.inc"
 
-//#include "stm32_i2c1.inc"
-//#include "stm32_i2c2.inc"
-//#include "stm32_i2c3.inc"
-//#include "stm32_i2c4.inc"
+#include "stm32_i2c1.inc"
+#include "stm32_i2c2.inc"
+#include "stm32_i2c3.inc"
+#include "stm32_i2c4.inc"
 
 //#include "stm32_spi1.inc"
 //#include "stm32_spi2.inc"
@@ -161,10 +161,10 @@ void irqInit(void) {
   fdcan1_irq_init();
   fdcan2_irq_init();
 
-//  i2c1_irq_init();
-//  i2c2_irq_init();
-//  i2c3_irq_init();
-//  i2c4_irq_init();
+  i2c1_irq_init();
+  i2c2_irq_init();
+  i2c3_irq_init();
+  i2c4_irq_init();
 
 //  spi1_irq_init();
 //  spi2_irq_init();
@@ -241,10 +241,10 @@ void irqDeinit(void) {
   fdcan1_irq_deinit();
   fdcan2_irq_deinit();
 
-//  i2c1_irq_deinit();
-//  i2c2_irq_deinit();
-//  i2c3_irq_deinit();
-//  i2c4_irq_deinit();
+  i2c1_irq_deinit();
+  i2c2_irq_deinit();
+  i2c3_irq_deinit();
+  i2c4_irq_deinit();
 
 //  spi1_irq_deinit();
 //  spi2_irq_deinit();

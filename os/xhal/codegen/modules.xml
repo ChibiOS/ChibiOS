@@ -9,6 +9,7 @@
   <!ENTITY hal_can             SYSTEM "hal_can.xml">
   <!ENTITY hal_eth             SYSTEM "hal_eth.xml">
   <!ENTITY hal_gpt             SYSTEM "hal_gpt.xml">
+  <!ENTITY hal_i2c             SYSTEM "hal_i2c.xml">
   <!ENTITY hal_icu             SYSTEM "hal_icu.xml">
   <!ENTITY hal_pwm             SYSTEM "hal_pwm.xml">
   <!ENTITY hal_rtc             SYSTEM "hal_rtc.xml">
@@ -31,6 +32,7 @@
     &hal_can;
     &hal_eth;
     &hal_gpt;
+    &hal_i2c;
     &hal_icu;
     &hal_pwm;
     &hal_rtc;

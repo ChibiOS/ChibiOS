@@ -52,6 +52,7 @@
 #define HAL_USE_CAN                         ${doc.HAL_USE_CAN!"FALSE"}
 #define HAL_USE_ETH                         ${doc.HAL_USE_ETH!"FALSE"}
 #define HAL_USE_GPT                         ${doc.HAL_USE_GPT!"FALSE"}
+#define HAL_USE_I2C                         ${doc.HAL_USE_I2C!"FALSE"}
 #define HAL_USE_ICU                         ${doc.HAL_USE_ICU!"FALSE"}
 #define HAL_USE_MMC_SPI                     ${doc.HAL_USE_MMC_SPI!"FALSE"}
 #define HAL_USE_PWM                         ${doc.HAL_USE_PWM!"FALSE"}
@@ -79,6 +80,14 @@
 /*===========================================================================*/
 
 #define GPT_DEFAULT_FREQUENCY               ${doc.GPT_DEFAULT_FREQUENCY!"1000000U"}
+
+/*===========================================================================*/
+/* I2C driver settings.                                                      */
+/*===========================================================================*/
+
+#define I2C_USE_SYNCHRONIZATION             ${doc.I2C_USE_SYNCHRONIZATION!"TRUE"}
+#define I2C_USE_MUTUAL_EXCLUSION            ${doc.I2C_USE_MUTUAL_EXCLUSION!"TRUE"}
+#define I2C_USE_CONFIGURATIONS              ${doc.I2C_USE_CONFIGURATIONS!"FALSE"}
 
 /*===========================================================================*/
 /* ICU driver settings.                                                      */

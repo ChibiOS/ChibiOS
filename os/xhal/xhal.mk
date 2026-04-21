@@ -30,6 +30,9 @@ endif
 ifneq ($(findstring HAL_USE_GPT TRUE,$(XHALCONF)),)
 XHALSRC += $(CHIBIOS)/os/xhal/src/hal_gpt.c
 endif
+ifneq ($(findstring HAL_USE_I2C TRUE,$(XHALCONF)),)
+XHALSRC += $(CHIBIOS)/os/xhal/src/hal_i2c.c
+endif
 ifneq ($(findstring HAL_USE_ICU TRUE,$(XHALCONF)),)
 XHALSRC += $(CHIBIOS)/os/xhal/src/hal_icu.c
 endif
@@ -69,6 +72,7 @@ XHALSRC = $(CHIBIOS)/os/xhal/src/hal.c \
           $(CHIBIOS)/os/xhal/src/hal_can.c \
           $(CHIBIOS)/os/xhal/src/hal_eth.c \
           $(CHIBIOS)/os/xhal/src/hal_gpt.c \
+          $(CHIBIOS)/os/xhal/src/hal_i2c.c \
           $(CHIBIOS)/os/xhal/src/hal_icu.c \
           $(CHIBIOS)/os/xhal/src/hal_pal.c \
           $(CHIBIOS)/os/xhal/src/hal_pwm.c \
