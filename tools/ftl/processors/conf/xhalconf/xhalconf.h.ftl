@@ -49,6 +49,7 @@
 
 #define HAL_USE_PAL                         ${doc.HAL_USE_PAL!"TRUE"}
 #define HAL_USE_ADC                         ${doc.HAL_USE_ADC!"FALSE"}
+#define HAL_USE_CAN                         ${doc.HAL_USE_CAN!"FALSE"}
 #define HAL_USE_ETH                         ${doc.HAL_USE_ETH!"FALSE"}
 #define HAL_USE_GPT                         ${doc.HAL_USE_GPT!"FALSE"}
 #define HAL_USE_ICU                         ${doc.HAL_USE_ICU!"FALSE"}
@@ -64,6 +65,14 @@
 /*===========================================================================*/
 
 #define ADC_USE_WAIT                        ${doc.ADC_USE_WAIT!"TRUE"}
+
+/*===========================================================================*/
+/* CAN driver settings.                                                      */
+/*===========================================================================*/
+
+#define CAN_USE_SYNCHRONIZATION             ${doc.CAN_USE_SYNCHRONIZATION!"TRUE"}
+#define CAN_USE_SLEEP_MODE                  ${doc.CAN_USE_SLEEP_MODE!"TRUE"}
+#define CAN_USE_CONFIGURATIONS              ${doc.CAN_USE_CONFIGURATIONS!"FALSE"}
 
 /*===========================================================================*/
 /* GPT driver settings.                                                      */

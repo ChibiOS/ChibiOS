@@ -59,9 +59,9 @@
 #include "stm32_exti5_9.inc"
 #include "stm32_exti10_15.inc"
 
-//#include "stm32_fdcan1.inc"
-//#include "stm32_fdcan2.inc"
-//#include "stm32_fdcan3.inc"
+#include "stm32_fdcan1.inc"
+#include "stm32_fdcan2.inc"
+#include "stm32_fdcan3.inc"
 
 #include "stm32_adc1_2.inc"
 #include "stm32_adc3.inc"
@@ -107,9 +107,9 @@ void irqInit(void) {
   exti4_irq_init();
   exti5_9_irq_init();
   exti10_15_irq_init();
-//  fdcan1_irq_init();
-//  fdcan2_irq_init();
-//  fdcan3_irq_init();
+  fdcan1_irq_init();
+  fdcan2_irq_init();
+  fdcan3_irq_init();
 
   adc1_adc2_irq_init();
   adc3_irq_init();
@@ -152,9 +152,9 @@ void irqDeinit(void) {
   exti4_irq_deinit();
   exti5_9_irq_deinit();
   exti10_15_irq_deinit();
-//  fdcan1_irq_deinit();
-//  fdcan2_irq_deinit();
-//  fdcan3_irq_deinit();
+  fdcan1_irq_deinit();
+  fdcan2_irq_deinit();
+  fdcan3_irq_deinit();
 
   adc1_adc2_irq_deinit();
   adc3_irq_deinit();

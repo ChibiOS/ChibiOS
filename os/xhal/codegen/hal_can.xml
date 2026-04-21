@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_can" descr="CAN Driver" check="HAL_USE_CAN == TRUE"
+  editcode="false">
+  <brief>CAN Driver macros and structures.</brief>
+  <imports>
+    <import>hal_cb_driver.xml</import>
+  </imports>
+  <public>
+    <includes_always>
+      <include style="regular">hal_cb_driver.h</include>
+    </includes_always>
+    <definitions_early>
+      <group description="CAN status flags">
+        <define name="CAN_LIMIT_WARNING" value="1U">
+          <brief>Error rate warning.</brief>
+        </define>
+        <define name="CAN_LIMIT_ERROR" value="2U">
+          <brief>Error rate limit reached.</brief>
+        </define>
+        <define name="CAN_BUS_OFF_ERROR" value="4U">
+          <brief>Bus-off condition reached.</brief>
+        </define>
+        <define name="CAN_FRAMING_ERROR" value="8U">
+          <brief>Framing error on the CAN bus.</brief>
+        </define>
+        <define name="CAN_OVERFLOW_ERROR" value="16U">
+          <brief>Receive queue overflow.</brief>
+        </define>
+      </group>
+      <group description="CAN mailbox constants">
+        <define name="CAN_ANY_MAILBOX" value="0U">
+          <brief>Special mailbox identifier.</brief>
+        </define>
+      </group>
+      <group description="CAN event flags">
+        <define name="CAN_EVENT_RX" value="(1U &lt;&lt; 0)">
+          <brief>One or more frames became available.</brief>
+        </define>
+        <define name="CAN_EVENT_TX" value="(1U &lt;&lt; 1)">
+          <brief>One or more transmit mailboxes became available.</brief>
+        </define>
+        <define name="CAN_EVENT_ERROR" value="(1U &lt;&lt; 2)">
+          <brief>A CAN error condition occurred.</brief>
+        </define>
+        <define name="CAN_EVENT_SLEEP" value="(1U &lt;&lt; 3)">
+          <brief>The driver entered sleep state.</brief>
+        </define>
+        <define name="CAN_EVENT_WAKEUP" value="(1U &lt;&lt; 4)">
+          <brief>The driver exited sleep state.</brief>
+        </define>
+        <define name="CAN_EVENT_ALL" value="(CAN_EVENT_RX | CAN_EVENT_TX | CAN_EVENT_ERROR | CAN_EVENT_SLEEP | CAN_EVENT_WAKEUP)">
+          <brief>All CAN event flags.</brief>
+        </define>
+      </group>
+    </definitions_early>
+    <configs>
+      <config name="CAN_USE_SYNCHRONIZATION" default="TRUE">
+        <brief>Support for synchronous CAN transmit and receive APIs.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="CAN_USE_SLEEP_MODE" default="TRUE">
+        <brief>Support for CAN sleep mode APIs.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="CAN_USE_CONFIGURATIONS" default="FALSE">
+        <brief>Support for CAN user configurations.</brief>
+        <note>When enabled the user must provide a variable named
+          @p can_configurations of type @p can_configurations_t.</note>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+    </configs>
+    <macros>
+      <group description="Macro functions">
+        <macro name="CAN_MAILBOX_TO_MASK">
+          <brief>Converts a mailbox index to a bit mask.</brief>
+          <param name="mbx" dir="in">Mailbox index.</param>
+          <return>The mailbox mask.</return>
+          <api />
+          <implementation><![CDATA[((canmbxmask_t)1U << ((mbx) - 1U))]]></implementation>
+        </macro>
+        <macro name="canTransmit">
+          <brief>Legacy name for @p canTransmitTimeout().</brief>
+          <param name="canp" dir="in">Pointer to the CAN driver instance.</param>
+          <param name="mailbox" dir="in">Mailbox number.</param>
+          <param name="ctfp" dir="in">Frame to transmit.</param>
+          <param name="timeout" dir="in">Timeout interval.</param>
+          <api />
+          <implementation><![CDATA[canTransmitTimeout(canp, mailbox, ctfp, timeout)]]></implementation>
+        </macro>
+        <macro name="canReceive">
+          <brief>Legacy name for @p canReceiveTimeout().</brief>
+          <param name="canp" dir="in">Pointer to the CAN driver instance.</param>
+          <param name="mailbox" dir="in">Mailbox number.</param>
+          <param name="crfp" dir="out">Frame receive buffer.</param>
+          <param name="timeout" dir="in">Timeout interval.</param>
+          <api />
+          <implementation><![CDATA[canReceiveTimeout(canp, mailbox, crfp, timeout)]]></implementation>
+        </macro>
+      </group>
+      <group description="Low level driver helper macros">
+        <condition check="CAN_USE_SYNCHRONIZATION == TRUE">
+          <macro name="_can_tx_empty_isr">
+            <brief>Common ISR code, TX mailbox empty event.</brief>
+            <param name="canp" dir="both">Pointer to the CAN driver instance.</param>
+            <param name="flags" dir="in">Mailbox and transmit error flags.</param>
+            <notapi />
+            <implementation><![CDATA[
+do {
+  (canp)->tx_mailbox_mask |= (canmbxmask_t)((flags) & 0xFFFFU);
+  (canp)->tx_error_mask   |= (canmbxmask_t)(((flags) >> 16U) & 0xFFFFU);
+  (canp)->events          |= CAN_EVENT_TX;
+  osalSysLockFromISR();
+  osalThreadDequeueAllI(&(canp)->txqueue, MSG_OK);
+  __cbdrv_invoke_cb(canp);
+  osalSysUnlockFromISR();
+} while (false)]]></implementation>
+          </macro>
+          <macro name="_can_rx_full_isr">
+            <brief>Common ISR code, RX mailbox full event.</brief>
+            <param name="canp" dir="both">Pointer to the CAN driver instance.</param>
+            <param name="flags" dir="in">Mailbox flags.</param>
+            <notapi />
+            <implementation><![CDATA[
+do {
+  (canp)->rx_mailbox_mask |= (canmbxmask_t)(flags);
+  (canp)->events          |= CAN_EVENT_RX;
+  osalSysLockFromISR();
+  osalThreadDequeueAllI(&(canp)->rxqueue, MSG_OK);
+  __cbdrv_invoke_cb(canp);
+  osalSysUnlockFromISR();
+} while (false)]]></implementation>
+          </macro>
+          <elseif />
+          <macro name="_can_tx_empty_isr">
+            <brief>Common ISR code, TX mailbox empty event.</brief>
+            <param name="canp" dir="both">Pointer to the CAN driver instance.</param>
+            <param name="flags" dir="in">Mailbox and transmit error flags.</param>
+            <notapi />
+            <implementation><![CDATA[
+do {
+  (canp)->tx_mailbox_mask |= (canmbxmask_t)((flags) & 0xFFFFU);
+  (canp)->tx_error_mask   |= (canmbxmask_t)(((flags) >> 16U) & 0xFFFFU);
+  (canp)->events          |= CAN_EVENT_TX;
+  osalSysLockFromISR();
+  __cbdrv_invoke_cb(canp);
+  osalSysUnlockFromISR();
+} while (false)]]></implementation>
+          </macro>
+          <macro name="_can_rx_full_isr">
+            <brief>Common ISR code, RX mailbox full event.</brief>
+            <param name="canp" dir="both">Pointer to the CAN driver instance.</param>
+            <param name="flags" dir="in">Mailbox flags.</param>
+            <notapi />
+            <implementation><![CDATA[
+do {
+  (canp)->rx_mailbox_mask |= (canmbxmask_t)(flags);
+  (canp)->events          |= CAN_EVENT_RX;
+  osalSysLockFromISR();
+  __cbdrv_invoke_cb(canp);
+  osalSysUnlockFromISR();
+} while (false)]]></implementation>
+          </macro>
+        </condition>
+        <macro name="_can_wakeup_isr">
+          <brief>Common ISR code, CAN wakeup event.</brief>
+          <param name="canp" dir="both">Pointer to the CAN driver instance.</param>
+          <notapi />
+          <implementation><![CDATA[
+do {
+  (canp)->state  = CAN_READY;
+  (canp)->events |= CAN_EVENT_WAKEUP;
+  osalSysLockFromISR();
+  __cbdrv_invoke_cb(canp);
+  osalSysUnlockFromISR();
+} while (false)]]></implementation>
+        </macro>
+        <macro name="_can_error_isr">
+          <brief>Common ISR code, CAN error event.</brief>
+          <param name="canp" dir="both">Pointer to the CAN driver instance.</param>
+          <param name="flags" dir="in">Error flags.</param>
+          <notapi />
+          <implementation><![CDATA[
+do {
+  (canp)->errors |= (canerror_t)(flags);
+  (canp)->events |= CAN_EVENT_ERROR;
+  osalSysLockFromISR();
+  __cbdrv_invoke_cb(canp);
+  osalSysUnlockFromISR();
+} while (false)]]></implementation>
+        </macro>
+      </group>
+    </macros>
+    <types>
+      <typedef name="canmbx_t">
+        <brief>Type of a CAN mailbox index.</brief>
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="canmbxmask_t">
+        <brief>Type of CAN mailbox masks.</brief>
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="can_events_t">
+        <brief>Type of CAN event flags.</brief>
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="canerror_t">
+        <brief>Type of CAN error flags.</brief>
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="canstate_t">
+        <brief>Type of CAN driver state.</brief>
+        <basetype ctype="driver_state_t" />
+      </typedef>
+      <typedef name="hal_can_driver_c">
+        <brief>Type of structure representing a CAN driver.</brief>
+        <basetype ctype="struct hal_can_driver" />
+      </typedef>
+      <typedef name="hal_can_config_t">
+        <brief>Type of structure representing a CAN configuration.</brief>
+        <basetype ctype="struct hal_can_config" />
+      </typedef>
+      <typedef name="CANDriver">
+        <brief>Type of structure representing a CAN driver (legacy).</brief>
+        <basetype ctype="struct hal_can_driver" />
+      </typedef>
+      <typedef name="CANConfig">
+        <brief>Type of structure representing a CAN configuration (legacy).</brief>
+        <basetype ctype="struct hal_can_config" />
+      </typedef>
+      <verbatim><![CDATA[
+#define CAN_UNINIT                         HAL_DRV_STATE_UNINIT
+#define CAN_STOP                           HAL_DRV_STATE_STOP
+#define CAN_STARTING                       HAL_DRV_STATE_STARTING
+#define CAN_READY                          HAL_DRV_STATE_READY
+#define CAN_SLEEP                          (HAL_DRV_STATE_ERROR + 1U)
+
+/* Inclusion of LLD header.*/
+#include "hal_can_lld.h"]]></verbatim>
+      <struct name="hal_can_config">
+        <brief>Driver configuration structure.</brief>
+        <fields>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+can_lld_config_fields;]]></verbatim>
+          <condition check="defined(CAN_CONFIG_EXT_FIELDS)">
+            <verbatim><![CDATA[
+CAN_CONFIG_EXT_FIELDS]]></verbatim>
+          </condition>
+        </fields>
+      </struct>
+      <typedef name="can_configurations_t">
+        <brief>Type of user-provided CAN configurations.</brief>
+        <basetype ctype="struct can_configurations" />
+      </typedef>
+      <struct name="can_configurations">
+        <brief>Structure representing user-provided CAN configurations.</brief>
+        <fields>
+          <field name="cfgsnum" ctype="unsigned">
+            <brief>Number of configurations in the open array.</brief>
+          </field>
+          <field name="cfgs" ctype="hal_can_config_t$I$N[]">
+            <brief>User CAN configurations.</brief>
+          </field>
+        </fields>
+      </struct>
+      <class type="regular" name="hal_can_driver" namespace="can"
+        ancestorname="hal_cb_driver" descr="CAN driver">
+        <brief>Class of a CAN driver.</brief>
+        <fields>
+          <field name="events" ctype="volatile can_events_t">
+            <brief>Cached CAN event flags.</brief>
+          </field>
+          <field name="rx_mailbox_mask" ctype="volatile canmbxmask_t">
+            <brief>Cached RX mailbox flags.</brief>
+          </field>
+          <field name="tx_mailbox_mask" ctype="volatile canmbxmask_t">
+            <brief>Cached TX mailbox flags.</brief>
+          </field>
+          <field name="tx_error_mask" ctype="volatile canmbxmask_t">
+            <brief>Cached TX error mailbox flags.</brief>
+          </field>
+          <field name="errors" ctype="volatile canerror_t">
+            <brief>Cached CAN error flags.</brief>
+          </field>
+          <condition check="CAN_USE_SYNCHRONIZATION == TRUE">
+            <field name="txqueue" ctype="threads_queue_t">
+              <brief>Transmission threads queue.</brief>
+            </field>
+            <field name="rxqueue" ctype="threads_queue_t">
+              <brief>Receive threads queue.</brief>
+            </field>
+          </condition>
+          <condition check="defined(CAN_DRIVER_EXT_FIELDS)">
+            <verbatim><![CDATA[
+CAN_DRIVER_EXT_FIELDS]]></verbatim>
+          </condition>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+can_lld_driver_fields;]]></verbatim>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+self->events          = 0U;
+self->rx_mailbox_mask = 0U;
+self->tx_mailbox_mask = 0U;
+self->tx_error_mask   = 0U;
+self->errors          = 0U;
+#if CAN_USE_SYNCHRONIZATION == TRUE
+osalThreadQueueObjectInit(&self->txqueue);
+osalThreadQueueObjectInit(&self->rxqueue);
+#endif
+
+#if defined(CAN_DRIVER_EXT_INIT_HOOK)
+CAN_DRIVER_EXT_INIT_HOOK(self);
+#endif]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[
+]]></implementation>
+          </dispose>
+          <regular>
+            <method name="canStart" ctype="msg_t">
+              <brief>Configures and activates the CAN peripheral.</brief>
+              <param name="config" ctype="const hal_can_config_t *" dir="in">
+                Driver configuration.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert(self->state == HAL_DRV_STATE_STOP, "invalid state");
+
+if (config != NULL) {
+  msg = drvSetCfgX(self, config);
+  if (msg != HAL_RET_SUCCESS) {
+    return msg;
+  }
+}
+
+return drvStart(self);]]></implementation>
+            </method>
+            <method name="canStop" ctype="void">
+              <brief>Deactivates the CAN peripheral.</brief>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+drvStop(self);]]></implementation>
+            </method>
+            <method name="canTryTransmitI" ctype="bool">
+              <brief>Attempts to queue a CAN frame for transmission.</brief>
+              <param name="mailbox" ctype="canmbx_t" dir="in">
+                Mailbox number or @p CAN_ANY_MAILBOX.
+              </param>
+              <param name="ctfp" ctype="const CANTxFrame *" dir="in">
+                Frame to transmit.
+              </param>
+              <return>The operation result.</return>
+              <retval value="false">If the frame has been queued.</retval>
+              <retval value="true">If the mailbox is full.</retval>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (ctfp != NULL) &&
+             (mailbox <= (canmbx_t)CAN_TX_MAILBOXES));
+osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+              "invalid state");
+
+if (!can_lld_is_tx_empty(self, mailbox)) {
+  return true;
+}
+
+can_lld_transmit(self, mailbox, ctfp);
+
+return false;]]></implementation>
+            </method>
+            <method name="canTryReceiveI" ctype="bool">
+              <brief>Attempts to fetch a CAN frame.</brief>
+              <param name="mailbox" ctype="canmbx_t" dir="in">
+                Mailbox number or @p CAN_ANY_MAILBOX.
+              </param>
+              <param name="crfp" ctype="CANRxFrame *" dir="out">
+                Receive buffer.
+              </param>
+              <return>The operation result.</return>
+              <retval value="false">If a frame has been fetched.</retval>
+              <retval value="true">If the mailbox is empty.</retval>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (crfp != NULL) &&
+             (mailbox <= (canmbx_t)CAN_RX_MAILBOXES));
+osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+              "invalid state");
+
+if (!can_lld_is_rx_nonempty(self, mailbox)) {
+  return true;
+}
+
+can_lld_receive(self, mailbox, crfp);
+
+return false;]]></implementation>
+            </method>
+            <method name="canTryAbortX" ctype="void">
+              <brief>Attempts to abort an ongoing transmission.</brief>
+              <param name="mailbox" ctype="canmbx_t" dir="in">
+                Mailbox number.
+              </param>
+              <xclass />
+              <implementation><![CDATA[
+osalDbgCheck((self != NULL) &&
+             (mailbox != CAN_ANY_MAILBOX) &&
+             (mailbox <= (canmbx_t)CAN_TX_MAILBOXES));
+
+can_lld_abort(self, mailbox);]]></implementation>
+            </method>
+            <condition check="CAN_USE_SYNCHRONIZATION == TRUE">
+              <method name="canTransmitTimeout" ctype="msg_t">
+                <brief>Queues a CAN frame for transmission.</brief>
+                <param name="mailbox" ctype="canmbx_t" dir="in">
+                  Mailbox number or @p CAN_ANY_MAILBOX.
+                </param>
+                <param name="ctfp" ctype="const CANTxFrame *" dir="in">
+                  Frame to transmit.
+                </param>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Timeout interval.
+                </param>
+                <return>The operation status.</return>
+                <api />
+                <implementation><![CDATA[
+osalDbgCheck((self != NULL) && (ctfp != NULL) &&
+             (mailbox <= (canmbx_t)CAN_TX_MAILBOXES));
+
+osalSysLock();
+osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+              "invalid state");
+
+while ((self->state == CAN_SLEEP) || !can_lld_is_tx_empty(self, mailbox)) {
+  msg_t msg = osalThreadEnqueueTimeoutS(&self->txqueue, timeout);
+  if (msg != MSG_OK) {
+    osalSysUnlock();
+    return msg;
+  }
+}
+
+can_lld_transmit(self, mailbox, ctfp);
+osalSysUnlock();
+
+return MSG_OK;]]></implementation>
+              </method>
+              <method name="canReceiveTimeout" ctype="msg_t">
+                <brief>Receives a CAN frame.</brief>
+                <param name="mailbox" ctype="canmbx_t" dir="in">
+                  Mailbox number or @p CAN_ANY_MAILBOX.
+                </param>
+                <param name="crfp" ctype="CANRxFrame *" dir="out">
+                  Receive buffer.
+                </param>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Timeout interval.
+                </param>
+                <return>The operation status.</return>
+                <api />
+                <implementation><![CDATA[
+osalDbgCheck((self != NULL) && (crfp != NULL) &&
+             (mailbox <= (canmbx_t)CAN_RX_MAILBOXES));
+
+osalSysLock();
+osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+              "invalid state");
+
+while ((self->state == CAN_SLEEP) || !can_lld_is_rx_nonempty(self, mailbox)) {
+  msg_t msg = osalThreadEnqueueTimeoutS(&self->rxqueue, timeout);
+  if (msg != MSG_OK) {
+    osalSysUnlock();
+    return msg;
+  }
+}
+
+can_lld_receive(self, mailbox, crfp);
+osalSysUnlock();
+
+return MSG_OK;]]></implementation>
+              </method>
+            </condition>
+            <condition check="CAN_USE_SLEEP_MODE == TRUE">
+              <method name="canSleep" ctype="void">
+                <brief>Enters CAN sleep mode.</brief>
+                <api />
+                <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+              "invalid state");
+if (self->state == CAN_READY) {
+  can_lld_sleep(self);
+  self->state = CAN_SLEEP;
+  self->events |= CAN_EVENT_SLEEP;
+  __cbdrv_invoke_cb(self);
+}
+osalSysUnlock();]]></implementation>
+              </method>
+              <method name="canWakeup" ctype="void">
+                <brief>Forces CAN wakeup from sleep mode.</brief>
+                <api />
+                <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+              "invalid state");
+if (self->state == CAN_SLEEP) {
+  can_lld_wakeup(self);
+  self->state = CAN_READY;
+  self->events |= CAN_EVENT_WAKEUP;
+  __cbdrv_invoke_cb(self);
+}
+osalSysUnlock();]]></implementation>
+              </method>
+            </condition>
+          </regular>
+          <inline>
+            <method name="canGetEventsX" ctype="can_events_t">
+              <brief>Returns the cached CAN event flags.</brief>
+              <return>The current cached event flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->events;]]></implementation>
+            </method>
+            <method name="canGetAndClearEventsX" ctype="can_events_t">
+              <brief>Gets and clears cached CAN event flags.</brief>
+              <param name="mask" ctype="can_events_t" dir="in">
+                Event flags to get and clear.
+              </param>
+              <return>The selected pending event flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+can_events_t events;
+syssts_t sts;
+
+sts = osalSysGetStatusAndLockX();
+events = self->events & mask;
+self->events &= ~mask;
+osalSysRestoreStatusX(sts);
+
+return events;]]></implementation>
+            </method>
+            <method name="canGetAndClearRxMailboxMaskX" ctype="canmbxmask_t">
+              <brief>Gets and clears cached RX mailbox flags.</brief>
+              <return>The pending RX mailbox flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+canmbxmask_t mask;
+syssts_t sts;
+
+sts = osalSysGetStatusAndLockX();
+mask = self->rx_mailbox_mask;
+self->rx_mailbox_mask = 0U;
+osalSysRestoreStatusX(sts);
+
+return mask;]]></implementation>
+            </method>
+            <method name="canGetAndClearTxMailboxMaskX" ctype="canmbxmask_t">
+              <brief>Gets and clears cached TX mailbox flags.</brief>
+              <return>The pending TX mailbox flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+canmbxmask_t mask;
+syssts_t sts;
+
+sts = osalSysGetStatusAndLockX();
+mask = self->tx_mailbox_mask;
+self->tx_mailbox_mask = 0U;
+osalSysRestoreStatusX(sts);
+
+return mask;]]></implementation>
+            </method>
+            <method name="canGetAndClearTxErrorMaskX" ctype="canmbxmask_t">
+              <brief>Gets and clears cached TX error mailbox flags.</brief>
+              <return>The pending TX error mailbox flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+canmbxmask_t mask;
+syssts_t sts;
+
+sts = osalSysGetStatusAndLockX();
+mask = self->tx_error_mask;
+self->tx_error_mask = 0U;
+osalSysRestoreStatusX(sts);
+
+return mask;]]></implementation>
+            </method>
+            <method name="canGetAndClearErrorsX" ctype="canerror_t">
+              <brief>Gets and clears cached CAN error flags.</brief>
+              <return>The pending CAN error flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+canerror_t errors;
+syssts_t sts;
+
+sts = osalSysGetStatusAndLockX();
+errors = self->errors;
+self->errors = 0U;
+osalSysRestoreStatusX(sts);
+
+return errors;]]></implementation>
+            </method>
+          </inline>
+          <override>
+            <method shortname="start">
+              <implementation><![CDATA[
+msg_t msg;
+
+msg = can_lld_start(self);
+if (msg != HAL_RET_SUCCESS) {
+  self->config = NULL;
+  self->events = 0U;
+  self->rx_mailbox_mask = 0U;
+  self->tx_mailbox_mask = 0U;
+  self->tx_error_mask = 0U;
+  self->errors = 0U;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[
+can_lld_stop(self);
+can_lld_reset(self);
+#if CAN_USE_SYNCHRONIZATION == TRUE
+osalThreadDequeueAllI(&self->rxqueue, MSG_RESET);
+osalThreadDequeueAllI(&self->txqueue, MSG_RESET);
+osalOsRescheduleS();
+#endif]]></implementation>
+            </method>
+            <method shortname="setcfg">
+              <implementation><![CDATA[
+return (const void *)can_lld_setcfg(self,
+                                    (const hal_can_config_t *)config);]]></implementation>
+            </method>
+            <method shortname="selcfg">
+              <implementation><![CDATA[
+return (const void *)can_lld_selcfg(self, cfgnum);]]></implementation>
+            </method>
+            <method shortname="setcb">
+              <implementation><![CDATA[
+__cbdrv_setcb_impl(self, cb);
+can_lld_set_callback(self, cb);]]></implementation>
+            </method>
+          </override>
+        </methods>
+      </class>
+    </types>
+    <functions>
+      <function name="canInit" ctype="void">
+        <brief>CAN Driver initialization.</brief>
+        <init />
+        <implementation><![CDATA[
+can_lld_init();]]></implementation>
+      </function>
+    </functions>
+  </public>
+  <private>
+    <includes_always>
+      <include style="regular">hal.h</include>
+    </includes_always>
+  </private>
+</module>

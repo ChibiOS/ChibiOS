@@ -6,6 +6,7 @@
   <!ENTITY hal_block_io        SYSTEM "hal_block_io.xml">
   <!ENTITY hal_buffered_serial SYSTEM "hal_buffered_serial.xml">
   <!ENTITY hal_adc             SYSTEM "hal_adc.xml">
+  <!ENTITY hal_can             SYSTEM "hal_can.xml">
   <!ENTITY hal_eth             SYSTEM "hal_eth.xml">
   <!ENTITY hal_gpt             SYSTEM "hal_gpt.xml">
   <!ENTITY hal_icu             SYSTEM "hal_icu.xml">
@@ -27,6 +28,7 @@
     &hal_block_io;
     &hal_buffered_serial;
     &hal_adc;
+    &hal_can;
     &hal_eth;
     &hal_gpt;
     &hal_icu;

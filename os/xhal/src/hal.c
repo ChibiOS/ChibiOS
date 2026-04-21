@@ -82,10 +82,10 @@ void halInit(void) {
 #if (HAL_USE_ICU == TRUE) || defined(__DOXYGEN__)
   icuInit();
 #endif
-#if 0
 #if (HAL_USE_CAN == TRUE) || defined(__DOXYGEN__)
   canInit();
 #endif
+#if 0
 #if (HAL_USE_CRY == TRUE) || defined(__DOXYGEN__)
   cryInit();
 #endif

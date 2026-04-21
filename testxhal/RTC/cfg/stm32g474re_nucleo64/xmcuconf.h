@@ -178,6 +178,14 @@
 #define STM32_ADC_ADC345_PRESC              ADC_CCR_PRESC_DIV2
 
 /*
+ * CAN driver system settings.
+ */
+#define STM32_CAN_USE_FDCAN1                FALSE
+#define STM32_CAN_USE_FDCAN2                FALSE
+#define STM32_CAN_USE_FDCAN3                FALSE
+#define STM32_CAN_FDCAN_PRESC               FDCAN_CONFIG_CKDIV_PDIV_1
+
+/*
  * GPT driver system settings.
  */
 #define STM32_GPT_USE_TIM1                  FALSE
