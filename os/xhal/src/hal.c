@@ -76,6 +76,9 @@ void halInit(void) {
 #if (HAL_USE_GPT == TRUE) || defined(__DOXYGEN__)
   gptInit();
 #endif
+#if (HAL_USE_PWM == TRUE) || defined(__DOXYGEN__)
+  pwmInit();
+#endif
 #if 0
 #if (HAL_USE_CAN == TRUE) || defined(__DOXYGEN__)
   canInit();
@@ -97,9 +100,6 @@ void halInit(void) {
 #endif
 #if (HAL_USE_ICU == TRUE) || defined(__DOXYGEN__)
   icuInit();
-#endif
-#if (HAL_USE_PWM == TRUE) || defined(__DOXYGEN__)
-  pwmInit();
 #endif
 #if (HAL_USE_SERIAL == TRUE) || defined(__DOXYGEN__)
   sdInit();

@@ -87,6 +87,8 @@ void *__gpt_objinit_impl(void *ip, const void *vmt) {
   /* Initialization of the ancestors-defined parts.*/
   __cbdrv_objinit_impl(self, vmt);
 
+  /* No initialization code.*/
+
   return self;
 }
 
@@ -144,7 +146,8 @@ void __gpt_stop_impl(void *ip) {
  */
 const void *__gpt_setcfg_impl(void *ip, const void *config) {
   hal_gpt_driver_c *self = (hal_gpt_driver_c *)ip;
-  return (const void *)gpt_lld_setcfg(self, (const hal_gpt_config_t *)config);
+  return (const void *)gpt_lld_setcfg(self,
+                                      (const hal_gpt_config_t *)config);
 }
 
 /**

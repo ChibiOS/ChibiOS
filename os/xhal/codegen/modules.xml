@@ -8,6 +8,7 @@
   <!ENTITY hal_adc             SYSTEM "hal_adc.xml">
   <!ENTITY hal_eth             SYSTEM "hal_eth.xml">
   <!ENTITY hal_gpt             SYSTEM "hal_gpt.xml">
+  <!ENTITY hal_pwm             SYSTEM "hal_pwm.xml">
   <!ENTITY hal_rtc             SYSTEM "hal_rtc.xml">
   <!ENTITY hal_sio             SYSTEM "hal_sio.xml">
   <!ENTITY hal_spi             SYSTEM "hal_spi.xml">
@@ -27,6 +28,7 @@
     &hal_adc;
     &hal_eth;
     &hal_gpt;
+    &hal_pwm;
     &hal_rtc;
     &hal_sio;
     &hal_spi;

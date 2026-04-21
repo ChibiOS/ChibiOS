@@ -81,8 +81,8 @@ do {
           <notapi />
           <implementation><![CDATA[
 do {
-  __cbdrv_invoke_cb_with_transition(wspip,                               \
-                                    HAL_DRV_STATE_ERROR,                 \
+  __cbdrv_invoke_cb_with_transition(wspip,
+                                    HAL_DRV_STATE_ERROR,
                                     HAL_DRV_STATE_READY);
   _wspi_wakeup_isr(wspip, MSG_RESET);
 } while (false)]]></implementation>

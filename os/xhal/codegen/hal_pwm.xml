@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_pwm" descr="PWM Driver" check="HAL_USE_PWM == TRUE"
+  editcode="false">
+  <brief>PWM Driver macros and structures.</brief>
+  <imports>
+    <import>hal_cb_driver.xml</import>
+  </imports>
+  <public>
+    <includes_always>
+      <include style="regular">hal_cb_driver.h</include>
+    </includes_always>
+    <definitions_early>
+      <group description="PWM output mode macros">
+        <define name="PWM_OUTPUT_MASK" value="0x0FU">
+          <brief>Standard output modes mask.</brief>
+        </define>
+        <define name="PWM_OUTPUT_DISABLED" value="0x00U">
+          <brief>Output not driven.</brief>
+        </define>
+        <define name="PWM_OUTPUT_ACTIVE_HIGH" value="0x01U">
+          <brief>Positive PWM logic, active level is logic one.</brief>
+        </define>
+        <define name="PWM_OUTPUT_ACTIVE_LOW" value="0x02U">
+          <brief>Inverse PWM logic, active level is logic zero.</brief>
+        </define>
+      </group>
+      <group description="PWM event flags">
+        <define name="PWM_EVENT_PERIOD" value="(1U &lt;&lt; 0)">
+          <brief>PWM period event flag.</brief>
+        </define>
+        <define name="PWM_EVENT_ALL_CHANNELS" value="((pwm_events_t)0x0000001EU)">
+          <brief>All PWM channel event flags supported by notifications.</brief>
+        </define>
+        <define name="PWM_EVENT_ALL" value="(PWM_EVENT_PERIOD | PWM_EVENT_ALL_CHANNELS)">
+          <brief>All PWM event flags.</brief>
+        </define>
+      </group>
+    </definitions_early>
+    <configs>
+      <config name="PWM_USE_CONFIGURATIONS" default="FALSE">
+        <brief>Support for PWM user configurations.</brief>
+        <note>When enabled the user must provide a variable named
+          @p pwm_configurations of type @p pwm_configurations_t.</note>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="PWM_DEFAULT_FREQUENCY" default="1000000U">
+        <brief>Default PWM timer frequency.</brief>
+      </config>
+      <config name="PWM_DEFAULT_PERIOD" default="1000U">
+        <brief>Default PWM period.</brief>
+      </config>
+    </configs>
+    <macros>
+      <group description="PWM duty cycle conversion">
+        <macro name="PWM_EVENT_CHANNEL">
+          <brief>Returns the event flag associated to a PWM channel.</brief>
+          <param name="n" dir="in">PWM channel index.</param>
+          <return>The event flag associated to the specified channel.</return>
+          <api />
+          <implementation><![CDATA[(pwm_events_t)(1U << ((unsigned)(n) + 1U))]]></implementation>
+        </macro>
+        <macro name="PWM_FRACTION_TO_WIDTH">
+          <brief>Converts from fraction to pulse width.</brief>
+          <param name="pwmp" dir="in">Pointer to the PWM driver instance.</param>
+          <param name="denominator" dir="in">Denominator of the fraction.</param>
+          <param name="numerator" dir="in">Numerator of the fraction.</param>
+          <return>The pulse width to be passed to @p pwmEnableChannel().</return>
+          <api />
+          <implementation><![CDATA[
+((pwmcnt_t)((((pwmcnt_t)(pwmp)->period) *
+             (pwmcnt_t)(numerator)) / (pwmcnt_t)(denominator)))]]></implementation>
+        </macro>
+        <macro name="PWM_DEGREES_TO_WIDTH">
+          <brief>Converts from degrees to pulse width.</brief>
+          <param name="pwmp" dir="in">Pointer to the PWM driver instance.</param>
+          <param name="degrees" dir="in">Degrees as an integer between 0 and 36000.</param>
+          <return>The pulse width to be passed to @p pwmEnableChannel().</return>
+          <api />
+          <implementation><![CDATA[PWM_FRACTION_TO_WIDTH(pwmp, 36000, degrees)]]></implementation>
+        </macro>
+        <macro name="PWM_PERCENTAGE_TO_WIDTH">
+          <brief>Converts from percentage to pulse width.</brief>
+          <param name="pwmp" dir="in">Pointer to the PWM driver instance.</param>
+          <param name="percentage" dir="in">Percentage as an integer between 0 and 10000.</param>
+          <return>The pulse width to be passed to @p pwmEnableChannel().</return>
+          <api />
+          <implementation><![CDATA[PWM_FRACTION_TO_WIDTH(pwmp, 10000, percentage)]]></implementation>
+        </macro>
+      </group>
+      <group description="Low level driver helper macros">
+        <macro name="_pwm_isr_invoke_cb">
+          <brief>Common ISR code, PWM event.</brief>
+          <param name="pwmp" dir="both">Pointer to the PWM driver instance.</param>
+          <param name="events" dir="in">PWM event flags.</param>
+          <notapi />
+          <implementation><![CDATA[
+do {
+  (pwmp)->events |= (events);
+  __cbdrv_invoke_cb(pwmp);
+} while (false)]]></implementation>
+        </macro>
+      </group>
+    </macros>
+    <types>
+      <typedef name="pwmmode_t">
+        <brief>Type of a PWM mode.</brief>
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="pwmchannel_t">
+        <brief>Type of a PWM channel.</brief>
+        <basetype ctype="uint8_t" />
+      </typedef>
+      <typedef name="pwmchnmsk_t">
+        <brief>Type of a PWM channels mask.</brief>
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="pwmcnt_t">
+        <brief>Type of a PWM counter.</brief>
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="pwm_events_t">
+        <brief>Type of PWM event flags.</brief>
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="pwmstate_t">
+        <brief>Type of PWM driver state.</brief>
+        <basetype ctype="driver_state_t" />
+      </typedef>
+      <typedef name="hal_pwm_driver_c">
+        <brief>Type of structure representing a PWM driver.</brief>
+        <basetype ctype="struct hal_pwm_driver" />
+      </typedef>
+      <typedef name="hal_pwm_config_t">
+        <brief>Type of structure representing a PWM configuration.</brief>
+        <basetype ctype="struct hal_pwm_config" />
+      </typedef>
+      <typedef name="hal_pwm_channel_config_t">
+        <brief>Type of structure representing a PWM channel configuration.</brief>
+        <basetype ctype="struct hal_pwm_channel_config" />
+      </typedef>
+      <typedef name="PWMDriver">
+        <brief>Type of structure representing a PWM driver (legacy).</brief>
+        <basetype ctype="struct hal_pwm_driver" />
+      </typedef>
+      <typedef name="PWMConfig">
+        <brief>Type of structure representing a PWM configuration (legacy).</brief>
+        <basetype ctype="struct hal_pwm_config" />
+      </typedef>
+      <typedef name="PWMChannelConfig">
+        <brief>Type of structure representing a PWM channel configuration (legacy).</brief>
+        <basetype ctype="struct hal_pwm_channel_config" />
+      </typedef>
+      <verbatim><![CDATA[
+#define PWM_UNINIT                          HAL_DRV_STATE_UNINIT
+#define PWM_STOP                            HAL_DRV_STATE_STOP
+#define PWM_READY                           HAL_DRV_STATE_READY
+
+/* Inclusion of LLD header.*/
+#include "hal_pwm_lld.h"]]></verbatim>
+      <struct name="hal_pwm_channel_config">
+        <brief>PWM driver channel configuration structure.</brief>
+        <fields>
+          <field name="mode" ctype="pwmmode_t">
+            <brief>Channel active logic level.</brief>
+          </field>
+          <condition check="defined(PWM_CHANNEL_CONFIG_EXT_FIELDS)">
+            <verbatim><![CDATA[
+PWM_CHANNEL_CONFIG_EXT_FIELDS]]></verbatim>
+          </condition>
+        </fields>
+      </struct>
+      <struct name="hal_pwm_config">
+        <brief>Driver configuration structure.</brief>
+        <fields>
+          <field name="frequency" ctype="uint32_t">
+            <brief>Timer clock in Hz.</brief>
+          </field>
+          <field name="period" ctype="pwmcnt_t">
+            <brief>PWM period in ticks.</brief>
+          </field>
+          <field name="enabled_events" ctype="pwm_events_t">
+            <brief>Initially enabled PWM event flags.</brief>
+          </field>
+          <field name="channels" ctype="hal_pwm_channel_config_t$I$N[PWM_CHANNELS]">
+            <brief>Channels configurations.</brief>
+          </field>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+pwm_lld_config_fields;]]></verbatim>
+          <condition check="defined(PWM_CONFIG_EXT_FIELDS)">
+            <verbatim><![CDATA[
+PWM_CONFIG_EXT_FIELDS]]></verbatim>
+          </condition>
+        </fields>
+      </struct>
+      <typedef name="pwm_configurations_t">
+        <brief>Type of user-provided PWM configurations.</brief>
+        <basetype ctype="struct pwm_configurations" />
+      </typedef>
+      <struct name="pwm_configurations">
+        <brief>Structure representing user-provided PWM configurations.</brief>
+        <fields>
+          <field name="cfgsnum" ctype="unsigned">
+            <brief>Number of configurations in the open array.</brief>
+          </field>
+          <field name="cfgs" ctype="hal_pwm_config_t$I$N[]">
+            <brief>User PWM configurations.</brief>
+          </field>
+        </fields>
+      </struct>
+      <class type="regular" name="hal_pwm_driver" namespace="pwm"
+        ancestorname="hal_cb_driver" descr="PWM driver">
+        <brief>Class of a PWM driver.</brief>
+        <fields>
+          <field name="period" ctype="pwmcnt_t">
+            <brief>Current PWM period in ticks.</brief>
+          </field>
+          <field name="enabled" ctype="pwmchnmsk_t">
+            <brief>Mask of the enabled channels.</brief>
+          </field>
+          <field name="enabled_events" ctype="pwm_events_t">
+            <brief>Mask of the enabled PWM events.</brief>
+          </field>
+          <field name="events" ctype="volatile pwm_events_t">
+            <brief>Cached PWM event flags.</brief>
+          </field>
+          <field name="channels" ctype="pwmchannel_t">
+            <brief>Number of channels in this instance.</brief>
+          </field>
+          <condition check="defined(PWM_DRIVER_EXT_FIELDS)">
+            <verbatim><![CDATA[
+PWM_DRIVER_EXT_FIELDS]]></verbatim>
+          </condition>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+pwm_lld_driver_fields;]]></verbatim>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+self->period         = 0U;
+self->enabled        = 0U;
+self->enabled_events = 0U;
+self->events         = 0U;
+self->channels       = 0U;
+
+#if defined(PWM_DRIVER_EXT_INIT_HOOK)
+PWM_DRIVER_EXT_INIT_HOOK(self);
+#endif]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[
+]]></implementation>
+          </dispose>
+          <regular>
+            <method name="pwmStart" ctype="msg_t">
+              <brief>Configures and activates the PWM peripheral.</brief>
+              <param name="config" ctype="const hal_pwm_config_t *" dir="in">
+                Driver configuration or @p NULL.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+
+if (config != NULL) {
+  if (drvGetStateX(self) == HAL_DRV_STATE_READY) {
+    pwmStop(self);
+  }
+
+  msg = drvSetCfgX(self, config);
+  if (msg != HAL_RET_SUCCESS) {
+    return msg;
+  }
+}
+
+return drvStart(self);]]></implementation>
+            </method>
+            <method name="pwmStop" ctype="void">
+              <brief>Deactivates the PWM peripheral.</brief>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+drvStop(self);]]></implementation>
+            </method>
+            <method name="pwmChangePeriodI" ctype="void">
+              <brief>Changes the period of the PWM peripheral.</brief>
+              <param name="period" ctype="pwmcnt_t" dir="in">
+                New cycle time in ticks.
+              </param>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+self->period = period;
+pwm_lld_change_period(self, period);]]></implementation>
+            </method>
+            <method name="pwmChangePeriod" ctype="void">
+              <brief>Changes the period of the PWM peripheral.</brief>
+              <param name="period" ctype="pwmcnt_t" dir="in">
+                New cycle time in ticks.
+              </param>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+pwmChangePeriodI(self, period);
+osalSysUnlock();]]></implementation>
+            </method>
+            <method name="pwmEnableChannelI" ctype="void">
+              <brief>Enables a PWM channel.</brief>
+              <param name="channel" ctype="pwmchannel_t" dir="in">
+                PWM channel identifier.
+              </param>
+              <param name="width" ctype="pwmcnt_t" dir="in">
+                PWM pulse width in timer ticks.
+              </param>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (channel < self->channels));
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+self->enabled |= ((pwmchnmsk_t)1U << (pwmchnmsk_t)channel);
+pwm_lld_enable_channel(self, channel, width);]]></implementation>
+            </method>
+            <method name="pwmEnableChannel" ctype="void">
+              <brief>Enables a PWM channel.</brief>
+              <param name="channel" ctype="pwmchannel_t" dir="in">
+                PWM channel identifier.
+              </param>
+              <param name="width" ctype="pwmcnt_t" dir="in">
+                PWM pulse width in timer ticks.
+              </param>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+pwmEnableChannelI(self, channel, width);
+osalSysUnlock();]]></implementation>
+            </method>
+            <method name="pwmDisableChannelI" ctype="void">
+              <brief>Disables a PWM channel.</brief>
+              <param name="channel" ctype="pwmchannel_t" dir="in">
+                PWM channel identifier.
+              </param>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (channel < self->channels));
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+self->enabled &= ~((pwmchnmsk_t)1U << (pwmchnmsk_t)channel);
+self->enabled_events &= ~PWM_EVENT_CHANNEL(channel);
+pwm_lld_disable_channel(self, channel);]]></implementation>
+            </method>
+            <method name="pwmDisableChannel" ctype="void">
+              <brief>Disables a PWM channel.</brief>
+              <param name="channel" ctype="pwmchannel_t" dir="in">
+                PWM channel identifier.
+              </param>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+pwmDisableChannelI(self, channel);
+osalSysUnlock();]]></implementation>
+            </method>
+            <method name="pwmEnableEventsI" ctype="void">
+              <brief>Enables PWM event notifications.</brief>
+              <param name="events" ctype="pwm_events_t" dir="in">
+                Event mask to be enabled.
+              </param>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+osalDbgAssert(drvGetCallbackX(self) != NULL, "undefined callback");
+
+self->enabled_events |= events;
+pwm_lld_enable_events(self, events);]]></implementation>
+            </method>
+            <method name="pwmEnableEvents" ctype="void">
+              <brief>Enables PWM event notifications.</brief>
+              <param name="events" ctype="pwm_events_t" dir="in">
+                Event mask to be enabled.
+              </param>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+pwmEnableEventsI(self, events);
+osalSysUnlock();]]></implementation>
+            </method>
+            <method name="pwmDisableEventsI" ctype="void">
+              <brief>Disables PWM event notifications.</brief>
+              <param name="events" ctype="pwm_events_t" dir="in">
+                Event mask to be disabled.
+              </param>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+self->enabled_events &= ~events;
+pwm_lld_disable_events(self, events);]]></implementation>
+            </method>
+            <method name="pwmDisableEvents" ctype="void">
+              <brief>Disables PWM event notifications.</brief>
+              <param name="events" ctype="pwm_events_t" dir="in">
+                Event mask to be disabled.
+              </param>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+pwmDisableEventsI(self, events);
+osalSysUnlock();]]></implementation>
+            </method>
+            <method name="pwmEnablePeriodicNotification" ctype="void">
+              <brief>Enables the periodic activation edge notification.</brief>
+              <api />
+              <implementation><![CDATA[
+pwmEnableEvents(self, PWM_EVENT_PERIOD);]]></implementation>
+            </method>
+            <method name="pwmDisablePeriodicNotification" ctype="void">
+              <brief>Disables the periodic activation edge notification.</brief>
+              <api />
+              <implementation><![CDATA[
+pwmDisableEvents(self, PWM_EVENT_PERIOD);]]></implementation>
+            </method>
+            <method name="pwmEnableChannelNotification" ctype="void">
+              <brief>Enables a channel de-activation edge notification.</brief>
+              <param name="channel" ctype="pwmchannel_t" dir="in">
+                PWM channel identifier.
+              </param>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+osalDbgCheck(channel < self->channels);
+osalDbgAssert((self->enabled &
+               ((pwmchnmsk_t)1U << (pwmchnmsk_t)channel)) != 0U,
+              "channel not enabled");
+pwmEnableEventsI(self, PWM_EVENT_CHANNEL(channel));
+osalSysUnlock();]]></implementation>
+            </method>
+            <method name="pwmDisableChannelNotification" ctype="void">
+              <brief>Disables a channel de-activation edge notification.</brief>
+              <param name="channel" ctype="pwmchannel_t" dir="in">
+                PWM channel identifier.
+              </param>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+osalDbgCheck(channel < self->channels);
+pwmDisableEventsI(self, PWM_EVENT_CHANNEL(channel));
+osalSysUnlock();]]></implementation>
+            </method>
+          </regular>
+          <inline>
+            <method name="pwmIsChannelEnabledI" ctype="bool">
+              <brief>Returns a PWM channel status.</brief>
+              <param name="channel" ctype="pwmchannel_t" dir="in">
+                PWM channel identifier.
+              </param>
+              <return>The channel status.</return>
+              <iclass />
+              <implementation><![CDATA[
+return (bool)((self->enabled &
+               ((pwmchnmsk_t)1U << (pwmchnmsk_t)channel)) != 0U);]]></implementation>
+            </method>
+            <method name="pwmEnablePeriodicNotificationI" ctype="void">
+              <brief>Enables the periodic activation edge notification.</brief>
+              <iclass />
+              <implementation><![CDATA[
+pwmEnableEventsI(self, PWM_EVENT_PERIOD);]]></implementation>
+            </method>
+            <method name="pwmDisablePeriodicNotificationI" ctype="void">
+              <brief>Disables the periodic activation edge notification.</brief>
+              <iclass />
+              <implementation><![CDATA[
+pwmDisableEventsI(self, PWM_EVENT_PERIOD);]]></implementation>
+            </method>
+            <method name="pwmEnableChannelNotificationI" ctype="void">
+              <brief>Enables a channel de-activation edge notification.</brief>
+              <param name="channel" ctype="pwmchannel_t" dir="in">
+                PWM channel identifier.
+              </param>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheck(channel < self->channels);
+osalDbgAssert((self->enabled &
+               ((pwmchnmsk_t)1U << (pwmchnmsk_t)channel)) != 0U,
+              "channel not enabled");
+pwmEnableEventsI(self, PWM_EVENT_CHANNEL(channel));]]></implementation>
+            </method>
+            <method name="pwmDisableChannelNotificationI" ctype="void">
+              <brief>Disables a channel de-activation edge notification.</brief>
+              <param name="channel" ctype="pwmchannel_t" dir="in">
+                PWM channel identifier.
+              </param>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheck(channel < self->channels);
+pwmDisableEventsI(self, PWM_EVENT_CHANNEL(channel));]]></implementation>
+            </method>
+            <method name="pwmGetEventsX" ctype="pwm_events_t">
+              <brief>Returns the cached PWM event flags.</brief>
+              <return>The current cached event flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->events;]]></implementation>
+            </method>
+            <method name="pwmGetAndClearEventsX" ctype="pwm_events_t">
+              <brief>Gets and clears cached PWM event flags.</brief>
+              <param name="mask" ctype="pwm_events_t" dir="in">
+                Mask of events to be returned and cleared.
+              </param>
+              <return>The selected pending event flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+pwm_events_t events;
+syssts_t sts;
+
+sts = osalSysGetStatusAndLockX();
+events = self->events & mask;
+self->events &= ~mask;
+osalSysRestoreStatusX(sts);
+
+return events;]]></implementation>
+            </method>
+          </inline>
+          <override>
+            <method shortname="start">
+              <implementation><![CDATA[
+msg_t msg;
+
+msg = pwm_lld_start(self);
+if (msg != HAL_RET_SUCCESS) {
+  self->config = NULL;
+  self->period = 0U;
+  self->enabled = 0U;
+  self->enabled_events = 0U;
+  self->events = 0U;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[
+pwm_lld_stop(self);
+self->period = 0U;
+self->enabled = 0U;
+self->enabled_events = 0U;
+self->events = 0U;]]></implementation>
+            </method>
+            <method shortname="setcfg">
+              <implementation><![CDATA[
+return (const void *)pwm_lld_setcfg(self,
+                                    (const hal_pwm_config_t *)config);]]></implementation>
+            </method>
+            <method shortname="selcfg">
+              <implementation><![CDATA[
+return (const void *)pwm_lld_selcfg(self, cfgnum);]]></implementation>
+            </method>
+            <method shortname="setcb">
+              <implementation><![CDATA[
+__cbdrv_setcb_impl(self, cb);
+pwm_lld_set_callback(self, cb);]]></implementation>
+            </method>
+          </override>
+        </methods>
+      </class>
+    </types>
+    <functions>
+      <function name="pwmInit" ctype="void">
+        <brief>PWM Driver initialization.</brief>
+        <init />
+        <implementation><![CDATA[
+pwm_lld_init();]]></implementation>
+      </function>
+    </functions>
+  </public>
+  <private>
+    <includes_always>
+      <include style="regular">hal.h</include>
+    </includes_always>
+  </private>
+</module>
