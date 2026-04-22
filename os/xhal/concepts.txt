@@ -441,3 +441,188 @@ Testing plan:
   - `gptPolledDelay()`
 - In the callback tests, verify both the timer mode transition and the cached
   event flags.
+
+USB proposal:
+- Add a generated XHAL USB module (`hal_usb.xml`) but treat USB as a
+  specialized driver, not as a regular `hal_cb_driver_c` instance.
+- Keep the low level driver shape close to HAL USB in the first iteration in
+  order to ease porting of the existing USBv1, USBv2 and OTGv1 LLDs.
+- Move endpoint zero handling to thread context only. Do not preserve the
+  ISR-side request hook model in XHAL.
+
+Public model:
+- Driver class: `hal_usb_driver_c`, ancestor `hal_base_driver_c`.
+- Hardware configuration type: `hal_usb_config_t`.
+- Protocol binding type: `hal_usb_bind_t`.
+- Descriptor type: `usb_descriptor_t`, intentionally close to HAL
+  `USBDescriptor` for easy class reuse.
+- Endpoint identifier type: `usbep_t`.
+- Driver state type: `usbstate_t`, kept USB-specific because the bus-level
+  state machine does not map cleanly to the standard XHAL driver states.
+- Event flags type: `usbeventflags_t`.
+
+Rationale for the split:
+- The current HAL `USBConfig` mixes two unrelated layers:
+  - hardware/LLD configuration
+  - protocol/class behavior
+- XHAL start/stop/configure semantics fit only the hardware side.
+- Descriptors, EP0 request handling, bus-event policy and optional SOF policy
+  should be modeled as a separate protocol binding.
+
+Driver state policy:
+- Keep the USB-specific states:
+  `USB_STOP`, `USB_READY`, `USB_SELECTED`, `USB_ACTIVE`, `USB_SUSPENDED`.
+- Do not attempt to collapse them into the generic `HAL_DRV_STATE_*` set.
+- The base XHAL driver state remains useful for lifecycle entry checks but the
+  public USB API should expose the USB-specific state machine.
+
+Suggested bus event flags:
+- `USB_FLAGS_RESET`
+- `USB_FLAGS_ADDRESS`
+- `USB_FLAGS_CONFIGURED`
+- `USB_FLAGS_UNCONFIGURED`
+- `USB_FLAGS_SUSPEND`
+- `USB_FLAGS_WAKEUP`
+- `USB_FLAGS_STALLED`
+
+Design rules:
+- `drvStart()` starts the peripheral using the current or built-in default
+  hardware configuration.
+- `drvSetCfgX()` changes hardware configuration only.
+- `drvSetCfgX()` must be rejected while the device is connected to the bus or
+  while endpoint activity is enabled.
+- `drvStop()` must forcibly disconnect, abort endpoint activity, invalidate the
+  EP0 worker context and unwind pending synchronous operations.
+- Protocol/class binding is a separate step performed using a USB-specific API.
+- Endpoint callbacks remain endpoint-specific; they are not folded into a
+  single generic XHAL callback.
+
+Proposed public API:
+- `void usbInit(void);`
+- `msg_t usbStart(hal_usb_driver_c *self);`
+- `void usbStop(hal_usb_driver_c *self);`
+- `const hal_usb_config_t *usbSetCfgX(hal_usb_driver_c *self,
+  const hal_usb_config_t *config);`
+- `msg_t usbBind(hal_usb_driver_c *self, const hal_usb_bind_t *bindp);`
+- `msg_t usbUnbind(hal_usb_driver_c *self);`
+- `const hal_usb_bind_t *usbGetBindX(hal_usb_driver_c *self);`
+- `void usbConnectBus(hal_usb_driver_c *self);`
+- `void usbDisconnectBus(hal_usb_driver_c *self);`
+- `usbstate_t usbGetDriverStateX(hal_usb_driver_c *self);`
+- `usbeventflags_t usbGetEventsX(hal_usb_driver_c *self);`
+- `usbeventflags_t usbGetAndClearEventsX(hal_usb_driver_c *self,
+  usbeventflags_t mask);`
+- `void usbInitEndpointI(hal_usb_driver_c *self, usbep_t ep,
+  const USBEndpointConfig *epcp);`
+- `void usbDisableEndpointsI(hal_usb_driver_c *self);`
+- `void usbReadSetupI(hal_usb_driver_c *self, usbep_t ep, uint8_t *buf);`
+- `void usbStartReceiveI(hal_usb_driver_c *self, usbep_t ep,
+  uint8_t *buf, size_t n);`
+- `void usbStartTransmitI(hal_usb_driver_c *self, usbep_t ep,
+  const uint8_t *buf, size_t n);`
+- `msg_t usbReceive(hal_usb_driver_c *self, usbep_t ep, uint8_t *buf,
+  size_t n);`
+- `msg_t usbTransmit(hal_usb_driver_c *self, usbep_t ep, const uint8_t *buf,
+  size_t n);`
+- `msg_t usbEp0WaitSetup(hal_usb_driver_c *self);`
+- `msg_t usbEp0HandleStandardRequest(hal_usb_driver_c *self, bool *handledp);`
+- `msg_t usbEp0Receive(hal_usb_driver_c *self, uint8_t *buf, size_t n);`
+- `msg_t usbEp0Reply(hal_usb_driver_c *self, const uint8_t *buf, size_t n);`
+- `msg_t usbEp0Acknowledge(hal_usb_driver_c *self);`
+- `void usbEp0Stall(hal_usb_driver_c *self);`
+- `bool usbStallReceiveI(hal_usb_driver_c *self, usbep_t ep);`
+- `bool usbStallTransmitI(hal_usb_driver_c *self, usbep_t ep);`
+- `void usbWakeupHost(hal_usb_driver_c *self);`
+- `uint16_t usbGetFrameNumberX(hal_usb_driver_c *self);`
+- `size_t usbGetReceiveTransactionSizeX(hal_usb_driver_c *self, usbep_t ep);`
+
+Protocol binding shape:
+- `hal_usb_bind_t` should contain protocol-related callbacks only:
+  - `const usb_descriptor_t *(*get_descriptor)(hal_usb_driver_c *self,
+    uint8_t dtype, uint8_t dindex, uint16_t lang);`
+  - `msg_t (*ep0_worker)(hal_usb_driver_c *self);`
+  - `void (*event_cb)(hal_usb_driver_c *self, usbeventflags_t flags);`
+  - `void (*sof_cb)(hal_usb_driver_c *self);`
+- The bound object may also expose an application-defined argument pointer.
+- The binding must be installed before `usbConnectBus()`.
+- Binding and unbinding should return `HAL_RET_INV_STATE` if attempted while
+  enumerated or suspended.
+
+Endpoint policy:
+- Keep `USBEndpointConfig`, `USBInEndpointState` and `USBOutEndpointState`
+  intentionally close to HAL in the first iteration.
+- Keep endpoint setup/IN/OUT callbacks in the endpoint configuration because
+  USB class drivers such as CDC depend naturally on endpoint-local handling.
+- Keep the `in_params[]` / `out_params[]` association model initially for
+  low-risk porting of class drivers such as `SerialUSB`.
+- Reassess those fields only after the first XHAL USB class drivers are stable.
+
+EP0 policy:
+- Support only the thread-based EP0 flow.
+- Remove `requests_hook_cb` from the public XHAL binding/config model.
+- Keep `usbEp0HandleStandardRequest()` in common code for standard requests.
+- Class-specific requests are handled by the protocol binding through the EP0
+  worker using `usbEp0WaitSetup()`, `usbEp0Receive()`, `usbEp0Reply()`,
+  `usbEp0Acknowledge()` and `usbEp0Stall()`.
+- Do not preserve the `usbSetupTransfer()`-style API that exposes internal EP0
+  driver fields to request handlers.
+
+Behavioral compatibility goals:
+- Preserve the existing endpoint transaction semantics.
+- Preserve the blocking endpoint APIs where synchronization is enabled.
+- Preserve bus connect/disconnect and remote wakeup behavior.
+- Preserve a class-driver-friendly endpoint callback model.
+- Keep the common EP0 state machine logic close to HAL in order to minimize
+  regressions while moving the request handling model to thread context only.
+
+LLD shape proposal:
+- `usb_lld_init()`
+- `msg_t usb_lld_start(hal_usb_driver_c *self)`
+- `void usb_lld_stop(hal_usb_driver_c *self)`
+- `const hal_usb_config_t *usb_lld_setcfg(hal_usb_driver_c *self,
+  const hal_usb_config_t *config)`
+- `void usb_lld_reset(hal_usb_driver_c *self)`
+- `void usb_lld_set_address(hal_usb_driver_c *self)`
+- `void usb_lld_init_endpoint(hal_usb_driver_c *self, usbep_t ep)`
+- `void usb_lld_disable_endpoints(hal_usb_driver_c *self)`
+- `usbepstatus_t usb_lld_get_status_in(hal_usb_driver_c *self, usbep_t ep)`
+- `usbepstatus_t usb_lld_get_status_out(hal_usb_driver_c *self, usbep_t ep)`
+- `void usb_lld_read_setup(hal_usb_driver_c *self, usbep_t ep, uint8_t *buf)`
+- `void usb_lld_start_out(hal_usb_driver_c *self, usbep_t ep)`
+- `void usb_lld_start_in(hal_usb_driver_c *self, usbep_t ep)`
+- `void usb_lld_stall_out(hal_usb_driver_c *self, usbep_t ep)`
+- `void usb_lld_stall_in(hal_usb_driver_c *self, usbep_t ep)`
+- `void usb_lld_clear_out(hal_usb_driver_c *self, usbep_t ep)`
+- `void usb_lld_clear_in(hal_usb_driver_c *self, usbep_t ep)`
+- `void usb_lld_connect_bus(hal_usb_driver_c *self)`
+- `void usb_lld_disconnect_bus(hal_usb_driver_c *self)`
+- `uint16_t usb_lld_get_frame_number(hal_usb_driver_c *self)`
+- `size_t usb_lld_get_transaction_size(hal_usb_driver_c *self, usbep_t ep)`
+- `void usb_lld_wakeup_host(hal_usb_driver_c *self)`
+
+Generated files and build integration:
+- Add `os/xhal/codegen/hal_usb.xml`.
+- Register it in `os/xhal/codegen/modules.xml`.
+- Generate `os/xhal/include/hal_usb.h` and `os/xhal/src/hal_usb.c`.
+- Wire USB into `os/xhal/include/hal.h`, `os/xhal/src/hal.c` and
+  `os/xhal/xhal.mk`.
+- Add `hal_usb_lld.h` templates and first concrete XHAL USB LLD ports before
+  enabling the umbrella include by default.
+
+Class-driver migration strategy:
+- Do not port `SerialUSB` until the common USB driver and one LLD are stable.
+- Rewrite `SerialUSB` around the bound protocol model and EP0 worker thread.
+- Keep endpoint callback wiring close to the current HAL implementation in the
+  first iteration.
+- Reuse the current CDC request handling logic as thread-context EP0 worker
+  code instead of as a request hook callback.
+
+Implementation order:
+- First add this USB design split to the XHAL concepts and keep it stable.
+- Then create the generated common XHAL USB module and its XML description.
+- Then port one STM32 USB LLD, preferably `OTGv1` as the long-term reference
+  or `USBv2` if it gives a smaller first bring-up.
+- Then adapt the common EP0 engine to thread-only handling.
+- Then port `SerialUSB`.
+- Finally wire umbrella inclusion and add one or more `testxhal/USB`
+  applications.

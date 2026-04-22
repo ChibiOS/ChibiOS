@@ -16,6 +16,7 @@
   <!ENTITY hal_sdc             SYSTEM "hal_sdc.xml">
   <!ENTITY hal_sio             SYSTEM "hal_sio.xml">
   <!ENTITY hal_spi             SYSTEM "hal_spi.xml">
+  <!ENTITY hal_usb             SYSTEM "hal_usb.xml">
   <!ENTITY hal_wspi            SYSTEM "hal_wspi.xml">
 ]>
 <instance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -40,6 +41,7 @@
     &hal_sdc;
     &hal_sio;
     &hal_spi;
+    &hal_usb;
     &hal_wspi;
   </modules>
 </instance>
