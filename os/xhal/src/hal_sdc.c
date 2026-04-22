@@ -661,6 +661,130 @@ void sdcInit(void) {
 /*===========================================================================*/
 
 /**
+ * @name        Interfaces implementation of hal_sdc_driver_c
+ * @{
+ */
+/**
+ * @brief       Implementation of interface method @p blkIsInserted().
+ *
+ * @param[in,out] ip            Pointer to the @p block_io_i class interface.
+ * @return                      The media state.
+ */
+static bool __sdc_blk_is_inserted_impl(void *ip) {
+  hal_sdc_driver_c *self = oopIfGetOwner(hal_sdc_driver_c, ip);
+
+  return sdcIsCardInserted(self);
+}
+
+/**
+ * @brief       Implementation of interface method @p blkIsWriteProtected().
+ *
+ * @param[in,out] ip            Pointer to the @p block_io_i class interface.
+ * @return                      The media state.
+ */
+static bool __sdc_blk_is_protected_impl(void *ip) {
+  hal_sdc_driver_c *self = oopIfGetOwner(hal_sdc_driver_c, ip);
+
+  return sdcIsWriteProtected(self);
+}
+
+/**
+ * @brief       Implementation of interface method @p blkConnect().
+ *
+ * @param[in,out] ip            Pointer to the @p block_io_i class interface.
+ * @return                      The operation status.
+ */
+static bool __sdc_blk_connect_impl(void *ip) {
+  hal_sdc_driver_c *self = oopIfGetOwner(hal_sdc_driver_c, ip);
+
+  return sdcConnect(self);
+}
+
+/**
+ * @brief       Implementation of interface method @p blkDisconnect().
+ *
+ * @param[in,out] ip            Pointer to the @p block_io_i class interface.
+ * @return                      The operation status.
+ */
+static bool __sdc_blk_disconnect_impl(void *ip) {
+  hal_sdc_driver_c *self = oopIfGetOwner(hal_sdc_driver_c, ip);
+
+  return sdcDisconnect(self);
+}
+
+/**
+ * @brief       Implementation of interface method @p blkRead().
+ *
+ * @param[in,out] ip            Pointer to the @p block_io_i class interface.
+ * @param         startblk      Initial block to read.
+ * @param         buffer        Pointer to the read buffer.
+ * @param         n             Number of blocks to read.
+ * @return                      The operation status.
+ */
+static bool __sdc_blk_read_impl(void *ip, uint32_t startblk, uint8_t *buffer,
+                                uint32_t n) {
+  hal_sdc_driver_c *self = oopIfGetOwner(hal_sdc_driver_c, ip);
+#if SDC_USE_SYNCHRONIZATION == TRUE
+  return sdcRead(self, startblk, buffer, n);
+#else
+  (void)startblk;
+  (void)buffer;
+  (void)n;
+
+  return HAL_FAILED;
+#endif
+}
+
+/**
+ * @brief       Implementation of interface method @p blkWrite().
+ *
+ * @param[in,out] ip            Pointer to the @p block_io_i class interface.
+ * @param         startblk      Initial block to write.
+ * @param         buffer        Pointer to the write buffer.
+ * @param         n             Number of blocks to write.
+ * @return                      The operation status.
+ */
+static bool __sdc_blk_write_impl(void *ip, uint32_t startblk,
+                                 const uint8_t *buffer, uint32_t n) {
+  hal_sdc_driver_c *self = oopIfGetOwner(hal_sdc_driver_c, ip);
+#if SDC_USE_SYNCHRONIZATION == TRUE
+  return sdcWrite(self, startblk, buffer, n);
+#else
+  (void)startblk;
+  (void)buffer;
+  (void)n;
+
+  return HAL_FAILED;
+#endif
+}
+
+/**
+ * @brief       Implementation of interface method @p blkSync().
+ *
+ * @param[in,out] ip            Pointer to the @p block_io_i class interface.
+ * @return                      The operation status.
+ */
+static bool __sdc_blk_sync_impl(void *ip) {
+  hal_sdc_driver_c *self = oopIfGetOwner(hal_sdc_driver_c, ip);
+
+  return sdcSync(self);
+}
+
+/**
+ * @brief       Implementation of interface method @p blkGetInfo().
+ *
+ * @param[in,out] ip            Pointer to the @p block_io_i class interface.
+ * @param         bdip          Device information buffer pointer.
+ * @return                      The operation status.
+ */
+static bool __sdc_blk_get_info_impl(void *ip, hal_blk_info_t *bdip) {
+  hal_sdc_driver_c *self = oopIfGetOwner(hal_sdc_driver_c, ip);
+
+  return sdcGetInfo(self, bdip);
+}
+/** @} */
+
+/**
  * @name        Methods implementations of hal_sdc_driver_c
  * @{
  */
@@ -678,6 +802,22 @@ void *__sdc_objinit_impl(void *ip, const void *vmt) {
 
   /* Initialization of the ancestors-defined parts.*/
   __cbdrv_objinit_impl(self, vmt);
+
+  /* Initialization of interface block_io_i.*/
+  {
+    static const struct block_io_vmt sdc_blk_vmt = {
+      .instance_offset      = offsetof(hal_sdc_driver_c, blk),
+      .is_inserted          = __sdc_blk_is_inserted_impl,
+      .is_protected         = __sdc_blk_is_protected_impl,
+      .connect              = __sdc_blk_connect_impl,
+      .disconnect           = __sdc_blk_disconnect_impl,
+      .read                 = __sdc_blk_read_impl,
+      .write                = __sdc_blk_write_impl,
+      .sync                 = __sdc_blk_sync_impl,
+      .get_info             = __sdc_blk_get_info_impl
+    };
+    oopIfObjectInit(&self->blk, &sdc_blk_vmt);
+  }
 
   /* Initialization code.*/
   self->errors = SDC_NO_ERROR;

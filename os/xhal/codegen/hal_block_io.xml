@@ -97,9 +97,9 @@
             <retval value="true">If the operation failed.</retval>
             <api />
           </method>
-          <method name="blkGetInfo" shortname="getinfo"
+          <method name="blkGetInfo" shortname="get_info"
             ctype="bool">
-            <brief>Writes one or more blocks.</brief>
+            <brief>Returns a media information structure.</brief>
             <param name="bdip" ctype="hal_blk_info_t *">Device information buffer
               pointer.</param>
             <return>The operation status.</return>

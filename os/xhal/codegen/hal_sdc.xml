@@ -6,6 +6,7 @@
   <brief>SDC Driver macros and structures.</brief>
   <imports>
     <import>hal_cb_driver.xml</import>
+    <import>hal_block_io.xml</import>
   </imports>
   <public>
     <includes_always>
@@ -264,6 +265,64 @@ SDC_CONFIG_EXT_FIELDS]]></verbatim>
       <class type="regular" name="hal_sdc_driver" namespace="sdc"
         ancestorname="hal_cb_driver" descr="SDC driver">
         <brief>Class of an SDC driver.</brief>
+        <implements>
+          <if name="block_io">
+            <method shortname="is_inserted">
+              <implementation><![CDATA[
+
+return sdcIsCardInserted(self);]]></implementation>
+            </method>
+            <method shortname="is_protected">
+              <implementation><![CDATA[
+
+return sdcIsWriteProtected(self);]]></implementation>
+            </method>
+            <method shortname="connect">
+              <implementation><![CDATA[
+
+return sdcConnect(self);]]></implementation>
+            </method>
+            <method shortname="disconnect">
+              <implementation><![CDATA[
+
+return sdcDisconnect(self);]]></implementation>
+            </method>
+            <method shortname="read">
+              <implementation><![CDATA[
+#if SDC_USE_SYNCHRONIZATION == TRUE
+return sdcRead(self, startblk, buffer, n);
+#else
+(void)startblk;
+(void)buffer;
+(void)n;
+
+return HAL_FAILED;
+#endif]]></implementation>
+            </method>
+            <method shortname="write">
+              <implementation><![CDATA[
+#if SDC_USE_SYNCHRONIZATION == TRUE
+return sdcWrite(self, startblk, buffer, n);
+#else
+(void)startblk;
+(void)buffer;
+(void)n;
+
+return HAL_FAILED;
+#endif]]></implementation>
+            </method>
+            <method shortname="sync">
+              <implementation><![CDATA[
+
+return sdcSync(self);]]></implementation>
+            </method>
+            <method shortname="get_info">
+              <implementation><![CDATA[
+
+return sdcGetInfo(self, bdip);]]></implementation>
+            </method>
+          </if>
+        </implements>
         <fields>
           <field name="errors" ctype="volatile sdcflags_t">
             <brief>Cached SDC error flags.</brief>

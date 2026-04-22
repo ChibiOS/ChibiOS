@@ -428,6 +428,7 @@ struct sdc_configurations {
 /**
  * @class       hal_sdc_driver_c
  * @extends     hal_cb_driver_c
+ * @implements  block_io_i
  *
  * @brief       Class of an SDC driver.
  *
@@ -501,6 +502,10 @@ struct hal_sdc_driver {
    * @note        Can be @p NULL.
    */
   drv_cb_t                  cb;
+  /**
+   * @brief       Implemented interface @p block_io_i.
+   */
+  block_io_i                blk;
   /**
    * @brief       Cached SDC error flags.
    */

@@ -99,7 +99,7 @@ struct block_io_vmt {
   bool (*read)(void *ip, uint32_t startblk, uint8_t *buffer, uint32_t n);
   bool (*write)(void *ip, uint32_t startblk, const uint8_t *buffer, uint32_t n);
   bool (*sync)(void *ip);
-  bool (*getinfo)(void *ip, hal_blk_info_t *bdip);
+  bool (*get_info)(void *ip, hal_blk_info_t *bdip);
 };
 
 /**
@@ -260,7 +260,7 @@ static inline bool blkSync(void *ip) {
 }
 
 /**
- * @brief       Writes one or more blocks.
+ * @brief       Returns a media information structure.
  *
  * @param[in,out] ip            Pointer to a @p block_io_i instance.
  * @param         bdip          Device information buffer pointer.
@@ -274,7 +274,7 @@ CC_FORCE_INLINE
 static inline bool blkGetInfo(void *ip, hal_blk_info_t *bdip) {
   block_io_i *self = (block_io_i *)ip;
 
-  return self->vmt->getinfo(ip, bdip);
+  return self->vmt->get_info(ip, bdip);
 }
 /** @} */
 
