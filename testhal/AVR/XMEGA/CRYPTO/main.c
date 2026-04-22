@@ -98,7 +98,7 @@ int main(void) {
   res = cryLoadAESTransientKey(&CRYD1, 16, key);
 
   chprintf(chp, "--- Start data encryption.\r\n");
-  res = cryEncryptAES(&CRYD1, tkey, data, data_encrypted);
+  res = cryEncryptAESX(&CRYD1, tkey, data, data_encrypted);
 
   if (res != CRY_NOERROR) {
     chprintf(chp, "--- Encryption failed.\r\n");
@@ -111,7 +111,7 @@ int main(void) {
   }
 
   chprintf(chp, "--- Start data decryption.\r\n");
-  res = cryDecryptAES(&CRYD1, tkey, data_encrypted, data_decrypted);
+  res = cryDecryptAESX(&CRYD1, tkey, data_encrypted, data_decrypted);
   if (res != CRY_NOERROR) {
       chprintf(chp, "--- Decryption failed.\r\n");
     while (true) {

@@ -36,12 +36,14 @@
  * @{
  */
 #define CRY_LLD_SUPPORTS_AES                TRUE
+#define CRY_LLD_SUPPORTS_AES_X              TRUE
 #define CRY_LLD_SUPPORTS_AES_ECB            FALSE
 #define CRY_LLD_SUPPORTS_AES_CBC            FALSE
 #define CRY_LLD_SUPPORTS_AES_CFB            FALSE
 #define CRY_LLD_SUPPORTS_AES_CTR            FALSE
 #define CRY_LLD_SUPPORTS_AES_GCM            FALSE
 #define CRY_LLD_SUPPORTS_DES                FALSE
+#define CRY_LLD_SUPPORTS_DES_X              FALSE
 #define CRY_LLD_SUPPORTS_DES_ECB            FALSE
 #define CRY_LLD_SUPPORTS_DES_CBC            FALSE
 #define CRY_LLD_SUPPORTS_SHA1               FALSE

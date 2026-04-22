@@ -74,6 +74,10 @@
 #include "stm32_i2c3.inc"
 #include "stm32_i2c4.inc"
 
+#if HAL_USE_USB == TRUE
+#include "stm32_usb1_lp_hp.inc"
+#endif
+
 #include "stm32_usart1.inc"
 #include "stm32_usart2.inc"
 #include "stm32_usart3.inc"
@@ -126,6 +130,9 @@ void irqInit(void) {
   i2c2_irq_init();
   i2c3_irq_init();
   i2c4_irq_init();
+#if HAL_USE_USB == TRUE
+  usb1_irq_init();
+#endif
 
   quadspi1_irq_init();
   rtc_irq_init();
@@ -176,6 +183,9 @@ void irqDeinit(void) {
   i2c2_irq_deinit();
   i2c3_irq_deinit();
   i2c4_irq_deinit();
+#if HAL_USE_USB == TRUE
+  usb1_irq_deinit();
+#endif
 
   quadspi1_irq_deinit();
   rtc_irq_deinit();

@@ -187,12 +187,18 @@ cryerror_t cryLoadAESTransientKey(CRYDriver *cryp,
 
 /**
  * @brief   Encryption of a single block using AES.
+ * @details This is the any-context variant of the API.
+ * @note    Portable code should use key identifier zero only.
+ * @note    No implementation is preferable to one violating the
+ *          @p X-class contract. If a backend cannot guarantee polled
+ *          execution without IRQs, DMA, or thread-context services then it
+ *          shall not advertise this capability and this function returns
+ *          @p CRY_ERR_INV_ALGO.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @note    Portable code should use key identifier zero only.
  * @param[in] in                buffer containing the input plaintext
  * @param[out] out              buffer for the output ciphertext
  * @return                      The operation status.
@@ -205,21 +211,19 @@ cryerror_t cryLoadAESTransientKey(CRYDriver *cryp,
  * @retval CRY_ERR_OP_FAILURE   if the operation failed, implementation
  *                              dependent.
  *
- * @api
+ * @xclass
  */
-cryerror_t cryEncryptAES(CRYDriver *cryp,
-                         crykey_t key_id,
-                         const uint8_t *in,
-                         uint8_t *out) {
+cryerror_t cryEncryptAESX(CRYDriver *cryp,
+                          crykey_t key_id,
+                          const uint8_t *in,
+                          uint8_t *out) {
 
   osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
-#if CRY_LLD_SUPPORTS_AES == TRUE
+#if CRY_LLD_SUPPORTS_AES_X == TRUE
   return cry_lld_encrypt_AES(cryp, key_id, in, out);
-#elif HAL_CRY_USE_FALLBACK == TRUE
-  return cry_fallback_encrypt_AES(cryp, key_id, in, out);
 #else
   (void)cryp;
   (void)key_id;
@@ -232,12 +236,18 @@ cryerror_t cryEncryptAES(CRYDriver *cryp,
 
 /**
  * @brief   Decryption of a single block using AES.
+ * @details This is the any-context variant of the API.
+ * @note    Portable code should use key identifier zero only.
+ * @note    No implementation is preferable to one violating the
+ *          @p X-class contract. If a backend cannot guarantee polled
+ *          execution without IRQs, DMA, or thread-context services then it
+ *          shall not advertise this capability and this function returns
+ *          @p CRY_ERR_INV_ALGO.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @note    Portable code should use key identifier zero only.
  * @param[in] in                buffer containing the input ciphertext
  * @param[out] out              buffer for the output plaintext
  * @return                      The operation status.
@@ -250,21 +260,19 @@ cryerror_t cryEncryptAES(CRYDriver *cryp,
  * @retval CRY_ERR_OP_FAILURE   if the operation failed, implementation
  *                              dependent.
  *
- * @api
+ * @xclass
  */
-cryerror_t cryDecryptAES(CRYDriver *cryp,
-                         crykey_t key_id,
-                         const uint8_t *in,
-                         uint8_t *out) {
+cryerror_t cryDecryptAESX(CRYDriver *cryp,
+                          crykey_t key_id,
+                          const uint8_t *in,
+                          uint8_t *out) {
 
   osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
-#if CRY_LLD_SUPPORTS_AES == TRUE
+#if CRY_LLD_SUPPORTS_AES_X == TRUE
   return cry_lld_decrypt_AES(cryp, key_id, in, out);
-#elif HAL_CRY_USE_FALLBACK == TRUE
-  return cry_fallback_decrypt_AES(cryp, key_id, in, out);
 #else
   (void)cryp;
   (void)key_id;
@@ -280,12 +288,12 @@ cryerror_t cryDecryptAES(CRYDriver *cryp,
  * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
+ * @note    Portable code should use key identifier zero only.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @note    Portable code should use key identifier zero only.
  * @param[in] size              size of both buffers, this number must be a
  *                              multiple of 16
  * @param[in] in                buffer containing the input plaintext
@@ -333,12 +341,12 @@ cryerror_t cryEncryptAES_ECB(CRYDriver *cryp,
  * @note    The function operates on data buffers whose length is a multiple
  *          of an AES block, this means that padding must be done by the
  *          caller.
+ * @note    Portable code should use key identifier zero only.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
  *                              the transient key, other values are keys stored
  *                              in an unspecified way
- * @note    Portable code should use key identifier zero only.
  * @param[in] size              size of both buffers, this number must be a
  *                              multiple of 16
  * @param[in] in                buffer containing the input ciphertext
@@ -886,6 +894,13 @@ cryerror_t cryLoadDESTransientKey(CRYDriver *cryp,
 
 /**
  * @brief   Encryption of a single block using (T)DES.
+ * @details This is the any-context variant of the API.
+ * @note    Portable code should use key identifier zero only.
+ * @note    No implementation is preferable to one violating the
+ *          @p X-class contract. If a backend cannot guarantee polled
+ *          execution without IRQs, DMA, or thread-context services then it
+ *          shall not advertise this capability and this function returns
+ *          @p CRY_ERR_INV_ALGO.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
@@ -903,21 +918,19 @@ cryerror_t cryLoadDESTransientKey(CRYDriver *cryp,
  * @retval CRY_ERR_OP_FAILURE   if the operation failed, implementation
  *                              dependent.
  *
- * @api
+ * @xclass
  */
-cryerror_t cryEncryptDES(CRYDriver *cryp,
-                         crykey_t key_id,
-                         const uint8_t *in,
-                         uint8_t *out) {
+cryerror_t cryEncryptDESX(CRYDriver *cryp,
+                          crykey_t key_id,
+                          const uint8_t *in,
+                          uint8_t *out) {
 
   osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
-#if CRY_LLD_SUPPORTS_DES == TRUE
+#if CRY_LLD_SUPPORTS_DES_X == TRUE
   return cry_lld_encrypt_DES(cryp, key_id, in, out);
-#elif HAL_CRY_USE_FALLBACK == TRUE
-  return cry_fallback_encrypt_DES(cryp, key_id, in, out);
 #else
   (void)cryp;
   (void)key_id;
@@ -930,7 +943,13 @@ cryerror_t cryEncryptDES(CRYDriver *cryp,
 
 /**
  * @brief   Decryption of a single block using (T)DES.
- *
+ * @details This is the any-context variant of the API.
+ * @note    Portable code should use key identifier zero only.
+ * @note    No implementation is preferable to one violating the
+ *          @p X-class contract. If a backend cannot guarantee polled
+ *          execution without IRQs, DMA, or thread-context services then it
+ *          shall not advertise this capability and this function returns
+ *          @p CRY_ERR_INV_ALGO.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
@@ -948,21 +967,19 @@ cryerror_t cryEncryptDES(CRYDriver *cryp,
  * @retval CRY_ERR_OP_FAILURE   if the operation failed, implementation
  *                              dependent.
  *
- * @api
+ * @xclass
  */
-cryerror_t cryDecryptDES(CRYDriver *cryp,
-                         crykey_t key_id,
-                         const uint8_t *in,
-                         uint8_t *out) {
+cryerror_t cryDecryptDESX(CRYDriver *cryp,
+                          crykey_t key_id,
+                          const uint8_t *in,
+                          uint8_t *out) {
 
   osalDbgCheck((cryp != NULL) && (in != NULL) && (out != NULL));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
-#if CRY_LLD_SUPPORTS_DES == TRUE
+#if CRY_LLD_SUPPORTS_DES_X == TRUE
   return cry_lld_decrypt_DES(cryp, key_id, in, out);
-#elif HAL_CRY_USE_FALLBACK == TRUE
-  return cry_fallback_decrypt_DES(cryp, key_id, in, out);
 #else
   (void)cryp;
   (void)key_id;

@@ -345,7 +345,11 @@ static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
 #include "hal_spi.h"
 //#include "hal_trng.h"
 //#include "hal_uart.h"
-//#include "hal_usb.h"
+#if (HAL_USE_USB == TRUE) || defined(__DOXYGEN__)
+#include "hal_usb.h"
+#include "hal_usb_service.h"
+#include "hal_usb_binder.h"
+#endif
 //#include "hal_wdg.h"
 #include "hal_wspi.h"
 

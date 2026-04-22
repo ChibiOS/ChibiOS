@@ -33,22 +33,26 @@
 
 /**
  * @name    Driver capability switches
+ * @note    New ports should start with all capabilities disabled and opt in
+ *          only after each function is implemented and documented.
  * @{
  */
-#define CRY_LLD_SUPPORTS_AES                TRUE
-#define CRY_LLD_SUPPORTS_AES_ECB            TRUE
-#define CRY_LLD_SUPPORTS_AES_CBC            TRUE
-#define CRY_LLD_SUPPORTS_AES_CFB            TRUE
-#define CRY_LLD_SUPPORTS_AES_CTR            TRUE
-#define CRY_LLD_SUPPORTS_AES_GCM            TRUE
-#define CRY_LLD_SUPPORTS_DES                TRUE
-#define CRY_LLD_SUPPORTS_DES_ECB            TRUE
-#define CRY_LLD_SUPPORTS_DES_CBC            TRUE
-#define CRY_LLD_SUPPORTS_SHA1               TRUE
-#define CRY_LLD_SUPPORTS_SHA256             TRUE
-#define CRY_LLD_SUPPORTS_SHA512             TRUE
-#define CRY_LLD_SUPPORTS_HMAC_SHA256        TRUE
-#define CRY_LLD_SUPPORTS_HMAC_SHA512        TRUE
+#define CRY_LLD_SUPPORTS_AES                FALSE
+#define CRY_LLD_SUPPORTS_AES_X              FALSE
+#define CRY_LLD_SUPPORTS_AES_ECB            FALSE
+#define CRY_LLD_SUPPORTS_AES_CBC            FALSE
+#define CRY_LLD_SUPPORTS_AES_CFB            FALSE
+#define CRY_LLD_SUPPORTS_AES_CTR            FALSE
+#define CRY_LLD_SUPPORTS_AES_GCM            FALSE
+#define CRY_LLD_SUPPORTS_DES                FALSE
+#define CRY_LLD_SUPPORTS_DES_X              FALSE
+#define CRY_LLD_SUPPORTS_DES_ECB            FALSE
+#define CRY_LLD_SUPPORTS_DES_CBC            FALSE
+#define CRY_LLD_SUPPORTS_SHA1               FALSE
+#define CRY_LLD_SUPPORTS_SHA256             FALSE
+#define CRY_LLD_SUPPORTS_SHA512             FALSE
+#define CRY_LLD_SUPPORTS_HMAC_SHA256        FALSE
+#define CRY_LLD_SUPPORTS_HMAC_SHA512        FALSE
 /** @} */
 
 /*===========================================================================*/

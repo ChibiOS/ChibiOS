@@ -577,8 +577,10 @@ cryerror_t cry_lld_aes_loadkey(CRYDriver *cryp,
 
 /**
  * @brief   Encryption of a single block using AES.
- * @note    The implementation of this function must guarantee that it can
- *          be called from any context.
+ * @details Backend hook for the public @p cryEncryptAESX() API.
+ * @note    This implementation must preserve the @p X-class contract.
+ * @note    No implementation is preferable to one violating the
+ *          any-context constraint.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
@@ -635,8 +637,10 @@ cryerror_t cry_lld_encrypt_AES(CRYDriver *cryp,
 
 /**
  * @brief   Decryption of a single block using AES.
- * @note    The implementation of this function must guarantee that it can
- *          be called from any context.
+ * @details Backend hook for the public @p cryDecryptAESX() API.
+ * @note    This implementation must preserve the @p X-class contract.
+ * @note    No implementation is preferable to one violating the
+ *          any-context constraint.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
@@ -1193,8 +1197,10 @@ cryerror_t cry_lld_des_loadkey(CRYDriver *cryp,
 
 /**
  * @brief   Encryption of a single block using (T)DES.
- * @note    The implementation of this function must guarantee that it can
- *          be called from any context.
+ * @details Backend hook for the public @p cryEncryptDESX() API.
+ * @note    This implementation must preserve the @p X-class contract.
+ * @note    No implementation is preferable to one violating the
+ *          any-context constraint.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is
@@ -1229,9 +1235,10 @@ cryerror_t cry_lld_encrypt_DES(CRYDriver *cryp,
 
 /**
  * @brief   Decryption of a single block using (T)DES.
- * @note    The implementation of this function must guarantee that it can
- *          be called from any context.
- *
+ * @details Backend hook for the public @p cryDecryptDESX() API.
+ * @note    This implementation must preserve the @p X-class contract.
+ * @note    No implementation is preferable to one violating the
+ *          any-context constraint.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] key_id            the key to be used for the operation, zero is

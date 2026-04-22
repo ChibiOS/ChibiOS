@@ -90,8 +90,8 @@ int main(void) {
       crySHA256Final(&CRYD1, &ctx256, digest);
 
       cryLoadAESTransientKey(&CRYD1, sizeof (key), key);
-      cryEncryptAES(&CRYD1, (crykey_t)0, data, out);
-      cryDecryptAES(&CRYD1, (crykey_t)0, data, out);
+      cryEncryptAESX(&CRYD1, (crykey_t)0, data, out);
+      cryDecryptAESX(&CRYD1, (crykey_t)0, data, out);
       cryEncryptAES_ECB(&CRYD1, (crykey_t)0, 16U, data, out);
       cryDecryptAES_ECB(&CRYD1, (crykey_t)0, 16U, data, out);
       cryEncryptAES_CBC(&CRYD1, (crykey_t)0, 16U, data, out, iv);

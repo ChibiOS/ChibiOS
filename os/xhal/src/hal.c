@@ -122,15 +122,15 @@ void halInit(void) {
 #if (HAL_USE_WSPI == TRUE) || defined(__DOXYGEN__)
   wspiInit();
 #endif
+#if (HAL_USE_USB == TRUE) || defined(__DOXYGEN__)
+  usbInit();
+#endif
 #if 0
 #if (HAL_USE_TRNG == TRUE) || defined(__DOXYGEN__)
   trngInit();
 #endif
 #if (HAL_USE_UART == TRUE) || defined(__DOXYGEN__)
   uartInit();
-#endif
-#if (HAL_USE_USB == TRUE) || defined(__DOXYGEN__)
-  usbInit();
 #endif
 #if (HAL_USE_MMC_SPI == TRUE) || defined(__DOXYGEN__)
   mmcInit();

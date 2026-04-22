@@ -63,9 +63,6 @@ static uint16_t get_hword(uint8_t *p) {
 
 static void usb_invoke_event_cb(hal_usb_driver_c *usbp, usbeventflags_t flags) {
   usbp->events |= flags;
-  if ((usbp->bind != NULL) && (usbp->bind->event_cb != NULL)) {
-    usbp->bind->event_cb(usbp, flags);
-  }
 }
 
 static void setup_reset(hal_usb_driver_c *usbp) {
@@ -236,6 +233,9 @@ void _usb_reset(hal_usb_driver_c *usbp) {
   usbp->ep0setup = 0U;
   usbp->ep0reset = 0U;
   usb_lld_reset(usbp);
+  if (usbp->binder != NULL) {
+    usbBinderResetI(usbp->binder);
+  }
   osalSysLockFromISR();
   ep0_signal_resetI(usbp);
   osalSysUnlockFromISR();
@@ -255,6 +255,9 @@ void _usb_suspend(hal_usb_driver_c *usbp) {
 
     usbp->saved_state = usbp->state;
     usbp->state = USB_SUSPENDED;
+    if (usbp->binder != NULL) {
+      usbBinderSuspendI(usbp->binder);
+    }
     _usb_isr_invoke_event_cb(usbp, USB_FLAGS_SUSPEND);
     usbp->transmitting = 0U;
     usbp->receiving = 0U;
@@ -288,6 +291,9 @@ void _usb_suspend(hal_usb_driver_c *usbp) {
 void _usb_wakeup(hal_usb_driver_c *usbp) {
   if (usbp->state == USB_SUSPENDED) {
     usbp->state = usbp->saved_state;
+    if (usbp->binder != NULL) {
+      usbBinderWakeupI(usbp->binder);
+    }
     _usb_isr_invoke_event_cb(usbp, USB_FLAGS_WAKEUP);
   }
 }
@@ -433,7 +439,7 @@ void *__usb_objinit_impl(void *ip, const void *vmt) {
   unsigned i;
 
   self->events        = (usbeventflags_t)0U;
-  self->bind          = NULL;
+  self->binder        = NULL;
   self->transmitting  = 0U;
   self->receiving     = 0U;
   self->ep0state      = USB_EP0_STP_WAITING;
@@ -523,10 +529,15 @@ msg_t __usb_start_impl(void *ip) {
  */
 void __usb_stop_impl(void *ip) {
   hal_usb_driver_c *self = (hal_usb_driver_c *)ip;
+  hal_usb_binder_c *binderp;
   unsigned i;
 
   usb_lld_stop(self);
-  self->bind          = NULL;
+  binderp             = self->binder;
+  self->binder        = NULL;
+  if (binderp != NULL) {
+    usbBinderUnbind(binderp);
+  }
   self->events        = (usbeventflags_t)0U;
   self->transmitting  = 0U;
   self->receiving     = 0U;
@@ -652,35 +663,40 @@ void usbStop(void *ip) {
 }
 
 /**
- * @brief       Binds protocol and class callbacks to the USB driver.
+ * @brief       Binds a USB binder object to the USB driver.
  *
  * @param[in,out] ip            Pointer to a @p hal_usb_driver_c instance.
- * @param[in]     bindp         Protocol binding descriptor.
+ * @param[in]     binderp       USB binder object.
  * @return                      The operation status.
  *
  * @api
  */
-msg_t usbBind(void *ip, const hal_usb_bind_t *bindp) {
+msg_t usbBind(void *ip, hal_usb_binder_c *binderp) {
   hal_usb_driver_c *self = (hal_usb_driver_c *)ip;
-  osalDbgCheck((self != NULL) && (bindp != NULL) &&
-               (bindp->get_descriptor != NULL) &&
-               (bindp->ep0_worker != NULL));
+  msg_t msg;
+
+  osalDbgCheck((self != NULL) && (binderp != NULL));
 
   osalSysLock();
-  if ((self->state == USB_SELECTED) ||
+  if ((self->binder != NULL) ||
+      (self->state == USB_SELECTED) ||
       (self->state == USB_ACTIVE) ||
       (self->state == USB_SUSPENDED)) {
     osalSysUnlock();
     return HAL_RET_INV_STATE;
   }
-  self->bind = bindp;
   osalSysUnlock();
 
-  return HAL_RET_SUCCESS;
+  msg = usbBinderBind(binderp, self);
+  if (msg == HAL_RET_SUCCESS) {
+    self->binder = binderp;
+  }
+
+  return msg;
 }
 
 /**
- * @brief       Removes the currently bound USB protocol handler.
+ * @brief       Removes the currently bound USB binder.
  *
  * @param[in,out] ip            Pointer to a @p hal_usb_driver_c instance.
  * @return                      The operation status.
@@ -689,6 +705,7 @@ msg_t usbBind(void *ip, const hal_usb_bind_t *bindp) {
  */
 msg_t usbUnbind(void *ip) {
   hal_usb_driver_c *self = (hal_usb_driver_c *)ip;
+  hal_usb_binder_c *binderp;
   osalDbgCheck(self != NULL);
 
   osalSysLock();
@@ -698,8 +715,13 @@ msg_t usbUnbind(void *ip) {
     osalSysUnlock();
     return HAL_RET_INV_STATE;
   }
-  self->bind = NULL;
+  binderp = self->binder;
+  self->binder = NULL;
   osalSysUnlock();
+
+  if (binderp != NULL) {
+    usbBinderUnbind(binderp);
+  }
 
   return HAL_RET_SUCCESS;
 }
@@ -714,7 +736,7 @@ msg_t usbUnbind(void *ip) {
 void usbConnectBus(void *ip) {
   hal_usb_driver_c *self = (hal_usb_driver_c *)ip;
   osalDbgCheck(self != NULL);
-  osalDbgAssert(self->bind != NULL, "no binding");
+  osalDbgAssert(self->binder != NULL, "no binder");
 
   usb_lld_connect_bus(self);
 }
@@ -1121,13 +1143,13 @@ msg_t usbEp0HandleStandardRequest(void *ip, bool *handledp) {
        ((uint32_t)USB_REQ_GET_DESCRIPTOR << 8):
   case (uint32_t)USB_RTYPE_RECIPIENT_INTERFACE |
        ((uint32_t)USB_REQ_GET_DESCRIPTOR << 8):
-    if ((self->bind == NULL) || (self->bind->get_descriptor == NULL)) {
+    if (self->binder == NULL) {
       usbEp0Stall(self);
       break;
     }
-    dp = self->bind->get_descriptor(self, self->setup[3],
-                                    self->setup[2],
-                                    get_hword(&self->setup[4]));
+    dp = usbBinderGetDescriptor(self->binder, self->setup[3],
+                                self->setup[2],
+                                get_hword(&self->setup[4]));
     if (dp != NULL) {
       msg = usbEp0Reply(self, dp->ud_string, dp->ud_size);
     }
@@ -1144,6 +1166,9 @@ msg_t usbEp0HandleStandardRequest(void *ip, bool *handledp) {
     if (self->state == USB_ACTIVE) {
       osalSysLock();
       usbDisableEndpointsI(self);
+      if (self->binder != NULL) {
+        usbBinderUnconfigureI(self->binder);
+      }
       osalSysUnlock();
       self->configuration = 0U;
       self->state = USB_SELECTED;
@@ -1152,6 +1177,11 @@ msg_t usbEp0HandleStandardRequest(void *ip, bool *handledp) {
     if (self->setup[2] != 0U) {
       self->configuration = self->setup[2];
       self->state = USB_ACTIVE;
+      osalSysLock();
+      if (self->binder != NULL) {
+        usbBinderConfigureI(self->binder);
+      }
+      osalSysUnlock();
       usb_invoke_event_cb(self, USB_FLAGS_CONFIGURED);
     }
     msg = usbEp0Acknowledge(self);

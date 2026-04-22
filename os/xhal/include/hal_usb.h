@@ -42,12 +42,12 @@
 /**
  * @brief       Builds an OUT endpoint address.
  */
-#define USB_ENDPOINT_OUT                    (ep)
+#define USB_ENDPOINT_OUT(ep)                (ep)
 
 /**
  * @brief       Builds an IN endpoint address.
  */
-#define USB_ENDPOINT_IN                     ((ep) | 0x80U)
+#define USB_ENDPOINT_IN(ep)                 ((ep) | 0x80U)
 /** @} */
 
 /**
@@ -108,6 +108,18 @@
 #define USB_FEATURE_ENDPOINT_HALT           0U
 #define USB_FEATURE_DEVICE_REMOTE_WAKEUP    1U
 #define USB_FEATURE_TEST_MODE               2U
+/** @} */
+
+/**
+ * @name    Address and status-stage handling helpers
+ * @{
+ */
+#define USB_EARLY_SET_ADDRESS               0U
+#define USB_LATE_SET_ADDRESS                1U
+#define USB_EP0_STATUS_STAGE_SW             0U
+#define USB_EP0_STATUS_STAGE_HW             1U
+#define USB_SET_ADDRESS_ACK_SW              0U
+#define USB_SET_ADDRESS_ACK_HW              1U
 /** @} */
 
 /**
@@ -219,9 +231,6 @@
 #define _usb_isr_invoke_event_cb(usbp, flags)                               \
   do {                                                                      \
     (usbp)->events |= (usbeventflags_t)(flags);                             \
-    if (((usbp)->bind != NULL) && ((usbp)->bind->event_cb != NULL)) {       \
-      (usbp)->bind->event_cb(usbp, (usbeventflags_t)(flags));               \
-    }                                                                       \
   } while (false)
 
 /**
@@ -233,8 +242,23 @@
  */
 #define _usb_isr_invoke_sof_cb(usbp)                                        \
   do {                                                                      \
-    if (((usbp)->bind != NULL) && ((usbp)->bind->sof_cb != NULL)) {         \
-      (usbp)->bind->sof_cb(usbp);                                           \
+    if ((usbp)->binder != NULL) {                                           \
+      usbBinderSOFI((usbp)->binder);                                        \
+    }                                                                       \
+  } while (false)
+
+/**
+ * @brief       Common ISR code, setup-packet callback.
+ *
+ * @param[in,out] usbp          Pointer to the USB driver instance.
+ * @param[in]     ep            Endpoint number.
+ *
+ * @notapi
+ */
+#define _usb_isr_invoke_setup_cb(usbp, ep)                                  \
+  do {                                                                      \
+    if ((usbp)->epc[ep]->setup_cb != NULL) {                                \
+      (usbp)->epc[ep]->setup_cb(usbp, ep);                                  \
     }                                                                       \
   } while (false)
 
@@ -311,6 +335,11 @@ typedef uint32_t usbeventflags_t;
 typedef struct hal_usb_driver hal_usb_driver_c;
 
 /**
+ * @brief       Type of structure representing a USB binder.
+ */
+typedef struct hal_usb_binder hal_usb_binder_c;
+
+/**
  * @brief       Type of structure representing a USB hardware configuration.
  */
 typedef struct hal_usb_config hal_usb_config_t;
@@ -348,20 +377,6 @@ typedef struct {
 
 typedef void (*usbcallback_t)(hal_usb_driver_c *usbp);
 typedef void (*usbepcallback_t)(hal_usb_driver_c *usbp, usbep_t ep);
-typedef void (*usbeventcb_t)(hal_usb_driver_c *usbp, usbeventflags_t flags);
-typedef msg_t (*usbep0workercb_t)(hal_usb_driver_c *usbp);
-typedef const usb_descriptor_t * (*usbgetdescriptor_t)(hal_usb_driver_c *usbp,
-                                                       uint8_t dtype,
-                                                       uint8_t dindex,
-                                                       uint16_t lang);
-
-typedef struct hal_usb_bind {
-  usbgetdescriptor_t        get_descriptor;
-  usbep0workercb_t          ep0_worker;
-  usbeventcb_t              event_cb;
-  usbcallback_t             sof_cb;
-  void                     *arg;
-} hal_usb_bind_t;
 
 typedef struct {
   size_t                    txsize;
@@ -370,6 +385,7 @@ typedef struct {
 #if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
   thread_reference_t        thread;
 #endif
+  size_t                    txlast;
 } USBInEndpointState;
 
 typedef struct {
@@ -379,6 +395,7 @@ typedef struct {
 #if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
   thread_reference_t        thread;
 #endif
+  uint16_t                  rxpkts;
 } USBOutEndpointState;
 
 typedef struct {
@@ -390,13 +407,9 @@ typedef struct {
   uint16_t                  out_maxsize;
   USBInEndpointState       *in_state;
   USBOutEndpointState      *out_state;
+  uint16_t                  ep_buffers;
+  uint8_t                  *setup_buf;
 } USBEndpointConfig;
-
-typedef struct usb_configurations usb_configurations_t;
-struct usb_configurations {
-  unsigned                  cfgsnum;
-  hal_usb_config_t          cfgs[];
-};
 
 /* Inclusion of LLD header.*/
 #include "hal_usb_lld.h"
@@ -404,7 +417,7 @@ struct usb_configurations {
 /**
  * @brief       USB hardware configuration structure.
  * @note        Protocol and class behavior are configured separately through
- *              the USB binding structure.
+ *              the USB binder object.
  */
 struct hal_usb_config {
   /* End of the mandatory fields.*/
@@ -412,6 +425,12 @@ struct hal_usb_config {
 #if (defined(USB_CONFIG_EXT_FIELDS)) || defined (__DOXYGEN__)
   USB_CONFIG_EXT_FIELDS
 #endif /* defined(USB_CONFIG_EXT_FIELDS) */
+};
+
+typedef struct usb_configurations usb_configurations_t;
+struct usb_configurations {
+  unsigned                  cfgsnum;
+  hal_usb_config_t          cfgs[];
 };
 
 /**
@@ -487,7 +506,7 @@ struct hal_usb_driver {
    * @brief       Cached USB event flags.
    */
   volatile usbeventflags_t  events;
-  const hal_usb_bind_t       *bind;
+  hal_usb_binder_c          *binder;
   uint16_t                    transmitting;
   uint16_t                    receiving;
   const USBEndpointConfig    *epc[USB_MAX_ENDPOINTS + 1U];
@@ -522,6 +541,8 @@ struct hal_usb_driver {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  /* Binder methods referenced by macros.*/
+  void usbBinderSOFI(void *ip);
   /* Methods of hal_usb_driver_c.*/
   void *__usb_objinit_impl(void *ip, const void *vmt);
   void __usb_dispose_impl(void *ip);
@@ -531,7 +552,7 @@ extern "C" {
   const void *__usb_selcfg_impl(void *ip, unsigned cfgnum);
   msg_t usbStart(void *ip, const hal_usb_config_t *config);
   void usbStop(void *ip);
-  msg_t usbBind(void *ip, const hal_usb_bind_t *bindp);
+  msg_t usbBind(void *ip, hal_usb_binder_c *binderp);
   msg_t usbUnbind(void *ip);
   void usbConnectBus(void *ip);
   void usbDisconnectBus(void *ip);
@@ -609,17 +630,17 @@ static inline usbstate_t usbGetDriverStateX(void *ip) {
 }
 
 /**
- * @brief       Returns the current USB protocol binding.
+ * @brief       Returns the current USB binder.
  *
  * @param[in,out] ip            Pointer to a @p hal_usb_driver_c instance.
- * @return                      The current USB binding or @p NULL.
+ * @return                      The current USB binder or @p NULL.
  *
  * @xclass
  */
 CC_FORCE_INLINE
-static inline const hal_usb_bind_t *usbGetBindX(void *ip) {
+static inline hal_usb_binder_c *usbGetBinderX(void *ip) {
   hal_usb_driver_c *self = (hal_usb_driver_c *)ip;
-  return self->bind;
+  return self->binder;
 }
 
 /**
@@ -670,8 +691,8 @@ static inline usbeventflags_t usbGetAndClearEventsX(void *ip,
  */
 CC_FORCE_INLINE
 static inline uint16_t usbGetFrameNumberX(void *ip) {
-  hal_usb_driver_c *self = (hal_usb_driver_c *)ip;
-  return usb_lld_get_frame_number(self);
+  (void)ip;
+  return usb_lld_get_frame_number(ip);
 }
 
 /**

@@ -102,7 +102,7 @@ static void cry_test_004_001_execute(void) {
   /* [4.1.2] Encrypt.*/
   test_set_step(2);
   {
-    ret = cryEncryptDES(&CRYD1, 0, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
+    ret = cryEncryptDESX(&CRYD1, 0, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
 
     test_assert(ret == CRY_NOERROR, "encrypt failed");
 
@@ -118,7 +118,7 @@ static void cry_test_004_001_execute(void) {
   /* [4.1.3] Decrypt.*/
   test_set_step(3);
   {
-    ret = cryDecryptDES(&CRYD1, 0, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
+    ret = cryDecryptDESX(&CRYD1, 0, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
 
     test_assert(ret == CRY_NOERROR, "decrypt failed");
 

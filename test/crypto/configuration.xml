@@ -1631,7 +1631,7 @@ test_assert(ret == CRY_NOERROR, "failed load transient key");
               </tags>
               <code>
                 <value><![CDATA[
-ret = cryEncryptDES(&CRYD1, 0, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
+ret = cryEncryptDESX(&CRYD1, 0, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
 
@@ -1653,7 +1653,7 @@ for (int i = 0; i < 2; i++) {
               </tags>
               <code>
                 <value><![CDATA[
-ret = cryDecryptDES(&CRYD1, 0, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
+ret = cryDecryptDESX(&CRYD1, 0, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
 
