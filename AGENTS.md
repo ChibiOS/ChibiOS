@@ -20,8 +20,9 @@
 
 ## Build & Test Hygiene
 - Clean projects after test builds unless otherwise specified.
-- For generated configuration files such as `mcuconf.h`, `halconf.h`, and similar outputs, update the corresponding generator templates or updater scripts as part of the same change; otherwise a regeneration pass may overwrite manual edits.
+- For generated or updater-managed configuration files such as `mcuconf.h`, `xmcuconf.h`, `halconf.h`, `xhalconf.h`, and similar outputs, update the corresponding `.ftl` templates and/or updater scripts as part of the same change; otherwise a regeneration pass may overwrite manual edits.
 - When changing XHAL driver settings, update both the `.ftl` templates and the generated `xhalconf.h`/`xmcuconf.h` files.
+- Each demo or test must contain its own configuration files in its local `cfg/` directory. Do not use cross-demo or cross-test include shims for `chconf.h`, `halconf.h`, `xhalconf.h`, `mcuconf.h`, `xmcuconf.h`, or similar configuration headers.
 - `tools/updater` scripts share temporary files, so do not run them in parallel; regenerate sequentially.
 
 ## Repository

@@ -309,6 +309,14 @@
 #define STM32_RTC_CR_INIT                   ${doc.STM32_RTC_CR_INIT!"0U"}
 
 /*
+ * USB driver system settings.
+ */
+#define STM32_USB_USE_USB1                  ${doc.STM32_USB_USE_USB1!"FALSE"}
+#define STM32_USB_LOW_POWER_ON_SUSPEND      ${doc.STM32_USB_LOW_POWER_ON_SUSPEND!"FALSE"}
+#define STM32_USB_USB1_HP_IRQ_PRIORITY      ${doc.STM32_USB_USB1_HP_IRQ_PRIORITY!"13"}
+#define STM32_USB_USB1_LP_IRQ_PRIORITY      ${doc.STM32_USB_USB1_LP_IRQ_PRIORITY!"14"}
+
+/*
  * WSPI driver system settings.
  */
 #define STM32_WSPI_USE_QUADSPI1             ${doc.STM32_WSPI_USE_QUADSPI1!"FALSE"}

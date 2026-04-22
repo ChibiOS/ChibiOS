@@ -60,6 +60,7 @@
 #define HAL_USE_SDC                         ${doc.HAL_USE_SDC!"FALSE"}
 #define HAL_USE_SIO                         ${doc.HAL_USE_SIO!"FALSE"}
 #define HAL_USE_SPI                         ${doc.HAL_USE_SPI!"FALSE"}
+#define HAL_USE_USB                         ${doc.HAL_USE_USB!"FALSE"}
 #define HAL_USE_WSPI                        ${doc.HAL_USE_WSPI!"FALSE"}
 
 /*===========================================================================*/
@@ -152,6 +153,23 @@
 #define SPI_USE_SYNCHRONIZATION             ${doc.SPI_USE_SYNCHRONIZATION!"TRUE"}
 #define SPI_USE_ASSERT_ON_ERROR             ${doc.SPI_USE_ASSERT_ON_ERROR!"FALSE"}
 #define SPI_USE_CONFIGURATIONS              ${doc.SPI_USE_CONFIGURATIONS!"FALSE"}
+
+/*===========================================================================*/
+/* USB driver settings.                                                      */
+/*===========================================================================*/
+
+#define USB_USE_WAIT                        ${doc.USB_USE_WAIT!"TRUE"}
+#define USB_USE_CONFIGURATIONS              ${doc.USB_USE_CONFIGURATIONS!"FALSE"}
+
+/*===========================================================================*/
+/* Serial USB settings.                                                      */
+/*===========================================================================*/
+
+#define SERIAL_USB_USE_MODULE               ${doc.SERIAL_USB_USE_MODULE!"FALSE"}
+#define SERIAL_USB_BUFFERS_SIZE             ${doc.SERIAL_USB_BUFFERS_SIZE!"256U"}
+#define SERIAL_USB_BUFFERS_NUMBER           ${doc.SERIAL_USB_BUFFERS_NUMBER!"2U"}
+#define SERIAL_USB_SEND_ZLP                 ${doc.SERIAL_USB_SEND_ZLP!"TRUE"}
+#define SERIAL_USB_RX_PACKET_MODE           ${doc.SERIAL_USB_RX_PACKET_MODE!"FALSE"}
 
 /*===========================================================================*/
 /* WSPI driver settings.                                                     */
