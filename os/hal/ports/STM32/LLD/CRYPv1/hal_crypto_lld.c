@@ -534,7 +534,7 @@ cryerror_t cry_lld_aes_loadkey(CRYDriver *cryp,
                                size_t size,
                                const uint8_t *keyp) {
 
-  /* Fetching key data.*/
+  /* Fetching key data, right-aligned in the CRYP key registers. */
   if (size == (size_t)32) {
     cryp->cryp_ksize = CRYP_CR_KEYSIZE_1;
     cryp->cryp_k[0] = __REV(__UNALIGNED_UINT32_READ(&keyp[0]));
@@ -550,12 +550,12 @@ cryerror_t cry_lld_aes_loadkey(CRYDriver *cryp,
     cryp->cryp_ksize = CRYP_CR_KEYSIZE_0;
     cryp->cryp_k[0] = 0U;
     cryp->cryp_k[1] = 0U;
-    cryp->cryp_k[2] = __REV(__UNALIGNED_UINT32_READ(&keyp[8]));
-    cryp->cryp_k[3] = __REV(__UNALIGNED_UINT32_READ(&keyp[12]));
-    cryp->cryp_k[4] = __REV(__UNALIGNED_UINT32_READ(&keyp[16]));
-    cryp->cryp_k[5] = __REV(__UNALIGNED_UINT32_READ(&keyp[20]));
-    cryp->cryp_k[6] = __REV(__UNALIGNED_UINT32_READ(&keyp[24]));
-    cryp->cryp_k[7] = __REV(__UNALIGNED_UINT32_READ(&keyp[28]));
+    cryp->cryp_k[2] = __REV(__UNALIGNED_UINT32_READ(&keyp[0]));
+    cryp->cryp_k[3] = __REV(__UNALIGNED_UINT32_READ(&keyp[4]));
+    cryp->cryp_k[4] = __REV(__UNALIGNED_UINT32_READ(&keyp[8]));
+    cryp->cryp_k[5] = __REV(__UNALIGNED_UINT32_READ(&keyp[12]));
+    cryp->cryp_k[6] = __REV(__UNALIGNED_UINT32_READ(&keyp[16]));
+    cryp->cryp_k[7] = __REV(__UNALIGNED_UINT32_READ(&keyp[20]));
   }
   else if (size == (size_t)16) {
     cryp->cryp_ksize = 0U;
@@ -563,10 +563,10 @@ cryerror_t cry_lld_aes_loadkey(CRYDriver *cryp,
     cryp->cryp_k[1] = 0U;
     cryp->cryp_k[2] = 0U;
     cryp->cryp_k[3] = 0U;
-    cryp->cryp_k[4] = __REV(__UNALIGNED_UINT32_READ(&keyp[16]));
-    cryp->cryp_k[5] = __REV(__UNALIGNED_UINT32_READ(&keyp[20]));
-    cryp->cryp_k[6] = __REV(__UNALIGNED_UINT32_READ(&keyp[24]));
-    cryp->cryp_k[7] = __REV(__UNALIGNED_UINT32_READ(&keyp[28]));
+    cryp->cryp_k[4] = __REV(__UNALIGNED_UINT32_READ(&keyp[0]));
+    cryp->cryp_k[5] = __REV(__UNALIGNED_UINT32_READ(&keyp[4]));
+    cryp->cryp_k[6] = __REV(__UNALIGNED_UINT32_READ(&keyp[8]));
+    cryp->cryp_k[7] = __REV(__UNALIGNED_UINT32_READ(&keyp[12]));
   }
   else {
     return CRY_ERR_INV_KEY_SIZE;
@@ -1536,7 +1536,7 @@ cryerror_t cry_lld_SHA256_init(CRYDriver *cryp, SHA256Context *sha256ctxp) {
   (void)cryp;
 
   /* Initializing context structure.*/
-  sha256ctxp->last_data = 0U;
+  memset(sha256ctxp->last_data, 0, sizeof sha256ctxp->last_data);
   sha256ctxp->last_size = 0U;
 
   /* Initializing operation.*/
@@ -1564,23 +1564,42 @@ cryerror_t cry_lld_SHA256_init(CRYDriver *cryp, SHA256Context *sha256ctxp) {
  */
 cryerror_t cry_lld_SHA256_update(CRYDriver *cryp, SHA256Context *sha256ctxp,
                                  size_t size, const uint8_t *in) {
-  const uint32_t *wp = (const uint32_t *)(const void *)in;
+  uint32_t word;
 
-  /* This HW is unable to hash blocks that are not a multiple of 4 bytes
-     except for the last block in the stream which is handled in the
-     "final" function.*/
-  if (sha256ctxp->last_size != 0U) {
-    return CRY_ERR_OP_FAILURE;
-  }
-
-  /* Any unaligned data is deferred to the "final" function.*/
-  sha256ctxp->last_size = 8U * (size % sizeof (uint32_t));
+  /* Completing a deferred partial word, if any.*/
   if (sha256ctxp->last_size > 0U) {
-    sha256ctxp->last_data = wp[size / sizeof (uint32_t)];
+    uint32_t fill = sizeof (uint32_t) - sha256ctxp->last_size;
+
+    if (size < fill) {
+      memcpy(&sha256ctxp->last_data[sha256ctxp->last_size], in, size);
+      sha256ctxp->last_size += (uint32_t)size;
+
+      return CRY_NOERROR;
+    }
+
+    memcpy(&sha256ctxp->last_data[sha256ctxp->last_size], in, fill);
+    memcpy(&word, sha256ctxp->last_data, sizeof word);
+    cry_lld_hash_push(cryp, 1U, &word);
+    sha256ctxp->last_size = 0U;
+    in   += fill;
+    size -= fill;
   }
 
-  /* Pushing data.*/
-  cry_lld_hash_push(cryp, (uint32_t)(size / sizeof (uint32_t)), wp);
+  /* Pushing aligned data.*/
+  if (size >= sizeof (uint32_t)) {
+    uint32_t n = (uint32_t)(size / sizeof (uint32_t));
+
+    cry_lld_hash_push(cryp, n, (const uint32_t *)(const void *)in);
+    in   += n * sizeof (uint32_t);
+    size -= n * sizeof (uint32_t);
+  }
+
+  /* Deferring trailing bytes to the "final" function.*/
+  if (size > 0U) {
+    memset(sha256ctxp->last_data, 0, sizeof sha256ctxp->last_data);
+    memcpy(sha256ctxp->last_data, in, size);
+    sha256ctxp->last_size = (uint32_t)size;
+  }
 
   return CRY_NOERROR;
 }
@@ -1603,17 +1622,19 @@ cryerror_t cry_lld_SHA256_update(CRYDriver *cryp, SHA256Context *sha256ctxp,
 cryerror_t cry_lld_SHA256_final(CRYDriver *cryp, SHA256Context *sha256ctxp,
                                 uint8_t *out) {
   uint32_t digest[8];
+  uint32_t word;
 
   (void)cryp;
 
   if (sha256ctxp->last_size > 0U) {
-    HASH->DIN = sha256ctxp->last_data;
+    memcpy(&word, sha256ctxp->last_data, sizeof word);
+    HASH->DIN = word;
   }
 
   /* Triggering final calculation and wait for result.*/
   HASH->SR  = 0U;
-  HASH->STR = sha256ctxp->last_size;
-  HASH->STR = sha256ctxp->last_size | HASH_STR_DCAL;
+  HASH->STR = sha256ctxp->last_size * 8U;
+  HASH->STR = sha256ctxp->last_size * 8U | HASH_STR_DCAL;
   while ((HASH->SR & HASH_SR_DCIS) == 0U) {
   }
 
@@ -1701,195 +1722,6 @@ cryerror_t cry_lld_SHA512_final(CRYDriver *cryp, SHA512Context *sha512ctxp,
 
   (void)cryp;
   (void)sha512ctxp;
-  (void)out;
-
-  return CRY_ERR_INV_ALGO;
-}
-#endif
-
-#if (CRY_LLD_SUPPORTS_HMAC_SHA256 == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Initializes the HMAC transient key.
- * @note    It is the underlying implementation to decide which key sizes are
- *          allowable.
- *
- * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[in] size              key size in bytes
- * @param[in] keyp              pointer to the key data
- * @return                      The operation status.
- * @retval CRY_NOERROR          if the operation succeeded.
- * @retval CRY_ERR_INV_ALGO     if the algorithm is unsupported.
- * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid for
- *                              the specified algorithm.
- *
- * @notapi
- */
-cryerror_t cry_lld_hmac_loadkey(CRYDriver *cryp,
-                                size_t size,
-                                const uint8_t *keyp) {
-
-  (void)cryp;
-  (void)size;
-  (void)keyp;
-
-  return CRY_NOERROR;
-}
-
-/**
- * @brief   Hash initialization using HMAC_SHA256.
- *
- * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[out] hmacsha256ctxp   pointer to a HMAC_SHA256 context to be
- *                              initialized
- * @return                      The operation status.
- * @retval CRY_NOERROR          if the operation succeeded.
- * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
- *                              device instance.
- * @retval CRY_ERR_OP_FAILURE   if the operation failed, implementation
- *                              dependent.
- *
- * @notapi
- */
-cryerror_t cry_lld_HMACSHA256_init(CRYDriver *cryp,
-                                   HMACSHA256Context *hmacsha256ctxp) {
-
-  (void)cryp;
-  (void)hmacsha256ctxp;
-
-  return CRY_ERR_INV_ALGO;
-}
-
-/**
- * @brief   Hash update using HMAC.
- *
- * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[in] hmacsha256ctxp    pointer to a HMAC_SHA256 context
- * @param[in] size              size of input buffer
- * @param[in] in                buffer containing the input text
- * @return                      The operation status.
- * @retval CRY_NOERROR          if the operation succeeded.
- * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
- *                              device instance.
- * @retval CRY_ERR_OP_FAILURE   if the operation failed, implementation
- *                              dependent.
- *
- * @notapi
- */
-cryerror_t cry_lld_HMACSHA256_update(CRYDriver *cryp,
-                                     HMACSHA256Context *hmacsha256ctxp,
-                                     size_t size,
-                                     const uint8_t *in) {
-
-  (void)cryp;
-  (void)hmacsha256ctxp;
-  (void)size;
-  (void)in;
-
-  return CRY_ERR_INV_ALGO;
-}
-
-/**
- * @brief   Hash finalization using HMAC.
- *
- * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[in] hmacsha256ctxp    pointer to a HMAC_SHA256 context
- * @param[out] out              256 bits output buffer
- * @return                      The operation status.
- * @retval CRY_NOERROR          if the operation succeeded.
- * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
- *                              device instance.
- * @retval CRY_ERR_OP_FAILURE   if the operation failed, implementation
- *                              dependent.
- *
- * @notapi
- */
-cryerror_t cry_lld_HMACSHA256_final(CRYDriver *cryp,
-                                    HMACSHA256Context *hmacsha256ctxp,
-                                    uint8_t *out) {
-
-  (void)cryp;
-  (void)hmacsha256ctxp;
-  (void)out;
-
-  return CRY_ERR_INV_ALGO;
-}
-#endif
-
-#if (CRY_LLD_SUPPORTS_HMAC_SHA512 == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Hash initialization using HMAC_SHA512.
- *
- * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[out] hmacsha512ctxp   pointer to a HMAC_SHA512 context to be
- *                              initialized
- * @return                      The operation status.
- * @retval CRY_NOERROR          if the operation succeeded.
- * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
- *                              device instance.
- * @retval CRY_ERR_OP_FAILURE   if the operation failed, implementation
- *                              dependent.
- *
- * @notapi
- */
-cryerror_t cry_lld_HMACSHA512_init(CRYDriver *cryp,
-                                   HMACSHA512Context *hmacsha512ctxp) {
-
-  (void)cryp;
-  (void)hmacsha512ctxp;
-
-  return CRY_ERR_INV_ALGO;
-}
-
-/**
- * @brief   Hash update using HMAC.
- *
- * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[in] hmacsha512ctxp    pointer to a HMAC_SHA512 context
- * @param[in] size              size of input buffer
- * @param[in] in                buffer containing the input text
- * @return                      The operation status.
- * @retval CRY_NOERROR          if the operation succeeded.
- * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
- *                              device instance.
- * @retval CRY_ERR_OP_FAILURE   if the operation failed, implementation
- *                              dependent.
- *
- * @notapi
- */
-cryerror_t cry_lld_HMACSHA512_update(CRYDriver *cryp,
-                                     HMACSHA512Context *hmacsha512ctxp,
-                                     size_t size,
-                                     const uint8_t *in) {
-
-  (void)cryp;
-  (void)hmacsha512ctxp;
-  (void)size;
-  (void)in;
-
-  return CRY_ERR_INV_ALGO;
-}
-
-/**
- * @brief   Hash finalization using HMAC.
- *
- * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[in] hmacsha512ctxp    pointer to a HMAC_SHA512 context
- * @param[out] out              512 bits output buffer
- * @return                      The operation status.
- * @retval CRY_NOERROR          if the operation succeeded.
- * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
- *                              device instance.
- * @retval CRY_ERR_OP_FAILURE   if the operation failed, implementation
- *                              dependent.
- *
- * @notapi
- */
-cryerror_t cry_lld_HMACSHA512_final(CRYDriver *cryp,
-                                    HMACSHA512Context *hmacsha512ctxp,
-                                    uint8_t *out) {
-
-  (void)cryp;
-  (void)hmacsha512ctxp;
   (void)out;
 
   return CRY_ERR_INV_ALGO;

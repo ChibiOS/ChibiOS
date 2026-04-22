@@ -115,6 +115,12 @@ struct CRYDriver {
    * @brief   Current configuration data.
    */
   const CRYConfig           *config;
+#if (CRY_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Mutex protecting the peripheral.
+   */
+  mutex_t                   mutex;
+#endif
   /**
    * @brief   Algorithm type of transient key.
    */

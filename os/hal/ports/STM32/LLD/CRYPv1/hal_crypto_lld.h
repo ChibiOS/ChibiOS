@@ -246,7 +246,7 @@
 #define CRY_LLD_SUPPORTS_SHA1               FALSE
 #define CRY_LLD_SUPPORTS_SHA256             TRUE
 #define CRY_LLD_SUPPORTS_SHA512             FALSE
-#define CRY_LLD_SUPPORTS_HMAC_SHA256        TRUE
+#define CRY_LLD_SUPPORTS_HMAC_SHA256        FALSE
 #define CRY_LLD_SUPPORTS_HMAC_SHA512        FALSE
 #else
 #define CRY_LLD_SUPPORTS_SHA1               FALSE
@@ -302,6 +302,12 @@ struct CRYDriver {
    * @brief   Current configuration data.
    */
   const CRYConfig           *config;
+#if (CRY_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Mutex protecting the peripheral.
+   */
+  mutex_t                   mutex;
+#endif
 #if defined(CRY_DRIVER_EXT_FIELDS)
   CRY_DRIVER_EXT_FIELDS
 #endif
@@ -363,11 +369,11 @@ typedef struct {
  */
 typedef struct {
   /**
-   * @brief   Last data to be hashed on finalization.
+   * @brief   Deferred data to be hashed on finalization.
    */
-  uint32_t      last_data;
+  uint8_t       last_data[4];
   /**
-   * @brief   Size, in bits, of the last data.
+   * @brief   Size, in bytes, of the deferred data.
    */
   uint32_t      last_size;
 } SHA256Context;

@@ -107,6 +107,12 @@ struct CRYDriver {
    * @brief   Current configuration data.
    */
   const CRYConfig           *config;
+#if (CRY_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Mutex protecting the peripheral.
+   */
+  mutex_t                   mutex;
+#endif
 #if defined(CRY_DRIVER_EXT_FIELDS)
   CRY_DRIVER_EXT_FIELDS
 #endif

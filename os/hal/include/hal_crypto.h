@@ -54,6 +54,14 @@
 #define HAL_CRY_ENFORCE_FALLBACK            FALSE
 #endif
 
+/**
+ * @brief   Enables the @p cryAcquireBus() and @p cryReleaseBus() APIs.
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(CRY_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define CRY_USE_MUTUAL_EXCLUSION            TRUE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -157,6 +165,9 @@ typedef struct {
 struct CRYDriver {
   crystate_t                state;
   const CRYConfig           *config;
+#if (CRY_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
+  mutex_t                   mutex;
+#endif
 };
 #endif /* HAL_CRY_ENFORCE_FALLBACK == TRUE */
 
@@ -219,6 +230,20 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+/**
+ * @name    Key Identifier Semantics
+ * @{
+ */
+/**
+ * @brief   Generic HAL key identifier usage.
+ * @note    Portable code should assume that only key identifier zero, the
+ *          transient key, is available.
+ * @note    Non-zero key identifiers are backend-specific extensions and their
+ *          availability, lifetime, and storage semantics are implementation
+ *          defined.
+ */
+/** @} */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -226,6 +251,10 @@ extern "C" {
   void cryObjectInit(CRYDriver *cryp);
   msg_t cryStart(CRYDriver *cryp, const CRYConfig *config);
   void cryStop(CRYDriver *cryp);
+#if (CRY_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
+  void cryAcquireBus(CRYDriver *cryp);
+  void cryReleaseBus(CRYDriver *cryp);
+#endif
   cryerror_t cryLoadAESTransientKey(CRYDriver *cryp,
                                     size_t size,
                                     const uint8_t *keyp);
