@@ -43,7 +43,7 @@ endif
 ifeq ($(USE_SMART_BUILD),)
   # The local chconf.h is an include shim shared with another H563 target.
   # Smart build cannot introspect it reliably, use the full module set.
-  USE_SMART_BUILD = no
+  USE_SMART_BUILD = yes
 endif
 
 #

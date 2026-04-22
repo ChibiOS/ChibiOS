@@ -28,6 +28,8 @@
 #include "hal.h"
 #include "oop_base_object.h"
 
+#if (HAL_USE_USB == TRUE) || defined(__DOXYGEN__)
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -336,3 +338,5 @@ static inline bool usbServiceOwnsOutEndpointX(void *ip, usbep_t ep) {
 #endif /* HAL_USB_SERVICE_H */
 
 /** @} */
+
+#endif /* HAL_USE_USB == TRUE */

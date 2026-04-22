@@ -24,6 +24,8 @@
 
 #include "hal_usb_service.h"
 
+#if (HAL_USE_USB == TRUE) || defined(__DOXYGEN__)
+
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
@@ -257,3 +259,5 @@ const struct hal_usb_service_vmt __hal_usb_service_vmt = {
 };
 
 /** @} */
+
+#endif /* HAL_USE_USB == TRUE */

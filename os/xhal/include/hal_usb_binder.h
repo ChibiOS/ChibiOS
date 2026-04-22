@@ -28,6 +28,8 @@
 #include "hal.h"
 #include "oop_base_object.h"
 
+#if (HAL_USE_USB == TRUE) || defined(__DOXYGEN__)
+
 typedef struct hal_usb_service hal_usb_service_c;
 
 /**
@@ -253,3 +255,5 @@ static inline void *usbBinderGetArgumentX(void *ip) {
 #endif /* HAL_USB_BINDER_H */
 
 /** @} */
+
+#endif /* HAL_USE_USB == TRUE */
