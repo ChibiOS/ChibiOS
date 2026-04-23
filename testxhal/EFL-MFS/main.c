@@ -63,7 +63,6 @@ int main(void) {
 
   bsioObjectInit(&bsio1, &PORTAB_SIO1, bsio1_ib, sizeof bsio1_ib,
                  bsio1_ob, sizeof bsio1_ob);
-  drvSetCfgX(&bsio1, NULL);
 
   eflStart(&EFLD1, NULL);
   drvStart(&bsio1);
