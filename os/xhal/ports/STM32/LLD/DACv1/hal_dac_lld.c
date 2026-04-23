@@ -139,7 +139,7 @@ static const dacparams_t dac1_ch1_params = {
                   STM32_DMA_CR_MINC | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P |
                   STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE | STM32_DMA_CR_HTIE |
                   STM32_DMA_CR_TCIE,
-  .dmairqprio   = STM32_DAC_DAC1_CH1_IRQ_PRIORITY
+  .dmairqprio   = STM32_DACV1_DAC1_IRQ_PRIORITY
 };
 #endif
 
@@ -158,7 +158,7 @@ static const dacparams_t dac1_ch2_params = {
                   STM32_DMA_CR_MINC | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P |
                   STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE | STM32_DMA_CR_HTIE |
                   STM32_DMA_CR_TCIE,
-  .dmairqprio   = STM32_DAC_DAC1_CH2_IRQ_PRIORITY
+  .dmairqprio   = STM32_DACV1_DAC1_IRQ_PRIORITY
 };
 #endif
 
@@ -177,7 +177,7 @@ static const dacparams_t dac2_ch1_params = {
                   STM32_DMA_CR_MINC | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P |
                   STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE | STM32_DMA_CR_HTIE |
                   STM32_DMA_CR_TCIE,
-  .dmairqprio   = STM32_DAC_DAC2_CH1_IRQ_PRIORITY
+  .dmairqprio   = STM32_DACV1_DAC2_IRQ_PRIORITY
 };
 #endif
 
@@ -196,7 +196,7 @@ static const dacparams_t dac2_ch2_params = {
                   STM32_DMA_CR_MINC | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P |
                   STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE | STM32_DMA_CR_HTIE |
                   STM32_DMA_CR_TCIE,
-  .dmairqprio   = STM32_DAC_DAC2_CH2_IRQ_PRIORITY
+  .dmairqprio   = STM32_DACV1_DAC2_IRQ_PRIORITY
 };
 #endif
 
@@ -215,7 +215,7 @@ static const dacparams_t dac3_ch1_params = {
                   STM32_DMA_CR_MINC | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P |
                   STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE | STM32_DMA_CR_HTIE |
                   STM32_DMA_CR_TCIE,
-  .dmairqprio   = STM32_DAC_DAC3_CH1_IRQ_PRIORITY
+  .dmairqprio   = STM32_DACV1_DAC3_IRQ_PRIORITY
 };
 #endif
 
@@ -234,7 +234,7 @@ static const dacparams_t dac3_ch2_params = {
                   STM32_DMA_CR_MINC | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P |
                   STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE | STM32_DMA_CR_HTIE |
                   STM32_DMA_CR_TCIE,
-  .dmairqprio   = STM32_DAC_DAC3_CH2_IRQ_PRIORITY
+  .dmairqprio   = STM32_DACV1_DAC3_IRQ_PRIORITY
 };
 #endif
 
@@ -253,7 +253,7 @@ static const dacparams_t dac4_ch1_params = {
                   STM32_DMA_CR_MINC | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P |
                   STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE | STM32_DMA_CR_HTIE |
                   STM32_DMA_CR_TCIE,
-  .dmairqprio   = STM32_DAC_DAC4_CH1_IRQ_PRIORITY
+  .dmairqprio   = STM32_DACV1_DAC4_IRQ_PRIORITY
 };
 #endif
 
@@ -272,7 +272,7 @@ static const dacparams_t dac4_ch2_params = {
                   STM32_DMA_CR_MINC | STM32_DMA_CR_CIRC | STM32_DMA_CR_DIR_M2P |
                   STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE | STM32_DMA_CR_HTIE |
                   STM32_DMA_CR_TCIE,
-  .dmairqprio   = STM32_DAC_DAC4_CH2_IRQ_PRIORITY
+  .dmairqprio   = STM32_DACV1_DAC4_IRQ_PRIORITY
 };
 #endif
 
@@ -312,6 +312,16 @@ static void dac_lld_serve_tx_interrupt(DACDriver *dacp, uint32_t flags) {
       /* Transfer complete processing.*/
       _dac_isr_full_code(dacp);
     }
+  }
+}
+
+static void serve_dac_interrupt(DACDriver *dacp) {
+
+  /* Check for DMA underrun while a stream is active.*/
+  if (dacp->grpp != NULL) {
+    /* DAC DMA underrun condition. This can happen only if the DMA is
+       unable to read data fast enough.*/
+    _dac_isr_error_code(dacp, DAC_ERR_UNDERFLOW);
   }
 }
 
@@ -936,6 +946,110 @@ void dac_lld_stop_conversion(DACDriver *dacp) {
 
   /* Re-enable channel.*/
   dacp->params->dac->CR = cr;
+}
+
+/**
+ * @brief   DAC1 IRQ service routine.
+ *
+ * @isr
+ */
+void dac_lld_serve_interrupt_dac1(void) {
+#if STM32_DAC_USE_DAC1_CH1 || STM32_DAC_USE_DAC1_CH2
+  uint32_t isr;
+
+  isr = DAC1->SR;
+  DAC1->SR = isr;
+
+#if STM32_DAC_USE_DAC1_CH1
+  if ((isr & DAC_SR_DMAUDR1) != 0U) {
+    serve_dac_interrupt(&DACD1);
+  }
+#endif
+
+#if !STM32_DAC_DUAL_MODE && STM32_DAC_USE_DAC1_CH2
+  if ((isr & DAC_SR_DMAUDR2) != 0U) {
+    serve_dac_interrupt(&DACD2);
+  }
+#endif
+#endif
+}
+
+/**
+ * @brief   DAC2 IRQ service routine.
+ *
+ * @isr
+ */
+void dac_lld_serve_interrupt_dac2(void) {
+#if STM32_DAC_USE_DAC2_CH1 || STM32_DAC_USE_DAC2_CH2
+  uint32_t isr;
+
+  isr = DAC2->SR;
+  DAC2->SR = isr;
+
+#if STM32_DAC_USE_DAC2_CH1
+  if ((isr & DAC_SR_DMAUDR1) != 0U) {
+    serve_dac_interrupt(&DACD3);
+  }
+#endif
+
+#if !STM32_DAC_DUAL_MODE && STM32_DAC_USE_DAC2_CH2
+  if ((isr & DAC_SR_DMAUDR2) != 0U) {
+    serve_dac_interrupt(&DACD4);
+  }
+#endif
+#endif
+}
+
+/**
+ * @brief   DAC3 IRQ service routine.
+ *
+ * @isr
+ */
+void dac_lld_serve_interrupt_dac3(void) {
+#if STM32_DAC_USE_DAC3_CH1 || STM32_DAC_USE_DAC3_CH2
+  uint32_t isr;
+
+  isr = DAC3->SR;
+  DAC3->SR = isr;
+
+#if STM32_DAC_USE_DAC3_CH1
+  if ((isr & DAC_SR_DMAUDR1) != 0U) {
+    serve_dac_interrupt(&DACD5);
+  }
+#endif
+
+#if !STM32_DAC_DUAL_MODE && STM32_DAC_USE_DAC3_CH2
+  if ((isr & DAC_SR_DMAUDR2) != 0U) {
+    serve_dac_interrupt(&DACD6);
+  }
+#endif
+#endif
+}
+
+/**
+ * @brief   DAC4 IRQ service routine.
+ *
+ * @isr
+ */
+void dac_lld_serve_interrupt_dac4(void) {
+#if STM32_DAC_USE_DAC4_CH1 || STM32_DAC_USE_DAC4_CH2
+  uint32_t isr;
+
+  isr = DAC4->SR;
+  DAC4->SR = isr;
+
+#if STM32_DAC_USE_DAC4_CH1
+  if ((isr & DAC_SR_DMAUDR1) != 0U) {
+    serve_dac_interrupt(&DACD7);
+  }
+#endif
+
+#if !STM32_DAC_DUAL_MODE && STM32_DAC_USE_DAC4_CH2
+  if ((isr & DAC_SR_DMAUDR2) != 0U) {
+    serve_dac_interrupt(&DACD8);
+  }
+#endif
+#endif
 }
 
 #endif /* HAL_USE_DAC */

@@ -91,6 +91,8 @@ CONFDIR  := ./cfg/stm32g474re_nucleo64
 BUILDDIR := ./build/stm32g474re_nucleo64
 DEPDIR   := ./.dep/stm32g474re_nucleo64
 
+OOPSELECT := base chprintf
+
 include $(CHIBIOS)/os/license/license.mk
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32g4xx.mk
 include $(CHIBIOS)/os/xhal/xhal.mk
@@ -101,6 +103,7 @@ include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
 include $(CHIBIOS)/tools/mk/autobuild.mk
 include $(CHIBIOS)/os/xhal/lib/complex/serial-usb/hal_serial_usb.mk
+include $(CHIBIOS)/os/various/xshell/xshell.mk
 
 LDSCRIPT= $(STARTUPLD)/STM32G474xE.ld
 
@@ -126,7 +129,7 @@ CPPWARN = -Wall -Wextra -Wundef
 # Start of user section
 #
 
-UDEFS =
+UDEFS = -DOOP_USE_LEGACY -DXSHELL_CMD_TEST_ENABLED=FALSE
 UADEFS =
 UINCDIR =
 ULIBDIR =

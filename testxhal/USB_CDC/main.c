@@ -14,15 +14,17 @@
     limitations under the License.
 */
 
-#include <string.h>
-
 #include "ch.h"
 #include "hal.h"
 #include "portab.h"
 
 #include "hal_serial_usb.h"
+#include "oop_chprintf.h"
+#include "xshell.h"
 
 #include "usbcfg.h"
+
+#define SHELL_WA_SIZE       THD_STACK_SIZE(1024)
 
 static void test_fail(void) {
 
@@ -41,13 +43,7 @@ static void test_assert(bool condition) {
   }
 }
 
-static void send_string(const char *s) {
-
-  (void)chnWriteTimeout(&PORTAB_SDU1.chn, (const uint8_t *)s, strlen(s),
-                        TIME_INFINITE);
-}
-
-static void execute_write_test(void) {
+static void cmd_write(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   static const uint8_t buf[] =
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
@@ -65,14 +61,34 @@ static void execute_write_test(void) {
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-  asynchronous_channel_i *chnp = &PORTAB_SDU1.chn;
+  (void)argv;
+  (void)envp;
 
-  while (chnGetTimeout(chnp, TIME_IMMEDIATE) == STM_TIMEOUT) {
-    (void)chnWriteTimeout(&PORTAB_SDU1.chn, buf, sizeof buf - 1U,
-                          TIME_INFINITE);
+  if (argc != 1) {
+    xshellUsage(xshp, "write");
+    return;
   }
-  send_string("\r\nstopped\r\n> ");
+
+  while (chnGetTimeout((asynchronous_channel_i *)xshp->stream,
+                       TIME_IMMEDIATE) == Q_TIMEOUT) {
+    chnWrite(xshp->stream, buf, sizeof buf - 1U);
+  }
+  chprintf(xshp->stream, XSHELL_NEWLINE_STR "stopped" XSHELL_NEWLINE_STR);
 }
+
+static const xshell_command_t commands[] = {
+  {"write", cmd_write},
+  {NULL, NULL}
+};
+
+static const xshell_manager_config_t shell_cfg = {
+  .thread_name      = "shell",
+  .banner           = "\r\nXHAL USB CDC test\r\n",
+  .prompt           = XSHELL_DEFAULT_PROMPT_STR,
+  .commands         = commands,
+  .use_heap         = true,
+  .stack.size       = SHELL_WA_SIZE
+};
 
 static THD_WORKING_AREA(waBlinkerThread, 128);
 static THD_FUNCTION(BlinkerThread, arg) {
@@ -124,9 +140,7 @@ static THD_FUNCTION(Ep0Thread, arg) {
 }
 
 int main(void) {
-  bool banner_shown;
-  char line[16];
-  unsigned linelen;
+  xshell_manager_t sm1;
 
   halInit();
   chSysInit();
@@ -148,52 +162,16 @@ int main(void) {
   chThdCreateStatic(waEp0Thread, sizeof(waEp0Thread),
                     NORMALPRIO + 2, Ep0Thread, NULL);
 
-  banner_shown = false;
-  linelen = 0U;
+  xshellObjectInit(&sm1, &shell_cfg);
+
   while (true) {
     if (usbGetDriverStateX(&PORTAB_USB1) == USB_ACTIVE) {
-      msg_t c;
+      xshell_t *xshp;
 
-      if (!banner_shown) {
-        send_string("\r\nXHAL USB CDC test\r\n");
-        send_string("Commands: help, write\r\n> ");
-        banner_shown = true;
-      }
-
-      c = chnGetTimeout(&PORTAB_SDU1.chn, TIME_MS2I(100));
-      if (c >= 0) {
-        if ((c == '\r') || (c == '\n')) {
-          send_string("\r\n");
-          line[linelen] = '\0';
-          if (strcmp(line, "write") == 0) {
-            execute_write_test();
-          }
-          else if ((strcmp(line, "help") == 0) || (linelen == 0U)) {
-            send_string("Commands: help, write\r\n> ");
-          }
-          else {
-            send_string("Unknown command\r\n> ");
-          }
-          linelen = 0U;
-        }
-        else if ((c == 0x08) || (c == 0x7FU)) {
-          if (linelen > 0U) {
-            linelen--;
-            send_string("\b \b");
-          }
-        }
-        else if ((c >= 0x20) && (c < (msg_t)0x7FU)) {
-          if (linelen < (sizeof line - 1U)) {
-            line[linelen++] = (char)c;
-            (void)chnPutTimeout(&PORTAB_SDU1.chn, (uint8_t)c, TIME_INFINITE);
-          }
-        }
-      }
+      xshp = xshellSpawn(&sm1, (BaseSequentialStream *)&PORTAB_SDU1.chn,
+                         NORMALPRIO + 1, NULL);
+      xshellWait(xshp);
     }
-    else {
-      banner_shown = false;
-      linelen = 0U;
-      chThdSleepMilliseconds(100);
-    }
+    chThdSleepMilliseconds(100);
   }
 }

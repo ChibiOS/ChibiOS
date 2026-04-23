@@ -93,8 +93,8 @@
 #include "stm32_tim3.inc"
 #include "stm32_tim4.inc"
 #include "stm32_tim5.inc"
-#include "stm32_tim6.inc"
-#include "stm32_tim7.inc"
+#include "stm32_tim6_dac.inc"
+#include "stm32_tim7_dac.inc"
 #include "stm32_tim8.inc"
 #include "stm32_tim20.inc"
 

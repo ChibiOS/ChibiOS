@@ -121,62 +121,6 @@
 #endif
 
 /**
- * @brief   DAC1 CH1 interrupt priority level setting.
- */
-#if !defined(STM32_DAC_DAC1_CH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC_DAC1_CH1_IRQ_PRIORITY     10
-#endif
-
-/**
- * @brief   DAC1 CH2 interrupt priority level setting.
- */
-#if !defined(STM32_DAC_DAC1_CH2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC_DAC1_CH2_IRQ_PRIORITY     10
-#endif
-
-/**
- * @brief   DAC2 CH1 interrupt priority level setting.
- */
-#if !defined(STM32_DAC_DAC2_CH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC_DAC2_CH1_IRQ_PRIORITY     10
-#endif
-
-/**
- * @brief   DAC2 CH2 interrupt priority level setting.
- */
-#if !defined(STM32_DAC_DAC2_CH2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC_DAC2_CH2_IRQ_PRIORITY     10
-#endif
-
-/**
- * @brief   DAC3 CH1 interrupt priority level setting.
- */
-#if !defined(STM32_DAC_DAC3_CH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC_DAC3_CH1_IRQ_PRIORITY     10
-#endif
-
-/**
- * @brief   DAC3 CH2 interrupt priority level setting.
- */
-#if !defined(STM32_DAC_DAC3_CH2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC_DAC3_CH2_IRQ_PRIORITY     10
-#endif
-
-/**
- * @brief   DAC4 CH1 interrupt priority level setting.
- */
-#if !defined(STM32_DAC_DAC4_CH1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC_DAC4_CH1_IRQ_PRIORITY     10
-#endif
-
-/**
- * @brief   DAC4 CH2 interrupt priority level setting.
- */
-#if !defined(STM32_DAC_DAC4_CH2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_DAC_DAC4_CH2_IRQ_PRIORITY     10
-#endif
-
-/**
  * @brief   DAC1 CH1 DMA priority (0..3|lowest..highest).
  */
 #if !defined(STM32_DAC_DAC1_CH1_DMA_PRIORITY) || defined(__DOXYGEN__)
@@ -311,44 +255,24 @@
 #error "DAC driver activated but no DAC peripheral assigned"
 #endif
 
-#if STM32_DAC_USE_DAC1_CH1 &&                                               \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_DAC_DAC1_CH1_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to DAC1 CH1"
+#if STM32_DAC_USE_DAC1_CH1 || STM32_DAC_USE_DAC1_CH2 ||                     \
+    STM32_DAC_USE_DAC3_CH1 || STM32_DAC_USE_DAC3_CH2
+#if !defined(STM32_IRQ_TIM6_DAC_PRIORITY)
+#error "STM32_IRQ_TIM6_DAC_PRIORITY not defined in xmcuconf.h"
+#endif
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM6_DAC_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_TIM6_DAC_PRIORITY"
+#endif
 #endif
 
-#if STM32_DAC_USE_DAC1_CH2 &&                                               \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_DAC_DAC1_CH2_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to DAC1 CH2"
+#if STM32_DAC_USE_DAC2_CH1 || STM32_DAC_USE_DAC2_CH2 ||                     \
+    STM32_DAC_USE_DAC4_CH1 || STM32_DAC_USE_DAC4_CH2
+#if !defined(STM32_IRQ_TIM7_DAC_PRIORITY)
+#error "STM32_IRQ_TIM7_DAC_PRIORITY not defined in xmcuconf.h"
 #endif
-
-#if STM32_DAC_USE_DAC2_CH1 &&                                               \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_DAC_DAC2_CH1_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to DAC2 CH1"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_TIM7_DAC_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_TIM7_DAC_PRIORITY"
 #endif
-
-#if STM32_DAC_USE_DAC2_CH2 &&                                               \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_DAC_DAC2_CH2_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to DAC2 CH2"
-#endif
-
-#if STM32_DAC_USE_DAC3_CH1 &&                                               \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_DAC_DAC3_CH1_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to DAC3 CH1"
-#endif
-
-#if STM32_DAC_USE_DAC3_CH2 &&                                               \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_DAC_DAC3_CH2_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to DAC3 CH2"
-#endif
-
-#if STM32_DAC_USE_DAC4_CH1 &&                                               \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_DAC_DAC4_CH1_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to DAC4 CH1"
-#endif
-
-#if STM32_DAC_USE_DAC4_CH2 &&                                               \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_DAC_DAC4_CH2_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to DAC4 CH2"
 #endif
 
 /* The following checks are only required when there is a DMA able to
@@ -551,6 +475,11 @@ typedef struct {
  */
 typedef uint32_t dacerror_t;
 
+#define STM32_DACV1_DAC1_IRQ_PRIORITY       STM32_IRQ_TIM6_DAC_PRIORITY
+#define STM32_DACV1_DAC2_IRQ_PRIORITY       STM32_IRQ_TIM7_DAC_PRIORITY
+#define STM32_DACV1_DAC3_IRQ_PRIORITY       STM32_IRQ_TIM6_DAC_PRIORITY
+#define STM32_DACV1_DAC4_IRQ_PRIORITY       STM32_IRQ_TIM7_DAC_PRIORITY
+
 #define DAC_ERR_DMAFAILURE                 (1U << 0)
 #define DAC_ERR_UNDERFLOW                  (1U << 1)
 
@@ -679,6 +608,10 @@ extern "C" {
                             dacsample_t sample);
   msg_t dac_lld_start_conversion(DACDriver *dacp);
   void dac_lld_stop_conversion(DACDriver *dacp);
+  void dac_lld_serve_interrupt_dac1(void);
+  void dac_lld_serve_interrupt_dac2(void);
+  void dac_lld_serve_interrupt_dac3(void);
+  void dac_lld_serve_interrupt_dac4(void);
 #ifdef __cplusplus
 }
 #endif
