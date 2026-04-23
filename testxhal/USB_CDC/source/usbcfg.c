@@ -150,7 +150,7 @@ static const uint8_t vcom_string1[] = {
 };
 
 static const uint8_t vcom_string2[] = {
-  USB_DESC_BYTE(56),
+  USB_DESC_BYTE(60),
   USB_DESC_BYTE(USB_DESCRIPTOR_STRING),
   'C', 0, 'h', 0, 'i', 0, 'b', 0, 'i', 0, 'O', 0, 'S', 0, '/', 0,
   'X', 0, 'H', 0, 'A', 0, 'L', 0, ' ', 0, 'V', 0, 'i', 0, 'r', 0,

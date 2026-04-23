@@ -42,6 +42,9 @@
 
 #if STM32_USB_USE_USB1 || defined(__DOXYGEN__)
 hal_usb_driver_c USBD1;
+
+static const hal_usb_config_t default_usb_config = {
+};
 #endif
 
 /*===========================================================================*/
@@ -312,6 +315,10 @@ const hal_usb_config_t *usb_lld_selcfg(hal_usb_driver_c *usbp,
 }
 
 msg_t usb_lld_start(hal_usb_driver_c *usbp) {
+
+  if (usbp->config == NULL) {
+    usbp->config = &default_usb_config;
+  }
 
   if (usbp->state == USB_STOP) {
 #if STM32_USB_USE_USB1

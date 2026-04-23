@@ -423,6 +423,17 @@ msg_t sduStart(SerialUSBDriver *sdup, const SerialUSBConfig *config) {
   sdup->bulk_out_epc.out_maxsize = config->bulk_out_maxsize;
   sdup->int_in_epc.in_maxsize    = config->int_in_maxsize;
 
+  if (config->bulk_in == config->bulk_out) {
+    sdup->bulk_in_epc.out_cb      = sduDataReceived;
+    sdup->bulk_in_epc.out_state   = &sdup->bulk_out_state;
+    sdup->bulk_in_epc.out_maxsize = config->bulk_out_maxsize;
+  }
+  else {
+    sdup->bulk_in_epc.out_cb      = NULL;
+    sdup->bulk_in_epc.out_state   = NULL;
+    sdup->bulk_in_epc.out_maxsize = 0U;
+  }
+
   sdup->config      = config;
   sdup->connected   = false;
   sdup->flags       = CHN_FL_NONE;
@@ -492,8 +503,10 @@ void sduConfigureHookI(SerialUSBDriver *sdup) {
   osalDbgCheck((sdup != NULL) && (sdup->config != NULL));
 
   usbInitEndpointI(sdup->config->usbp, sdup->config->bulk_in, &sdup->bulk_in_epc);
-  usbInitEndpointI(sdup->config->usbp, sdup->config->bulk_out,
-                   &sdup->bulk_out_epc);
+  if (sdup->config->bulk_out != sdup->config->bulk_in) {
+    usbInitEndpointI(sdup->config->usbp, sdup->config->bulk_out,
+                     &sdup->bulk_out_epc);
+  }
   if (sdup->config->int_in > 0U) {
     usbInitEndpointI(sdup->config->usbp, sdup->config->int_in, &sdup->int_in_epc);
   }

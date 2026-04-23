@@ -111,15 +111,27 @@
 /** @} */
 
 /**
- * @name    Address and status-stage handling helpers
+ * @name    Device addressing modes
  * @{
  */
-#define USB_EARLY_SET_ADDRESS               0U
-#define USB_LATE_SET_ADDRESS                1U
-#define USB_EP0_STATUS_STAGE_SW             0U
-#define USB_EP0_STATUS_STAGE_HW             1U
-#define USB_SET_ADDRESS_ACK_SW              0U
-#define USB_SET_ADDRESS_ACK_HW              1U
+#define USB_EARLY_SET_ADDRESS               0
+#define USB_LATE_SET_ADDRESS                1
+/** @} */
+
+/**
+ * @name    Endpoint-zero status handling modes
+ * @{
+ */
+#define USB_EP0_STATUS_STAGE_SW             0
+#define USB_EP0_STATUS_STAGE_HW             1
+/** @} */
+
+/**
+ * @name    Set-address acknowledge handling modes
+ * @{
+ */
+#define USB_SET_ADDRESS_ACK_SW              0
+#define USB_SET_ADDRESS_ACK_HW              1
 /** @} */
 
 /**
@@ -243,12 +255,14 @@
 #define _usb_isr_invoke_sof_cb(usbp)                                        \
   do {                                                                      \
     if ((usbp)->binder != NULL) {                                           \
+      osalSysLockFromISR();                                                 \
       usbBinderSOFI((usbp)->binder);                                        \
+      osalSysUnlockFromISR();                                               \
     }                                                                       \
   } while (false)
 
 /**
- * @brief       Common ISR code, setup-packet callback.
+ * @brief       Common ISR code, setup packet callback.
  *
  * @param[in,out] usbp          Pointer to the USB driver instance.
  * @param[in]     ep            Endpoint number.
@@ -335,14 +349,10 @@ typedef uint32_t usbeventflags_t;
 typedef struct hal_usb_driver hal_usb_driver_c;
 
 /**
- * @brief       Type of structure representing a USB binder.
- */
-typedef struct hal_usb_binder hal_usb_binder_c;
-
-/**
  * @brief       Type of structure representing a USB hardware configuration.
  */
 typedef struct hal_usb_config hal_usb_config_t;
+typedef struct hal_usb_binder hal_usb_binder_c;
 
 typedef uint8_t usbep_t;
 typedef driver_state_t usbstate_t;
@@ -381,21 +391,21 @@ typedef void (*usbepcallback_t)(hal_usb_driver_c *usbp, usbep_t ep);
 typedef struct {
   size_t                    txsize;
   size_t                    txcnt;
+  size_t                    txlast;
   const uint8_t            *txbuf;
 #if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
   thread_reference_t        thread;
 #endif
-  size_t                    txlast;
 } USBInEndpointState;
 
 typedef struct {
   size_t                    rxsize;
   size_t                    rxcnt;
+  size_t                    rxpkts;
   uint8_t                  *rxbuf;
 #if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
   thread_reference_t        thread;
 #endif
-  uint16_t                  rxpkts;
 } USBOutEndpointState;
 
 typedef struct {
@@ -407,7 +417,7 @@ typedef struct {
   uint16_t                  out_maxsize;
   USBInEndpointState       *in_state;
   USBOutEndpointState      *out_state;
-  uint16_t                  ep_buffers;
+  unsigned                  ep_buffers;
   uint8_t                  *setup_buf;
 } USBEndpointConfig;
 
@@ -417,7 +427,7 @@ typedef struct {
 /**
  * @brief       USB hardware configuration structure.
  * @note        Protocol and class behavior are configured separately through
- *              the USB binder object.
+ *              the USB binding structure.
  */
 struct hal_usb_config {
   /* End of the mandatory fields.*/
@@ -541,8 +551,6 @@ struct hal_usb_driver {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  /* Binder methods referenced by macros.*/
-  void usbBinderSOFI(void *ip);
   /* Methods of hal_usb_driver_c.*/
   void *__usb_objinit_impl(void *ip, const void *vmt);
   void __usb_dispose_impl(void *ip);
@@ -691,8 +699,10 @@ static inline usbeventflags_t usbGetAndClearEventsX(void *ip,
  */
 CC_FORCE_INLINE
 static inline uint16_t usbGetFrameNumberX(void *ip) {
-  (void)ip;
-  return usb_lld_get_frame_number(ip);
+  hal_usb_driver_c *self = (hal_usb_driver_c *)ip;
+
+  (void)self;
+  return usb_lld_get_frame_number(self);
 }
 
 /**

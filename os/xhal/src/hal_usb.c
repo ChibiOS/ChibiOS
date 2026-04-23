@@ -233,10 +233,10 @@ void _usb_reset(hal_usb_driver_c *usbp) {
   usbp->ep0setup = 0U;
   usbp->ep0reset = 0U;
   usb_lld_reset(usbp);
+  osalSysLockFromISR();
   if (usbp->binder != NULL) {
     usbBinderResetI(usbp->binder);
   }
-  osalSysLockFromISR();
   ep0_signal_resetI(usbp);
   osalSysUnlockFromISR();
   _usb_isr_invoke_event_cb(usbp, USB_FLAGS_RESET);
@@ -255,9 +255,6 @@ void _usb_suspend(hal_usb_driver_c *usbp) {
 
     usbp->saved_state = usbp->state;
     usbp->state = USB_SUSPENDED;
-    if (usbp->binder != NULL) {
-      usbBinderSuspendI(usbp->binder);
-    }
     _usb_isr_invoke_event_cb(usbp, USB_FLAGS_SUSPEND);
     usbp->transmitting = 0U;
     usbp->receiving = 0U;
@@ -276,6 +273,9 @@ void _usb_suspend(hal_usb_driver_c *usbp) {
     }
 #endif
     osalSysLockFromISR();
+    if (usbp->binder != NULL) {
+      usbBinderSuspendI(usbp->binder);
+    }
     ep0_signal_resetI(usbp);
     osalSysUnlockFromISR();
   }
@@ -291,9 +291,11 @@ void _usb_suspend(hal_usb_driver_c *usbp) {
 void _usb_wakeup(hal_usb_driver_c *usbp) {
   if (usbp->state == USB_SUSPENDED) {
     usbp->state = usbp->saved_state;
+    osalSysLockFromISR();
     if (usbp->binder != NULL) {
       usbBinderWakeupI(usbp->binder);
     }
+    osalSysUnlockFromISR();
     _usb_isr_invoke_event_cb(usbp, USB_FLAGS_WAKEUP);
   }
 }
@@ -316,8 +318,8 @@ void _usb_ep0setup(hal_usb_driver_c *usbp, usbep_t ep) {
     msg = MSG_RESET;
   }
 
-  usbReadSetupI(usbp, 0U, usbp->setup);
   osalSysLockFromISR();
+  usbReadSetupI(usbp, 0U, usbp->setup);
   ep0_signal_setupI(usbp, msg);
   osalSysUnlockFromISR();
 }
@@ -529,14 +531,12 @@ msg_t __usb_start_impl(void *ip) {
  */
 void __usb_stop_impl(void *ip) {
   hal_usb_driver_c *self = (hal_usb_driver_c *)ip;
-  hal_usb_binder_c *binderp;
   unsigned i;
 
   usb_lld_stop(self);
-  binderp             = self->binder;
-  self->binder        = NULL;
-  if (binderp != NULL) {
-    usbBinderUnbind(binderp);
+  if (self->binder != NULL) {
+    usbBinderUnbind(self->binder);
+    self->binder = NULL;
   }
   self->events        = (usbeventflags_t)0U;
   self->transmitting  = 0U;
@@ -663,10 +663,10 @@ void usbStop(void *ip) {
 }
 
 /**
- * @brief       Binds a USB binder object to the USB driver.
+ * @brief       Binds protocol and class callbacks to the USB driver.
  *
  * @param[in,out] ip            Pointer to a @p hal_usb_driver_c instance.
- * @param[in]     binderp       USB binder object.
+ * @param[in]     bindp         Protocol binding descriptor.
  * @return                      The operation status.
  *
  * @api
@@ -678,13 +678,13 @@ msg_t usbBind(void *ip, hal_usb_binder_c *binderp) {
   osalDbgCheck((self != NULL) && (binderp != NULL));
 
   osalSysLock();
-  if ((self->binder != NULL) ||
-      (self->state == USB_SELECTED) ||
+  if ((self->state == USB_SELECTED) ||
       (self->state == USB_ACTIVE) ||
       (self->state == USB_SUSPENDED)) {
     osalSysUnlock();
     return HAL_RET_INV_STATE;
   }
+  osalDbgAssert(self->binder == NULL, "binder already attached");
   osalSysUnlock();
 
   msg = usbBinderBind(binderp, self);
@@ -696,7 +696,7 @@ msg_t usbBind(void *ip, hal_usb_binder_c *binderp) {
 }
 
 /**
- * @brief       Removes the currently bound USB binder.
+ * @brief       Removes the currently bound USB protocol handler.
  *
  * @param[in,out] ip            Pointer to a @p hal_usb_driver_c instance.
  * @return                      The operation status.
@@ -705,7 +705,6 @@ msg_t usbBind(void *ip, hal_usb_binder_c *binderp) {
  */
 msg_t usbUnbind(void *ip) {
   hal_usb_driver_c *self = (hal_usb_driver_c *)ip;
-  hal_usb_binder_c *binderp;
   osalDbgCheck(self != NULL);
 
   osalSysLock();
@@ -715,13 +714,11 @@ msg_t usbUnbind(void *ip) {
     osalSysUnlock();
     return HAL_RET_INV_STATE;
   }
-  binderp = self->binder;
-  self->binder = NULL;
-  osalSysUnlock();
-
-  if (binderp != NULL) {
-    usbBinderUnbind(binderp);
+  if (self->binder != NULL) {
+    usbBinderUnbind(self->binder);
+    self->binder = NULL;
   }
+  osalSysUnlock();
 
   return HAL_RET_SUCCESS;
 }
@@ -862,6 +859,7 @@ void usbStartReceiveI(void *ip, usbep_t ep, uint8_t *buf, size_t n) {
   osp->rxbuf  = buf;
   osp->rxsize = n;
   osp->rxcnt  = 0U;
+  osp->rxpkts = 0U;
 #if USB_USE_WAIT == TRUE
   osp->thread = NULL;
 #endif
@@ -896,6 +894,7 @@ void usbStartTransmitI(void *ip, usbep_t ep, const uint8_t *buf, size_t n) {
   isp->txbuf  = buf;
   isp->txsize = n;
   isp->txcnt  = 0U;
+  isp->txlast = 0U;
 #if USB_USE_WAIT == TRUE
   isp->thread = NULL;
 #endif
@@ -1134,9 +1133,18 @@ msg_t usbEp0HandleStandardRequest(void *ip, bool *handledp) {
     break;
   case (uint32_t)USB_RTYPE_RECIPIENT_DEVICE |
        ((uint32_t)USB_REQ_SET_ADDRESS << 8):
+#if USB_SET_ADDRESS_MODE == USB_EARLY_SET_ADDRESS
+    self->address = self->setup[2];
+    usb_lld_set_address(self);
+#endif
     msg = usbEp0Acknowledge(self);
     if (msg == MSG_OK) {
+#if USB_SET_ADDRESS_MODE == USB_LATE_SET_ADDRESS
       set_address_thread(self);
+#else
+      usb_invoke_event_cb(self, USB_FLAGS_ADDRESS);
+      self->state = USB_SELECTED;
+#endif
     }
     break;
   case (uint32_t)USB_RTYPE_RECIPIENT_DEVICE |
