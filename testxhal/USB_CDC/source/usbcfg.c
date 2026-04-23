@@ -297,6 +297,5 @@ const SerialUSBConfig serusbcfg = {
 };
 
 void usbcdcObjectInit(void) {
-  usbBinderObjectInit(&usbcdc_binder);
-  usbcdc_binder.vmt = &usbcdc_binder_vmt;
+  usbBinderObjectInit(&usbcdc_binder, &usbcdc_binder_vmt);
 }

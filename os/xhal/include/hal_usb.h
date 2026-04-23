@@ -355,11 +355,9 @@ typedef struct hal_usb_config hal_usb_config_t;
 
 typedef uint8_t usbep_t;
 typedef driver_state_t usbstate_t;
-typedef struct hal_usb_binder hal_usb_binder_c;
+struct hal_usb_service;
+struct hal_usb_binder;
 
-#define USB_UNINIT                         HAL_DRV_STATE_UNINIT
-#define USB_STOP                           HAL_DRV_STATE_STOP
-#define USB_READY                          HAL_DRV_STATE_READY
 #define USB_SELECTED                       (HAL_DRV_STATE_ACTIVE + 1U)
 #define USB_ACTIVE                         (HAL_DRV_STATE_ACTIVE + 2U)
 #define USB_SUSPENDED                      (HAL_DRV_STATE_ACTIVE + 3U)
@@ -442,6 +440,183 @@ struct usb_configurations {
   unsigned                  cfgsnum;
   hal_usb_config_t          cfgs[];
 };
+
+/**
+ * @brief       Type of structure representing USB service ownership metadata.
+ */
+typedef struct hal_usb_service_info hal_usb_service_info_t;
+
+/**
+ * @brief       USB service ownership metadata.
+ * @details     This structure identifies the interfaces and endpoints managed
+ *              by a USB service instance. Endpoint zero is never owned by a
+ *              service.
+ */
+struct hal_usb_service_info {
+  /**
+   * @brief       First interface number owned by the service.
+   */
+  uint8_t                   if_base;
+  /**
+   * @brief       Number of consecutive interfaces owned by the service.
+   */
+  uint8_t                   if_count;
+  /**
+   * @brief       Bit mask of owned IN endpoints, bit N corresponds to endpoint
+   *              N.
+   */
+  uint16_t                  in_ep_mask;
+  /**
+   * @brief       Bit mask of owned OUT endpoints, bit N corresponds to
+   *              endpoint N.
+   */
+  uint16_t                  out_ep_mask;
+};
+
+/**
+ * @class       hal_usb_service_c
+ * @extends     base_object_c
+ *
+ * @brief       Base class for composable USB services.
+ * @details     This class represents a reusable USB function or service
+ *              managed by a USB binder. A service exposes static ownership
+ *              metadata together with USB-specific lifecycle and dispatch
+ *              hooks, but it does not own the USB peripheral lifecycle. The
+ *              virtual methods carrying the @p I suffix must be invoked with
+ *              the system lock already held by the caller.
+ *
+ * @name        Class @p hal_usb_service_c structures
+ * @{
+ */
+
+/**
+ * @brief       Type of a USB service class.
+ */
+typedef struct hal_usb_service hal_usb_service_c;
+
+/**
+ * @brief       Class @p hal_usb_service_c virtual methods table.
+ */
+struct hal_usb_service_vmt {
+  /* From base_object_c.*/
+  void (*dispose)(void *ip);
+  /* From hal_usb_service_c.*/
+  msg_t (*bind)(void *ip, struct hal_usb_binder *binderp);
+  void (*unbind)(void *ip);
+  void (*reset)(void *ip);
+  void (*configure)(void *ip);
+  void (*unconfigure)(void *ip);
+  void (*suspend)(void *ip);
+  void (*wakeup)(void *ip);
+  void (*sof)(void *ip);
+  void (*in)(void *ip, usbep_t ep);
+  void (*out)(void *ip, usbep_t ep);
+  msg_t (*setup)(void *ip, bool *handledp);
+};
+
+/**
+ * @brief       Structure representing a USB service class.
+ */
+struct hal_usb_service {
+  /**
+   * @brief       Virtual Methods Table.
+   */
+  const struct hal_usb_service_vmt *vmt;
+  /**
+   * @brief       Binder currently owning the service, can be @p NULL.
+   */
+  struct hal_usb_binder *   binder;
+  /**
+   * @brief       Pointer to the immutable service ownership metadata.
+   */
+  const hal_usb_service_info_t * info;
+  /**
+   * @brief       Application-defined service argument.
+   */
+  void *                    arg;
+  /**
+   * @brief       Next service in the binder registration list.
+   */
+  hal_usb_service_c *       next;
+  /**
+   * @brief       Previous service in the binder registration list.
+   */
+  hal_usb_service_c *       prev;
+};
+/** @} */
+
+/**
+ * @class       hal_usb_binder_c
+ * @extends     base_object_c
+ *
+ * @brief       Base class for USB device binders.
+ * @details     A binder is the device-composition object sitting between a USB
+ *              driver instance and one or more USB services. The binder owns
+ *              the final descriptors and dispatches USB events to the
+ *              registered services. The virtual methods carrying the @p I
+ *              suffix must be invoked with the system lock already held by the
+ *              caller.
+ *
+ * @name        Class @p hal_usb_binder_c structures
+ * @{
+ */
+
+/**
+ * @brief       Type of a USB binder class.
+ */
+typedef struct hal_usb_binder hal_usb_binder_c;
+
+/**
+ * @brief       Class @p hal_usb_binder_c virtual methods table.
+ */
+struct hal_usb_binder_vmt {
+  /* From base_object_c.*/
+  void (*dispose)(void *ip);
+  /* From hal_usb_binder_c.*/
+  msg_t (*bind)(void *ip, hal_usb_driver_c *usbp);
+  void (*unbind)(void *ip);
+  const usb_descriptor_t * (*get_descriptor)(void *ip, uint8_t dtype, uint8_t dindex, uint16_t lang);
+  void (*reset)(void *ip);
+  void (*configure)(void *ip);
+  void (*unconfigure)(void *ip);
+  void (*suspend)(void *ip);
+  void (*wakeup)(void *ip);
+  void (*sof)(void *ip);
+  void (*in)(void *ip, usbep_t ep);
+  void (*out)(void *ip, usbep_t ep);
+  msg_t (*setup)(void *ip, bool *handledp);
+};
+
+/**
+ * @brief       Structure representing a USB binder class.
+ */
+struct hal_usb_binder {
+  /**
+   * @brief       Virtual Methods Table.
+   */
+  const struct hal_usb_binder_vmt *vmt;
+  /**
+   * @brief       Currently bound USB driver, can be @p NULL.
+   */
+  hal_usb_driver_c *        usbp;
+  /**
+   * @brief       Head of the registered services list.
+   */
+  hal_usb_service_c *       services;
+  /**
+   * @brief       Tail of the registered services list.
+   */
+  hal_usb_service_c *       service_last;
+  /**
+   * @brief       Number of registered services.
+   */
+  unsigned                  services_num;
+  /**
+   * @brief       Application-defined binder argument.
+   */
+  void *                    arg;
+};
+/** @} */
 
 /**
  * @class       hal_usb_driver_c
@@ -551,6 +726,37 @@ struct hal_usb_driver {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  /* Methods of hal_usb_service_c.*/
+  void *__usbsvc_objinit_impl(void *ip, const void *vmt);
+  void __usbsvc_dispose_impl(void *ip);
+  msg_t __usbsvc_bind_impl(void *ip, struct hal_usb_binder *binderp);
+  void __usbsvc_unbind_impl(void *ip);
+  void __usbsvc_reset_impl(void *ip);
+  void __usbsvc_configure_impl(void *ip);
+  void __usbsvc_unconfigure_impl(void *ip);
+  void __usbsvc_suspend_impl(void *ip);
+  void __usbsvc_wakeup_impl(void *ip);
+  void __usbsvc_sof_impl(void *ip);
+  void __usbsvc_in_impl(void *ip, usbep_t ep);
+  void __usbsvc_out_impl(void *ip, usbep_t ep);
+  msg_t __usbsvc_setup_impl(void *ip, bool *handledp);
+  /* Methods of hal_usb_binder_c.*/
+  void *__usbbnd_objinit_impl(void *ip, const void *vmt);
+  void __usbbnd_dispose_impl(void *ip);
+  msg_t __usbbnd_bind_impl(void *ip, hal_usb_driver_c *usbp);
+  void __usbbnd_unbind_impl(void *ip);
+  const usb_descriptor_t *__usbbnd_get_descriptor_impl(void *ip, uint8_t dtype,
+                                                       uint8_t dindex,
+                                                       uint16_t lang);
+  void __usbbnd_reset_impl(void *ip);
+  void __usbbnd_configure_impl(void *ip);
+  void __usbbnd_unconfigure_impl(void *ip);
+  void __usbbnd_suspend_impl(void *ip);
+  void __usbbnd_wakeup_impl(void *ip);
+  void __usbbnd_sof_impl(void *ip);
+  void __usbbnd_in_impl(void *ip, usbep_t ep);
+  void __usbbnd_out_impl(void *ip, usbep_t ep);
+  msg_t __usbbnd_setup_impl(void *ip, bool *handledp);
   /* Methods of hal_usb_driver_c.*/
   void *__usb_objinit_impl(void *ip, const void *vmt);
   void __usb_dispose_impl(void *ip);
@@ -583,6 +789,33 @@ extern "C" {
   bool usbStallTransmitI(void *ip, usbep_t ep);
   void usbWakeupHost(void *ip);
   /* Regular functions.*/
+  msg_t usbServiceBind(void *ip, hal_usb_binder_c *binderp);
+  void usbServiceUnbind(void *ip);
+  void usbServiceResetI(void *ip);
+  void usbServiceConfigureI(void *ip);
+  void usbServiceUnconfigureI(void *ip);
+  void usbServiceSuspendI(void *ip);
+  void usbServiceWakeupI(void *ip);
+  void usbServiceSOFI(void *ip);
+  void usbServiceInI(void *ip, usbep_t ep);
+  void usbServiceOutI(void *ip, usbep_t ep);
+  msg_t usbServiceSetup(void *ip, bool *handledp);
+  msg_t usbBinderBind(void *ip, hal_usb_driver_c *usbp);
+  void usbBinderUnbind(void *ip);
+  msg_t usbBinderRegisterService(void *ip, hal_usb_service_c *servicep);
+  msg_t usbBinderUnregisterService(void *ip, hal_usb_service_c *servicep);
+  hal_usb_service_c *usbBinderGetNextServiceX(void *ip);
+  const usb_descriptor_t *usbBinderGetDescriptor(void *ip, uint8_t dtype,
+                                                 uint8_t dindex, uint16_t lang);
+  void usbBinderResetI(void *ip);
+  void usbBinderConfigureI(void *ip);
+  void usbBinderUnconfigureI(void *ip);
+  void usbBinderSuspendI(void *ip);
+  void usbBinderWakeupI(void *ip);
+  void usbBinderSOFI(void *ip);
+  void usbBinderInI(void *ip, usbep_t ep);
+  void usbBinderOutI(void *ip, usbep_t ep);
+  msg_t usbBinderSetup(void *ip, bool *handledp);
   void usbInit(void);
   void _usb_reset(hal_usb_driver_c *usbp);
   void _usb_suspend(hal_usb_driver_c *usbp);
@@ -597,6 +830,581 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @name        Virtual methods of hal_usb_service_c
+ * @{
+ */
+/**
+ * @brief       Service-specific binding hook.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ * @param[in]     binderp       Binder owning the service.
+ * @return                      The operation status.
+ */
+CC_FORCE_INLINE
+static inline msg_t usbServiceOnBind(void *ip, struct hal_usb_binder *binderp) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+  return self->vmt->bind(ip, binderp);
+}
+
+/**
+ * @brief       Service-specific unbind hook.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ */
+CC_FORCE_INLINE
+static inline void usbServiceOnUnbind(void *ip) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+  self->vmt->unbind(ip);
+}
+
+/**
+ * @brief       Service-specific reset notification hook.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbServiceOnResetI(void *ip) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+  self->vmt->reset(ip);
+}
+
+/**
+ * @brief       Service-specific configure notification hook.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbServiceOnConfigureI(void *ip) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+  self->vmt->configure(ip);
+}
+
+/**
+ * @brief       Service-specific unconfigure notification hook.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbServiceOnUnconfigureI(void *ip) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+  self->vmt->unconfigure(ip);
+}
+
+/**
+ * @brief       Service-specific suspend notification hook.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbServiceOnSuspendI(void *ip) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+  self->vmt->suspend(ip);
+}
+
+/**
+ * @brief       Service-specific wake-up notification hook.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbServiceOnWakeupI(void *ip) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+  self->vmt->wakeup(ip);
+}
+
+/**
+ * @brief       Service-specific SOF notification hook.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbServiceOnSOFI(void *ip) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+  self->vmt->sof(ip);
+}
+
+/**
+ * @brief       Service-specific IN endpoint notification hook.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ * @param[in]     ep            Endpoint number.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbServiceOnInI(void *ip, usbep_t ep) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+  self->vmt->in(ip, ep);
+}
+
+/**
+ * @brief       Service-specific OUT endpoint notification hook.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ * @param[in]     ep            Endpoint number.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbServiceOnOutI(void *ip, usbep_t ep) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+  self->vmt->out(ip, ep);
+}
+
+/**
+ * @brief       Service-specific endpoint-zero request hook.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ * @param[out]    handledp      Handled flag.
+ * @return                      The operation status.
+ */
+CC_FORCE_INLINE
+static inline msg_t usbServiceOnSetup(void *ip, bool *handledp) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+  return self->vmt->setup(ip, handledp);
+}
+/** @} */
+
+/**
+ * @name        Inline methods of hal_usb_service_c
+ * @{
+ */
+/**
+ * @brief       Initializes the base USB service part of a derived object.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ * @param[in]     infop         Service ownership metadata.
+ * @param[in]     vmt           VMT of the concrete derived service.
+ * @return                      Pointer to the initialized object.
+ *
+ * @objinit
+ */
+CC_FORCE_INLINE
+static inline hal_usb_service_c *usbServiceObjectInit(void *ip,
+                                                      const hal_usb_service_info_t *infop,
+                                                      const struct hal_usb_service_vmt *vmt) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+  self = __usbsvc_objinit_impl(self, vmt);
+  self->info = infop;
+
+  return self;
+}
+
+/**
+ * @brief       Returns the current binder owning the service.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ * @return                      The bound binder or @p NULL.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline hal_usb_binder_c *usbServiceGetBinderX(void *ip) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+  return (hal_usb_binder_c *)self->binder;
+}
+
+/**
+ * @brief       Returns the service ownership metadata.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ * @return                      Pointer to the immutable metadata.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline const hal_usb_service_info_t *usbServiceGetInfoX(void *ip) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+  return self->info;
+}
+
+/**
+ * @brief       Sets the application-defined service argument.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ * @param[in]     arg           The new application-defined argument.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline void usbServiceSetArgumentX(void *ip, void *arg) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+  self->arg = arg;
+}
+
+/**
+ * @brief       Returns the application-defined service argument.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ * @return                      The application-defined argument.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline void *usbServiceGetArgumentX(void *ip) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+  return self->arg;
+}
+
+/**
+ * @brief       Checks whether the service owns a specific interface number.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ * @param[in]     ifn           Interface number to be tested.
+ * @return                      Ownership result.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline bool usbServiceOwnsInterfaceX(void *ip, uint8_t ifn) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+  unsigned base;
+  unsigned limit;
+
+  if ((self->info == NULL) || (self->info->if_count == 0U)) {
+    return false;
+  }
+
+  base  = (unsigned)self->info->if_base;
+  limit = base + (unsigned)self->info->if_count;
+
+  return ((unsigned)ifn >= base) && ((unsigned)ifn < limit);
+}
+
+/**
+ * @brief       Checks whether the service owns a specific IN endpoint.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ * @param[in]     ep            Endpoint number.
+ * @return                      Ownership result.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline bool usbServiceOwnsInEndpointX(void *ip, usbep_t ep) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+  if ((self->info == NULL) || (ep > (usbep_t)15U)) {
+    return false;
+  }
+
+  return (bool)((self->info->in_ep_mask &
+                 (uint16_t)((unsigned)1U << (unsigned)ep)) != 0U);
+}
+
+/**
+ * @brief       Checks whether the service owns a specific OUT endpoint.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_service_c instance.
+ * @param[in]     ep            Endpoint number.
+ * @return                      Ownership result.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline bool usbServiceOwnsOutEndpointX(void *ip, usbep_t ep) {
+  hal_usb_service_c *self = (hal_usb_service_c *)ip;
+  if ((self->info == NULL) || (ep > (usbep_t)15U)) {
+    return false;
+  }
+
+  return (bool)((self->info->out_ep_mask &
+                 (uint16_t)((unsigned)1U << (unsigned)ep)) != 0U);
+}
+/** @} */
+
+/**
+ * @name        Virtual methods of hal_usb_binder_c
+ * @{
+ */
+/**
+ * @brief       Binder-specific bind hook.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ * @param[in]     usbp          USB driver instance.
+ * @return                      The operation status.
+ */
+CC_FORCE_INLINE
+static inline msg_t usbBinderOnBind(void *ip, hal_usb_driver_c *usbp) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+  return self->vmt->bind(ip, usbp);
+}
+
+/**
+ * @brief       Binder-specific unbind hook.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ */
+CC_FORCE_INLINE
+static inline void usbBinderOnUnbind(void *ip) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+  self->vmt->unbind(ip);
+}
+
+/**
+ * @brief       Binder-specific descriptor lookup hook.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ * @param[in]     dtype         Descriptor type.
+ * @param[in]     dindex        Descriptor index.
+ * @param[in]     lang          Language identifier.
+ * @return                      Descriptor lookup result.
+ */
+CC_FORCE_INLINE
+static inline const usb_descriptor_t *usbBinderOnGetDescriptor(void *ip,
+                                                               uint8_t dtype,
+                                                               uint8_t dindex,
+                                                               uint16_t lang) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+  return self->vmt->get_descriptor(ip, dtype, dindex, lang);
+}
+
+/**
+ * @brief       Default reset notification dispatcher.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbBinderOnResetI(void *ip) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+  self->vmt->reset(ip);
+}
+
+/**
+ * @brief       Default configure notification dispatcher.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbBinderOnConfigureI(void *ip) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+  self->vmt->configure(ip);
+}
+
+/**
+ * @brief       Default unconfigure notification dispatcher.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbBinderOnUnconfigureI(void *ip) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+  self->vmt->unconfigure(ip);
+}
+
+/**
+ * @brief       Default suspend notification dispatcher.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbBinderOnSuspendI(void *ip) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+  self->vmt->suspend(ip);
+}
+
+/**
+ * @brief       Default wake-up notification dispatcher.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbBinderOnWakeupI(void *ip) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+  self->vmt->wakeup(ip);
+}
+
+/**
+ * @brief       Default SOF notification dispatcher.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbBinderOnSOFI(void *ip) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+  self->vmt->sof(ip);
+}
+
+/**
+ * @brief       Default IN endpoint notification dispatcher.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ * @param[in]     ep            Endpoint number.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbBinderOnInI(void *ip, usbep_t ep) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+  self->vmt->in(ip, ep);
+}
+
+/**
+ * @brief       Default OUT endpoint notification dispatcher.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ * @param[in]     ep            Endpoint number.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline void usbBinderOnOutI(void *ip, usbep_t ep) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+  self->vmt->out(ip, ep);
+}
+
+/**
+ * @brief       Default endpoint-zero request dispatcher.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ * @param[out]    handledp      Handled flag.
+ * @return                      The operation status.
+ */
+CC_FORCE_INLINE
+static inline msg_t usbBinderOnSetup(void *ip, bool *handledp) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+  return self->vmt->setup(ip, handledp);
+}
+/** @} */
+
+/**
+ * @name        Inline methods of hal_usb_binder_c
+ * @{
+ */
+/**
+ * @brief       Initializes the base USB binder part of a derived object.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ * @param[in]     vmt           VMT of the concrete derived binder.
+ * @return                      Pointer to the initialized object.
+ *
+ * @objinit
+ */
+CC_FORCE_INLINE
+static inline hal_usb_binder_c *usbBinderObjectInit(void *ip,
+                                                    const struct hal_usb_binder_vmt *vmt) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+  return __usbbnd_objinit_impl(self, vmt);
+}
+
+/**
+ * @brief       Returns the currently bound USB driver.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ * @return                      The bound USB driver or @p NULL.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline hal_usb_driver_c *usbBinderGetDriverX(void *ip) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+  return self->usbp;
+}
+
+/**
+ * @brief       Returns the first registered service.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ * @return                      Pointer to the first service or @p NULL.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline hal_usb_service_c *usbBinderGetFirstServiceX(void *ip) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+  return self->services;
+}
+
+/**
+ * @brief       Returns the number of registered services.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ * @return                      The number of registered services.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline unsigned usbBinderGetServicesNumX(void *ip) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+  return self->services_num;
+}
+
+/**
+ * @brief       Sets the application-defined binder argument.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ * @param[in]     arg           The new application-defined argument.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline void usbBinderSetArgumentX(void *ip, void *arg) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+  self->arg = arg;
+}
+
+/**
+ * @brief       Returns the application-defined binder argument.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_usb_binder_c instance.
+ * @return                      The application-defined argument.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline void *usbBinderGetArgumentX(void *ip) {
+  hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+  return self->arg;
+}
+/** @} */
 
 /**
  * @name        Default constructor of hal_usb_driver_c

@@ -232,11 +232,9 @@ do {
       <verbatim><![CDATA[
 typedef uint8_t usbep_t;
 typedef driver_state_t usbstate_t;
-typedef struct hal_usb_binder hal_usb_binder_c;
+struct hal_usb_service;
+struct hal_usb_binder;
 
-#define USB_UNINIT                         HAL_DRV_STATE_UNINIT
-#define USB_STOP                           HAL_DRV_STATE_STOP
-#define USB_READY                          HAL_DRV_STATE_READY
 #define USB_SELECTED                       (HAL_DRV_STATE_ACTIVE + 1U)
 #define USB_ACTIVE                         (HAL_DRV_STATE_ACTIVE + 2U)
 #define USB_SUSPENDED                      (HAL_DRV_STATE_ACTIVE + 3U)
@@ -320,6 +318,504 @@ struct usb_configurations {
   unsigned                  cfgsnum;
   hal_usb_config_t          cfgs[];
 };]]></verbatim>
+      <typedef name="hal_usb_service_info_t">
+        <brief>Type of structure representing USB service ownership metadata.</brief>
+        <basetype ctype="struct hal_usb_service_info" />
+      </typedef>
+      <struct name="hal_usb_service_info">
+        <brief>USB service ownership metadata.</brief>
+        <details><![CDATA[This structure identifies the interfaces and
+          endpoints managed by a USB service instance. Endpoint zero is never
+          owned by a service.]]></details>
+        <fields>
+          <field name="if_base" ctype="uint8_t">
+            <brief>First interface number owned by the service.</brief>
+          </field>
+          <field name="if_count" ctype="uint8_t">
+            <brief>Number of consecutive interfaces owned by the service.</brief>
+          </field>
+          <field name="in_ep_mask" ctype="uint16_t">
+            <brief>Bit mask of owned IN endpoints, bit N corresponds to
+              endpoint N.</brief>
+          </field>
+          <field name="out_ep_mask" ctype="uint16_t">
+            <brief>Bit mask of owned OUT endpoints, bit N corresponds to
+              endpoint N.</brief>
+          </field>
+        </fields>
+      </struct>
+      <class type="abstract" name="hal_usb_service" namespace="usbsvc"
+        ancestorname="base_object" descr="USB service">
+        <brief>Base class for composable USB services.</brief>
+        <details><![CDATA[This class represents a reusable USB function or
+          service managed by a USB binder. A service exposes static ownership
+          metadata together with USB-specific lifecycle and dispatch hooks, but
+          it does not own the USB peripheral lifecycle. The virtual methods
+          carrying the @p I suffix must be invoked with the system lock
+          already held by the caller.]]></details>
+        <fields>
+          <field name="binder" ctype="struct hal_usb_binder *">
+            <brief>Binder currently owning the service, can be @p NULL.</brief>
+          </field>
+          <field name="info" ctype="const hal_usb_service_info_t *">
+            <brief>Pointer to the immutable service ownership metadata.</brief>
+          </field>
+          <field name="arg" ctype="void *">
+            <brief>Application-defined service argument.</brief>
+          </field>
+          <field name="next" ctype="hal_usb_service_c *">
+            <brief>Next service in the binder registration list.</brief>
+          </field>
+          <field name="prev" ctype="hal_usb_service_c *">
+            <brief>Previous service in the binder registration list.</brief>
+          </field>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+self->binder = NULL;
+self->info   = NULL;
+self->arg    = NULL;
+self->next   = NULL;
+self->prev   = NULL;]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[ ]]></implementation>
+          </dispose>
+          <virtual>
+            <method name="usbServiceOnBind" shortname="bind" ctype="msg_t">
+              <brief>Service-specific binding hook.</brief>
+              <param name="binderp" ctype="struct hal_usb_binder *" dir="in">
+                Binder owning the service.
+              </param>
+              <return>The operation status.</return>
+              <implementation><![CDATA[
+(void)self;
+(void)binderp;
+
+return HAL_RET_SUCCESS;]]></implementation>
+            </method>
+            <method name="usbServiceOnUnbind" shortname="unbind" ctype="void">
+              <brief>Service-specific unbind hook.</brief>
+              <implementation><![CDATA[
+(void)self;]]></implementation>
+            </method>
+            <method name="usbServiceOnResetI" shortname="reset" ctype="void">
+              <brief>Service-specific reset notification hook.</brief>
+              <iclass />
+              <implementation><![CDATA[
+(void)self;]]></implementation>
+            </method>
+            <method name="usbServiceOnConfigureI" shortname="configure"
+              ctype="void">
+              <brief>Service-specific configure notification hook.</brief>
+              <iclass />
+              <implementation><![CDATA[
+(void)self;]]></implementation>
+            </method>
+            <method name="usbServiceOnUnconfigureI" shortname="unconfigure"
+              ctype="void">
+              <brief>Service-specific unconfigure notification hook.</brief>
+              <iclass />
+              <implementation><![CDATA[
+(void)self;]]></implementation>
+            </method>
+            <method name="usbServiceOnSuspendI" shortname="suspend"
+              ctype="void">
+              <brief>Service-specific suspend notification hook.</brief>
+              <iclass />
+              <implementation><![CDATA[
+(void)self;]]></implementation>
+            </method>
+            <method name="usbServiceOnWakeupI" shortname="wakeup"
+              ctype="void">
+              <brief>Service-specific wake-up notification hook.</brief>
+              <iclass />
+              <implementation><![CDATA[
+(void)self;]]></implementation>
+            </method>
+            <method name="usbServiceOnSOFI" shortname="sof" ctype="void">
+              <brief>Service-specific SOF notification hook.</brief>
+              <iclass />
+              <implementation><![CDATA[
+(void)self;]]></implementation>
+            </method>
+            <method name="usbServiceOnInI" shortname="in" ctype="void">
+              <brief>Service-specific IN endpoint notification hook.</brief>
+              <param name="ep" ctype="usbep_t" dir="in">Endpoint number.</param>
+              <iclass />
+              <implementation><![CDATA[
+(void)self;
+(void)ep;]]></implementation>
+            </method>
+            <method name="usbServiceOnOutI" shortname="out" ctype="void">
+              <brief>Service-specific OUT endpoint notification hook.</brief>
+              <param name="ep" ctype="usbep_t" dir="in">Endpoint number.</param>
+              <iclass />
+              <implementation><![CDATA[
+(void)self;
+(void)ep;]]></implementation>
+            </method>
+            <method name="usbServiceOnSetup" shortname="setup" ctype="msg_t">
+              <brief>Service-specific endpoint-zero request hook.</brief>
+              <param name="handledp" ctype="bool *" dir="out">
+                Handled flag.
+              </param>
+              <return>The operation status.</return>
+              <implementation><![CDATA[
+(void)self;
+if (handledp != NULL) {
+  *handledp = false;
+}
+
+return HAL_RET_SUCCESS;]]></implementation>
+            </method>
+          </virtual>
+          <inline>
+            <method name="usbServiceObjectInit" ctype="hal_usb_service_c *">
+              <brief>Initializes the base USB service part of a derived
+                object.</brief>
+              <param name="infop" ctype="const hal_usb_service_info_t *"
+                dir="in">
+                Service ownership metadata.
+              </param>
+              <param name="vmt" ctype="const struct hal_usb_service_vmt *"
+                dir="in">
+                VMT of the concrete derived service.
+              </param>
+              <return>Pointer to the initialized object.</return>
+              <objinit />
+              <implementation><![CDATA[
+self = __usbsvc_objinit_impl(self, vmt);
+self->info = infop;
+
+return self;]]></implementation>
+            </method>
+            <method name="usbServiceGetBinderX"
+              ctype="hal_usb_binder_c *">
+              <brief>Returns the current binder owning the service.</brief>
+              <return>The bound binder or @p NULL.</return>
+              <xclass />
+              <implementation><![CDATA[
+return (hal_usb_binder_c *)self->binder;]]></implementation>
+            </method>
+            <method name="usbServiceGetInfoX"
+              ctype="const hal_usb_service_info_t *">
+              <brief>Returns the service ownership metadata.</brief>
+              <return>Pointer to the immutable metadata.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->info;]]></implementation>
+            </method>
+            <method name="usbServiceSetArgumentX" ctype="void">
+              <brief>Sets the application-defined service argument.</brief>
+              <param name="arg" ctype="void *" dir="in">
+                The new application-defined argument.
+              </param>
+              <xclass />
+              <implementation><![CDATA[
+self->arg = arg;]]></implementation>
+            </method>
+            <method name="usbServiceGetArgumentX" ctype="void *">
+              <brief>Returns the application-defined service argument.</brief>
+              <return>The application-defined argument.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->arg;]]></implementation>
+            </method>
+            <method name="usbServiceOwnsInterfaceX" ctype="bool">
+              <brief>Checks whether the service owns a specific interface
+                number.</brief>
+              <param name="ifn" ctype="uint8_t" dir="in">
+                Interface number to be tested.
+              </param>
+              <return>Ownership result.</return>
+              <xclass />
+              <implementation><![CDATA[
+unsigned base;
+unsigned limit;
+
+if ((self->info == NULL) || (self->info->if_count == 0U)) {
+  return false;
+}
+
+base  = (unsigned)self->info->if_base;
+limit = base + (unsigned)self->info->if_count;
+
+return ((unsigned)ifn >= base) && ((unsigned)ifn < limit);]]></implementation>
+            </method>
+            <method name="usbServiceOwnsInEndpointX" ctype="bool">
+              <brief>Checks whether the service owns a specific IN
+                endpoint.</brief>
+              <param name="ep" ctype="usbep_t" dir="in">Endpoint number.</param>
+              <return>Ownership result.</return>
+              <xclass />
+              <implementation><![CDATA[
+if ((self->info == NULL) || (ep > (usbep_t)15U)) {
+  return false;
+}
+
+return (bool)((self->info->in_ep_mask &
+               (uint16_t)((unsigned)1U << (unsigned)ep)) != 0U);]]></implementation>
+            </method>
+            <method name="usbServiceOwnsOutEndpointX" ctype="bool">
+              <brief>Checks whether the service owns a specific OUT
+                endpoint.</brief>
+              <param name="ep" ctype="usbep_t" dir="in">Endpoint number.</param>
+              <return>Ownership result.</return>
+              <xclass />
+              <implementation><![CDATA[
+if ((self->info == NULL) || (ep > (usbep_t)15U)) {
+  return false;
+}
+
+return (bool)((self->info->out_ep_mask &
+               (uint16_t)((unsigned)1U << (unsigned)ep)) != 0U);]]></implementation>
+            </method>
+          </inline>
+        </methods>
+      </class>
+      <class type="abstract" name="hal_usb_binder" namespace="usbbnd"
+        ancestorname="base_object" descr="USB binder">
+        <brief>Base class for USB device binders.</brief>
+        <details><![CDATA[A binder is the device-composition object sitting
+          between a USB driver instance and one or more USB services. The
+          binder owns the final descriptors and dispatches USB events to the
+          registered services. The virtual methods carrying the @p I suffix
+          must be invoked with the system lock already held by the caller.]]></details>
+        <fields>
+          <field name="usbp" ctype="hal_usb_driver_c *">
+            <brief>Currently bound USB driver, can be @p NULL.</brief>
+          </field>
+          <field name="services" ctype="hal_usb_service_c *">
+            <brief>Head of the registered services list.</brief>
+          </field>
+          <field name="service_last" ctype="hal_usb_service_c *">
+            <brief>Tail of the registered services list.</brief>
+          </field>
+          <field name="services_num" ctype="unsigned">
+            <brief>Number of registered services.</brief>
+          </field>
+          <field name="arg" ctype="void *">
+            <brief>Application-defined binder argument.</brief>
+          </field>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+self->usbp         = NULL;
+self->services     = NULL;
+self->service_last = NULL;
+self->services_num = 0U;
+self->arg          = NULL;]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[ ]]></implementation>
+          </dispose>
+          <virtual>
+            <method name="usbBinderOnBind" shortname="bind" ctype="msg_t">
+              <brief>Binder-specific bind hook.</brief>
+              <param name="usbp" ctype="hal_usb_driver_c *" dir="in">
+                USB driver instance.
+              </param>
+              <return>The operation status.</return>
+              <implementation><![CDATA[
+(void)self;
+(void)usbp;
+
+return HAL_RET_SUCCESS;]]></implementation>
+            </method>
+            <method name="usbBinderOnUnbind" shortname="unbind" ctype="void">
+              <brief>Binder-specific unbind hook.</brief>
+              <implementation><![CDATA[
+(void)self;]]></implementation>
+            </method>
+            <method name="usbBinderOnGetDescriptor" shortname="get_descriptor"
+              ctype="const usb_descriptor_t *">
+              <brief>Binder-specific descriptor lookup hook.</brief>
+              <param name="dtype" ctype="uint8_t" dir="in">Descriptor type.</param>
+              <param name="dindex" ctype="uint8_t" dir="in">Descriptor index.</param>
+              <param name="lang" ctype="uint16_t" dir="in">Language identifier.</param>
+              <return>Descriptor lookup result.</return>
+              <implementation><![CDATA[
+(void)self;
+(void)dtype;
+(void)dindex;
+(void)lang;
+
+return NULL;]]></implementation>
+            </method>
+            <method name="usbBinderOnResetI" shortname="reset" ctype="void">
+              <brief>Default reset notification dispatcher.</brief>
+              <iclass />
+              <implementation><![CDATA[
+hal_usb_service_c *servicep;
+
+for (servicep = self->services; servicep != NULL; servicep = servicep->next) {
+  usbServiceOnResetI(servicep);
+}]]></implementation>
+            </method>
+            <method name="usbBinderOnConfigureI" shortname="configure"
+              ctype="void">
+              <brief>Default configure notification dispatcher.</brief>
+              <iclass />
+              <implementation><![CDATA[
+hal_usb_service_c *servicep;
+
+for (servicep = self->services; servicep != NULL; servicep = servicep->next) {
+  usbServiceOnConfigureI(servicep);
+}]]></implementation>
+            </method>
+            <method name="usbBinderOnUnconfigureI" shortname="unconfigure"
+              ctype="void">
+              <brief>Default unconfigure notification dispatcher.</brief>
+              <iclass />
+              <implementation><![CDATA[
+hal_usb_service_c *servicep;
+
+for (servicep = self->services; servicep != NULL; servicep = servicep->next) {
+  usbServiceOnUnconfigureI(servicep);
+}]]></implementation>
+            </method>
+            <method name="usbBinderOnSuspendI" shortname="suspend"
+              ctype="void">
+              <brief>Default suspend notification dispatcher.</brief>
+              <iclass />
+              <implementation><![CDATA[
+hal_usb_service_c *servicep;
+
+for (servicep = self->services; servicep != NULL; servicep = servicep->next) {
+  usbServiceOnSuspendI(servicep);
+}]]></implementation>
+            </method>
+            <method name="usbBinderOnWakeupI" shortname="wakeup"
+              ctype="void">
+              <brief>Default wake-up notification dispatcher.</brief>
+              <iclass />
+              <implementation><![CDATA[
+hal_usb_service_c *servicep;
+
+for (servicep = self->services; servicep != NULL; servicep = servicep->next) {
+  usbServiceOnWakeupI(servicep);
+}]]></implementation>
+            </method>
+            <method name="usbBinderOnSOFI" shortname="sof" ctype="void">
+              <brief>Default SOF notification dispatcher.</brief>
+              <iclass />
+              <implementation><![CDATA[
+hal_usb_service_c *servicep;
+
+for (servicep = self->services; servicep != NULL; servicep = servicep->next) {
+  usbServiceOnSOFI(servicep);
+}]]></implementation>
+            </method>
+            <method name="usbBinderOnInI" shortname="in" ctype="void">
+              <brief>Default IN endpoint notification dispatcher.</brief>
+              <param name="ep" ctype="usbep_t" dir="in">Endpoint number.</param>
+              <iclass />
+              <implementation><![CDATA[
+hal_usb_service_c *servicep;
+
+for (servicep = self->services; servicep != NULL; servicep = servicep->next) {
+  if (usbServiceOwnsInEndpointX(servicep, ep)) {
+    usbServiceOnInI(servicep, ep);
+    return;
+  }
+}]]></implementation>
+            </method>
+            <method name="usbBinderOnOutI" shortname="out" ctype="void">
+              <brief>Default OUT endpoint notification dispatcher.</brief>
+              <param name="ep" ctype="usbep_t" dir="in">Endpoint number.</param>
+              <iclass />
+              <implementation><![CDATA[
+hal_usb_service_c *servicep;
+
+for (servicep = self->services; servicep != NULL; servicep = servicep->next) {
+  if (usbServiceOwnsOutEndpointX(servicep, ep)) {
+    usbServiceOnOutI(servicep, ep);
+    return;
+  }
+}]]></implementation>
+            </method>
+            <method name="usbBinderOnSetup" shortname="setup" ctype="msg_t">
+              <brief>Default endpoint-zero request dispatcher.</brief>
+              <param name="handledp" ctype="bool *" dir="out">
+                Handled flag.
+              </param>
+              <return>The operation status.</return>
+              <implementation><![CDATA[
+hal_usb_service_c *servicep;
+
+*handledp = false;
+for (servicep = self->services; servicep != NULL; servicep = servicep->next) {
+  msg_t msg;
+  bool handled;
+
+  handled = false;
+  msg = usbServiceSetup(servicep, &handled);
+  if ((msg != HAL_RET_SUCCESS) || handled) {
+    *handledp = handled;
+    return msg;
+  }
+}
+
+return HAL_RET_SUCCESS;]]></implementation>
+            </method>
+          </virtual>
+          <inline>
+            <method name="usbBinderObjectInit" ctype="hal_usb_binder_c *">
+              <brief>Initializes the base USB binder part of a derived
+                object.</brief>
+              <param name="vmt" ctype="const struct hal_usb_binder_vmt *"
+                dir="in">
+                VMT of the concrete derived binder.
+              </param>
+              <return>Pointer to the initialized object.</return>
+              <objinit />
+              <implementation><![CDATA[
+return __usbbnd_objinit_impl(self, vmt);]]></implementation>
+            </method>
+            <method name="usbBinderGetDriverX" ctype="hal_usb_driver_c *">
+              <brief>Returns the currently bound USB driver.</brief>
+              <return>The bound USB driver or @p NULL.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->usbp;]]></implementation>
+            </method>
+            <method name="usbBinderGetFirstServiceX"
+              ctype="hal_usb_service_c *">
+              <brief>Returns the first registered service.</brief>
+              <return>Pointer to the first service or @p NULL.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->services;]]></implementation>
+            </method>
+            <method name="usbBinderGetServicesNumX" ctype="unsigned">
+              <brief>Returns the number of registered services.</brief>
+              <return>The number of registered services.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->services_num;]]></implementation>
+            </method>
+            <method name="usbBinderSetArgumentX" ctype="void">
+              <brief>Sets the application-defined binder argument.</brief>
+              <param name="arg" ctype="void *" dir="in">
+                The new application-defined argument.
+              </param>
+              <xclass />
+              <implementation><![CDATA[
+self->arg = arg;]]></implementation>
+            </method>
+            <method name="usbBinderGetArgumentX" ctype="void *">
+              <brief>Returns the application-defined binder argument.</brief>
+              <return>The application-defined argument.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->arg;]]></implementation>
+            </method>
+          </inline>
+        </methods>
+      </class>
       <class type="regular" name="hal_usb_driver" namespace="usb"
         ancestorname="hal_base_driver" descr="USB driver">
         <brief>Class of a USB driver.</brief>
@@ -375,7 +871,7 @@ self->ep0reset      = 0U;
 self->status        = 0U;
 self->address       = 0U;
 self->configuration = 0U;
-self->saved_state   = USB_STOP;
+self->saved_state   = HAL_DRV_STATE_STOP;
 for (i = 0U; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
   self->epc[i] = NULL;
 }
@@ -670,7 +1166,8 @@ msg_t msg;
 osalDbgCheck(self != NULL);
 
 osalSysLock();
-if ((self->state == USB_STOP) || (self->state == USB_UNINIT)) {
+if ((self->state == HAL_DRV_STATE_STOP) ||
+    (self->state == HAL_DRV_STATE_UNINIT)) {
   osalSysUnlock();
   return MSG_RESET;
 }
@@ -1068,7 +1565,7 @@ self->ep0reset      = 0U;
 self->status        = 0U;
 self->address       = 0U;
 self->configuration = 0U;
-self->saved_state   = USB_STOP;
+self->saved_state   = HAL_DRV_STATE_STOP;
 for (i = 0U; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
   self->epc[i] = NULL;
 }
@@ -1104,7 +1601,7 @@ self->ep0reset      = 0U;
 self->status        = 0U;
 self->address       = 0U;
 self->configuration = 0U;
-self->saved_state   = USB_STOP;
+self->saved_state   = HAL_DRV_STATE_STOP;
 for (i = 0U; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
 #if USB_USE_WAIT == TRUE
   if (self->epc[i] != NULL) {
@@ -1145,6 +1642,486 @@ return (const void *)usb_lld_selcfg(self, cfgnum);]]></implementation>
       </class>
     </types>
     <functions>
+      <function name="usbServiceBind" ctype="msg_t">
+        <brief>Binds a USB service to a USB binder.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_service_c instance.
+        </param>
+        <param name="binderp" ctype="hal_usb_binder_c *" dir="in">
+          Binder owning the service.
+        </param>
+        <return>The operation status.</return>
+        <api />
+        <implementation><![CDATA[
+hal_usb_service_c *self = (hal_usb_service_c *)ip;
+msg_t msg;
+
+osalDbgCheck((self != NULL) && (binderp != NULL));
+osalDbgAssert(self->binder == NULL, "already bound");
+
+self->binder = (struct hal_usb_binder *)binderp;
+msg = usbServiceOnBind(self, (struct hal_usb_binder *)binderp);
+if (msg != HAL_RET_SUCCESS) {
+  self->binder = NULL;
+}
+
+return msg;]]></implementation>
+      </function>
+      <function name="usbServiceUnbind" ctype="void">
+        <brief>Unbinds a USB service from its binder.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_service_c instance.
+        </param>
+        <api />
+        <implementation><![CDATA[
+hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+osalDbgCheck(self != NULL);
+
+usbServiceOnUnbind(self);
+self->binder = NULL;]]></implementation>
+      </function>
+      <function name="usbServiceResetI" ctype="void">
+        <brief>Notifies a USB service of a reset event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_service_c instance.
+        </param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+usbServiceOnResetI(self);
+]]></implementation>
+      </function>
+      <function name="usbServiceConfigureI" ctype="void">
+        <brief>Notifies a USB service of a configuration event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_service_c instance.
+        </param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+usbServiceOnConfigureI(self);
+]]></implementation>
+      </function>
+      <function name="usbServiceUnconfigureI" ctype="void">
+        <brief>Notifies a USB service of an unconfigure event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_service_c instance.
+        </param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+usbServiceOnUnconfigureI(self);
+]]></implementation>
+      </function>
+      <function name="usbServiceSuspendI" ctype="void">
+        <brief>Notifies a USB service of a suspend event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_service_c instance.
+        </param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+usbServiceOnSuspendI(self);
+]]></implementation>
+      </function>
+      <function name="usbServiceWakeupI" ctype="void">
+        <brief>Notifies a USB service of a wake-up event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_service_c instance.
+        </param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+usbServiceOnWakeupI(self);
+]]></implementation>
+      </function>
+      <function name="usbServiceSOFI" ctype="void">
+        <brief>Notifies a USB service of a start-of-frame event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_service_c instance.
+        </param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+usbServiceOnSOFI(self);
+]]></implementation>
+      </function>
+      <function name="usbServiceInI" ctype="void">
+        <brief>Notifies a USB service of an IN endpoint event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_service_c instance.
+        </param>
+        <param name="ep" ctype="usbep_t" dir="in">Endpoint number.</param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (ep <= (usbep_t)USB_MAX_ENDPOINTS));
+usbServiceOnInI(self, ep);
+]]></implementation>
+      </function>
+      <function name="usbServiceOutI" ctype="void">
+        <brief>Notifies a USB service of an OUT endpoint event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_service_c instance.
+        </param>
+        <param name="ep" ctype="usbep_t" dir="in">Endpoint number.</param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (ep <= (usbep_t)USB_MAX_ENDPOINTS));
+usbServiceOnOutI(self, ep);
+]]></implementation>
+      </function>
+      <function name="usbServiceSetup" ctype="msg_t">
+        <brief>Dispatches an endpoint-zero request to a USB service.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_service_c instance.
+        </param>
+        <param name="handledp" ctype="bool *" dir="out">
+          Handled flag.
+        </param>
+        <return>The operation status.</return>
+        <api />
+        <implementation><![CDATA[
+hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+osalDbgCheck((self != NULL) && (handledp != NULL));
+
+return usbServiceOnSetup(self, handledp);]]></implementation>
+      </function>
+      <function name="usbBinderBind" ctype="msg_t">
+        <brief>Binds a USB binder to a USB driver.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_binder_c instance.
+        </param>
+        <param name="usbp" ctype="hal_usb_driver_c *" dir="in">
+          USB driver instance.
+        </param>
+        <return>The operation status.</return>
+        <api />
+        <implementation><![CDATA[
+hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+hal_usb_service_c *servicep;
+msg_t msg;
+
+osalDbgCheck((self != NULL) && (usbp != NULL));
+osalDbgAssert(self->usbp == NULL, "already bound");
+
+self->usbp = usbp;
+msg = usbBinderOnBind(self, usbp);
+if (msg != HAL_RET_SUCCESS) {
+  self->usbp = NULL;
+  return msg;
+}
+
+for (servicep = self->services; servicep != NULL; servicep = servicep->next) {
+  msg = usbServiceBind(servicep, self);
+  if (msg != HAL_RET_SUCCESS) {
+    hal_usb_service_c *sp;
+
+    for (sp = self->services; sp != servicep; sp = sp->next) {
+      usbServiceUnbind(sp);
+    }
+    usbBinderOnUnbind(self);
+    self->usbp = NULL;
+    return msg;
+  }
+}
+
+return HAL_RET_SUCCESS;]]></implementation>
+      </function>
+      <function name="usbBinderUnbind" ctype="void">
+        <brief>Unbinds a USB binder from its USB driver.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_binder_c instance.
+        </param>
+        <api />
+        <implementation><![CDATA[
+hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+hal_usb_service_c *servicep;
+
+osalDbgCheck(self != NULL);
+
+for (servicep = self->services; servicep != NULL; servicep = servicep->next) {
+  if (usbServiceGetBinderX(servicep) == self) {
+    usbServiceUnbind(servicep);
+  }
+}
+
+usbBinderOnUnbind(self);
+self->usbp = NULL;]]></implementation>
+      </function>
+      <function name="usbBinderRegisterService" ctype="msg_t">
+        <brief>Registers a USB service on a binder.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_binder_c instance.
+        </param>
+        <param name="servicep" ctype="hal_usb_service_c *" dir="in">
+          Service to be registered.
+        </param>
+        <return>The operation status.</return>
+        <api />
+        <implementation><![CDATA[
+hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+hal_usb_service_c *sp;
+
+osalDbgCheck((self != NULL) && (servicep != NULL));
+osalDbgAssert(self->usbp == NULL, "registration while bound");
+osalDbgAssert(usbServiceGetBinderX(servicep) == NULL, "service already bound");
+osalDbgAssert((servicep->next == NULL) && (servicep->prev == NULL),
+              "service already linked");
+osalDbgAssert(usbServiceGetInfoX(servicep) != NULL, "missing service info");
+
+for (sp = self->services; sp != NULL; sp = sp->next) {
+  osalDbgAssert(sp != servicep, "service already registered");
+  if (usbbnd_service_conflict(usbServiceGetInfoX(servicep),
+                              usbServiceGetInfoX(sp))) {
+    return HAL_RET_INV_STATE;
+  }
+}
+
+servicep->prev = self->service_last;
+servicep->next = NULL;
+if (self->service_last != NULL) {
+  self->service_last->next = servicep;
+}
+else {
+  self->services = servicep;
+}
+self->service_last = servicep;
+self->services_num++;
+
+return HAL_RET_SUCCESS;]]></implementation>
+      </function>
+      <function name="usbBinderUnregisterService" ctype="msg_t">
+        <brief>Unregisters a USB service from a binder.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_binder_c instance.
+        </param>
+        <param name="servicep" ctype="hal_usb_service_c *" dir="in">
+          Service to be unregistered.
+        </param>
+        <return>The operation status.</return>
+        <api />
+        <implementation><![CDATA[
+hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+hal_usb_service_c *sp;
+
+osalDbgCheck((self != NULL) && (servicep != NULL));
+osalDbgAssert(self->usbp == NULL, "unregistration while bound");
+
+for (sp = self->services; sp != NULL; sp = sp->next) {
+  if (sp == servicep) {
+    break;
+  }
+}
+if (sp == NULL) {
+  return HAL_RET_INV_STATE;
+}
+
+if (servicep->prev != NULL) {
+  servicep->prev->next = servicep->next;
+}
+else {
+  self->services = servicep->next;
+}
+if (servicep->next != NULL) {
+  servicep->next->prev = servicep->prev;
+}
+else {
+  self->service_last = servicep->prev;
+}
+servicep->next = NULL;
+servicep->prev = NULL;
+self->services_num--;
+
+return HAL_RET_SUCCESS;]]></implementation>
+      </function>
+      <function name="usbBinderGetNextServiceX" ctype="hal_usb_service_c *">
+        <brief>Returns the next registered service.</brief>
+        <param name="ip" ctype="void *" dir="in">
+          Pointer to a @p hal_usb_service_c instance.
+        </param>
+        <return>Pointer to the next service or @p NULL.</return>
+        <xclass />
+        <implementation><![CDATA[
+hal_usb_service_c *self = (hal_usb_service_c *)ip;
+
+osalDbgCheck(self != NULL);
+
+return self->next;]]></implementation>
+      </function>
+      <function name="usbBinderGetDescriptor" ctype="const usb_descriptor_t *">
+        <brief>Requests a descriptor from a USB binder.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_binder_c instance.
+        </param>
+        <param name="dtype" ctype="uint8_t" dir="in">Descriptor type.</param>
+        <param name="dindex" ctype="uint8_t" dir="in">Descriptor index.</param>
+        <param name="lang" ctype="uint16_t" dir="in">Language identifier.</param>
+        <return>Descriptor lookup result.</return>
+        <api />
+        <implementation><![CDATA[
+hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+osalDbgCheck(self != NULL);
+
+return usbBinderOnGetDescriptor(self, dtype, dindex, lang);]]></implementation>
+      </function>
+      <function name="usbBinderResetI" ctype="void">
+        <brief>Notifies a USB binder of a reset event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_binder_c instance.
+        </param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+usbBinderOnResetI(self);
+]]></implementation>
+      </function>
+      <function name="usbBinderConfigureI" ctype="void">
+        <brief>Notifies a USB binder of a configuration event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_binder_c instance.
+        </param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+usbBinderOnConfigureI(self);
+]]></implementation>
+      </function>
+      <function name="usbBinderUnconfigureI" ctype="void">
+        <brief>Notifies a USB binder of an unconfigure event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_binder_c instance.
+        </param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+usbBinderOnUnconfigureI(self);
+]]></implementation>
+      </function>
+      <function name="usbBinderSuspendI" ctype="void">
+        <brief>Notifies a USB binder of a suspend event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_binder_c instance.
+        </param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+usbBinderOnSuspendI(self);
+]]></implementation>
+      </function>
+      <function name="usbBinderWakeupI" ctype="void">
+        <brief>Notifies a USB binder of a wake-up event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_binder_c instance.
+        </param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+usbBinderOnWakeupI(self);
+]]></implementation>
+      </function>
+      <function name="usbBinderSOFI" ctype="void">
+        <brief>Notifies a USB binder of a start-of-frame event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_binder_c instance.
+        </param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+usbBinderOnSOFI(self);
+]]></implementation>
+      </function>
+      <function name="usbBinderInI" ctype="void">
+        <brief>Notifies a USB binder of an IN endpoint event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_binder_c instance.
+        </param>
+        <param name="ep" ctype="usbep_t" dir="in">Endpoint number.</param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (ep <= (usbep_t)USB_MAX_ENDPOINTS));
+usbBinderOnInI(self, ep);
+]]></implementation>
+      </function>
+      <function name="usbBinderOutI" ctype="void">
+        <brief>Notifies a USB binder of an OUT endpoint event.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_binder_c instance.
+        </param>
+        <param name="ep" ctype="usbep_t" dir="in">Endpoint number.</param>
+        <iclass />
+        <implementation><![CDATA[
+hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (ep <= (usbep_t)USB_MAX_ENDPOINTS));
+usbBinderOnOutI(self, ep);
+]]></implementation>
+      </function>
+      <function name="usbBinderSetup" ctype="msg_t">
+        <brief>Dispatches an endpoint-zero request through a USB binder.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_binder_c instance.
+        </param>
+        <param name="handledp" ctype="bool *" dir="out">
+          Handled flag.
+        </param>
+        <return>The operation status.</return>
+        <api />
+        <implementation><![CDATA[
+hal_usb_binder_c *self = (hal_usb_binder_c *)ip;
+
+osalDbgCheck((self != NULL) && (handledp != NULL));
+
+return usbBinderOnSetup(self, handledp);]]></implementation>
+      </function>
       <function name="usbInit" ctype="void">
         <brief>USB Driver initialization.</brief>
         <init />
@@ -1160,7 +2137,7 @@ usb_lld_init();]]></implementation>
         <implementation><![CDATA[
 unsigned i;
 
-usbp->state         = USB_READY;
+usbp->state         = HAL_DRV_STATE_READY;
 usbp->status        = 0U;
 usbp->address       = 0U;
 usbp->configuration = 0U;
@@ -1375,6 +2352,39 @@ hw |= (uint16_t)*p << 8U;
 
 return hw;]]></implementation>
       </function>
+      <function name="usbbnd_if_conflict" ctype="bool">
+        <param name="ap" ctype="const hal_usb_service_info_t *" dir="in"></param>
+        <param name="bp" ctype="const hal_usb_service_info_t *" dir="in"></param>
+        <implementation><![CDATA[
+unsigned abase, alimit, bbase, blimit;
+
+if ((ap->if_count == 0U) || (bp->if_count == 0U)) {
+  return false;
+}
+
+abase  = (unsigned)ap->if_base;
+alimit = abase + (unsigned)ap->if_count;
+bbase  = (unsigned)bp->if_base;
+blimit = bbase + (unsigned)bp->if_count;
+
+return (abase < blimit) && (bbase < alimit);]]></implementation>
+      </function>
+      <function name="usbbnd_service_conflict" ctype="bool">
+        <param name="ap" ctype="const hal_usb_service_info_t *" dir="in"></param>
+        <param name="bp" ctype="const hal_usb_service_info_t *" dir="in"></param>
+        <implementation><![CDATA[
+if (usbbnd_if_conflict(ap, bp)) {
+  return true;
+}
+if ((ap->in_ep_mask & bp->in_ep_mask) != 0U) {
+  return true;
+}
+if ((ap->out_ep_mask & bp->out_ep_mask) != 0U) {
+  return true;
+}
+
+return false;]]></implementation>
+      </function>
       <function name="usb_invoke_event_cb" ctype="void">
         <param name="usbp" ctype="hal_usb_driver_c *" dir="both"></param>
         <param name="flags" ctype="usbeventflags_t" dir="in"></param>
@@ -1441,7 +2451,7 @@ msg_t msg;
 size_t max;
 
 osalSysLock();
-if ((usbp->state == USB_STOP) || (usbp->ep0rseq != usbp->ep0seq)) {
+if ((usbp->state == HAL_DRV_STATE_STOP) || (usbp->ep0rseq != usbp->ep0seq)) {
   osalSysUnlock();
   return MSG_RESET;
 }
@@ -1479,7 +2489,7 @@ msg_t msg;
 size_t max;
 
 osalSysLock();
-if ((usbp->state == USB_STOP) || (usbp->ep0rseq != usbp->ep0seq)) {
+if ((usbp->state == HAL_DRV_STATE_STOP) || (usbp->ep0rseq != usbp->ep0seq)) {
   osalSysUnlock();
   return MSG_RESET;
 }

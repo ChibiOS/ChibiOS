@@ -233,18 +233,6 @@ typedef struct hal_dac_conversion_group DACConversionGroup;
 #include "hal_dac_lld.h"
 
 /**
- * @brief       DAC driver state type.
- */
-typedef driver_state_t dacstate_t;
-
-#define DAC_UNINIT                          HAL_DRV_STATE_UNINIT
-#define DAC_STOP                            HAL_DRV_STATE_STOP
-#define DAC_READY                           HAL_DRV_STATE_READY
-#define DAC_ACTIVE                          HAL_DRV_STATE_ACTIVE
-#define DAC_COMPLETE                        HAL_DRV_STATE_FULL
-#define DAC_ERROR                           HAL_DRV_STATE_ERROR
-
-/**
  * @brief       Conversion group configuration structure.
  */
 struct hal_dac_conversion_group {

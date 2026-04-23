@@ -112,21 +112,34 @@ static THD_FUNCTION(Ep0Thread, arg) {
 
   (void)arg;
   chRegSetThreadName("usb-ep0");
+
+  /*
+   * Endpoint zero is handled entirely in thread context in this demo. The
+   * LLD only captures SETUP packets and wakes this worker, then control
+   * transfers are completed here using the common EP0 helpers:
+   *   1. wait for a new SETUP packet,
+   *   2. serve standard requests in the shared USB code,
+   *   3. forward non-standard requests to the currently bound USB binder,
+   *   4. stall EP0 if nobody claims the request.
+   */
   while (true) {
     bool handled;
     msg_t msg;
 
+    /* Blocks until a new SETUP packet arrives or the bus is reset. */
     msg = usbEp0WaitSetup(&PORTAB_USB1);
     if (msg != MSG_OK) {
       continue;
     }
 
+    /* Standard device requests are handled by the common USB layer first. */
     handled = false;
     msg = usbEp0HandleStandardRequest(&PORTAB_USB1, &handled);
     if (msg != MSG_OK) {
       continue;
     }
 
+    /* Class/vendor requests are delegated to the active device binder. */
     if (!handled) {
       binderp = usbGetBinderX(&PORTAB_USB1);
       if (binderp != NULL) {
@@ -137,6 +150,7 @@ static THD_FUNCTION(Ep0Thread, arg) {
       }
     }
 
+    /* Unclaimed requests must terminate with a stall on endpoint zero. */
     if (!handled) {
       usbEp0Stall(&PORTAB_USB1);
     }
