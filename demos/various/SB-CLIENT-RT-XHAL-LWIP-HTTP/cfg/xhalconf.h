@@ -39,6 +39,7 @@
 
 #define HAL_USE_PAL                         FALSE
 #define HAL_USE_ADC                         FALSE
+#define HAL_USE_DAC                         FALSE
 #define HAL_USE_CAN                         FALSE
 #define HAL_USE_ETH                         TRUE
 #define HAL_USE_GPT                         FALSE
@@ -57,6 +58,12 @@
 /*===========================================================================*/
 
 #define ADC_USE_WAIT                        TRUE
+
+/*===========================================================================*/
+/* DAC driver settings.                                                      */
+/*===========================================================================*/
+
+#define DAC_USE_WAIT                        TRUE
 
 /*===========================================================================*/
 /* CAN driver settings.                                                      */

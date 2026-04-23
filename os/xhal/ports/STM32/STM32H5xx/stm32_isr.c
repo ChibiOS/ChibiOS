@@ -51,7 +51,7 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-//#include "stm32_dac1.inc"
+#include "stm32_dac1.inc"
 
 #include "stm32_adc1.inc"
 #include "stm32_adc1_2.inc"
@@ -138,7 +138,7 @@
  */
 void irqInit(void) {
 
-//  dac1_irq_init();
+  dac1_irq_init();
 
   adc1_irq_init();
   adc1_adc2_irq_init();
@@ -221,7 +221,7 @@ void irqInit(void) {
  */
 void irqDeinit(void) {
 
-//  dac1_irq_deinit();
+  dac1_irq_deinit();
 
   adc1_irq_deinit();
   adc1_adc2_irq_deinit();

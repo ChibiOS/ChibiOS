@@ -246,12 +246,21 @@ static void usbcdc_sof_impl(void *ip) {
 
 static void usbcdc_in_impl(void *ip, usbep_t ep) {
   (void)ip;
-  (void)ep;
+
+  if (ep == USB1_DATA_REQUEST_EP) {
+    sduDataTransmitted(&PORTAB_USB1, ep);
+  }
+  else if (ep == USB1_INTERRUPT_REQUEST_EP) {
+    sduInterruptTransmitted(&PORTAB_USB1, ep);
+  }
 }
 
 static void usbcdc_out_impl(void *ip, usbep_t ep) {
   (void)ip;
-  (void)ep;
+
+  if (ep == USB1_DATA_AVAILABLE_EP) {
+    sduDataReceived(&PORTAB_USB1, ep);
+  }
 }
 
 static msg_t usbcdc_setup_impl(void *ip, bool *handledp) {

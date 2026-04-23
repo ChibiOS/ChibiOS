@@ -170,7 +170,7 @@
 /*
  * IRQ system settings.
  */
-#define STM32_IRQ_DAC1_PRIORITY             9
+#define STM32_IRQ_DAC1_PRIORITY             ${doc.STM32_IRQ_DAC1_PRIORITY!"9"}
 
 #define STM32_IRQ_ADC1_PRIORITY             ${doc.STM32_IRQ_ADC1_PRIORITY!"5"}
 #define STM32_IRQ_ADC2_PRIORITY             ${doc.STM32_IRQ_ADC2_PRIORITY!"5"}
@@ -272,6 +272,17 @@
 #define STM32_CAN_USE_FDCAN1                ${doc.STM32_CAN_USE_FDCAN1!"FALSE"}
 #define STM32_CAN_USE_FDCAN2                ${doc.STM32_CAN_USE_FDCAN2!"FALSE"}
 #define STM32_CAN_FDCAN_PRESC               ${doc.STM32_CAN_FDCAN_PRESC!"FDCAN_CONFIG_CKDIV_PDIV_1"}
+
+/*
+ * DAC driver system settings.
+ */
+#define STM32_DAC_DUAL_MODE                 ${doc.STM32_DAC_DUAL_MODE!"FALSE"}
+#define STM32_DAC_USE_DAC1_CH1              ${doc.STM32_DAC_USE_DAC1_CH1!"FALSE"}
+#define STM32_DAC_USE_DAC1_CH2              ${doc.STM32_DAC_USE_DAC1_CH2!"FALSE"}
+#define STM32_DAC_DAC1_CH1_DMA_PRIORITY     ${doc.STM32_DAC_DAC1_CH1_DMA_PRIORITY!"2"}
+#define STM32_DAC_DAC1_CH2_DMA_PRIORITY     ${doc.STM32_DAC_DAC1_CH2_DMA_PRIORITY!"2"}
+#define STM32_DAC_DAC1_CH1_DMA3_CHANNEL     ${doc.STM32_DAC_DAC1_CH1_DMA_CHANNEL!"STM32_DMA3_MASK_FIFO2"}
+#define STM32_DAC_DAC1_CH2_DMA3_CHANNEL     ${doc.STM32_DAC_DAC1_CH2_DMA_CHANNEL!"STM32_DMA3_MASK_FIFO2"}
 
 /*
  * GPT driver system settings.

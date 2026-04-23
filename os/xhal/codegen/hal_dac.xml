@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_dac" descr="DAC Driver" check="HAL_USE_DAC == TRUE"
+  editcode="false">
+  <brief>DAC Driver macros and structures.</brief>
+  <imports>
+    <import>hal_cb_driver.xml</import>
+  </imports>
+  <public>
+    <includes_always>
+      <include style="regular">hal_cb_driver.h</include>
+    </includes_always>
+    <definitions_early>
+      <group description="DAC event flags">
+        <define name="DAC_EVENT_HALF" value="(1U &lt;&lt; 0)">
+          <brief>Half-buffer completion event flag.</brief>
+        </define>
+        <define name="DAC_EVENT_FULL" value="(1U &lt;&lt; 1)">
+          <brief>Full-buffer completion event flag.</brief>
+        </define>
+      </group>
+    </definitions_early>
+    <configs>
+      <config name="DAC_USE_WAIT" default="TRUE">
+        <brief>Support for synchronous DAC streaming API.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+    </configs>
+    <macros>
+      <group description="Macro functions">
+        <macro name="dacIsBufferComplete">
+          <brief>Checks if the current callback refers to a full buffer.</brief>
+          <param name="dacp" dir="in">Pointer to the DAC driver instance.</param>
+          <return>The buffer-complete state.</return>
+          <special />
+          <implementation><![CDATA[((bool)((dacp)->state == HAL_DRV_STATE_FULL))]]></implementation>
+        </macro>
+      </group>
+      <group description="Low level driver helper macros">
+        <condition check="DAC_USE_WAIT == TRUE">
+          <macro name="_dac_reset_i">
+            <brief>Resumes a thread waiting for DAC streaming completion.</brief>
+            <param name="dacp" dir="in">Pointer to the DAC driver instance.</param>
+            <notapi />
+            <implementation><![CDATA[osalThreadResumeI(&(dacp)->thread, MSG_RESET)]]></implementation>
+          </macro>
+          <macro name="_dac_reset_s">
+            <brief>Resumes a thread waiting for DAC streaming completion.</brief>
+            <param name="dacp" dir="in">Pointer to the DAC driver instance.</param>
+            <notapi />
+            <implementation><![CDATA[osalThreadResumeS(&(dacp)->thread, MSG_RESET)]]></implementation>
+          </macro>
+          <macro name="_dac_wakeup_isr">
+            <brief>Wakes up a thread waiting for DAC streaming completion.</brief>
+            <param name="dacp" dir="in">Pointer to the DAC driver instance.</param>
+            <notapi />
+            <implementation><![CDATA[
+do {
+  osalSysLockFromISR();
+  osalThreadResumeI(&(dacp)->thread, MSG_OK);
+  osalSysUnlockFromISR();
+} while (false)]]></implementation>
+          </macro>
+          <macro name="_dac_error_wakeup_isr">
+            <brief>Wakes up a thread waiting for DAC streaming termination because of an error.</brief>
+            <param name="dacp" dir="in">Pointer to the DAC driver instance.</param>
+            <notapi />
+            <implementation><![CDATA[
+do {
+  osalSysLockFromISR();
+  osalThreadResumeI(&(dacp)->thread, MSG_TIMEOUT);
+  osalSysUnlockFromISR();
+} while (false)]]></implementation>
+          </macro>
+          <elseif />
+          <macro name="_dac_reset_i">
+            <param name="dacp" dir="in" />
+            <implementation><![CDATA[]]></implementation>
+          </macro>
+          <macro name="_dac_reset_s">
+            <param name="dacp" dir="in" />
+            <implementation><![CDATA[]]></implementation>
+          </macro>
+          <macro name="_dac_wakeup_isr">
+            <param name="dacp" dir="in" />
+            <implementation><![CDATA[]]></implementation>
+          </macro>
+          <macro name="_dac_error_wakeup_isr">
+            <param name="dacp" dir="in" />
+            <implementation><![CDATA[]]></implementation>
+          </macro>
+        </condition>
+        <macro name="_dac_isr_half_code">
+          <brief>Common ISR code, half buffer event.</brief>
+          <param name="dacp" dir="both">Pointer to the DAC driver instance.</param>
+          <notapi />
+          <implementation><![CDATA[
+do {
+  (dacp)->events |= DAC_EVENT_HALF;
+  __cbdrv_invoke_half_cb(dacp);
+} while (false)]]></implementation>
+        </macro>
+        <macro name="_dac_isr_full_code">
+          <brief>Common ISR code, full buffer event.</brief>
+          <param name="dacp" dir="both">Pointer to the DAC driver instance.</param>
+          <notapi />
+          <implementation><![CDATA[
+do {
+  (dacp)->events |= DAC_EVENT_FULL;
+  __cbdrv_invoke_full_cb(dacp);
+  _dac_wakeup_isr(dacp);
+} while (false)]]></implementation>
+        </macro>
+        <macro name="_dac_isr_error_code">
+          <brief>Common ISR code, error event.</brief>
+          <param name="dacp" dir="both">Pointer to the DAC driver instance.</param>
+          <param name="err" dir="in">Platform dependent error code.</param>
+          <notapi />
+          <implementation><![CDATA[
+do {
+  dac_lld_stop_conversion(dacp);
+  (dacp)->errors |= (err);
+  __cbdrv_invoke_cb_with_transition(dacp,
+                                    HAL_DRV_STATE_ERROR,
+                                    HAL_DRV_STATE_READY);
+  (dacp)->grpp = NULL;
+  _dac_error_wakeup_isr(dacp);
+} while (false)]]></implementation>
+        </macro>
+      </group>
+    </macros>
+    <types>
+      <typedef name="daceventflags_t">
+        <brief>Type of DAC event flags.</brief>
+        <basetype ctype="uint32_t" />
+      </typedef>
+      <typedef name="hal_dac_driver_c">
+        <brief>Type of structure representing a DAC driver.</brief>
+        <basetype ctype="struct hal_dac_driver" />
+      </typedef>
+      <typedef name="hal_dac_config_t">
+        <brief>Type of structure representing a DAC configuration.</brief>
+        <basetype ctype="struct hal_dac_config" />
+      </typedef>
+      <typedef name="dac_conversion_group_t">
+        <brief>Type of structure representing a DAC conversion group.</brief>
+        <basetype ctype="struct hal_dac_conversion_group" />
+      </typedef>
+      <verbatim><![CDATA[
+typedef struct hal_dac_driver DACDriver;
+typedef struct hal_dac_config DACConfig;
+typedef struct hal_dac_conversion_group DACConversionGroup;
+
+/* Inclusion of LLD header.*/
+#include "hal_dac_lld.h"
+
+/**
+ * @brief       DAC driver state type.
+ */
+typedef driver_state_t dacstate_t;
+
+#define DAC_UNINIT                          HAL_DRV_STATE_UNINIT
+#define DAC_STOP                            HAL_DRV_STATE_STOP
+#define DAC_READY                           HAL_DRV_STATE_READY
+#define DAC_ACTIVE                          HAL_DRV_STATE_ACTIVE
+#define DAC_COMPLETE                        HAL_DRV_STATE_FULL
+#define DAC_ERROR                           HAL_DRV_STATE_ERROR]]></verbatim>
+      <struct name="hal_dac_conversion_group">
+        <brief>Conversion group configuration structure.</brief>
+        <fields>
+          <field name="num_channels" ctype="uint32_t">
+            <brief>Number of DAC channels in the conversion group.</brief>
+          </field>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+dac_lld_conversion_group_fields;]]></verbatim>
+          <condition check="defined(DAC_CONVERSION_GROUP_EXT_FIELDS)">
+            <verbatim><![CDATA[
+DAC_CONVERSION_GROUP_EXT_FIELDS]]></verbatim>
+          </condition>
+        </fields>
+      </struct>
+      <struct name="hal_dac_config">
+        <brief>Driver configuration structure.</brief>
+        <fields>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+dac_lld_config_fields;]]></verbatim>
+          <condition check="defined(DAC_CONFIG_EXT_FIELDS)">
+            <verbatim><![CDATA[
+DAC_CONFIG_EXT_FIELDS]]></verbatim>
+          </condition>
+        </fields>
+      </struct>
+      <class type="regular" name="hal_dac_driver" namespace="dac"
+        ancestorname="hal_cb_driver" descr="DAC driver">
+        <brief>Class of a DAC driver.</brief>
+        <fields>
+          <field name="samples" ctype="dacsample_t *">
+            <brief>Current samples buffer pointer or @p NULL.</brief>
+          </field>
+          <field name="depth" ctype="size_t">
+            <brief>Current samples buffer depth or zero.</brief>
+          </field>
+          <field name="grpp" ctype="const dac_conversion_group_t *">
+            <brief>Current conversion group pointer or @p NULL.</brief>
+          </field>
+          <field name="events" ctype="volatile daceventflags_t">
+            <brief>Cached DAC event flags.</brief>
+          </field>
+          <field name="errors" ctype="volatile dacerror_t">
+            <brief>Cached DAC error flags.</brief>
+          </field>
+          <condition check="DAC_USE_WAIT == TRUE">
+            <field name="thread" ctype="thread_reference_t">
+              <brief>Waiting thread reference.</brief>
+            </field>
+          </condition>
+          <condition check="defined(DAC_DRIVER_EXT_FIELDS)">
+            <verbatim><![CDATA[
+DAC_DRIVER_EXT_FIELDS]]></verbatim>
+          </condition>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+dac_lld_driver_fields;]]></verbatim>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+self->samples = NULL;
+self->depth   = 0U;
+self->grpp    = NULL;
+self->events  = 0U;
+self->errors  = 0U;
+#if DAC_USE_WAIT == TRUE
+self->thread  = NULL;
+#endif]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[
+]]></implementation>
+          </dispose>
+          <regular>
+            <method name="dacStart" ctype="msg_t">
+              <brief>Configures and activates the DAC peripheral.</brief>
+              <param name="config" ctype="const hal_dac_config_t *" dir="in">
+                Driver configuration or @p NULL.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+
+if (config != NULL) {
+  msg = drvSetCfgX(self, config);
+  if (msg != HAL_RET_SUCCESS) {
+    return msg;
+  }
+}
+
+return drvStart(self);]]></implementation>
+            </method>
+            <method name="dacStop" ctype="void">
+              <brief>Deactivates the DAC peripheral.</brief>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+drvStop(self);]]></implementation>
+            </method>
+            <method name="dacPutChannelX" ctype="msg_t">
+              <brief>Outputs a value directly on a DAC channel.</brief>
+              <param name="channel" ctype="dacchannel_t" dir="in">
+                DAC channel number.
+              </param>
+              <param name="sample" ctype="dacsample_t" dir="in">
+                Value to be output.
+              </param>
+              <xclass />
+              <implementation><![CDATA[
+osalDbgCheck(channel < (dacchannel_t)DAC_MAX_CHANNELS);
+osalDbgAssert((self->state == HAL_DRV_STATE_READY)  ||
+              (self->state == HAL_DRV_STATE_ACTIVE) ||
+              (self->state == HAL_DRV_STATE_HALF)   ||
+              (self->state == HAL_DRV_STATE_FULL),
+              "invalid state");
+
+return dac_lld_put_channel(self, channel, sample);]]></implementation>
+            </method>
+            <method name="dacStartConversionI" ctype="msg_t">
+              <brief>Starts a DAC circular streaming conversion.</brief>
+              <param name="grpp" ctype="const dac_conversion_group_t *" dir="in">
+                Conversion group.
+              </param>
+              <param name="samples" ctype="dacsample_t *" dir="in">
+                Samples buffer.
+              </param>
+              <param name="depth" ctype="size_t" dir="in">
+                Buffer depth.
+              </param>
+              <return>The operation status.</return>
+              <iclass />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (grpp != NULL) && (samples != NULL) &&
+             (depth > 0U) && ((depth == 1U) || ((depth & 1U) == 0U)));
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+self->samples = samples;
+self->depth   = depth;
+self->grpp    = grpp;
+self->events  = 0U;
+self->errors  = 0U;
+self->state   = HAL_DRV_STATE_ACTIVE;
+msg = dac_lld_start_conversion(self);
+if (msg != HAL_RET_SUCCESS) {
+  self->samples = NULL;
+  self->depth   = 0U;
+  self->grpp    = NULL;
+  self->state   = HAL_DRV_STATE_READY;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method name="dacStartConversion" ctype="msg_t">
+              <brief>Starts a DAC circular streaming conversion.</brief>
+              <param name="grpp" ctype="const dac_conversion_group_t *" dir="in">
+                Conversion group.
+              </param>
+              <param name="samples" ctype="dacsample_t *" dir="in">
+                Samples buffer.
+              </param>
+              <param name="depth" ctype="size_t" dir="in">
+                Buffer depth.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalSysLock();
+msg = dacStartConversionI(self, grpp, samples, depth);
+osalSysUnlock();
+
+return msg;]]></implementation>
+            </method>
+            <method name="dacStopConversionI" ctype="void">
+              <brief>Stops an ongoing DAC conversion.</brief>
+              <iclass />
+              <implementation><![CDATA[
+osalDbgCheckClassI();
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == HAL_DRV_STATE_READY)  ||
+              (self->state == HAL_DRV_STATE_ACTIVE) ||
+              (self->state == HAL_DRV_STATE_HALF)   ||
+              (self->state == HAL_DRV_STATE_FULL)   ||
+              (self->state == HAL_DRV_STATE_ERROR),
+              "invalid state");
+
+if (self->state != HAL_DRV_STATE_READY) {
+  dac_lld_stop_conversion(self);
+  self->samples = NULL;
+  self->depth   = 0U;
+  self->grpp    = NULL;
+  self->state   = HAL_DRV_STATE_READY;
+  _dac_reset_i(self);
+}]]></implementation>
+            </method>
+            <method name="dacStopConversion" ctype="void">
+              <brief>Stops an ongoing DAC conversion.</brief>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+osalDbgAssert((self->state == HAL_DRV_STATE_READY)  ||
+              (self->state == HAL_DRV_STATE_ACTIVE) ||
+              (self->state == HAL_DRV_STATE_HALF)   ||
+              (self->state == HAL_DRV_STATE_FULL)   ||
+              (self->state == HAL_DRV_STATE_ERROR),
+              "invalid state");
+if (self->state != HAL_DRV_STATE_READY) {
+  dac_lld_stop_conversion(self);
+  self->samples = NULL;
+  self->depth   = 0U;
+  self->grpp    = NULL;
+  self->state   = HAL_DRV_STATE_READY;
+  _dac_reset_s(self);
+}
+osalSysUnlock();]]></implementation>
+            </method>
+          </regular>
+          <condition check="DAC_USE_WAIT == TRUE">
+            <regular>
+              <method name="dacConvert" ctype="msg_t">
+                <brief>Starts a DAC circular conversion and waits for one full cycle.</brief>
+                <param name="grpp" ctype="const dac_conversion_group_t *" dir="in">
+                  Conversion group.
+                </param>
+                <param name="samples" ctype="dacsample_t *" dir="in">
+                  Samples buffer.
+                </param>
+                <param name="depth" ctype="size_t" dir="in">
+                  Buffer depth.
+                </param>
+                <return>The operation result.</return>
+                <api />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+osalDbgAssert(self->thread == NULL, "already waiting");
+msg = dacStartConversionI(self, grpp, samples, depth);
+if (msg == HAL_RET_SUCCESS) {
+  msg = osalThreadSuspendS(&self->thread);
+}
+osalSysUnlock();
+
+return msg;]]></implementation>
+              </method>
+              <method name="dacSynchronizeS" ctype="msg_t">
+                <brief>Waits for the next full DAC buffer cycle.</brief>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Wait timeout.
+                </param>
+                <return>The wait result.</return>
+                <sclass />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheckClassS();
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == HAL_DRV_STATE_ACTIVE) ||
+              (self->state == HAL_DRV_STATE_READY),
+              "invalid state");
+
+if (self->state == HAL_DRV_STATE_ACTIVE) {
+  msg = osalThreadSuspendTimeoutS(&self->thread, timeout);
+}
+else {
+  msg = MSG_OK;
+}
+
+return msg;]]></implementation>
+              </method>
+              <method name="dacSynchronize" ctype="msg_t">
+                <brief>Waits for the next full DAC buffer cycle.</brief>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Wait timeout.
+                </param>
+                <return>The wait result.</return>
+                <api />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+msg = dacSynchronizeS(self, timeout);
+osalSysUnlock();
+
+return msg;]]></implementation>
+              </method>
+            </regular>
+          </condition>
+          <inline>
+            <method name="dacGetEventsX" ctype="daceventflags_t">
+              <brief>Returns the cached DAC event flags.</brief>
+              <return>The current cached event flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->events;]]></implementation>
+            </method>
+            <method name="dacGetAndClearEventsX" ctype="daceventflags_t">
+              <brief>Gets and clears cached DAC event flags.</brief>
+              <param name="mask" ctype="daceventflags_t" dir="in">
+                Mask of events to be returned and cleared.
+              </param>
+              <return>The selected pending event flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+daceventflags_t flags;
+syssts_t sts;
+
+sts = osalSysGetStatusAndLockX();
+flags = self->events & mask;
+self->events &= ~mask;
+osalSysRestoreStatusX(sts);
+
+return flags;]]></implementation>
+            </method>
+            <method name="dacGetErrorsX" ctype="dacerror_t">
+              <brief>Returns the cached DAC error flags.</brief>
+              <return>The current cached error flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+return self->errors;]]></implementation>
+            </method>
+            <method name="dacGetAndClearErrorsX" ctype="dacerror_t">
+              <brief>Gets and clears cached DAC error flags.</brief>
+              <param name="mask" ctype="dacerror_t" dir="in">
+                Mask of errors to be returned and cleared.
+              </param>
+              <return>The selected pending error flags.</return>
+              <xclass />
+              <implementation><![CDATA[
+dacerror_t errors;
+syssts_t sts;
+
+sts = osalSysGetStatusAndLockX();
+errors = self->errors & mask;
+self->errors &= ~mask;
+osalSysRestoreStatusX(sts);
+
+return errors;]]></implementation>
+            </method>
+          </inline>
+          <override>
+            <method shortname="start">
+              <implementation><![CDATA[
+msg_t msg;
+
+self->samples = NULL;
+self->depth   = 0U;
+self->grpp    = NULL;
+self->events  = 0U;
+self->errors  = 0U;
+
+msg = dac_lld_start(self);
+if (msg != HAL_RET_SUCCESS) {
+  self->config = NULL;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[
+dac_lld_stop(self);
+self->samples = NULL;
+self->depth   = 0U;
+self->grpp    = NULL;
+self->events  = 0U;
+self->errors  = 0U;]]></implementation>
+            </method>
+            <method shortname="setcfg">
+              <implementation><![CDATA[
+return (const void *)dac_lld_setcfg(self,
+                                    (const hal_dac_config_t *)config);]]></implementation>
+            </method>
+            <method shortname="selcfg">
+              <implementation><![CDATA[
+return (const void *)dac_lld_selcfg(self, cfgnum);]]></implementation>
+            </method>
+            <method shortname="setcb">
+              <implementation><![CDATA[
+__cbdrv_setcb_impl(self, cb);
+dac_lld_set_callback(self, cb);]]></implementation>
+            </method>
+          </override>
+        </methods>
+      </class>
+    </types>
+    <functions>
+      <function name="dacInit" ctype="void">
+        <brief>DAC Driver initialization.</brief>
+        <init />
+        <implementation><![CDATA[
+dac_lld_init();]]></implementation>
+      </function>
+    </functions>
+  </public>
+  <private>
+    <includes_always>
+      <include style="regular">hal.h</include>
+    </includes_always>
+  </private>
+</module>
