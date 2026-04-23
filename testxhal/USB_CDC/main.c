@@ -168,6 +168,9 @@ int main(void) {
   sduObjectInit(&PORTAB_SDU1);
 
   test_assert(sduStart(&PORTAB_SDU1, &serusbcfg) == HAL_RET_SUCCESS);
+  test_assert(usbBinderRegisterService(&usbcdc_binder,
+                                       sduGetServiceX(&PORTAB_SDU1)) ==
+              HAL_RET_SUCCESS);
 
   usbDisconnectBus(&PORTAB_USB1);
   chThdSleepMilliseconds(1500);

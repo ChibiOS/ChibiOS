@@ -173,17 +173,6 @@ static const usb_descriptor_t vcom_strings[] = {
   {sizeof vcom_string3, vcom_string3}
 };
 
-static msg_t usbcdc_bind_impl(void *ip, hal_usb_driver_c *usbp) {
-  (void)ip;
-  (void)usbp;
-
-  return HAL_RET_SUCCESS;
-}
-
-static void usbcdc_unbind_impl(void *ip) {
-  (void)ip;
-}
-
 static const usb_descriptor_t *usbcdc_get_descriptor_impl(void *ip,
                                                           uint8_t dtype,
                                                           uint8_t dindex,
@@ -208,81 +197,20 @@ static const usb_descriptor_t *usbcdc_get_descriptor_impl(void *ip,
   return NULL;
 }
 
-static void usbcdc_reset_impl(void *ip) {
-  (void)ip;
-
-  sduSuspendHookI(&PORTAB_SDU1);
-}
-
-static void usbcdc_configure_impl(void *ip) {
-  (void)ip;
-
-  sduConfigureHookI(&PORTAB_SDU1);
-}
-
-static void usbcdc_unconfigure_impl(void *ip) {
-  (void)ip;
-
-  sduSuspendHookI(&PORTAB_SDU1);
-}
-
-static void usbcdc_suspend_impl(void *ip) {
-  (void)ip;
-
-  sduSuspendHookI(&PORTAB_SDU1);
-}
-
-static void usbcdc_wakeup_impl(void *ip) {
-  (void)ip;
-
-  sduWakeupHookI(&PORTAB_SDU1);
-}
-
-static void usbcdc_sof_impl(void *ip) {
-  (void)ip;
-
-  sduSOFHookI(&PORTAB_SDU1);
-}
-
-static void usbcdc_in_impl(void *ip, usbep_t ep) {
-  (void)ip;
-
-  if (ep == USB1_DATA_REQUEST_EP) {
-    sduDataTransmitted(&PORTAB_USB1, ep);
-  }
-  else if (ep == USB1_INTERRUPT_REQUEST_EP) {
-    sduInterruptTransmitted(&PORTAB_USB1, ep);
-  }
-}
-
-static void usbcdc_out_impl(void *ip, usbep_t ep) {
-  (void)ip;
-
-  if (ep == USB1_DATA_AVAILABLE_EP) {
-    sduDataReceived(&PORTAB_USB1, ep);
-  }
-}
-
-static msg_t usbcdc_setup_impl(void *ip, bool *handledp) {
-  (void)ip;
-
-  return sduRequestsHook(&PORTAB_SDU1, handledp);
-}
-
 static const struct hal_usb_binder_vmt usbcdc_binder_vmt = {
   .dispose        = __usbbnd_dispose_impl,
-  .bind           = usbcdc_bind_impl,
-  .unbind         = usbcdc_unbind_impl,
+  .bind           = __usbbnd_bind_impl,
+  .unbind         = __usbbnd_unbind_impl,
   .get_descriptor = usbcdc_get_descriptor_impl,
-  .reset          = usbcdc_reset_impl,
-  .configure      = usbcdc_configure_impl,
-  .unconfigure    = usbcdc_unconfigure_impl,
-  .suspend        = usbcdc_suspend_impl,
-  .wakeup         = usbcdc_wakeup_impl,
-  .sof            = usbcdc_sof_impl,
-  .in             = usbcdc_in_impl,
-  .out            = usbcdc_out_impl,
-  .setup          = usbcdc_setup_impl
+  .reset          = __usbbnd_reset_impl,
+  .configure      = __usbbnd_configure_impl,
+  .unconfigure    = __usbbnd_unconfigure_impl,
+  .suspend        = __usbbnd_suspend_impl,
+  .wakeup         = __usbbnd_wakeup_impl,
+  .sof            = __usbbnd_sof_impl,
+  .in             = __usbbnd_in_impl,
+  .out            = __usbbnd_out_impl,
+  .setup          = __usbbnd_setup_impl
 };
 
 const SerialUSBConfig serusbcfg = {
