@@ -153,10 +153,6 @@ do {
         <basetype ctype="struct hal_pwm_channel_config" />
       </typedef>
       <verbatim><![CDATA[
-#define PWM_UNINIT                          HAL_DRV_STATE_UNINIT
-#define PWM_STOP                            HAL_DRV_STATE_STOP
-#define PWM_READY                           HAL_DRV_STATE_READY
-
 /* Inclusion of LLD header.*/
 #include "hal_pwm_lld.h"]]></verbatim>
       <struct name="hal_pwm_channel_config">

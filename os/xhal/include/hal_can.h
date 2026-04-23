@@ -296,7 +296,7 @@
  */
 #define _can_wakeup_isr(canp)                                               \
   do {                                                                      \
-    (canp)->state  = CAN_READY;                                             \
+    (canp)->state  = HAL_DRV_STATE_READY;                                   \
     (canp)->events |= CAN_EVENT_WAKEUP;                                     \
     osalSysLockFromISR();                                                   \
     __cbdrv_invoke_cb(canp);                                                \
@@ -370,10 +370,6 @@ typedef struct hal_can_driver CANDriver;
  */
 typedef struct hal_can_config CANConfig;
 
-#define CAN_UNINIT                         HAL_DRV_STATE_UNINIT
-#define CAN_STOP                           HAL_DRV_STATE_STOP
-#define CAN_STARTING                       HAL_DRV_STATE_STARTING
-#define CAN_READY                          HAL_DRV_STATE_READY
 #define CAN_SLEEP                          (HAL_DRV_STATE_ERROR + 1U)
 
 /* Inclusion of LLD header.*/

@@ -267,10 +267,6 @@ typedef struct hal_pwm_config PWMConfig;
  */
 typedef struct hal_pwm_channel_config PWMChannelConfig;
 
-#define PWM_UNINIT                          HAL_DRV_STATE_UNINIT
-#define PWM_STOP                            HAL_DRV_STATE_STOP
-#define PWM_READY                           HAL_DRV_STATE_READY
-
 /* Inclusion of LLD header.*/
 #include "hal_pwm_lld.h"
 

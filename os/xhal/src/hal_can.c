@@ -274,7 +274,8 @@ bool canTryTransmitI(void *ip, canmbx_t mailbox, const CANTxFrame *ctfp) {
   osalDbgCheckClassI();
   osalDbgCheck((self != NULL) && (ctfp != NULL) &&
                (mailbox <= (canmbx_t)CAN_TX_MAILBOXES));
-  osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+                (self->state == CAN_SLEEP),
                 "invalid state");
 
   if (!can_lld_is_tx_empty(self, mailbox)) {
@@ -303,7 +304,8 @@ bool canTryReceiveI(void *ip, canmbx_t mailbox, CANRxFrame *crfp) {
   osalDbgCheckClassI();
   osalDbgCheck((self != NULL) && (crfp != NULL) &&
                (mailbox <= (canmbx_t)CAN_RX_MAILBOXES));
-  osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+                (self->state == CAN_SLEEP),
                 "invalid state");
 
   if (!can_lld_is_rx_nonempty(self, mailbox)) {
@@ -351,7 +353,8 @@ msg_t canTransmitTimeout(void *ip, canmbx_t mailbox, const CANTxFrame *ctfp,
                (mailbox <= (canmbx_t)CAN_TX_MAILBOXES));
 
   osalSysLock();
-  osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+                (self->state == CAN_SLEEP),
                 "invalid state");
 
   while ((self->state == CAN_SLEEP) || !can_lld_is_tx_empty(self, mailbox)) {
@@ -386,7 +389,8 @@ msg_t canReceiveTimeout(void *ip, canmbx_t mailbox, CANRxFrame *crfp,
                (mailbox <= (canmbx_t)CAN_RX_MAILBOXES));
 
   osalSysLock();
-  osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+                (self->state == CAN_SLEEP),
                 "invalid state");
 
   while ((self->state == CAN_SLEEP) || !can_lld_is_rx_nonempty(self, mailbox)) {
@@ -417,9 +421,10 @@ void canSleep(void *ip) {
   osalDbgCheck(self != NULL);
 
   osalSysLock();
-  osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+                (self->state == CAN_SLEEP),
                 "invalid state");
-  if (self->state == CAN_READY) {
+  if (self->state == HAL_DRV_STATE_READY) {
     can_lld_sleep(self);
     self->state = CAN_SLEEP;
     self->events |= CAN_EVENT_SLEEP;
@@ -440,11 +445,12 @@ void canWakeup(void *ip) {
   osalDbgCheck(self != NULL);
 
   osalSysLock();
-  osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+                (self->state == CAN_SLEEP),
                 "invalid state");
   if (self->state == CAN_SLEEP) {
     can_lld_wakeup(self);
-    self->state = CAN_READY;
+    self->state = HAL_DRV_STATE_READY;
     self->events |= CAN_EVENT_WAKEUP;
     __cbdrv_invoke_cb(self);
   }

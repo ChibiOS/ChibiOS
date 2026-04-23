@@ -110,9 +110,6 @@ typedef enum {
   ICU_CHANNEL_2 = 1U                /**< Use TIMxCH2.                      */
 } icuchannel_t;
 
-#define ICU_UNINIT                         HAL_DRV_STATE_UNINIT
-#define ICU_STOP                           HAL_DRV_STATE_STOP
-#define ICU_READY                          HAL_DRV_STATE_READY
 #define ICU_WAITING                        (HAL_DRV_STATE_ERROR + 1U)
 #define ICU_ACTIVE                         (HAL_DRV_STATE_ERROR + 2U)
 

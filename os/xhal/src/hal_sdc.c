@@ -865,8 +865,8 @@ msg_t __sdc_start_impl(void *ip) {
 
   msg = sdc_lld_start(self);
   if (msg == HAL_RET_SUCCESS) {
-    if (self->state == SDC_STOP) {
-      self->state = SDC_ACTIVE;
+    if (self->state == HAL_DRV_STATE_STOP) {
+      self->state = HAL_DRV_STATE_ACTIVE;
     }
   }
   else {
@@ -966,8 +966,9 @@ msg_t sdcStart(void *ip, const hal_sdc_config_t *config) {
   msg_t msg;
 
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == SDC_STOP) || (self->state == SDC_ACTIVE) ||
-                (self->state == SDC_READY), "invalid state");
+  osalDbgAssert((self->state == HAL_DRV_STATE_STOP) ||
+                (self->state == HAL_DRV_STATE_ACTIVE) ||
+                (self->state == HAL_DRV_STATE_READY), "invalid state");
 
   if (config != NULL) {
     msg = drvSetCfgX(self, config);
@@ -989,8 +990,9 @@ msg_t sdcStart(void *ip, const hal_sdc_config_t *config) {
 void sdcStop(void *ip) {
   hal_sdc_driver_c *self = (hal_sdc_driver_c *)ip;
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == SDC_STOP) || (self->state == SDC_ACTIVE) ||
-                (self->state == SDC_READY), "invalid state");
+  osalDbgAssert((self->state == HAL_DRV_STATE_STOP) ||
+                (self->state == HAL_DRV_STATE_ACTIVE) ||
+                (self->state == HAL_DRV_STATE_READY), "invalid state");
 
   drvStop(self);
 }
@@ -1011,7 +1013,8 @@ bool sdcConnect(void *ip) {
   sdcbusclk_t clk = SDC_CLK_25MHz;
 
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == SDC_ACTIVE) || (self->state == SDC_READY),
+  osalDbgAssert((self->state == HAL_DRV_STATE_ACTIVE) ||
+                (self->state == HAL_DRV_STATE_READY),
                 "invalid state");
 
   self->errors = SDC_NO_ERROR;
@@ -1103,12 +1106,12 @@ bool sdcConnect(void *ip) {
       goto failed;
   }
 
-  self->state = SDC_READY;
+  self->state = HAL_DRV_STATE_READY;
   return HAL_SUCCESS;
 
   failed:
   sdc_lld_stop_clk(self);
-  self->state = SDC_ACTIVE;
+  self->state = HAL_DRV_STATE_ACTIVE;
   return HAL_FAILED;
 }
 
@@ -1125,22 +1128,23 @@ bool sdcConnect(void *ip) {
 bool sdcDisconnect(void *ip) {
   hal_sdc_driver_c *self = (hal_sdc_driver_c *)ip;
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == SDC_ACTIVE) || (self->state == SDC_READY),
+  osalDbgAssert((self->state == HAL_DRV_STATE_ACTIVE) ||
+                (self->state == HAL_DRV_STATE_READY),
                 "invalid state");
 
-  if (self->state == SDC_ACTIVE) {
+  if (self->state == HAL_DRV_STATE_ACTIVE) {
     return HAL_SUCCESS;
   }
 
   self->state = SDC_DISCONNECTING;
   if (_sdc_wait_for_transfer_state(self)) {
     sdc_lld_stop_clk(self);
-    self->state = SDC_ACTIVE;
+    self->state = HAL_DRV_STATE_ACTIVE;
     return HAL_FAILED;
   }
 
   sdc_lld_stop_clk(self);
-  self->state = SDC_ACTIVE;
+  self->state = HAL_DRV_STATE_ACTIVE;
   return HAL_SUCCESS;
 }
 
@@ -1160,7 +1164,7 @@ msg_t sdcStartRead(void *ip, uint32_t startblk, uint8_t *buf, uint32_t n) {
   msg_t msg;
 
   osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
-  osalDbgAssert(self->state == SDC_READY, "not ready");
+  osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
 
   if ((startblk >= self->capacity) || (n > (self->capacity - startblk))) {
     self->errors |= SDC_OVERFLOW_ERROR;
@@ -1171,7 +1175,7 @@ msg_t sdcStartRead(void *ip, uint32_t startblk, uint8_t *buf, uint32_t n) {
   self->state = SDC_READING;
   msg = sdc_lld_start_read(self, startblk, buf, n);
   if (msg != HAL_RET_SUCCESS) {
-    self->state = SDC_READY;
+    self->state = HAL_DRV_STATE_READY;
   }
 
   return msg;
@@ -1194,7 +1198,7 @@ msg_t sdcStartWrite(void *ip, uint32_t startblk, const uint8_t *buf,
   msg_t msg;
 
   osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
-  osalDbgAssert(self->state == SDC_READY, "not ready");
+  osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
 
   if ((startblk >= self->capacity) || (n > (self->capacity - startblk))) {
     self->errors |= SDC_OVERFLOW_ERROR;
@@ -1205,7 +1209,7 @@ msg_t sdcStartWrite(void *ip, uint32_t startblk, const uint8_t *buf,
   self->state = SDC_WRITING;
   msg = sdc_lld_start_write(self, startblk, buf, n);
   if (msg != HAL_RET_SUCCESS) {
-    self->state = SDC_READY;
+    self->state = HAL_DRV_STATE_READY;
   }
 
   return msg;
@@ -1224,7 +1228,7 @@ msg_t sdcStopTransfer(void *ip) {
   msg_t msg = HAL_RET_SUCCESS;
 
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == SDC_READY) ||
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
                 (self->state == SDC_READING) ||
                 (self->state == SDC_WRITING),
                 "invalid state");
@@ -1232,7 +1236,7 @@ msg_t sdcStopTransfer(void *ip) {
   if ((self->state == SDC_READING) || (self->state == SDC_WRITING)) {
     osalSysLock();
     msg = sdc_lld_stop_transfer(self);
-    self->state = SDC_READY;
+    self->state = HAL_DRV_STATE_READY;
 #if SDC_USE_SYNCHRONIZATION == TRUE
     osalThreadResumeI(&self->sync_transfer, MSG_RESET);
 #endif
@@ -1258,7 +1262,7 @@ msg_t sdcSynchronizeS(void *ip, sysinterval_t timeout) {
   msg_t msg;
 
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == SDC_READY) ||
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
                 (self->state == SDC_READING) ||
                 (self->state == SDC_WRITING),
                 "invalid state");
@@ -1267,7 +1271,7 @@ msg_t sdcSynchronizeS(void *ip, sysinterval_t timeout) {
     msg = osalThreadSuspendTimeoutS(&self->sync_transfer, timeout);
     if (msg == MSG_TIMEOUT) {
       (void)sdc_lld_stop_transfer(self);
-      self->state = SDC_READY;
+      self->state = HAL_DRV_STATE_READY;
     }
   }
   else {
@@ -1313,7 +1317,7 @@ msg_t sdcSynchronize(void *ip, sysinterval_t timeout) {
 bool sdcRead(void *ip, uint32_t startblk, uint8_t *buf, uint32_t n) {
   hal_sdc_driver_c *self = (hal_sdc_driver_c *)ip;
   osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
-  osalDbgAssert(self->state == SDC_READY, "invalid state");
+  osalDbgAssert(self->state == HAL_DRV_STATE_READY, "invalid state");
 
   if ((startblk >= self->capacity) || (n > (self->capacity - startblk))) {
     self->errors |= SDC_OVERFLOW_ERROR;
@@ -1357,7 +1361,7 @@ bool sdcRead(void *ip, uint32_t startblk, uint8_t *buf, uint32_t n) {
 bool sdcWrite(void *ip, uint32_t startblk, const uint8_t *buf, uint32_t n) {
   hal_sdc_driver_c *self = (hal_sdc_driver_c *)ip;
   osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
-  osalDbgAssert(self->state == SDC_READY, "invalid state");
+  osalDbgAssert(self->state == HAL_DRV_STATE_READY, "invalid state");
 
   if ((startblk >= self->capacity) || (n > (self->capacity - startblk))) {
     self->errors |= SDC_OVERFLOW_ERROR;
@@ -1424,13 +1428,13 @@ bool sdcSync(void *ip) {
   bool result;
 
   osalDbgCheck(self != NULL);
-  if (self->state != SDC_READY) {
+  if (self->state != HAL_DRV_STATE_READY) {
     return HAL_FAILED;
   }
 
   self->state = SDC_SYNCING;
   result = sdc_lld_sync(self);
-  self->state = SDC_READY;
+  self->state = HAL_DRV_STATE_READY;
 
   return result;
 }
@@ -1450,7 +1454,7 @@ bool sdcGetInfo(void *ip, hal_blk_info_t *bdip) {
   hal_sdc_driver_c *self = (hal_sdc_driver_c *)ip;
   osalDbgCheck((self != NULL) && (bdip != NULL));
 
-  if (self->state != SDC_READY) {
+  if (self->state != HAL_DRV_STATE_READY) {
     return HAL_FAILED;
   }
 
@@ -1479,7 +1483,7 @@ bool sdcErase(void *ip, uint32_t startblk, uint32_t endblk) {
   uint32_t end;
 
   osalDbgCheck(self != NULL);
-  osalDbgAssert(self->state == SDC_READY, "invalid state");
+  osalDbgAssert(self->state == HAL_DRV_STATE_READY, "invalid state");
 
   if ((startblk >= self->capacity) || (endblk >= self->capacity) ||
       (endblk < startblk)) {
@@ -1519,11 +1523,11 @@ bool sdcErase(void *ip, uint32_t startblk, uint32_t endblk) {
     goto failed;
   }
 
-  self->state = SDC_READY;
+  self->state = HAL_DRV_STATE_READY;
   return HAL_SUCCESS;
 
   failed:
-  self->state = SDC_READY;
+  self->state = HAL_DRV_STATE_READY;
   return HAL_FAILED;
 }
 

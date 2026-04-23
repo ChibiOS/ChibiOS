@@ -207,10 +207,6 @@ typedef struct hal_i2c_driver I2CDriver;
  */
 typedef struct hal_i2c_config I2CConfig;
 
-#define I2C_UNINIT                         HAL_DRV_STATE_UNINIT
-#define I2C_STOP                           HAL_DRV_STATE_STOP
-#define I2C_READY                          HAL_DRV_STATE_READY
-#define I2C_ACTIVE_TX                      HAL_DRV_STATE_ACTIVE
 #define I2C_ACTIVE_RX                      (HAL_DRV_STATE_ERROR + 1U)
 #define I2C_LOCKED                         (HAL_DRV_STATE_ERROR + 2U)
 
@@ -491,7 +487,7 @@ static inline void __i2c_wakeup_isr(void *ip, msg_t msg) {
 CC_FORCE_INLINE
 static inline void __i2c_complete_isr(void *ip) {
   hal_i2c_driver_c *self = (hal_i2c_driver_c *)ip;
-  self->state = I2C_READY;
+  self->state = HAL_DRV_STATE_READY;
   __i2c_wakeup_isr(self, MSG_OK);
 }
 
@@ -505,7 +501,7 @@ static inline void __i2c_complete_isr(void *ip) {
 CC_FORCE_INLINE
 static inline void __i2c_error_isr(void *ip) {
   hal_i2c_driver_c *self = (hal_i2c_driver_c *)ip;
-  self->state = I2C_READY;
+  self->state = HAL_DRV_STATE_READY;
   __i2c_wakeup_isr(self, MSG_RESET);
 }
 /** @} */

@@ -152,7 +152,7 @@ do {
 do {
   __cbdrv_invoke_cb_with_transition(sdcp,
                                     HAL_DRV_STATE_COMPLETE,
-                                    SDC_READY);
+                                    HAL_DRV_STATE_READY);
   _sdc_wakeup_isr(sdcp, MSG_OK);
 } while (false)]]></implementation>
         </macro>
@@ -164,7 +164,7 @@ do {
 do {
   __cbdrv_invoke_cb_with_transition(sdcp,
                                     HAL_DRV_STATE_ERROR,
-                                    SDC_READY);
+                                    HAL_DRV_STATE_READY);
   _sdc_wakeup_isr(sdcp, MSG_RESET);
 } while (false)]]></implementation>
         </macro>
@@ -217,10 +217,6 @@ typedef enum {
         <basetype ctype="struct hal_sdc_config" />
       </typedef>
       <verbatim><![CDATA[
-#define SDC_UNINIT                         HAL_DRV_STATE_UNINIT
-#define SDC_STOP                           HAL_DRV_STATE_STOP
-#define SDC_ACTIVE                         HAL_DRV_STATE_ACTIVE
-#define SDC_READY                          HAL_DRV_STATE_READY
 #define SDC_CONNECTING                     (HAL_DRV_STATE_ERROR + 1U)
 #define SDC_DISCONNECTING                  (HAL_DRV_STATE_ERROR + 2U)
 #define SDC_READING                        (HAL_DRV_STATE_ERROR + 3U)
@@ -336,10 +332,10 @@ return sdcGetInfo(self, bdip);]]></implementation>
           <field name="capacity" ctype="uint32_t">
             <brief>Card capacity expressed in logical blocks.</brief>
           </field>
-          <field name="cid" ctype="uint32_t[4]">
+          <field name="cid[4]" ctype="uint32_t">
             <brief>Card CID register image.</brief>
           </field>
-          <field name="csd" ctype="uint32_t[4]">
+          <field name="csd[4]" ctype="uint32_t">
             <brief>Card CSD register image.</brief>
           </field>
           <condition check="SDC_USE_SYNCHRONIZATION == TRUE">
@@ -387,8 +383,9 @@ SDC_DRIVER_EXT_INIT_HOOK(self);
 msg_t msg;
 
 osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == SDC_STOP) || (self->state == SDC_ACTIVE) ||
-              (self->state == SDC_READY), "invalid state");
+osalDbgAssert((self->state == HAL_DRV_STATE_STOP) ||
+              (self->state == HAL_DRV_STATE_ACTIVE) ||
+              (self->state == HAL_DRV_STATE_READY), "invalid state");
 
 if (config != NULL) {
   msg = drvSetCfgX(self, config);
@@ -404,8 +401,9 @@ return drvStart(self);]]></implementation>
               <api />
               <implementation><![CDATA[
 osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == SDC_STOP) || (self->state == SDC_ACTIVE) ||
-              (self->state == SDC_READY), "invalid state");
+osalDbgAssert((self->state == HAL_DRV_STATE_STOP) ||
+              (self->state == HAL_DRV_STATE_ACTIVE) ||
+              (self->state == HAL_DRV_STATE_READY), "invalid state");
 
 drvStop(self);]]></implementation>
             </method>
@@ -420,7 +418,8 @@ uint32_t resp[1];
 sdcbusclk_t clk = SDC_CLK_25MHz;
 
 osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == SDC_ACTIVE) || (self->state == SDC_READY),
+osalDbgAssert((self->state == HAL_DRV_STATE_ACTIVE) ||
+              (self->state == HAL_DRV_STATE_READY),
               "invalid state");
 
 self->errors = SDC_NO_ERROR;
@@ -512,12 +511,12 @@ switch (self->cardmode & SDC_MODE_CARDTYPE_MASK) {
     goto failed;
 }
 
-self->state = SDC_READY;
+self->state = HAL_DRV_STATE_READY;
 return HAL_SUCCESS;
 
 failed:
 sdc_lld_stop_clk(self);
-self->state = SDC_ACTIVE;
+self->state = HAL_DRV_STATE_ACTIVE;
 return HAL_FAILED;]]></implementation>
             </method>
             <method name="sdcDisconnect" ctype="bool">
@@ -528,22 +527,23 @@ return HAL_FAILED;]]></implementation>
               <api />
               <implementation><![CDATA[
 osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == SDC_ACTIVE) || (self->state == SDC_READY),
+osalDbgAssert((self->state == HAL_DRV_STATE_ACTIVE) ||
+              (self->state == HAL_DRV_STATE_READY),
               "invalid state");
 
-if (self->state == SDC_ACTIVE) {
+if (self->state == HAL_DRV_STATE_ACTIVE) {
   return HAL_SUCCESS;
 }
 
 self->state = SDC_DISCONNECTING;
 if (_sdc_wait_for_transfer_state(self)) {
   sdc_lld_stop_clk(self);
-  self->state = SDC_ACTIVE;
+  self->state = HAL_DRV_STATE_ACTIVE;
   return HAL_FAILED;
 }
 
 sdc_lld_stop_clk(self);
-self->state = SDC_ACTIVE;
+self->state = HAL_DRV_STATE_ACTIVE;
 return HAL_SUCCESS;]]></implementation>
             </method>
             <method name="sdcStartRead" ctype="msg_t">
@@ -563,7 +563,7 @@ return HAL_SUCCESS;]]></implementation>
 msg_t msg;
 
 osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
-osalDbgAssert(self->state == SDC_READY, "not ready");
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
 
 if ((startblk >= self->capacity) || (n > (self->capacity - startblk))) {
   self->errors |= SDC_OVERFLOW_ERROR;
@@ -574,7 +574,7 @@ self->errors = SDC_NO_ERROR;
 self->state = SDC_READING;
 msg = sdc_lld_start_read(self, startblk, buf, n);
 if (msg != HAL_RET_SUCCESS) {
-  self->state = SDC_READY;
+  self->state = HAL_DRV_STATE_READY;
 }
 
 return msg;]]></implementation>
@@ -596,7 +596,7 @@ return msg;]]></implementation>
 msg_t msg;
 
 osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
-osalDbgAssert(self->state == SDC_READY, "not ready");
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
 
 if ((startblk >= self->capacity) || (n > (self->capacity - startblk))) {
   self->errors |= SDC_OVERFLOW_ERROR;
@@ -607,7 +607,7 @@ self->errors = SDC_NO_ERROR;
 self->state = SDC_WRITING;
 msg = sdc_lld_start_write(self, startblk, buf, n);
 if (msg != HAL_RET_SUCCESS) {
-  self->state = SDC_READY;
+  self->state = HAL_DRV_STATE_READY;
 }
 
 return msg;]]></implementation>
@@ -620,7 +620,7 @@ return msg;]]></implementation>
 msg_t msg = HAL_RET_SUCCESS;
 
 osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == SDC_READY) ||
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
               (self->state == SDC_READING) ||
               (self->state == SDC_WRITING),
               "invalid state");
@@ -628,7 +628,7 @@ osalDbgAssert((self->state == SDC_READY) ||
 if ((self->state == SDC_READING) || (self->state == SDC_WRITING)) {
   osalSysLock();
   msg = sdc_lld_stop_transfer(self);
-  self->state = SDC_READY;
+  self->state = HAL_DRV_STATE_READY;
 #if SDC_USE_SYNCHRONIZATION == TRUE
   osalThreadResumeI(&self->sync_transfer, MSG_RESET);
 #endif
@@ -650,7 +650,7 @@ return msg;]]></implementation>
 msg_t msg;
 
 osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == SDC_READY) ||
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
               (self->state == SDC_READING) ||
               (self->state == SDC_WRITING),
               "invalid state");
@@ -659,7 +659,7 @@ if ((self->state == SDC_READING) || (self->state == SDC_WRITING)) {
   msg = osalThreadSuspendTimeoutS(&self->sync_transfer, timeout);
   if (msg == MSG_TIMEOUT) {
     (void)sdc_lld_stop_transfer(self);
-    self->state = SDC_READY;
+    self->state = HAL_DRV_STATE_READY;
   }
 }
 else {
@@ -701,7 +701,7 @@ return msg;]]></implementation>
                 <api />
                 <implementation><![CDATA[
 osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
-osalDbgAssert(self->state == SDC_READY, "invalid state");
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "invalid state");
 
 if ((startblk >= self->capacity) || (n > (self->capacity - startblk))) {
   self->errors |= SDC_OVERFLOW_ERROR;
@@ -745,7 +745,7 @@ return sdc_sync_read_aligned(self, startblk, buf, n);]]></implementation>
                 <api />
                 <implementation><![CDATA[
 osalDbgCheck((self != NULL) && (buf != NULL) && (n > 0U));
-osalDbgAssert(self->state == SDC_READY, "invalid state");
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "invalid state");
 
 if ((startblk >= self->capacity) || (n > (self->capacity - startblk))) {
   self->errors |= SDC_OVERFLOW_ERROR;
@@ -800,13 +800,13 @@ return flags;]]></implementation>
 bool result;
 
 osalDbgCheck(self != NULL);
-if (self->state != SDC_READY) {
+if (self->state != HAL_DRV_STATE_READY) {
   return HAL_FAILED;
 }
 
 self->state = SDC_SYNCING;
 result = sdc_lld_sync(self);
-self->state = SDC_READY;
+self->state = HAL_DRV_STATE_READY;
 
 return result;]]></implementation>
             </method>
@@ -822,7 +822,7 @@ return result;]]></implementation>
               <implementation><![CDATA[
 osalDbgCheck((self != NULL) && (bdip != NULL));
 
-if (self->state != SDC_READY) {
+if (self->state != HAL_DRV_STATE_READY) {
   return HAL_FAILED;
 }
 
@@ -849,7 +849,7 @@ uint32_t start;
 uint32_t end;
 
 osalDbgCheck(self != NULL);
-osalDbgAssert(self->state == SDC_READY, "invalid state");
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "invalid state");
 
 if ((startblk >= self->capacity) || (endblk >= self->capacity) ||
     (endblk < startblk)) {
@@ -889,11 +889,11 @@ if (_sdc_wait_for_transfer_state(self)) {
   goto failed;
 }
 
-self->state = SDC_READY;
+self->state = HAL_DRV_STATE_READY;
 return HAL_SUCCESS;
 
 failed:
-self->state = SDC_READY;
+self->state = HAL_DRV_STATE_READY;
 return HAL_FAILED;]]></implementation>
             </method>
             <condition check="SDC_USE_MUTUAL_EXCLUSION == TRUE">
@@ -949,8 +949,8 @@ msg_t msg;
 
 msg = sdc_lld_start(self);
 if (msg == HAL_RET_SUCCESS) {
-  if (self->state == SDC_STOP) {
-    self->state = SDC_ACTIVE;
+  if (self->state == HAL_DRV_STATE_STOP) {
+    self->state = HAL_DRV_STATE_ACTIVE;
   }
 }
 else {

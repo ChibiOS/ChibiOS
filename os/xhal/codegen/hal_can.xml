@@ -169,7 +169,7 @@ do {
           <notapi />
           <implementation><![CDATA[
 do {
-  (canp)->state  = CAN_READY;
+  (canp)->state  = HAL_DRV_STATE_READY;
   (canp)->events |= CAN_EVENT_WAKEUP;
   osalSysLockFromISR();
   __cbdrv_invoke_cb(canp);
@@ -230,10 +230,6 @@ do {
         <basetype ctype="struct hal_can_config" />
       </typedef>
       <verbatim><![CDATA[
-#define CAN_UNINIT                         HAL_DRV_STATE_UNINIT
-#define CAN_STOP                           HAL_DRV_STATE_STOP
-#define CAN_STARTING                       HAL_DRV_STATE_STARTING
-#define CAN_READY                          HAL_DRV_STATE_READY
 #define CAN_SLEEP                          (HAL_DRV_STATE_ERROR + 1U)
 
 /* Inclusion of LLD header.*/
@@ -368,7 +364,8 @@ drvStop(self);]]></implementation>
 osalDbgCheckClassI();
 osalDbgCheck((self != NULL) && (ctfp != NULL) &&
              (mailbox <= (canmbx_t)CAN_TX_MAILBOXES));
-osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == CAN_SLEEP),
               "invalid state");
 
 if (!can_lld_is_tx_empty(self, mailbox)) {
@@ -395,7 +392,8 @@ return false;]]></implementation>
 osalDbgCheckClassI();
 osalDbgCheck((self != NULL) && (crfp != NULL) &&
              (mailbox <= (canmbx_t)CAN_RX_MAILBOXES));
-osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == CAN_SLEEP),
               "invalid state");
 
 if (!can_lld_is_rx_nonempty(self, mailbox)) {
@@ -438,7 +436,8 @@ osalDbgCheck((self != NULL) && (ctfp != NULL) &&
              (mailbox <= (canmbx_t)CAN_TX_MAILBOXES));
 
 osalSysLock();
-osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == CAN_SLEEP),
               "invalid state");
 
 while ((self->state == CAN_SLEEP) || !can_lld_is_tx_empty(self, mailbox)) {
@@ -472,7 +471,8 @@ osalDbgCheck((self != NULL) && (crfp != NULL) &&
              (mailbox <= (canmbx_t)CAN_RX_MAILBOXES));
 
 osalSysLock();
-osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == CAN_SLEEP),
               "invalid state");
 
 while ((self->state == CAN_SLEEP) || !can_lld_is_rx_nonempty(self, mailbox)) {
@@ -497,9 +497,10 @@ return MSG_OK;]]></implementation>
 osalDbgCheck(self != NULL);
 
 osalSysLock();
-osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == CAN_SLEEP),
               "invalid state");
-if (self->state == CAN_READY) {
+if (self->state == HAL_DRV_STATE_READY) {
   can_lld_sleep(self);
   self->state = CAN_SLEEP;
   self->events |= CAN_EVENT_SLEEP;
@@ -514,11 +515,12 @@ osalSysUnlock();]]></implementation>
 osalDbgCheck(self != NULL);
 
 osalSysLock();
-osalDbgAssert((self->state == CAN_READY) || (self->state == CAN_SLEEP),
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == CAN_SLEEP),
               "invalid state");
 if (self->state == CAN_SLEEP) {
   can_lld_wakeup(self);
-  self->state = CAN_READY;
+  self->state = HAL_DRV_STATE_READY;
   self->events |= CAN_EVENT_WAKEUP;
   __cbdrv_invoke_cb(self);
 }

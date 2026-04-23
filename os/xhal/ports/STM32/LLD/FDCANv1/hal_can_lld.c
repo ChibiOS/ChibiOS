@@ -347,7 +347,7 @@ msg_t can_lld_start(hal_can_driver_c *canp) {
  */
 void can_lld_stop(hal_can_driver_c *canp) {
   /* If in ready or sleep state then disables the CAN peripheral.*/
-  if ((canp->state == CAN_READY) || (canp->state == CAN_SLEEP)) {
+  if ((canp->state == HAL_DRV_STATE_READY) || (canp->state == CAN_SLEEP)) {
     /* Disabling and clearing interrupts.*/
     canp->fdcan->IE  = 0U;
     canp->fdcan->IR  = (uint32_t)-1;
@@ -762,7 +762,7 @@ void canSTM32SetFilters(hal_can_driver_c *canp,
                         uint8_t num,
                         const CANFilter *cfp) {
 
-  osalDbgAssert(canp->state == CAN_READY, "invalid state");
+  osalDbgAssert(canp->state == HAL_DRV_STATE_READY, "invalid state");
 
   can_lld_set_filters(canp, num, cfp);
 }

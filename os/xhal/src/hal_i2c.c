@@ -219,7 +219,8 @@ msg_t i2cStart(void *ip, const hal_i2c_config_t *config) {
   msg_t msg;
 
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == I2C_STOP) || (self->state == I2C_READY) ||
+  osalDbgAssert((self->state == HAL_DRV_STATE_STOP) ||
+                (self->state == HAL_DRV_STATE_READY) ||
                 (self->state == I2C_LOCKED), "invalid state");
 
   if (config != NULL) {
@@ -242,7 +243,8 @@ msg_t i2cStart(void *ip, const hal_i2c_config_t *config) {
 void i2cStop(void *ip) {
   hal_i2c_driver_c *self = (hal_i2c_driver_c *)ip;
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == I2C_STOP) || (self->state == I2C_READY) ||
+  osalDbgAssert((self->state == HAL_DRV_STATE_STOP) ||
+                (self->state == HAL_DRV_STATE_READY) ||
                 (self->state == I2C_LOCKED), "invalid state");
 
   drvStop(self);
@@ -272,14 +274,14 @@ msg_t i2cStartMasterTransmitI(void *ip, i2caddr_t addr, const uint8_t *txbuf,
   osalDbgCheck((self != NULL) &&
                (txbytes > 0U) && (txbuf != NULL) &&
                ((rxbytes == 0U) || ((rxbytes > 0U) && (rxbuf != NULL))));
-  osalDbgAssert(self->state == I2C_READY, "not ready");
+  osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
 
   self->errors = I2C_NO_ERROR;
-  self->state  = I2C_ACTIVE_TX;
+  self->state  = HAL_DRV_STATE_ACTIVE;
   msg = i2c_lld_start_master_transmit(self, addr, txbuf, txbytes,
                                       rxbuf, rxbytes);
   if (msg != HAL_RET_SUCCESS) {
-    self->state = I2C_READY;
+    self->state = HAL_DRV_STATE_READY;
   }
 
   return msg;
@@ -304,13 +306,13 @@ msg_t i2cStartMasterReceiveI(void *ip, i2caddr_t addr, uint8_t *rxbuf,
   osalDbgCheckClassI();
   osalDbgCheck((self != NULL) && (addr != 0U) &&
                (rxbytes > 0U) && (rxbuf != NULL));
-  osalDbgAssert(self->state == I2C_READY, "not ready");
+  osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
 
   self->errors = I2C_NO_ERROR;
   self->state  = I2C_ACTIVE_RX;
   msg = i2c_lld_start_master_receive(self, addr, rxbuf, rxbytes);
   if (msg != HAL_RET_SUCCESS) {
-    self->state = I2C_READY;
+    self->state = HAL_DRV_STATE_READY;
   }
 
   return msg;
@@ -330,14 +332,15 @@ msg_t i2cStopTransferI(void *ip) {
 
   osalDbgCheckClassI();
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == I2C_READY) ||
-                (self->state == I2C_ACTIVE_TX) ||
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+                (self->state == HAL_DRV_STATE_ACTIVE) ||
                 (self->state == I2C_ACTIVE_RX),
                 "invalid state");
 
-  if ((self->state == I2C_ACTIVE_TX) || (self->state == I2C_ACTIVE_RX)) {
+  if ((self->state == HAL_DRV_STATE_ACTIVE) ||
+      (self->state == I2C_ACTIVE_RX)) {
     msg = i2c_lld_stop_transfer(self);
-    self->state = I2C_READY;
+    self->state = HAL_DRV_STATE_READY;
 #if I2C_USE_SYNCHRONIZATION == TRUE
     osalThreadResumeI(&self->sync_transfer, MSG_RESET);
 #endif
@@ -382,12 +385,13 @@ msg_t i2cSynchronizeS(void *ip, sysinterval_t timeout) {
   msg_t msg;
 
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == I2C_ACTIVE_TX) ||
+  osalDbgAssert((self->state == HAL_DRV_STATE_ACTIVE) ||
                 (self->state == I2C_ACTIVE_RX) ||
-                (self->state == I2C_READY),
+                (self->state == HAL_DRV_STATE_READY),
                 "invalid state");
 
-  if ((self->state == I2C_ACTIVE_TX) || (self->state == I2C_ACTIVE_RX)) {
+  if ((self->state == HAL_DRV_STATE_ACTIVE) ||
+      (self->state == I2C_ACTIVE_RX)) {
     msg = osalThreadSuspendTimeoutS(&self->sync_transfer, timeout);
     if (msg == MSG_TIMEOUT) {
       (void)i2c_lld_stop_transfer(self);

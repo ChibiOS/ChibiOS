@@ -298,7 +298,7 @@
   do {                                                                      \
     __cbdrv_invoke_cb_with_transition(sdcp,                                 \
                                       HAL_DRV_STATE_COMPLETE,               \
-                                      SDC_READY);                           \
+                                      HAL_DRV_STATE_READY);                 \
     _sdc_wakeup_isr(sdcp, MSG_OK);                                          \
   } while (false)
 
@@ -313,7 +313,7 @@
   do {                                                                      \
     __cbdrv_invoke_cb_with_transition(sdcp,                                 \
                                       HAL_DRV_STATE_ERROR,                  \
-                                      SDC_READY);                           \
+                                      HAL_DRV_STATE_READY);                 \
     _sdc_wakeup_isr(sdcp, MSG_RESET);                                       \
   } while (false)
 /** @} */
@@ -374,10 +374,6 @@ typedef struct hal_sdc_driver SDCDriver;
  */
 typedef struct hal_sdc_config SDCConfig;
 
-#define SDC_UNINIT                         HAL_DRV_STATE_UNINIT
-#define SDC_STOP                           HAL_DRV_STATE_STOP
-#define SDC_ACTIVE                         HAL_DRV_STATE_ACTIVE
-#define SDC_READY                          HAL_DRV_STATE_READY
 #define SDC_CONNECTING                     (HAL_DRV_STATE_ERROR + 1U)
 #define SDC_DISCONNECTING                  (HAL_DRV_STATE_ERROR + 2U)
 #define SDC_READING                        (HAL_DRV_STATE_ERROR + 3U)
@@ -525,11 +521,11 @@ struct hal_sdc_driver {
   /**
    * @brief       Card CID register image.
    */
-  uint32_t[4]               cid;
+  uint32_t                  cid[4];
   /**
    * @brief       Card CSD register image.
    */
-  uint32_t[4]               csd;
+  uint32_t                  csd[4];
 #if (SDC_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Synchronization point for transfer completion.

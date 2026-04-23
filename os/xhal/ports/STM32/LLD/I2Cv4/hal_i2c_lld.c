@@ -331,7 +331,7 @@ static void i2c_lld_serve_events(hal_i2c_driver_c *i2cp, uint32_t isr) {
 #if STM32_I2C_USE_DMA == FALSE
   /* Handling of data transfer if the DMA mode is disabled.*/
   {
-    if (i2cp->state == I2C_ACTIVE_TX) {
+    if (i2cp->state == HAL_DRV_STATE_ACTIVE) {
       /* Transmission phase.*/
       if (((cr1 & I2C_CR1_TXIE) != 0U) && ((isr & I2C_ISR_TXIS) != 0U)) {
         dp->TXDR = (uint32_t)*i2cp->txptr;
@@ -358,7 +358,7 @@ static void i2c_lld_serve_events(hal_i2c_driver_c *i2cp, uint32_t isr) {
 
   /* Partial transfer handling, restarting the transfer and returning.*/
   if ((isr & I2C_ISR_TCR) != 0U) {
-    if (i2cp->state == I2C_ACTIVE_TX) {
+    if (i2cp->state == HAL_DRV_STATE_ACTIVE) {
 #if STM32_I2C_USE_DMA == TRUE
       i2cp->txbytes -= (size_t)I2C_MAX_XFR_BYTES;
 #endif
@@ -375,7 +375,7 @@ static void i2c_lld_serve_events(hal_i2c_driver_c *i2cp, uint32_t isr) {
 
   /* The following condition is true if a transfer phase has been completed.*/
   if ((isr & I2C_ISR_TC) != 0U) {
-    if (i2cp->state == I2C_ACTIVE_TX) {
+    if (i2cp->state == HAL_DRV_STATE_ACTIVE) {
       /* End of the transmit phase.*/
 
 #if STM32_I2C_USE_DMA == TRUE
@@ -570,7 +570,7 @@ msg_t i2c_lld_start(hal_i2c_driver_c *i2cp) {
   dp->CR1 &= ~I2C_CR1_PE;
 
   /* If in stopped state then enables the I2C and DMA clocks.*/
-  if (i2cp->state == I2C_STOP) {
+  if (i2cp->state == HAL_DRV_STATE_STOP) {
 
 #if STM32_I2C_USE_I2C1
     if (&I2CD1 == i2cp) {
@@ -660,7 +660,7 @@ msg_t i2c_lld_start(hal_i2c_driver_c *i2cp) {
 void i2c_lld_stop(hal_i2c_driver_c *i2cp) {
 
   /* If not in stopped state then disables the I2C clock.*/
-  if (i2cp->state != I2C_STOP) {
+  if (i2cp->state != HAL_DRV_STATE_STOP) {
 
     /* I2C disable.*/
     i2c_lld_abort_operation(i2cp);

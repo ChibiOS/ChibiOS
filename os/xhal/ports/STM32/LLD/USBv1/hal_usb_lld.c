@@ -320,7 +320,7 @@ msg_t usb_lld_start(hal_usb_driver_c *usbp) {
     usbp->config = &default_usb_config;
   }
 
-  if (usbp->state == USB_STOP) {
+  if (usbp->state == HAL_DRV_STATE_STOP) {
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
 
@@ -343,7 +343,7 @@ msg_t usb_lld_start(hal_usb_driver_c *usbp) {
 
 void usb_lld_stop(hal_usb_driver_c *usbp) {
 
-  if (usbp->state != USB_STOP) {
+  if (usbp->state != HAL_DRV_STATE_STOP) {
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
 

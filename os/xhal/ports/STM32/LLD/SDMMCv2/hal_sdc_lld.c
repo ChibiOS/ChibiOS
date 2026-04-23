@@ -408,7 +408,7 @@ msg_t sdc_lld_start(hal_sdc_driver_c *sdcp) {
     sdcp->config = config;
   }
 
-  if (sdcp->state == SDC_STOP) {
+  if (sdcp->state == HAL_DRV_STATE_STOP) {
 #if STM32_SDC_USE_SDMMC1
     if (&SDCD1 == sdcp) {
       rccEnableSDMMC1(true);
@@ -434,7 +434,7 @@ msg_t sdc_lld_start(hal_sdc_driver_c *sdcp) {
 
 void sdc_lld_stop(hal_sdc_driver_c *sdcp) {
 
-  if (sdcp->state != SDC_STOP) {
+  if (sdcp->state != HAL_DRV_STATE_STOP) {
     sdc_lld_end_data_path(sdcp);
     sdcp->sdmmc->POWER  = 0U;
     sdcp->sdmmc->CLKCR  = 0U;
