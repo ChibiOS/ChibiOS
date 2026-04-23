@@ -90,7 +90,7 @@ static const xshell_manager_config_t shell_cfg = {
   .stack.size       = SHELL_WA_SIZE
 };
 
-static THD_WORKING_AREA(waBlinkerThread, 128);
+static THD_WORKING_AREA(waBlinkerThread, 256);
 static THD_FUNCTION(BlinkerThread, arg) {
 
   (void)arg;
