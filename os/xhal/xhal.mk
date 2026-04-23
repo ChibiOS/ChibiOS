@@ -21,6 +21,7 @@ XHALSRC := $(CHIBIOS)/os/xhal/src/hal.c \
            $(CHIBIOS)/os/xhal/src/hal_safety.c \
            $(CHIBIOS)/os/xhal/src/hal_base_driver.c \
            $(CHIBIOS)/os/xhal/src/hal_cb_driver.c \
+           $(CHIBIOS)/os/xhal/src/hal_flash_base.c \
            $(CHIBIOS)/os/xhal/src/hal_st.c \
            $(CHIBIOS)/os/xhal/src/hal_buffered_serial.c \
            $(CHIBIOS)/os/xhal/src/hal_queues.c
@@ -77,6 +78,7 @@ XHALSRC = $(CHIBIOS)/os/xhal/src/hal.c \
           $(CHIBIOS)/os/xhal/src/hal_safety.c \
           $(CHIBIOS)/os/xhal/src/hal_base_driver.c \
           $(CHIBIOS)/os/xhal/src/hal_cb_driver.c \
+          $(CHIBIOS)/os/xhal/src/hal_flash_base.c \
           $(CHIBIOS)/os/xhal/src/hal_st.c \
           $(CHIBIOS)/os/xhal/src/hal_buffered_serial.c \
           $(CHIBIOS)/os/xhal/src/hal_queues.c \

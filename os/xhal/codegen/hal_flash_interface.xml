@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_flash_interface" descr="Flash Interface" editcode="false">
+  <brief>Flash Interface.</brief>
+  <details><![CDATA[Base interface for flash devices.]]></details>
+  <imports>
+    <import>oop_base_interface.xml</import>
+  </imports>
+  <public>
+    <includes_always>
+      <include style="regular">oop_base_interface.h</include>
+    </includes_always>
+    <definitions_early>
+      <group description="Flash attributes">
+        <define name="FLASH_ATTR_ERASED_IS_ONE" value="0x00000001U">
+          <brief>Defines one as the erased bit state.</brief>
+        </define>
+        <define name="FLASH_ATTR_MEMORY_MAPPED" value="0x00000002U">
+          <brief>The memory is accessible in a memory mapped mode.</brief>
+        </define>
+        <define name="FLASH_ATTR_REWRITABLE" value="0x00000004U">
+          <brief>Programmed pages can be programmed again.</brief>
+          <note>This is incompatible and alternative to @p FLASH_ATTR_ECC_CAPABLE.</note>
+        </define>
+        <define name="FLASH_ATTR_ECC_CAPABLE" value="0x00000008U">
+          <brief>The memory is protected by an ECC mechanism.</brief>
+          <note><![CDATA[This usually puts restrictions on the program operations.
+            - Program operations can only happen at offsets aligned to write
+              page boundaries.
+            - The programmed data size must be a multiple of the write
+              page size.
+            - Programmed pages cannot be re-programmed.]]></note>
+        </define>
+        <define name="FLASH_ATTR_ECC_ZERO_LINE_CAPABLE" value="0x00000010U">
+          <brief>The device is able to overwrite zero to a line.</brief>
+          <note>This attribute is only meaningful for ECC-capable devices.</note>
+        </define>
+        <define name="FLASH_ATTR_SUSPEND_ERASE_CAPABLE" value="0x00000020U">
+          <brief>The device is able to suspend erase operations.</brief>
+        </define>
+      </group>
+    </definitions_early>
+    <types>
+      <typedef name="flash_sector_descriptor_t">
+        <brief>Type of a flash sector descriptor.</brief>
+        <basetype ctype="struct flash_sector_descriptor" />
+      </typedef>
+      <typedef name="flash_descriptor_t">
+        <brief>Type of a flash device descriptor.</brief>
+        <basetype ctype="struct flash_descriptor" />
+      </typedef>
+      <verbatim><![CDATA[
+/**
+ * @brief       Type of a flash error code.
+ */
+typedef enum {
+  FLASH_NO_ERROR = 0,
+  FLASH_BUSY_ERASING = 1,
+  FLASH_ERROR_READ = 2,
+  FLASH_ERROR_PROGRAM = 3,
+  FLASH_ERROR_ERASE = 4,
+  FLASH_ERROR_VERIFY = 5,
+  FLASH_ERROR_HW_FAILURE = 6,
+  FLASH_ERROR_UNIMPLEMENTED = 7
+} flash_error_t;
+
+/**
+ * @brief       Type of a flash offset.
+ */
+typedef uint32_t flash_offset_t;
+
+/**
+ * @brief       Type of a flash sector number.
+ */
+typedef uint32_t flash_sector_t;]]></verbatim>
+      <struct name="flash_sector_descriptor">
+        <brief>Flash sector descriptor.</brief>
+        <fields>
+          <field name="offset" ctype="flash_offset_t">
+            <brief>Sector offset.</brief>
+          </field>
+          <field name="size" ctype="uint32_t">
+            <brief>Sector size.</brief>
+          </field>
+        </fields>
+      </struct>
+      <struct name="flash_descriptor">
+        <brief>Flash device descriptor.</brief>
+        <fields>
+          <field name="attributes" ctype="uint32_t">
+            <brief>Device attributes.</brief>
+          </field>
+          <field name="page_size" ctype="uint32_t">
+            <brief>Size of write page.</brief>
+          </field>
+          <field name="sectors_count" ctype="flash_sector_t">
+            <brief>Number of sectors in the device.</brief>
+          </field>
+          <field name="sectors" ctype="const flash_sector_descriptor_t *">
+            <brief>Sector descriptors for non-uniform devices or @p NULL.</brief>
+          </field>
+          <field name="sectors_size" ctype="uint32_t">
+            <brief>Uniform sector size or zero for non-uniform devices.</brief>
+          </field>
+          <field name="address" ctype="uint8_t *">
+            <brief>Mapped base address or @p NULL if not memory mapped.</brief>
+          </field>
+          <field name="size" ctype="uint32_t">
+            <brief>Flash size.</brief>
+          </field>
+        </fields>
+      </struct>
+      <interface name="flash_interface" namespace="fls"
+        ancestorname="base_interface" descr="flash interface">
+        <brief>Generic flash interface.</brief>
+        <consts></consts>
+        <methods>
+          <method name="flsGetDescriptor" shortname="get_descriptor"
+            ctype="const flash_descriptor_t *">
+            <brief>Gets the flash descriptor structure.</brief>
+            <return>A flash device descriptor.</return>
+            <api />
+          </method>
+          <method name="flsRead" shortname="read" ctype="flash_error_t">
+            <brief>Read operation.</brief>
+            <param name="offset" ctype="flash_offset_t" dir="in">Flash offset.</param>
+            <param name="n" ctype="size_t" dir="in">Number of bytes to be read.</param>
+            <param name="rp" ctype="uint8_t *" dir="out">Pointer to the data buffer.</param>
+            <return>An error code.</return>
+            <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+            <retval value="FLASH_BUSY_ERASING">If there is an erase operation in progress.</retval>
+            <retval value="FLASH_ERROR_READ">If the read operation failed.</retval>
+            <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
+            <api />
+          </method>
+          <method name="flsProgram" shortname="program" ctype="flash_error_t">
+            <brief>Program operation.</brief>
+            <param name="offset" ctype="flash_offset_t" dir="in">Flash offset.</param>
+            <param name="n" ctype="size_t" dir="in">Number of bytes to be programmed.</param>
+            <param name="pp" ctype="const uint8_t *" dir="in">Pointer to the data buffer.</param>
+            <return>An error code.</return>
+            <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+            <retval value="FLASH_BUSY_ERASING">If there is an erase operation in progress.</retval>
+            <retval value="FLASH_ERROR_PROGRAM">If the program operation failed.</retval>
+            <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
+            <api />
+          </method>
+          <method name="flsStartEraseAll" shortname="start_erase_all"
+            ctype="flash_error_t">
+            <brief>Starts a whole-device erase operation.</brief>
+            <return>An error code.</return>
+            <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+            <retval value="FLASH_BUSY_ERASING">If there is an erase operation in progress.</retval>
+            <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
+            <api />
+          </method>
+          <method name="flsStartEraseSector" shortname="start_erase_sector"
+            ctype="flash_error_t">
+            <brief>Starts a sector erase operation.</brief>
+            <param name="sector" ctype="flash_sector_t" dir="in">Sector to be erased.</param>
+            <return>An error code.</return>
+            <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+            <retval value="FLASH_BUSY_ERASING">If there is an erase operation in progress.</retval>
+            <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
+            <api />
+          </method>
+          <method name="flsQueryErase" shortname="query_erase"
+            ctype="flash_error_t">
+            <brief>Queries the driver for erase operation progress.</brief>
+            <param name="msec" ctype="unsigned *" dir="out">Recommended time, in milliseconds, before retrying, can be @p NULL.</param>
+            <return>An error code.</return>
+            <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+            <retval value="FLASH_BUSY_ERASING">If there is an erase operation in progress.</retval>
+            <retval value="FLASH_ERROR_ERASE">If the erase operation failed.</retval>
+            <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
+            <api />
+          </method>
+          <method name="flsVerifyErase" shortname="verify_erase"
+            ctype="flash_error_t">
+            <brief>Returns the erase state of a sector.</brief>
+            <param name="sector" ctype="flash_sector_t" dir="in">Sector to be verified.</param>
+            <return>An error code.</return>
+            <retval value="FLASH_NO_ERROR">If the sector is erased.</retval>
+            <retval value="FLASH_BUSY_ERASING">If there is an erase operation in progress.</retval>
+            <retval value="FLASH_ERROR_VERIFY">If the verify operation failed.</retval>
+            <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
+            <api />
+          </method>
+          <method name="flsAcquireExclusive" shortname="acquire_exclusive"
+            ctype="flash_error_t">
+            <brief>Acquires exclusive access to flash.</brief>
+            <return>An error code.</return>
+            <retval value="FLASH_NO_ERROR">If the access is obtained.</retval>
+            <retval value="FLASH_ERROR_UNIMPLEMENTED">If exclusive access is not implemented.</retval>
+            <api />
+          </method>
+          <method name="flsReleaseExclusive" shortname="release_exclusive"
+            ctype="flash_error_t">
+            <brief>Releases exclusive access to flash.</brief>
+            <return>An error code.</return>
+            <retval value="FLASH_NO_ERROR">If the access is released.</retval>
+            <retval value="FLASH_ERROR_UNIMPLEMENTED">If exclusive access is not implemented.</retval>
+            <api />
+          </method>
+        </methods>
+      </interface>
+    </types>
+    <functions></functions>
+  </public>
+  <private>
+    <includes_always>
+      <include style="regular">hal.h</include>
+    </includes_always>
+  </private>
+</module>

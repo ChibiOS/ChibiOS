@@ -15,10 +15,17 @@
 */
 
 /**
- * @file    hal_serial_usb.h
- * @brief   Serial over USB Driver macros and structures.
+ * @file        hal_serial_usb.h
+ * @brief       Generated Serial over USB Driver header.
+ * @note        This is a generated file, do not edit directly.
  *
- * @addtogroup HAL_SERIAL_USB
+ * @addtogroup  HAL_SERIAL_USB
+ * @brief       Serial over USB driver.
+ * @details     This module implements a CDC-ACM serial channel on top of the
+ *              generic USB CDC service class. The USB driver and device binder
+ *              remain external; this module adds buffered channel semantics,
+ *              queue handling, and serial-oriented flow control on top of the
+ *              CDC transport.
  * @{
  */
 
@@ -27,62 +34,68 @@
 
 #include "hal.h"
 
-#if !defined(SERIAL_USB_USE_MODULE) || defined(__DOXYGEN__)
-#define SERIAL_USB_USE_MODULE            TRUE
-#endif
-
-#if (SERIAL_USB_USE_MODULE == TRUE) || defined(__DOXYGEN__)
+#if (!defined(SERIAL_USB_USE_MODULE) || (SERIAL_USB_USE_MODULE == TRUE)) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
-/* Driver constants.                                                         */
-/*===========================================================================*/
-
-#if !defined(CDC_SET_LINE_CODING) || defined(__DOXYGEN__)
-#define CDC_SET_LINE_CODING             0x20U
-#endif
-
-#if !defined(CDC_GET_LINE_CODING) || defined(__DOXYGEN__)
-#define CDC_GET_LINE_CODING             0x21U
-#endif
-
-#if !defined(CDC_SET_CONTROL_LINE_STATE) || defined(__DOXYGEN__)
-#define CDC_SET_CONTROL_LINE_STATE      0x22U
-#endif
-
-#define SERIAL_USB_DEFAULT_RATE         38400U
-
-/*===========================================================================*/
-/* Driver pre-compile time settings.                                         */
+/* Module constants.                                                         */
 /*===========================================================================*/
 
 /**
- * @name    SERIAL_USB configuration options
+ * @name    Serial USB state aliases
  * @{
  */
+#define SDU_UNINIT                          USB_CDC_SERVICE_UNINIT
+#define SDU_STOP                            USB_CDC_SERVICE_STOP
+#define SDU_READY                           USB_CDC_SERVICE_READY
+/** @} */
+
+/*===========================================================================*/
+/* Module pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief       Serial USB driver enable switch.
+ */
+#if !defined(SERIAL_USB_USE_MODULE) || defined(__DOXYGEN__)
+#define SERIAL_USB_USE_MODULE               TRUE
+#endif
+
+/**
+ * @brief       Size of each TX/RX staging area.
+ */
 #if !defined(SERIAL_USB_BUFFERS_SIZE) || defined(__DOXYGEN__)
-#define SERIAL_USB_BUFFERS_SIZE         256U
+#define SERIAL_USB_BUFFERS_SIZE             256U
 #endif
 
+/**
+ * @brief       Number of queue-sized staging buffers.
+ */
 #if !defined(SERIAL_USB_BUFFERS_NUMBER) || defined(__DOXYGEN__)
-#define SERIAL_USB_BUFFERS_NUMBER       2U
+#define SERIAL_USB_BUFFERS_NUMBER           2U
 #endif
 
+/**
+ * @brief       Enables zero-length packet transmission when required.
+ */
 #if !defined(SERIAL_USB_SEND_ZLP) || defined(__DOXYGEN__)
-#define SERIAL_USB_SEND_ZLP             TRUE
+#define SERIAL_USB_SEND_ZLP                 TRUE
 #endif
 
+/**
+ * @brief       Limits OUT transfers to endpoint packet size.
+ */
 #if !defined(SERIAL_USB_RX_PACKET_MODE) || defined(__DOXYGEN__)
-#define SERIAL_USB_RX_PACKET_MODE       FALSE
+#define SERIAL_USB_RX_PACKET_MODE           FALSE
 #endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-#if (HAL_USE_USB == FALSE)
-#error "Serial USB requires HAL_USE_USB"
-#endif
 
 #if (SERIAL_USB_SEND_ZLP != FALSE) && (SERIAL_USB_SEND_ZLP != TRUE)
 #error "invalid SERIAL_USB_SEND_ZLP value"
@@ -93,147 +106,114 @@
 #endif
 
 /*===========================================================================*/
-/* Driver data structures and types.                                         */
+/* Module macros.                                                            */
 /*===========================================================================*/
 
-/**
- * @brief Driver state machine possible states.
- */
-typedef enum {
-  SDU_UNINIT = 0,
-  SDU_STOP   = 1,
-  SDU_READY  = 2
-} sdustate_t;
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
 
-/**
- * @brief   Type of CDC line coding structure.
- */
-typedef struct {
-  uint8_t                   dwDTERate[4];
-  uint8_t                   bCharFormat;
-  uint8_t                   bParityType;
-  uint8_t                   bDataBits;
-} sdu_linecoding_t;
-
-/**
- * @brief   Structure representing a serial over USB driver.
- */
+typedef usb_cdc_service_state_t sdustate_t;
+typedef usb_cdc_linecoding_t sdu_linecoding_t;
+typedef hal_usb_cdc_config_t SerialUSBConfig;
 typedef struct hal_serial_usb_driver SerialUSBDriver;
+
+/**
+ * @class       hal_serial_usb_driver_c
+ * @extends     hal_usb_cdc_service_c
+ * @implements  asynchronous_channel_i
+ *
+ * @brief       CDC serial channel service class.
+ * @details     This class adds buffered asynchronous-channel behavior on top
+ *              of the generic USB CDC service base class.
+ *
+ * @name        Class @p hal_serial_usb_driver_c structures
+ * @{
+ */
+
+/**
+ * @brief       Type of a serial over USB driver class.
+ */
 typedef struct hal_serial_usb_driver hal_serial_usb_driver_c;
 
 /**
- * @brief   Serial over USB Driver configuration structure.
- * @details The USB driver and descriptors remain externally owned. This
- *          structure only describes the CDC-ACM function wiring used by the
- *          serial layer.
+ * @brief       Class @p hal_serial_usb_driver_c virtual methods table.
  */
-typedef struct hal_serial_usb_config {
-  /**
-   * @brief   USB driver to use.
-   */
-  hal_usb_driver_c         *usbp;
-  /**
-   * @brief   Control interface number associated to this CDC function.
-   */
-  uint8_t                   control_if;
-  /**
-   * @brief   Bulk IN endpoint used for outgoing data transfer.
-   */
-  usbep_t                   bulk_in;
-  /**
-   * @brief   Bulk OUT endpoint used for incoming data transfer.
-   */
-  usbep_t                   bulk_out;
-  /**
-   * @brief   Interrupt IN endpoint used for notifications.
-   * @note    If set to zero then the endpoint is considered absent.
-   */
-  usbep_t                   int_in;
-  /**
-   * @brief   Bulk IN endpoint maximum packet size.
-   */
-  uint16_t                  bulk_in_maxsize;
-  /**
-   * @brief   Bulk OUT endpoint maximum packet size.
-   */
-  uint16_t                  bulk_out_maxsize;
-  /**
-   * @brief   Interrupt IN endpoint maximum packet size.
-   * @note    Ignored when @p int_in is zero.
-   */
-  uint16_t                  int_in_maxsize;
-} SerialUSBConfig;
+struct hal_serial_usb_driver_vmt {
+  /* From base_object_c.*/
+  void (*dispose)(void *ip);
+  /* From hal_usb_service_c.*/
+  msg_t (*bind)(void *ip, struct hal_usb_binder *binderp);
+  void (*unbind)(void *ip);
+  void (*reset)(void *ip);
+  void (*configure)(void *ip);
+  void (*unconfigure)(void *ip);
+  void (*suspend)(void *ip);
+  void (*wakeup)(void *ip);
+  void (*sof)(void *ip);
+  void (*in)(void *ip, usbep_t ep);
+  void (*out)(void *ip, usbep_t ep);
+  msg_t (*setup)(void *ip, bool *handledp);
+  /* From hal_usb_cdc_service_c.*/
+  void (*configured)(void *ip);
+  void (*disconnected)(void *ip);
+  void (*wakehook)(void *ip);
+  void (*sofhook)(void *ip);
+  void (*data_transmitted)(void *ip, usbep_t ep);
+  void (*data_received)(void *ip, usbep_t ep);
+  void (*irq_transmitted)(void *ip, usbep_t ep);
+  void (*control_line_state)(void *ip);
+  /* From hal_serial_usb_driver_c.*/
+};
 
 /**
- * @brief   Structure representing a serial over USB driver.
+ * @brief       Structure representing a serial over USB driver class.
  */
 struct hal_serial_usb_driver {
   /**
-   * @brief       Implemented interface @p asynchronous_channel_i.
+   * @brief       Virtual Methods Table.
    */
-  asynchronous_channel_i    chn;
+  const struct hal_serial_usb_driver_vmt *vmt;
   /**
-   * @brief       Input queue.
+   * @brief       Binder currently owning the service, can be @p NULL.
    */
-  input_queue_t             iqueue;
+  struct hal_usb_binder *   binder;
   /**
-   * @brief       Output queue.
+   * @brief       Pointer to the immutable service ownership metadata.
    */
-  output_queue_t            oqueue;
+  const hal_usb_service_info_t * info;
   /**
-   * @brief       I/O condition event source.
+   * @brief       Application-defined service argument.
    */
-  event_source_t            event;
+  void *                    arg;
   /**
-   * @brief       Cached channel flags.
+   * @brief       Next service in the binder registration list.
    */
-  volatile chnflags_t       flags;
+  hal_usb_service_c *       next;
   /**
-   * @brief       Driver state.
+   * @brief       Previous service in the binder registration list.
    */
-  sdustate_t                state;
+  hal_usb_service_c *       prev;
   /**
-   * @brief       Driver connectivity state.
+   * @brief       Active CDC service configuration.
+   */
+  const hal_usb_cdc_config_t * config;
+  /**
+   * @brief       CDC service state.
+   */
+  usb_cdc_service_state_t   state;
+  /**
+   * @brief       Connection state as observed by the USB service logic.
    */
   bool                      connected;
   /**
-   * @brief       Current configuration data.
+   * @brief       Current CDC line coding state.
    */
-  const SerialUSBConfig     *config;
+  usb_cdc_linecoding_t      linecoding;
   /**
-   * @brief       Current line coding.
-   */
-  sdu_linecoding_t          linecoding;
-  /**
-   * @brief       Notification endpoint line state cache.
+   * @brief       Current CDC control line state bitmap.
    */
   uint16_t                  control_line_state;
-  /**
-   * @brief       Last transmitted packet size.
-   */
-  size_t                    last_txsize;
-  /**
-   * @brief       Synchronization point for TX completion.
-   */
-  thread_reference_t        txsync;
-  /**
-   * @brief       Input queue backing storage.
-   */
-  uint8_t                   ib[SERIAL_USB_BUFFERS_NUMBER *
-                               SERIAL_USB_BUFFERS_SIZE];
-  /**
-   * @brief       Output queue backing storage.
-   */
-  uint8_t                   ob[SERIAL_USB_BUFFERS_NUMBER *
-                               SERIAL_USB_BUFFERS_SIZE];
-  /**
-   * @brief       Staging buffer for OUT transactions.
-   */
-  uint8_t                   rxbuf[SERIAL_USB_BUFFERS_SIZE];
-  /**
-   * @brief       Staging buffer for IN transactions.
-   */
-  uint8_t                   txbuf[SERIAL_USB_BUFFERS_SIZE];
   /**
    * @brief       Bulk IN endpoint state.
    */
@@ -258,7 +238,56 @@ struct hal_serial_usb_driver {
    * @brief       Interrupt IN endpoint configuration.
    */
   USBEndpointConfig         int_in_epc;
+  /**
+   * @brief       Mutable CDC service ownership metadata.
+   */
+  hal_usb_service_info_t    svcinfo;
+  /**
+   * @brief       Implemented interface @p asynchronous_channel_i.
+   */
+  asynchronous_channel_i    chn;
+  /**
+   * @brief       Input queue.
+   */
+  input_queue_t             iqueue;
+  /**
+   * @brief       Output queue.
+   */
+  output_queue_t            oqueue;
+  /**
+   * @brief       I/O condition event source.
+   */
+  event_source_t            event;
+  /**
+   * @brief       Pending channel flags.
+   */
+  volatile chnflags_t       flags;
+  /**
+   * @brief       Last transmitted bulk transfer size.
+   */
+  size_t                    last_txsize;
+  /**
+   * @brief       Optional thread waiting for TX drain.
+   */
+  thread_reference_t        txsync;
+  /**
+   * @brief       Input queue storage.
+   */
+  uint8_t                   ib[SERIAL_USB_BUFFERS_NUMBER * SERIAL_USB_BUFFERS_SIZE];
+  /**
+   * @brief       Output queue storage.
+   */
+  uint8_t                   ob[SERIAL_USB_BUFFERS_NUMBER * SERIAL_USB_BUFFERS_SIZE];
+  /**
+   * @brief       Temporary receive staging buffer.
+   */
+  uint8_t                   rxbuf[SERIAL_USB_BUFFERS_SIZE];
+  /**
+   * @brief       Temporary transmit staging buffer.
+   */
+  uint8_t                   txbuf[SERIAL_USB_BUFFERS_SIZE];
 };
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -267,48 +296,54 @@ struct hal_serial_usb_driver {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sduObjectInit(SerialUSBDriver *sdup);
-  msg_t sduStart(SerialUSBDriver *sdup, const SerialUSBConfig *config);
-  void sduStop(SerialUSBDriver *sdup);
-  void sduSuspendHookI(SerialUSBDriver *sdup);
-  void sduWakeupHookI(SerialUSBDriver *sdup);
-  void sduConfigureHookI(SerialUSBDriver *sdup);
-  msg_t sduRequestsHook(SerialUSBDriver *sdup, bool *handledp);
-  void sduSOFHookI(SerialUSBDriver *sdup);
-  void sduDataTransmitted(hal_usb_driver_c *usbp, usbep_t ep);
-  void sduDataReceived(hal_usb_driver_c *usbp, usbep_t ep);
-  void sduInterruptTransmitted(hal_usb_driver_c *usbp, usbep_t ep);
+  /* Methods of hal_serial_usb_driver_c.*/
+  void *__sdu_objinit_impl(void *ip, const void *vmt);
+  void __sdu_dispose_impl(void *ip);
+  void __sdu_unbind_impl(void *ip);
+  void __sdu_configured_impl(void *ip);
+  void __sdu_disconnected_impl(void *ip);
+  void __sdu_wakehook_impl(void *ip);
+  void __sdu_sofhook_impl(void *ip);
+  void __sdu_data_transmitted_impl(void *ip, usbep_t ep);
+  void __sdu_data_received_impl(void *ip, usbep_t ep);
+  void __sdu_irq_transmitted_impl(void *ip, usbep_t ep);
+  void __sdu_control_line_state_impl(void *ip);
+  /* Regular functions.*/
+  const sdu_linecoding_t *sduGetLineCodingX(void *ip);
+  event_source_t *sduGetEventSourceX(void *ip);
+  hal_usb_service_c *sduGetServiceX(void *ip);
+  msg_t sduStart(void *ip, const SerialUSBConfig *config);
+  void sduStop(void *ip);
 #ifdef __cplusplus
 }
 #endif
 
 /*===========================================================================*/
-/* Driver inline functions.                                                  */
+/* Module inline functions.                                                  */
 /*===========================================================================*/
 
 /**
- * @brief   Returns the current line coding.
- *
- * @param[in] sdup      pointer to a @p SerialUSBDriver object
- * @return              Pointer to the cached line coding.
+ * @name        Default constructor of hal_serial_usb_driver_c
+ * @{
  */
-CC_FORCE_INLINE
-static inline const sdu_linecoding_t *sduGetLineCodingX(SerialUSBDriver *sdup) {
-  return &sdup->linecoding;
-}
-
 /**
- * @brief   Returns the event source associated to the driver.
+ * @brief       Default initialization function of @p hal_serial_usb_driver_c.
  *
- * @param[in] sdup      pointer to a @p SerialUSBDriver object
- * @return              Pointer to the event source.
+ * @param[out]    self          Pointer to a @p hal_serial_usb_driver_c
+ *                              instance to be initialized.
+ * @return                      Pointer to the initialized object.
+ *
+ * @objinit
  */
 CC_FORCE_INLINE
-static inline event_source_t *sduGetEventSourceX(SerialUSBDriver *sdup) {
-  return &sdup->event;
-}
+static inline hal_serial_usb_driver_c *sduObjectInit(hal_serial_usb_driver_c *self) {
+  extern const struct hal_serial_usb_driver_vmt __hal_serial_usb_driver_vmt;
 
-#endif /* SERIAL_USB_USE_MODULE == TRUE */
+  return __sdu_objinit_impl(self, &__hal_serial_usb_driver_vmt);
+}
+/** @} */
+
+#endif /* !defined(SERIAL_USB_USE_MODULE) || (SERIAL_USB_USE_MODULE == TRUE) */
 
 #endif /* HAL_SERIAL_USB_H */
 

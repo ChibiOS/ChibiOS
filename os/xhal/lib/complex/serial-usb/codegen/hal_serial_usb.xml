@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_serial_usb" descr="Serial over USB Driver"
+  check="!defined(SERIAL_USB_USE_MODULE) || (SERIAL_USB_USE_MODULE == TRUE)"
+  headerpath="." sourcepath="." editcode="false">
+  <brief>Serial over USB driver.</brief>
+  <details><![CDATA[This module implements a CDC-ACM serial channel on top of
+    the generic USB CDC service class. The USB driver and device binder remain
+    external; this module adds buffered channel semantics, queue handling, and
+    serial-oriented flow control on top of the CDC transport.]]></details>
+  <imports>
+    <import>hal_usb.xml</import>
+    <import>hal_channels.xml</import>
+  </imports>
+  <public>
+    <includes_always>
+      <include style="regular">hal.h</include>
+    </includes_always>
+    <definitions_early>
+      <group description="Serial USB state aliases">
+        <define name="SDU_UNINIT" value="USB_CDC_SERVICE_UNINIT" />
+        <define name="SDU_STOP" value="USB_CDC_SERVICE_STOP" />
+        <define name="SDU_READY" value="USB_CDC_SERVICE_READY" />
+      </group>
+    </definitions_early>
+    <configs>
+      <config name="SERIAL_USB_USE_MODULE" default="TRUE">
+        <brief>Serial USB driver enable switch.</brief>
+      </config>
+      <config name="SERIAL_USB_BUFFERS_SIZE" default="256U">
+        <brief>Size of each TX/RX staging area.</brief>
+      </config>
+      <config name="SERIAL_USB_BUFFERS_NUMBER" default="2U">
+        <brief>Number of queue-sized staging buffers.</brief>
+      </config>
+      <config name="SERIAL_USB_SEND_ZLP" default="TRUE">
+        <brief>Enables zero-length packet transmission when required.</brief>
+      </config>
+      <config name="SERIAL_USB_RX_PACKET_MODE" default="FALSE">
+        <brief>Limits OUT transfers to endpoint packet size.</brief>
+      </config>
+    </configs>
+    <definitions_late>
+      <verbatim><![CDATA[
+#if (SERIAL_USB_SEND_ZLP != FALSE) && (SERIAL_USB_SEND_ZLP != TRUE)
+#error "invalid SERIAL_USB_SEND_ZLP value"
+#endif
+
+#if (SERIAL_USB_RX_PACKET_MODE != FALSE) && (SERIAL_USB_RX_PACKET_MODE != TRUE)
+#error "invalid SERIAL_USB_RX_PACKET_MODE value"
+#endif]]></verbatim>
+    </definitions_late>
+    <types>
+      <verbatim><![CDATA[
+typedef usb_cdc_service_state_t sdustate_t;
+typedef usb_cdc_linecoding_t sdu_linecoding_t;
+typedef hal_usb_cdc_config_t SerialUSBConfig;
+typedef struct hal_serial_usb_driver SerialUSBDriver;]]></verbatim>
+      <class type="regular" name="hal_serial_usb_driver" namespace="sdu"
+        ancestorname="hal_usb_cdc_service" descr="serial over USB driver">
+        <brief>CDC serial channel service class.</brief>
+        <details><![CDATA[This class adds buffered asynchronous-channel
+          behavior on top of the generic USB CDC service base class.]]></details>
+        <implements>
+          <if name="asynchronous_channel">
+            <method shortname="write">
+              <implementation><![CDATA[
+if ((self->state != SDU_READY) || (self->config == NULL) || !self->connected) {
+  return 0U;
+}
+
+return oqWriteTimeout(&self->oqueue, bp, n, TIME_INFINITE);]]></implementation>
+            </method>
+            <method shortname="read">
+              <implementation><![CDATA[
+if ((self->state != SDU_READY) || (self->config == NULL)) {
+  return 0U;
+}
+if (!self->connected && iqIsEmptyI(&self->iqueue)) {
+  return 0U;
+}
+
+return iqReadTimeout(&self->iqueue, bp, n, TIME_INFINITE);]]></implementation>
+            </method>
+            <method shortname="put">
+              <implementation><![CDATA[
+if ((self->state != SDU_READY) || (self->config == NULL) || !self->connected) {
+  return STM_RESET;
+}
+
+return oqPutTimeout(&self->oqueue, b, TIME_INFINITE);]]></implementation>
+            </method>
+            <method shortname="get">
+              <implementation><![CDATA[
+if ((self->state != SDU_READY) || (self->config == NULL)) {
+  return STM_RESET;
+}
+if (!self->connected && iqIsEmptyI(&self->iqueue)) {
+  return STM_RESET;
+}
+
+return iqGetTimeout(&self->iqueue, TIME_INFINITE);]]></implementation>
+            </method>
+            <method shortname="unget">
+              <implementation><![CDATA[
+(void)self;
+(void)b;
+
+return STM_RESET;]]></implementation>
+            </method>
+            <method shortname="writet">
+              <implementation><![CDATA[
+if ((self->state != SDU_READY) || (self->config == NULL) || !self->connected) {
+  return 0U;
+}
+
+return oqWriteTimeout(&self->oqueue, bp, n, timeout);]]></implementation>
+            </method>
+            <method shortname="readt">
+              <implementation><![CDATA[
+if ((self->state != SDU_READY) || (self->config == NULL)) {
+  return 0U;
+}
+if (!self->connected && iqIsEmptyI(&self->iqueue)) {
+  return 0U;
+}
+
+return iqReadTimeout(&self->iqueue, bp, n, timeout);]]></implementation>
+            </method>
+            <method shortname="putt">
+              <implementation><![CDATA[
+if ((self->state != SDU_READY) || (self->config == NULL) || !self->connected) {
+  return STM_RESET;
+}
+
+return oqPutTimeout(&self->oqueue, b, timeout);]]></implementation>
+            </method>
+            <method shortname="gett">
+              <implementation><![CDATA[
+if ((self->state != SDU_READY) || (self->config == NULL)) {
+  return STM_RESET;
+}
+if (!self->connected && iqIsEmptyI(&self->iqueue)) {
+  return STM_RESET;
+}
+
+return iqGetTimeout(&self->iqueue, timeout);]]></implementation>
+            </method>
+            <method shortname="getclr">
+              <implementation><![CDATA[
+chnflags_t flags;
+syssts_t sts;
+
+sts = osalSysGetStatusAndLockX();
+flags = self->flags & mask;
+self->flags &= ~mask;
+osalSysRestoreStatusX(sts);
+
+return flags;]]></implementation>
+            </method>
+            <method shortname="ctl">
+              <implementation><![CDATA[
+switch (operation) {
+case CHN_CTL_NOP:
+  osalDbgCheck(arg == NULL);
+  return HAL_RET_SUCCESS;
+case CHN_CTL_TX_WAIT:
+  osalDbgCheck(arg == NULL);
+  osalSysLock();
+  if ((self->state != SDU_READY) || (self->config == NULL) ||
+      !self->connected) {
+    osalSysUnlock();
+    return MSG_RESET;
+  }
+  if ((oqGetFullI(&self->oqueue) == 0U) && !sdu_is_transmitting_i(self)) {
+    osalSysUnlock();
+    return MSG_OK;
+  }
+  self->txsync = NULL;
+  {
+    msg_t msg = osalThreadSuspendS(&self->txsync);
+    osalSysUnlock();
+    return msg;
+  }
+default:
+  break;
+}
+
+return HAL_RET_UNKNOWN_CTL;]]></implementation>
+            </method>
+          </if>
+        </implements>
+        <fields>
+          <field name="iqueue" ctype="input_queue_t">
+            <brief>Input queue.</brief>
+          </field>
+          <field name="oqueue" ctype="output_queue_t">
+            <brief>Output queue.</brief>
+          </field>
+          <field name="event" ctype="event_source_t">
+            <brief>I/O condition event source.</brief>
+          </field>
+          <field name="flags" ctype="volatile chnflags_t">
+            <brief>Pending channel flags.</brief>
+          </field>
+          <field name="last_txsize" ctype="size_t">
+            <brief>Last transmitted bulk transfer size.</brief>
+          </field>
+          <field name="txsync" ctype="thread_reference_t">
+            <brief>Optional thread waiting for TX drain.</brief>
+          </field>
+          <field name="ib"
+            ctype="uint8_t$I$N[SERIAL_USB_BUFFERS_NUMBER * SERIAL_USB_BUFFERS_SIZE]">
+            <brief>Input queue storage.</brief>
+          </field>
+          <field name="ob"
+            ctype="uint8_t$I$N[SERIAL_USB_BUFFERS_NUMBER * SERIAL_USB_BUFFERS_SIZE]">
+            <brief>Output queue storage.</brief>
+          </field>
+          <field name="rxbuf" ctype="uint8_t$I$N[SERIAL_USB_BUFFERS_SIZE]">
+            <brief>Temporary receive staging buffer.</brief>
+          </field>
+          <field name="txbuf" ctype="uint8_t$I$N[SERIAL_USB_BUFFERS_SIZE]">
+            <brief>Temporary transmit staging buffer.</brief>
+          </field>
+        </fields>
+        <methods>
+          <objinit callsuper="false">
+            <implementation><![CDATA[
+__cdcsvc_objinit_impl((void *)self, vmt);
+iqObjectInit(&self->iqueue, self->ib, sizeof(self->ib), sdu_inotify, self);
+oqObjectInit(&self->oqueue, self->ob, sizeof(self->ob), sdu_onotify, self);
+osalEventObjectInit(&self->event);
+self->flags = CHN_FL_NONE;
+self->last_txsize = 0U;
+self->txsync = NULL;]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[ ]]></implementation>
+          </dispose>
+          <override>
+            <method shortname="unbind">
+              <implementation><![CDATA[
+osalSysLock();
+sdu_add_flags_i(self, CHN_FL_DISCONNECTED);
+sdu_reset_queues_i(self, MSG_RESET);
+osalOsRescheduleS();
+osalSysUnlock();]]></implementation>
+            </method>
+            <method shortname="configured">
+              <implementation><![CDATA[
+iqResetI(&self->iqueue);
+oqResetI(&self->oqueue);
+self->last_txsize = 0U;
+sdu_add_flags_i(self, CHN_FL_CONNECTED);
+(void)sdu_start_receive_i(self);]]></implementation>
+            </method>
+            <method shortname="disconnected">
+              <implementation><![CDATA[
+sdu_add_flags_i(self, CHN_FL_DISCONNECTED);
+sdu_reset_queues_i(self, MSG_RESET);]]></implementation>
+            </method>
+            <method shortname="wakehook">
+              <implementation><![CDATA[
+sdu_add_flags_i(self, CHN_FL_CONNECTED);
+(void)sdu_start_receive_i(self);]]></implementation>
+            </method>
+            <method shortname="sofhook">
+              <implementation><![CDATA[
+(void)sdu_try_transmit_i(self, true);]]></implementation>
+            </method>
+            <method shortname="data_transmitted">
+              <implementation><![CDATA[
+sdu_data_transmitted_i(self, self->config->usbp, ep);]]></implementation>
+            </method>
+            <method shortname="data_received">
+              <implementation><![CDATA[
+sdu_data_received_i(self, self->config->usbp, ep);]]></implementation>
+            </method>
+            <method shortname="irq_transmitted">
+              <implementation><![CDATA[
+(void)self;
+(void)ep;]]></implementation>
+            </method>
+            <method shortname="control_line_state">
+              <implementation><![CDATA[
+(void)self;]]></implementation>
+            </method>
+          </override>
+        </methods>
+      </class>
+    </types>
+    <functions>
+      <function name="sduGetLineCodingX"
+        ctype="const sdu_linecoding_t *">
+        <brief>Returns the current CDC line coding.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p SerialUSBDriver instance.
+        </param>
+        <return>Pointer to the current CDC line coding.</return>
+        <xclass />
+        <implementation><![CDATA[
+SerialUSBDriver *self = (SerialUSBDriver *)ip;
+
+osalDbgCheck(self != NULL);
+
+return (const sdu_linecoding_t *)usbCdcServiceGetLineCodingX((void *)self);]]></implementation>
+      </function>
+      <function name="sduGetEventSourceX" ctype="event_source_t *">
+        <brief>Returns the channel event source.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p SerialUSBDriver instance.
+        </param>
+        <return>Pointer to the event source.</return>
+        <xclass />
+        <implementation><![CDATA[
+SerialUSBDriver *self = (SerialUSBDriver *)ip;
+
+osalDbgCheck(self != NULL);
+
+return &self->event;]]></implementation>
+      </function>
+      <function name="sduGetServiceX" ctype="hal_usb_service_c *">
+        <brief>Returns the USB service view of the serial driver.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p SerialUSBDriver instance.
+        </param>
+        <return>Pointer to the embedded USB service base.</return>
+        <xclass />
+        <implementation><![CDATA[
+SerialUSBDriver *self = (SerialUSBDriver *)ip;
+
+osalDbgCheck(self != NULL);
+
+return (hal_usb_service_c *)self;]]></implementation>
+      </function>
+      <function name="sduStart" ctype="msg_t">
+        <brief>Starts a serial USB driver instance.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p SerialUSBDriver instance.
+        </param>
+        <param name="config" ctype="const SerialUSBConfig *" dir="in">
+          Driver configuration.
+        </param>
+        <return>The operation status.</return>
+        <api />
+        <implementation><![CDATA[
+SerialUSBDriver *self = (SerialUSBDriver *)ip;
+msg_t msg;
+
+osalDbgCheck((self != NULL) && (config != NULL));
+osalDbgCheck((config->bulk_in_maxsize > 0U) &&
+             (config->bulk_in_maxsize <= SERIAL_USB_BUFFERS_SIZE));
+osalDbgCheck((config->bulk_out_maxsize > 0U) &&
+             (config->bulk_out_maxsize <= SERIAL_USB_BUFFERS_SIZE));
+if (config->int_in > 0U) {
+  osalDbgCheck((config->int_in_maxsize > 0U) &&
+               (config->int_in_maxsize <= SERIAL_USB_BUFFERS_SIZE));
+}
+
+msg = usbCdcServiceStart((void *)self,
+                         (const hal_usb_cdc_config_t *)config);
+if (msg == HAL_RET_SUCCESS) {
+  osalSysLock();
+  self->flags = CHN_FL_NONE;
+  self->last_txsize = 0U;
+  iqResetI(&self->iqueue);
+  oqResetI(&self->oqueue);
+  osalSysUnlock();
+}
+
+return msg;]]></implementation>
+      </function>
+      <function name="sduStop" ctype="void">
+        <brief>Stops a serial USB driver instance.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p SerialUSBDriver instance.
+        </param>
+        <api />
+        <implementation><![CDATA[
+SerialUSBDriver *self = (SerialUSBDriver *)ip;
+
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+sdu_add_flags_i(self, CHN_FL_DISCONNECTED);
+sdu_reset_queues_i(self, MSG_RESET);
+osalOsRescheduleS();
+osalSysUnlock();
+
+usbCdcServiceStop((void *)self);]]></implementation>
+      </function>
+    </functions>
+  </public>
+  <private>
+    <includes_always>
+      <include style="regular">hal_serial_usb.h</include>
+    </includes_always>
+    <types>
+      <verbatim><![CDATA[
+static void sdu_add_flags_i(SerialUSBDriver *self, chnflags_t flags) {
+  self->flags |= flags;
+  osalEventBroadcastFlagsI(&self->event, flags);
+}
+
+static void sdu_resume_tx_waiter_i(SerialUSBDriver *self, msg_t msg) {
+  osalThreadResumeI(&self->txsync, msg);
+}
+
+static bool sdu_is_usb_active_x(SerialUSBDriver *self) {
+  const SerialUSBConfig *cfg = (const SerialUSBConfig *)self->config;
+
+  return (cfg != NULL) &&
+         (usbGetDriverStateX(cfg->usbp) == USB_ACTIVE) &&
+         (self->state == SDU_READY) &&
+         self->connected;
+}
+
+static bool sdu_is_transmitting_i(SerialUSBDriver *self) {
+  const SerialUSBConfig *cfg = (const SerialUSBConfig *)self->config;
+  uint16_t mask;
+
+  if (cfg == NULL) {
+    return false;
+  }
+
+  mask = (uint16_t)((unsigned)1U << (unsigned)cfg->bulk_in);
+
+  return (bool)((cfg->usbp->transmitting & mask) != 0U);
+}
+
+static bool sdu_is_receiving_i(SerialUSBDriver *self) {
+  const SerialUSBConfig *cfg = (const SerialUSBConfig *)self->config;
+  uint16_t mask;
+
+  if (cfg == NULL) {
+    return false;
+  }
+
+  mask = (uint16_t)((unsigned)1U << (unsigned)cfg->bulk_out);
+
+  return (bool)((cfg->usbp->receiving & mask) != 0U);
+}
+
+static size_t sdu_tx_collect_i(SerialUSBDriver *self, size_t n) {
+  size_t i;
+
+  for (i = 0U; i < n; i++) {
+    msg_t msg = oqGetI(&self->oqueue);
+
+    osalDbgAssert(msg >= MSG_OK, "queue unexpectedly empty");
+    self->txbuf[i] = (uint8_t)msg;
+  }
+
+  return n;
+}
+
+static bool sdu_start_receive_i(SerialUSBDriver *self) {
+  const SerialUSBConfig *cfg = (const SerialUSBConfig *)self->config;
+  size_t n;
+
+  if ((cfg == NULL) || !sdu_is_usb_active_x(self) || sdu_is_receiving_i(self)) {
+    return true;
+  }
+
+#if (SERIAL_USB_RX_PACKET_MODE == TRUE)
+  n = (size_t)cfg->bulk_out_maxsize;
+  osalDbgAssert(n <= (size_t)SERIAL_USB_BUFFERS_SIZE,
+                "SERIAL_USB_BUFFERS_SIZE too small");
+#else
+  n = (size_t)SERIAL_USB_BUFFERS_SIZE;
+#endif
+
+  if (iqGetEmptyI(&self->iqueue) < n) {
+    return true;
+  }
+
+  usbStartReceiveI(cfg->usbp, cfg->bulk_out, self->rxbuf, n);
+
+  return false;
+}
+
+static bool sdu_try_transmit_i(SerialUSBDriver *self, bool flush) {
+  const SerialUSBConfig *cfg = (const SerialUSBConfig *)self->config;
+  size_t n;
+
+  if ((cfg == NULL) || !sdu_is_usb_active_x(self) || sdu_is_transmitting_i(self)) {
+    return false;
+  }
+
+  n = oqGetFullI(&self->oqueue);
+  if (n == 0U) {
+    return false;
+  }
+
+  if (!flush && (n < (size_t)SERIAL_USB_BUFFERS_SIZE)) {
+    return false;
+  }
+
+  if (n > (size_t)SERIAL_USB_BUFFERS_SIZE) {
+    n = (size_t)SERIAL_USB_BUFFERS_SIZE;
+  }
+
+  n = sdu_tx_collect_i(self, n);
+  self->last_txsize = n;
+  usbStartTransmitI(cfg->usbp, cfg->bulk_in, self->txbuf, n);
+
+  return true;
+}
+
+static void sdu_data_transmitted_i(SerialUSBDriver *self,
+                                   hal_usb_driver_c *usbp,
+                                   usbep_t ep) {
+  const SerialUSBConfig *cfg = (const SerialUSBConfig *)self->config;
+
+  sdu_add_flags_i(self, CHN_FL_TX_NOTFULL);
+  if (!sdu_try_transmit_i(self, false)) {
+#if (SERIAL_USB_SEND_ZLP == TRUE)
+    if ((cfg != NULL) &&
+        (self->last_txsize > 0U) &&
+        ((self->last_txsize % (size_t)cfg->bulk_in_maxsize) == 0U)) {
+      self->last_txsize = 0U;
+      usbStartTransmitI(usbp, ep, usbp->setup, 0U);
+      return;
+    }
+#endif
+    sdu_add_flags_i(self, CHN_FL_TX_END);
+    sdu_resume_tx_waiter_i(self, MSG_OK);
+  }
+}
+
+static void sdu_data_received_i(SerialUSBDriver *self,
+                                hal_usb_driver_c *usbp,
+                                usbep_t ep) {
+  size_t i;
+  size_t n;
+
+  n = usbGetReceiveTransactionSizeX(usbp, ep);
+  for (i = 0U; i < n; i++) {
+    if (iqPutI(&self->iqueue, self->rxbuf[i]) != MSG_OK) {
+      sdu_add_flags_i(self, CHN_FL_BUFFER_FULL_ERR);
+      break;
+    }
+  }
+  if (n > 0U) {
+    sdu_add_flags_i(self, CHN_FL_RX_NOTEMPTY);
+  }
+  (void)sdu_start_receive_i(self);
+}
+
+static void sdu_reset_queues_i(SerialUSBDriver *self, msg_t msg) {
+  self->connected = false;
+  iqResetI(&self->iqueue);
+  oqResetI(&self->oqueue);
+  sdu_resume_tx_waiter_i(self, msg);
+}
+
+static void sdu_inotify(io_queue_t *qp) {
+  SerialUSBDriver *self = (SerialUSBDriver *)qGetLink(qp);
+
+  if (self != NULL) {
+    (void)sdu_start_receive_i(self);
+  }
+}
+
+static void sdu_onotify(io_queue_t *qp) {
+  SerialUSBDriver *self = (SerialUSBDriver *)qGetLink(qp);
+
+  if (self != NULL) {
+    (void)sdu_try_transmit_i(self, false);
+  }
+}
+]]></verbatim>
+    </types>
+  </private>
+</module>

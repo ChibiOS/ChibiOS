@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_flash_base" descr="Flash Base Driver" editcode="false">
+  <brief>Common base class for flash devices.</brief>
+  <details><![CDATA[This abstract class implements the generic flash
+    interface and provides common state handling and helper functions for
+    flash device drivers.]]></details>
+  <imports>
+    <import>oop_base_object.xml</import>
+    <import>hal_flash_interface.xml</import>
+  </imports>
+  <public>
+    <includes_always>
+      <include style="regular">oop_base_object.h</include>
+      <include style="regular">hal_flash_interface.h</include>
+    </includes_always>
+    <types>
+      <typedef name="BaseFlash">
+        <brief>Type of a flash base driver class (legacy).</brief>
+        <basetype ctype="struct hal_flash_base" />
+      </typedef>
+      <verbatim><![CDATA[
+/**
+ * @brief       Driver state machine possible states.
+ */
+typedef enum {
+  FLASH_UNINIT = 0,
+  FLASH_STOP   = 1,
+  FLASH_READY  = 2,
+  FLASH_READ   = 3,
+  FLASH_PGM    = 4,
+  FLASH_ERASE  = 5
+} flash_state_t;]]></verbatim>
+      <class type="abstract" name="hal_flash_base" namespace="flash"
+        ancestorname="base_object" descr="flash base driver">
+        <brief>Base class of all flash drivers.</brief>
+        <implements>
+          <if name="flash_interface">
+            <method shortname="get_descriptor">
+              <implementation><![CDATA[
+
+return &self->descriptor;]]></implementation>
+            </method>
+            <method shortname="read">
+              <implementation><![CDATA[
+flash_error_t err;
+
+osalDbgCheck((self != NULL) && (rp != NULL) && (n > 0U));
+osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+              "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  return FLASH_BUSY_ERASING;
+}
+
+self->state = FLASH_READ;
+err = self->vmt->read(self, offset, n, rp);
+self->state = FLASH_READY;
+
+return err;]]></implementation>
+            </method>
+            <method shortname="program">
+              <implementation><![CDATA[
+flash_error_t err;
+
+osalDbgCheck((self != NULL) && (pp != NULL) && (n > 0U));
+osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+              "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  return FLASH_BUSY_ERASING;
+}
+
+self->state = FLASH_PGM;
+err = self->vmt->program(self, offset, n, pp);
+self->state = FLASH_READY;
+
+return err;]]></implementation>
+            </method>
+            <method shortname="start_erase_all">
+              <implementation><![CDATA[
+flash_error_t err;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+              "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  return FLASH_BUSY_ERASING;
+}
+
+self->state = FLASH_ERASE;
+err = self->vmt->start_erase_all(self);
+if (err != FLASH_NO_ERROR) {
+  self->state = FLASH_READY;
+}
+
+return err;]]></implementation>
+            </method>
+            <method shortname="start_erase_sector">
+              <implementation><![CDATA[
+flash_error_t err;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+              "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  return FLASH_BUSY_ERASING;
+}
+
+self->state = FLASH_ERASE;
+err = self->vmt->start_erase_sector(self, sector);
+if (err != FLASH_NO_ERROR) {
+  self->state = FLASH_READY;
+}
+
+return err;]]></implementation>
+            </method>
+            <method shortname="query_erase">
+              <implementation><![CDATA[
+flash_error_t err;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+              "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  err = self->vmt->query_erase(self, msec);
+  if (err == FLASH_NO_ERROR) {
+    self->state = FLASH_READY;
+  }
+}
+else {
+  err = FLASH_NO_ERROR;
+}
+
+return err;]]></implementation>
+            </method>
+            <method shortname="verify_erase">
+              <implementation><![CDATA[
+flash_error_t err;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+              "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  return FLASH_BUSY_ERASING;
+}
+
+self->state = FLASH_READ;
+err = self->vmt->verify_erase(self, sector);
+self->state = FLASH_READY;
+
+return err;]]></implementation>
+            </method>
+            <method shortname="acquire_exclusive">
+              <implementation><![CDATA[
+
+osalDbgCheck(self != NULL);
+osalMutexLock(&self->mutex);
+
+return FLASH_NO_ERROR;]]></implementation>
+            </method>
+            <method shortname="release_exclusive">
+              <implementation><![CDATA[
+
+osalDbgCheck(self != NULL);
+osalMutexUnlock(&self->mutex);
+
+return FLASH_NO_ERROR;]]></implementation>
+            </method>
+          </if>
+        </implements>
+        <fields>
+          <field name="state" ctype="flash_state_t">
+            <brief>Driver state.</brief>
+          </field>
+          <field name="mutex" ctype="mutex_t">
+            <brief>Flash access mutex.</brief>
+          </field>
+          <field name="descriptor" ctype="flash_descriptor_t">
+            <brief>Flash descriptor.</brief>
+          </field>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+self->state                  = FLASH_STOP;
+self->descriptor.attributes  = 0U;
+self->descriptor.page_size   = 0U;
+self->descriptor.sectors_count = 0U;
+self->descriptor.sectors     = NULL;
+self->descriptor.sectors_size = 0U;
+self->descriptor.address     = NULL;
+self->descriptor.size        = 0U;
+osalMutexObjectInit(&self->mutex);]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[
+self->state = FLASH_UNINIT;]]></implementation>
+          </dispose>
+          <virtual>
+            <method name="__flash_read" shortname="read"
+              ctype="flash_error_t">
+              <brief>Read operation.</brief>
+              <param name="offset" ctype="flash_offset_t" dir="in">Flash offset.</param>
+              <param name="n" ctype="size_t" dir="in">Number of bytes to be read.</param>
+              <param name="rp" ctype="uint8_t *" dir="out">Pointer to the data buffer.</param>
+              <return>An error code.</return>
+              <notapi />
+            </method>
+            <method name="__flash_program" shortname="program"
+              ctype="flash_error_t">
+              <brief>Program operation.</brief>
+              <param name="offset" ctype="flash_offset_t" dir="in">Flash offset.</param>
+              <param name="n" ctype="size_t" dir="in">Number of bytes to be programmed.</param>
+              <param name="pp" ctype="const uint8_t *" dir="in">Pointer to the data buffer.</param>
+              <return>An error code.</return>
+              <notapi />
+            </method>
+            <method name="__flash_start_erase_all" shortname="start_erase_all"
+              ctype="flash_error_t">
+              <brief>Starts a whole-device erase operation.</brief>
+              <return>An error code.</return>
+              <notapi />
+            </method>
+            <method name="__flash_start_erase_sector" shortname="start_erase_sector"
+              ctype="flash_error_t">
+              <brief>Starts a sector erase operation.</brief>
+              <param name="sector" ctype="flash_sector_t" dir="in">Sector to be erased.</param>
+              <return>An error code.</return>
+              <notapi />
+            </method>
+            <method name="__flash_query_erase" shortname="query_erase"
+              ctype="flash_error_t">
+              <brief>Queries the driver for erase operation progress.</brief>
+              <param name="msec" ctype="unsigned *" dir="out">Recommended time, in milliseconds, before retrying, can be @p NULL.</param>
+              <return>An error code.</return>
+              <notapi />
+            </method>
+            <method name="__flash_verify_erase" shortname="verify_erase"
+              ctype="flash_error_t">
+              <brief>Returns the erase state of a sector.</brief>
+              <param name="sector" ctype="flash_sector_t" dir="in">Sector to be verified.</param>
+              <return>An error code.</return>
+              <notapi />
+            </method>
+          </virtual>
+          <regular>
+            <method name="flashWaitErase" ctype="flash_error_t">
+              <brief>Waits until the current erase operation is finished.</brief>
+              <return>An error code.</return>
+              <implementation><![CDATA[
+while (true) {
+  flash_error_t err;
+  unsigned msec;
+
+  err = flsQueryErase(&self->fls, &msec);
+  if (err != FLASH_BUSY_ERASING) {
+    return err;
+  }
+
+  osalThreadSleepMilliseconds(msec);
+}]]></implementation>
+            </method>
+            <method name="flashGetSectorOffset" ctype="flash_offset_t">
+              <brief>Returns the offset of a sector.</brief>
+              <param name="sector" ctype="flash_sector_t" dir="in">Flash sector number.</param>
+              <return>Sector offset.</return>
+              <implementation><![CDATA[
+flash_offset_t offset;
+const flash_descriptor_t *descriptor = &self->descriptor;
+
+osalDbgAssert(sector < descriptor->sectors_count, "invalid sector");
+
+if (descriptor->sectors != NULL) {
+  offset = descriptor->sectors[sector].offset;
+}
+else {
+  offset = (flash_offset_t)sector * (flash_offset_t)descriptor->sectors_size;
+}
+
+return offset;]]></implementation>
+            </method>
+            <method name="flashGetSectorSize" ctype="uint32_t">
+              <brief>Returns the size of a sector.</brief>
+              <param name="sector" ctype="flash_sector_t" dir="in">Flash sector number.</param>
+              <return>Sector size.</return>
+              <implementation><![CDATA[
+uint32_t size;
+const flash_descriptor_t *descriptor = &self->descriptor;
+
+osalDbgAssert(sector < descriptor->sectors_count, "invalid sector");
+
+if (descriptor->sectors != NULL) {
+  size = descriptor->sectors[sector].size;
+}
+else {
+  size = descriptor->sectors_size;
+}
+
+return size;]]></implementation>
+            </method>
+            <method name="flashGetOffsetSector" ctype="flash_sector_t">
+              <brief>Returns the sector containing an offset.</brief>
+              <param name="offset" ctype="flash_offset_t" dir="in">Flash offset.</param>
+              <return>Flash sector number.</return>
+              <implementation><![CDATA[
+flash_sector_t sector, i;
+const flash_descriptor_t *descriptor = &self->descriptor;
+
+osalDbgAssert(offset < descriptor->size, "invalid offset");
+
+if (descriptor->sectors != NULL) {
+  flash_offset_t sector_start;
+  flash_offset_t sector_end;
+
+  for (i = 0; i < descriptor->sectors_count; i++) {
+    sector_start = descriptor->sectors[i].offset;
+    sector_end = sector_start + descriptor->sectors[i].size - 1U;
+    if ((offset >= sector_start) && (offset <= sector_end)) {
+      return i;
+    }
+  }
+}
+else {
+  sector = offset / descriptor->sectors_size;
+  return sector;
+}
+
+osalDbgAssert(false, "invalid offset");
+
+return 0U;]]></implementation>
+            </method>
+            <method name="flashGetOffsetAddress" ctype="void *">
+              <brief>Gets an absolute address from a flash offset.</brief>
+              <note>Meaningful only for memory mapped devices.</note>
+              <param name="offset" ctype="flash_offset_t" dir="in">Flash offset.</param>
+              <return>A pointer to the offset address.</return>
+              <implementation><![CDATA[
+const flash_descriptor_t *descriptor = &self->descriptor;
+
+osalDbgAssert(offset < descriptor->size, "invalid offset");
+
+return (void *)(descriptor->address + offset);]]></implementation>
+            </method>
+            <method name="flashGetAddressOffset" ctype="flash_offset_t">
+              <brief>Gets a flash offset from an absolute address.</brief>
+              <note>Meaningful only for memory mapped devices.</note>
+              <param name="addr" ctype="void *" dir="in">Absolute address.</param>
+              <return>Flash offset.</return>
+              <implementation><![CDATA[
+const flash_descriptor_t *descriptor = &self->descriptor;
+uintptr_t addr_value = (uintptr_t)addr;
+uintptr_t base_value = (uintptr_t)descriptor->address;
+
+osalDbgAssert((addr_value >= base_value) &&
+              (addr_value < (base_value + (uintptr_t)descriptor->size)),
+              "invalid address");
+
+return (flash_offset_t)(addr_value - base_value);]]></implementation>
+            </method>
+          </regular>
+        </methods>
+      </class>
+    </types>
+  </public>
+  <private>
+    <includes>
+      <include style="regular">hal.h</include>
+    </includes>
+  </private>
+</module>
