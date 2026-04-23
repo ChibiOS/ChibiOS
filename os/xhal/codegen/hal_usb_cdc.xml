@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_usb_cdc" descr="USB CDC Services" check="HAL_USE_USB == TRUE"
+  editcode="false">
+  <brief>USB CDC service support classes and helpers.</brief>
+  <imports>
+    <import>hal_usb.xml</import>
+  </imports>
+  <public>
+    <includes_always>
+      <include style="regular">hal_usb.h</include>
+    </includes_always>
+    <definitions_early>
+      <group description="CDC specific messages">
+        <define name="CDC_SEND_ENCAPSULATED_COMMAND" value="0x00U" />
+        <define name="CDC_GET_ENCAPSULATED_RESPONSE" value="0x01U" />
+        <define name="CDC_SET_COMM_FEATURE" value="0x02U" />
+        <define name="CDC_GET_COMM_FEATURE" value="0x03U" />
+        <define name="CDC_CLEAR_COMM_FEATURE" value="0x04U" />
+        <define name="CDC_SET_AUX_LINE_STATE" value="0x10U" />
+        <define name="CDC_SET_HOOK_STATE" value="0x11U" />
+        <define name="CDC_PULSE_SETUP" value="0x12U" />
+        <define name="CDC_SEND_PULSE" value="0x13U" />
+        <define name="CDC_SET_PULSE_TIME" value="0x14U" />
+        <define name="CDC_RING_AUX_JACK" value="0x15U" />
+        <define name="CDC_SET_LINE_CODING" value="0x20U" />
+        <define name="CDC_GET_LINE_CODING" value="0x21U" />
+        <define name="CDC_SET_CONTROL_LINE_STATE" value="0x22U" />
+        <define name="CDC_SEND_BREAK" value="0x23U" />
+        <define name="CDC_SET_RINGER_PARMS" value="0x30U" />
+        <define name="CDC_GET_RINGER_PARMS" value="0x31U" />
+        <define name="CDC_SET_OPERATION_PARMS" value="0x32U" />
+        <define name="CDC_GET_OPERATION_PARMS" value="0x33U" />
+      </group>
+      <group description="CDC classes">
+        <define name="CDC_COMMUNICATION_INTERFACE_CLASS" value="0x02U" />
+        <define name="CDC_DATA_INTERFACE_CLASS" value="0x0AU" />
+      </group>
+      <group description="CDC subclasses">
+        <define name="CDC_ABSTRACT_CONTROL_MODEL" value="0x02U" />
+      </group>
+      <group description="CDC descriptors">
+        <define name="CDC_CS_INTERFACE" value="0x24U" />
+      </group>
+      <group description="CDC subdescriptors">
+        <define name="CDC_HEADER" value="0x00U" />
+        <define name="CDC_CALL_MANAGEMENT" value="0x01U" />
+        <define name="CDC_ABSTRACT_CONTROL_MANAGEMENT" value="0x02U" />
+        <define name="CDC_UNION" value="0x06U" />
+      </group>
+      <group description="Line control bit definitions">
+        <define name="LC_STOP_1" value="0U" />
+        <define name="LC_STOP_1P5" value="1U" />
+        <define name="LC_STOP_2" value="2U" />
+        <define name="LC_PARITY_NONE" value="0U" />
+        <define name="LC_PARITY_ODD" value="1U" />
+        <define name="LC_PARITY_EVEN" value="2U" />
+        <define name="LC_PARITY_MARK" value="3U" />
+        <define name="LC_PARITY_SPACE" value="4U" />
+      </group>
+      <group description="Default CDC line coding">
+        <define name="CDC_DEFAULT_DTE_RATE" value="38400U" />
+        <define name="CDC_DEFAULT_CHAR_FORMAT" value="LC_STOP_1" />
+        <define name="CDC_DEFAULT_PARITY" value="LC_PARITY_NONE" />
+        <define name="CDC_DEFAULT_DATA_BITS" value="8U" />
+      </group>
+    </definitions_early>
+    <types>
+      <verbatim><![CDATA[
+typedef enum {
+  USB_CDC_SERVICE_UNINIT = 0,
+  USB_CDC_SERVICE_STOP   = 1,
+  USB_CDC_SERVICE_READY  = 2
+} usb_cdc_service_state_t;
+
+typedef struct {
+  uint8_t                   dwDTERate[4];
+  uint8_t                   bCharFormat;
+  uint8_t                   bParityType;
+  uint8_t                   bDataBits;
+} usb_cdc_linecoding_t;
+
+typedef struct hal_usb_cdc_service hal_usb_cdc_service_c;
+typedef struct hal_usb_cdc_config hal_usb_cdc_config_t;
+
+struct hal_usb_cdc_config {
+  hal_usb_driver_c         *usbp;
+  uint8_t                   control_if;
+  usbep_t                   bulk_in;
+  usbep_t                   bulk_out;
+  usbep_t                   int_in;
+  uint16_t                  bulk_in_maxsize;
+  uint16_t                  bulk_out_maxsize;
+  uint16_t                  int_in_maxsize;
+};]]></verbatim>
+      <class type="abstract" name="hal_usb_cdc_service" namespace="cdcsvc"
+        ancestorname="hal_usb_service" descr="USB CDC service">
+        <brief>Abstract CDC-ACM USB service base class.</brief>
+        <details><![CDATA[This abstract class implements the common CDC-ACM
+          service logic shared by higher-level wrappers such as serial-over-USB
+          channels. The class provides endpoint setup, ownership metadata,
+          class-request handling, and USB event dispatch. Derived classes only
+          need to implement the actual bulk/interrupt data-path behavior.]]></details>
+        <fields>
+          <field name="config" ctype="const hal_usb_cdc_config_t *">
+            <brief>Active CDC service configuration.</brief>
+          </field>
+          <field name="state" ctype="usb_cdc_service_state_t">
+            <brief>CDC service state.</brief>
+          </field>
+          <field name="connected" ctype="bool">
+            <brief>Connection state as observed by the USB service logic.</brief>
+          </field>
+          <field name="linecoding" ctype="usb_cdc_linecoding_t">
+            <brief>Current CDC line coding state.</brief>
+          </field>
+          <field name="control_line_state" ctype="uint16_t">
+            <brief>Current CDC control line state bitmap.</brief>
+          </field>
+          <field name="bulk_in_state" ctype="USBInEndpointState">
+            <brief>Bulk IN endpoint state.</brief>
+          </field>
+          <field name="bulk_out_state" ctype="USBOutEndpointState">
+            <brief>Bulk OUT endpoint state.</brief>
+          </field>
+          <field name="int_in_state" ctype="USBInEndpointState">
+            <brief>Interrupt IN endpoint state.</brief>
+          </field>
+          <field name="bulk_in_epc" ctype="USBEndpointConfig">
+            <brief>Bulk IN endpoint configuration.</brief>
+          </field>
+          <field name="bulk_out_epc" ctype="USBEndpointConfig">
+            <brief>Bulk OUT endpoint configuration.</brief>
+          </field>
+          <field name="int_in_epc" ctype="USBEndpointConfig">
+            <brief>Interrupt IN endpoint configuration.</brief>
+          </field>
+          <field name="svcinfo" ctype="hal_usb_service_info_t">
+            <brief>Mutable CDC service ownership metadata.</brief>
+          </field>
+        </fields>
+        <methods>
+          <objinit callsuper="false">
+            <implementation><![CDATA[
+usbServiceObjectInit((void *)self, &self->svcinfo,
+                     (const struct hal_usb_service_vmt *)vmt);
+self->config = NULL;
+self->state = USB_CDC_SERVICE_STOP;
+self->connected = false;
+self->control_line_state = 0U;
+memset(&self->bulk_in_state, 0, sizeof(self->bulk_in_state));
+memset(&self->bulk_out_state, 0, sizeof(self->bulk_out_state));
+memset(&self->int_in_state, 0, sizeof(self->int_in_state));
+memset(&self->bulk_in_epc, 0, sizeof(self->bulk_in_epc));
+memset(&self->bulk_out_epc, 0, sizeof(self->bulk_out_epc));
+memset(&self->int_in_epc, 0, sizeof(self->int_in_epc));
+
+self->bulk_in_epc.ep_mode    = USB_EP_MODE_TYPE_BULK;
+self->bulk_in_epc.in_cb      = cdcsvc_endpoint_in_cb;
+self->bulk_in_epc.in_state   = &self->bulk_in_state;
+
+self->bulk_out_epc.ep_mode   = USB_EP_MODE_TYPE_BULK;
+self->bulk_out_epc.out_cb    = cdcsvc_endpoint_out_cb;
+self->bulk_out_epc.out_state = &self->bulk_out_state;
+
+self->int_in_epc.ep_mode     = USB_EP_MODE_TYPE_INTR;
+self->int_in_epc.in_cb       = cdcsvc_endpoint_in_cb;
+self->int_in_epc.in_state    = &self->int_in_state;
+
+self->svcinfo.if_base = 0U;
+self->svcinfo.if_count = 0U;
+self->svcinfo.in_ep_mask = 0U;
+self->svcinfo.out_ep_mask = 0U;
+cdcsvc_set_default_linecoding(self);]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[ ]]></implementation>
+          </dispose>
+          <virtual>
+            <method name="usbCdcServiceOnConfiguredI" shortname="configured"
+              ctype="void">
+              <brief>Derived hook after configuration selection.</brief>
+              <details><![CDATA[Called with the system lock held after the CDC
+                endpoints have been initialized and the service state marked
+                connected.]]></details>
+              <iclass />
+              <implementation><![CDATA[(void)self;]]></implementation>
+            </method>
+            <method name="usbCdcServiceOnDisconnectedI" shortname="disconnected"
+              ctype="void">
+              <brief>Derived hook after reset, unconfigure, or suspend.</brief>
+              <details><![CDATA[Called with the system lock held after the CDC
+                service has been marked disconnected.]]></details>
+              <iclass />
+              <implementation><![CDATA[(void)self;]]></implementation>
+            </method>
+            <method name="usbCdcServiceOnWakeupHookI" shortname="wakehook"
+              ctype="void">
+              <brief>Derived hook after bus wake-up.</brief>
+              <iclass />
+              <implementation><![CDATA[(void)self;]]></implementation>
+            </method>
+            <method name="usbCdcServiceOnSOFHookI" shortname="sofhook"
+              ctype="void">
+              <brief>Derived hook on each SOF notification.</brief>
+              <iclass />
+              <implementation><![CDATA[(void)self;]]></implementation>
+            </method>
+            <method name="usbCdcServiceOnDataTransmittedI"
+              shortname="data_transmitted" ctype="void">
+              <brief>Derived hook on bulk IN completion.</brief>
+              <param name="ep" ctype="usbep_t" dir="in">Endpoint number.</param>
+              <iclass />
+              <implementation><![CDATA[
+(void)self;
+(void)ep;]]></implementation>
+            </method>
+            <method name="usbCdcServiceOnDataReceivedI"
+              shortname="data_received" ctype="void">
+              <brief>Derived hook on bulk OUT completion.</brief>
+              <param name="ep" ctype="usbep_t" dir="in">Endpoint number.</param>
+              <iclass />
+              <implementation><![CDATA[
+(void)self;
+(void)ep;]]></implementation>
+            </method>
+            <method name="usbCdcServiceOnInterruptTransmittedI"
+              shortname="irq_transmitted" ctype="void">
+              <brief>Derived hook on interrupt IN completion.</brief>
+              <param name="ep" ctype="usbep_t" dir="in">Endpoint number.</param>
+              <iclass />
+              <implementation><![CDATA[
+(void)self;
+(void)ep;]]></implementation>
+            </method>
+            <method name="usbCdcServiceOnControlLineState"
+              shortname="control_line_state" ctype="void">
+              <brief>Derived hook after control line state changes.</brief>
+              <implementation><![CDATA[(void)self;]]></implementation>
+            </method>
+          </virtual>
+          <override>
+            <method shortname="bind">
+              <implementation><![CDATA[
+if ((self->config == NULL) || (binderp == NULL)) {
+  return HAL_RET_INV_STATE;
+}
+if (binderp->usbp != self->config->usbp) {
+  return HAL_RET_INV_STATE;
+}
+
+return HAL_RET_SUCCESS;]]></implementation>
+            </method>
+            <method shortname="unbind">
+              <implementation><![CDATA[
+self->connected = false;]]></implementation>
+            </method>
+            <method shortname="reset">
+              <implementation><![CDATA[
+self->connected = false;
+usbCdcServiceOnDisconnectedI(self);]]></implementation>
+            </method>
+            <method shortname="configure">
+              <implementation><![CDATA[
+osalDbgAssert(self->config != NULL, "service not started");
+
+usbInitEndpointI(self->config->usbp, self->config->bulk_in,
+                 &self->bulk_in_epc);
+if (self->config->bulk_out != self->config->bulk_in) {
+  usbInitEndpointI(self->config->usbp, self->config->bulk_out,
+                   &self->bulk_out_epc);
+}
+if (self->config->int_in > 0U) {
+  usbInitEndpointI(self->config->usbp, self->config->int_in,
+                   &self->int_in_epc);
+}
+self->connected = true;
+usbCdcServiceOnConfiguredI(self);]]></implementation>
+            </method>
+            <method shortname="unconfigure">
+              <implementation><![CDATA[
+self->connected = false;
+usbCdcServiceOnDisconnectedI(self);]]></implementation>
+            </method>
+            <method shortname="suspend">
+              <implementation><![CDATA[
+self->connected = false;
+usbCdcServiceOnDisconnectedI(self);]]></implementation>
+            </method>
+            <method shortname="wakeup">
+              <implementation><![CDATA[
+self->connected = true;
+usbCdcServiceOnWakeupHookI(self);]]></implementation>
+            </method>
+            <method shortname="sof">
+              <implementation><![CDATA[
+usbCdcServiceOnSOFHookI(self);]]></implementation>
+            </method>
+            <method shortname="in">
+              <implementation><![CDATA[
+if ((self->config != NULL) && (ep == self->config->bulk_in)) {
+  usbCdcServiceOnDataTransmittedI(self, ep);
+}
+else if ((self->config != NULL) && (self->config->int_in > 0U) &&
+         (ep == self->config->int_in)) {
+  usbCdcServiceOnInterruptTransmittedI(self, ep);
+}]]></implementation>
+            </method>
+            <method shortname="out">
+              <implementation><![CDATA[
+if ((self->config != NULL) && (ep == self->config->bulk_out)) {
+  usbCdcServiceOnDataReceivedI(self, ep);
+}]]></implementation>
+            </method>
+            <method shortname="setup">
+              <implementation><![CDATA[
+uint8_t *setup;
+
+osalDbgAssert((handledp != NULL) && (self->config != NULL),
+              "invalid setup context");
+
+*handledp = false;
+setup = self->config->usbp->setup;
+if ((setup[0] & USB_RTYPE_TYPE_MASK) != USB_RTYPE_TYPE_CLASS) {
+  return HAL_RET_SUCCESS;
+}
+if ((setup[0] & USB_RTYPE_RECIPIENT_MASK) != USB_RTYPE_RECIPIENT_INTERFACE) {
+  return HAL_RET_SUCCESS;
+}
+if (setup[4] != self->config->control_if) {
+  return HAL_RET_SUCCESS;
+}
+
+switch (setup[1]) {
+case CDC_GET_LINE_CODING:
+  *handledp = true;
+  return usbEp0Reply(self->config->usbp,
+                     (const uint8_t *)&self->linecoding,
+                     sizeof(self->linecoding));
+case CDC_SET_LINE_CODING:
+  *handledp = true;
+  return usbEp0Receive(self->config->usbp,
+                       (uint8_t *)&self->linecoding,
+                       sizeof(self->linecoding));
+case CDC_SET_CONTROL_LINE_STATE:
+  *handledp = true;
+  self->control_line_state = (uint16_t)setup[2] |
+                             ((uint16_t)setup[3] << 8U);
+  usbCdcServiceOnControlLineState(self);
+  return usbEp0Acknowledge(self->config->usbp);
+default:
+  break;
+}
+
+return HAL_RET_SUCCESS;]]></implementation>
+            </method>
+          </override>
+        </methods>
+      </class>
+    </types>
+    <functions>
+      <function name="usbCdcServiceStart" ctype="msg_t">
+        <brief>Starts a CDC service instance.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_cdc_service_c instance.
+        </param>
+        <param name="config" ctype="const hal_usb_cdc_config_t *" dir="in">
+          CDC service configuration.
+        </param>
+        <return>The operation status.</return>
+        <api />
+        <implementation><![CDATA[
+hal_usb_cdc_service_c *self = (hal_usb_cdc_service_c *)ip;
+hal_usb_driver_c *usbp;
+
+osalDbgCheck((self != NULL) && (config != NULL) && (config->usbp != NULL));
+osalDbgCheck((config->bulk_in > 0U) &&
+             (config->bulk_in <= (usbep_t)USB_MAX_ENDPOINTS));
+osalDbgCheck((config->bulk_out > 0U) &&
+             (config->bulk_out <= (usbep_t)USB_MAX_ENDPOINTS));
+osalDbgCheck(config->bulk_in_maxsize > 0U);
+osalDbgCheck(config->bulk_out_maxsize > 0U);
+if (config->int_in > 0U) {
+  osalDbgCheck((config->int_in <= (usbep_t)USB_MAX_ENDPOINTS) &&
+               (config->int_in_maxsize > 0U));
+}
+osalDbgAssert(usbServiceGetBinderX(self) == NULL, "service bound");
+
+osalSysLock();
+osalDbgAssert((self->state == USB_CDC_SERVICE_STOP) ||
+              (self->state == USB_CDC_SERVICE_READY), "invalid state");
+
+usbp = config->usbp;
+usbp->in_params[config->bulk_in - 1U] = self;
+usbp->out_params[config->bulk_out - 1U] = self;
+if (config->int_in > 0U) {
+  usbp->in_params[config->int_in - 1U] = self;
+}
+
+self->bulk_in_epc.in_maxsize = config->bulk_in_maxsize;
+self->bulk_out_epc.out_maxsize = config->bulk_out_maxsize;
+self->int_in_epc.in_maxsize = config->int_in_maxsize;
+
+if (config->bulk_in == config->bulk_out) {
+  self->bulk_in_epc.out_cb = cdcsvc_endpoint_out_cb;
+  self->bulk_in_epc.out_state = &self->bulk_out_state;
+  self->bulk_in_epc.out_maxsize = config->bulk_out_maxsize;
+}
+else {
+  self->bulk_in_epc.out_cb = NULL;
+  self->bulk_in_epc.out_state = NULL;
+  self->bulk_in_epc.out_maxsize = 0U;
+}
+
+self->config = config;
+self->connected = false;
+self->svcinfo.if_base = config->control_if;
+self->svcinfo.if_count = 2U;
+self->svcinfo.in_ep_mask =
+    (uint16_t)((uint16_t)1U << (unsigned)config->bulk_in);
+if (config->int_in > 0U) {
+  self->svcinfo.in_ep_mask |=
+      (uint16_t)((uint16_t)1U << (unsigned)config->int_in);
+}
+self->svcinfo.out_ep_mask =
+    (uint16_t)((uint16_t)1U << (unsigned)config->bulk_out);
+self->state = USB_CDC_SERVICE_READY;
+osalSysUnlock();
+
+return HAL_RET_SUCCESS;]]></implementation>
+      </function>
+      <function name="usbCdcServiceStop" ctype="void">
+        <brief>Stops a CDC service instance.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_cdc_service_c instance.
+        </param>
+        <api />
+        <implementation><![CDATA[
+hal_usb_cdc_service_c *self = (hal_usb_cdc_service_c *)ip;
+hal_usb_driver_c *usbp = NULL;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert(usbServiceGetBinderX(self) == NULL, "service bound");
+
+osalSysLock();
+osalDbgAssert((self->state == USB_CDC_SERVICE_STOP) ||
+              (self->state == USB_CDC_SERVICE_READY), "invalid state");
+
+if (self->config != NULL) {
+  usbp = self->config->usbp;
+  usbp->in_params[self->config->bulk_in - 1U] = NULL;
+  usbp->out_params[self->config->bulk_out - 1U] = NULL;
+  if (self->config->int_in > 0U) {
+    usbp->in_params[self->config->int_in - 1U] = NULL;
+  }
+}
+
+self->config = NULL;
+self->connected = false;
+self->svcinfo.if_base = 0U;
+self->svcinfo.if_count = 0U;
+self->svcinfo.in_ep_mask = 0U;
+self->svcinfo.out_ep_mask = 0U;
+self->state = USB_CDC_SERVICE_STOP;
+osalSysUnlock();]]></implementation>
+      </function>
+      <function name="usbCdcServiceGetLineCodingX"
+        ctype="const usb_cdc_linecoding_t *">
+        <brief>Returns the current CDC line coding structure.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_cdc_service_c instance.
+        </param>
+        <return>Pointer to the current line coding structure.</return>
+        <xclass />
+        <implementation><![CDATA[
+hal_usb_cdc_service_c *self = (hal_usb_cdc_service_c *)ip;
+
+osalDbgCheck(self != NULL);
+
+return &self->linecoding;]]></implementation>
+      </function>
+      <function name="usbCdcServiceGetControlLineStateX" ctype="uint16_t">
+        <brief>Returns the current control line state bitmap.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_cdc_service_c instance.
+        </param>
+        <return>The current control line state bitmap.</return>
+        <xclass />
+        <implementation><![CDATA[
+hal_usb_cdc_service_c *self = (hal_usb_cdc_service_c *)ip;
+
+osalDbgCheck(self != NULL);
+
+return self->control_line_state;]]></implementation>
+      </function>
+      <function name="usbCdcServiceGetConfigX"
+        ctype="const hal_usb_cdc_config_t *">
+        <brief>Returns the active CDC configuration.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_cdc_service_c instance.
+        </param>
+        <return>The active CDC configuration or @p NULL.</return>
+        <xclass />
+        <implementation><![CDATA[
+hal_usb_cdc_service_c *self = (hal_usb_cdc_service_c *)ip;
+
+osalDbgCheck(self != NULL);
+
+return self->config;]]></implementation>
+      </function>
+      <function name="usbCdcServiceIsConnectedX" ctype="bool">
+        <brief>Returns the current logical connection state.</brief>
+        <param name="ip" ctype="void *" dir="both">
+          Pointer to a @p hal_usb_cdc_service_c instance.
+        </param>
+        <return>The current logical connection state.</return>
+        <xclass />
+        <implementation><![CDATA[
+hal_usb_cdc_service_c *self = (hal_usb_cdc_service_c *)ip;
+
+osalDbgCheck(self != NULL);
+
+return self->connected;]]></implementation>
+      </function>
+    </functions>
+  </public>
+  <private>
+    <includes_always>
+      <include style="regular">string.h</include>
+      <include style="regular">hal.h</include>
+    </includes_always>
+    <functions>
+      <function name="cdcsvc_set_default_linecoding" ctype="void">
+        <param name="self" ctype="hal_usb_cdc_service_c *" dir="both"></param>
+        <implementation><![CDATA[
+self->linecoding.dwDTERate[0] = (uint8_t)(CDC_DEFAULT_DTE_RATE);
+self->linecoding.dwDTERate[1] = (uint8_t)(CDC_DEFAULT_DTE_RATE >> 8);
+self->linecoding.dwDTERate[2] = (uint8_t)(CDC_DEFAULT_DTE_RATE >> 16);
+self->linecoding.dwDTERate[3] = (uint8_t)(CDC_DEFAULT_DTE_RATE >> 24);
+self->linecoding.bCharFormat = CDC_DEFAULT_CHAR_FORMAT;
+self->linecoding.bParityType = CDC_DEFAULT_PARITY;
+self->linecoding.bDataBits = CDC_DEFAULT_DATA_BITS;]]></implementation>
+      </function>
+      <function name="cdcsvc_endpoint_in_cb" ctype="void">
+        <param name="usbp" ctype="hal_usb_driver_c *" dir="both"></param>
+        <param name="ep" ctype="usbep_t" dir="in"></param>
+        <implementation><![CDATA[
+hal_usb_binder_c *binderp;
+
+binderp = usbGetBinderX(usbp);
+if (binderp != NULL) {
+  osalSysLockFromISR();
+  usbBinderInI(binderp, ep);
+  osalSysUnlockFromISR();
+}]]></implementation>
+      </function>
+      <function name="cdcsvc_endpoint_out_cb" ctype="void">
+        <param name="usbp" ctype="hal_usb_driver_c *" dir="both"></param>
+        <param name="ep" ctype="usbep_t" dir="in"></param>
+        <implementation><![CDATA[
+hal_usb_binder_c *binderp;
+
+binderp = usbGetBinderX(usbp);
+if (binderp != NULL) {
+  osalSysLockFromISR();
+  usbBinderOutI(binderp, ep);
+  osalSysUnlockFromISR();
+}]]></implementation>
+      </function>
+    </functions>
+  </private>
+</module>

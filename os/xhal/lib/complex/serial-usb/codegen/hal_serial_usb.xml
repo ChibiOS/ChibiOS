@@ -10,7 +10,7 @@
     external; this module adds buffered channel semantics, queue handling, and
     serial-oriented flow control on top of the CDC transport.]]></details>
   <imports>
-    <import>hal_usb.xml</import>
+    <import>hal_usb_cdc.xml</import>
     <import>hal_channels.xml</import>
   </imports>
   <public>
