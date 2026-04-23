@@ -411,6 +411,11 @@
 #define STM32_SDC_SDMMC_PWRSAV              TRUE
 
 /*
+ * WDG driver system settings.
+ */
+#define STM32_WDG_USE_IWDG                  FALSE
+
+/*
  * WSPI driver system settings.
  */
 #define STM32_WSPI_USE_OCTOSPI1             FALSE

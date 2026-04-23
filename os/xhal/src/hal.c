@@ -121,6 +121,9 @@ void halInit(void) {
 #if (HAL_USE_USB == TRUE) || defined(__DOXYGEN__)
   usbInit();
 #endif
+#if (HAL_USE_WDG == TRUE) || defined(__DOXYGEN__)
+  wdgInit();
+#endif
 #if 0
 #if (HAL_USE_TRNG == TRUE) || defined(__DOXYGEN__)
   trngInit();
@@ -133,9 +136,6 @@ void halInit(void) {
 #endif
 #if (HAL_USE_SERIAL_USB == TRUE) || defined(__DOXYGEN__)
   sduInit();
-#endif
-#if (HAL_USE_WDG == TRUE) || defined(__DOXYGEN__)
-  wdgInit();
 #endif
 #endif
 

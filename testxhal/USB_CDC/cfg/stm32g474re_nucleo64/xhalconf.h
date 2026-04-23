@@ -54,8 +54,8 @@
 #define HAL_USE_SIO                         FALSE
 #define HAL_USE_SPI                         FALSE
 #define HAL_USE_USB                         TRUE
+#define HAL_USE_WDG                         FALSE
 #define HAL_USE_WSPI                        FALSE
-
 /*===========================================================================*/
 /* ADC driver settings.                                                      */
 /*===========================================================================*/

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_wdg" descr="WDG Driver" check="HAL_USE_WDG == TRUE"
+  editcode="false">
+  <brief>WDG Driver macros and structures.</brief>
+  <imports>
+    <import>hal_base_driver.xml</import>
+  </imports>
+  <public>
+    <includes_always>
+      <include style="regular">hal_base_driver.h</include>
+    </includes_always>
+    <macros>
+      <group description="Macro functions">
+        <macro name="wdgResetI">
+          <brief>Resets the watchdog counter.</brief>
+          <param name="wdgp" dir="in">Pointer to the watchdog driver.</param>
+          <iclass />
+          <implementation><![CDATA[wdg_lld_reset(wdgp)]]></implementation>
+        </macro>
+      </group>
+    </macros>
+    <types>
+      <typedef name="hal_wdg_driver_c">
+        <brief>Type of structure representing a watchdog driver.</brief>
+        <basetype ctype="struct hal_wdg_driver" />
+      </typedef>
+      <typedef name="hal_wdg_config_t">
+        <brief>Type of structure representing a watchdog configuration.</brief>
+        <basetype ctype="struct hal_wdg_config" />
+      </typedef>
+      <verbatim><![CDATA[
+typedef struct hal_wdg_driver WDGDriver;
+typedef struct hal_wdg_config WDGConfig;
+
+/* Inclusion of LLD header.*/
+#include "hal_wdg_lld.h"]]></verbatim>
+      <struct name="hal_wdg_config">
+        <brief>Driver configuration structure.</brief>
+        <fields>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+wdg_lld_config_fields;]]></verbatim>
+        </fields>
+      </struct>
+      <class type="regular" name="hal_wdg_driver" namespace="wdg"
+        ancestorname="hal_base_driver" descr="WDG driver">
+        <brief>Class of a watchdog driver.</brief>
+        <fields>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+wdg_lld_driver_fields;]]></verbatim>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[
+]]></implementation>
+          </dispose>
+          <regular>
+            <method name="wdgStart" ctype="msg_t">
+              <brief>Configures and activates the watchdog peripheral.</brief>
+              <param name="config" ctype="const hal_wdg_config_t *" dir="in">
+                Driver configuration.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck((self != NULL) && (config != NULL));
+
+msg = drvSetCfgX(self, config);
+if (msg != HAL_RET_SUCCESS) {
+  return msg;
+}
+
+return drvStart(self);]]></implementation>
+            </method>
+            <method name="wdgStop" ctype="void">
+              <brief>Deactivates the watchdog peripheral if supported.</brief>
+              <note>Some hardware implementations, such as STM32 IWDG, cannot
+                be stopped once activated.</note>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+drvStop(self);]]></implementation>
+            </method>
+            <method name="wdgReset" ctype="void">
+              <brief>Resets the watchdog counter.</brief>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+wdgResetI(self);
+osalSysUnlock();]]></implementation>
+            </method>
+          </regular>
+          <override>
+            <method shortname="start">
+              <implementation><![CDATA[
+return wdg_lld_start(self);]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[
+wdg_lld_stop(self);]]></implementation>
+            </method>
+            <method shortname="setcfg">
+              <implementation><![CDATA[
+return wdg_lld_setcfg(self, (const hal_wdg_config_t *)config);]]></implementation>
+            </method>
+            <method shortname="selcfg">
+              <implementation><![CDATA[
+return wdg_lld_selcfg(self, cfgnum);]]></implementation>
+            </method>
+          </override>
+        </methods>
+      </class>
+    </types>
+    <functions>
+      <function name="wdgInit" ctype="void">
+        <brief>WDG Driver initialization.</brief>
+        <init />
+        <implementation><![CDATA[
+wdg_lld_init();]]></implementation>
+      </function>
+    </functions>
+  </public>
+  <private>
+    <includes_always>
+      <include style="regular">hal.h</include>
+    </includes_always>
+  </private>
+</module>

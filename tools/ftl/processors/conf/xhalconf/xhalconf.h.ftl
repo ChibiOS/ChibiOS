@@ -64,6 +64,7 @@
 #define HAL_USE_SIO                         ${doc.HAL_USE_SIO!"FALSE"}
 #define HAL_USE_SPI                         ${doc.HAL_USE_SPI!"FALSE"}
 #define HAL_USE_USB                         ${doc.HAL_USE_USB!"FALSE"}
+#define HAL_USE_WDG                         ${doc.HAL_USE_WDG!"FALSE"}
 #define HAL_USE_WSPI                        ${doc.HAL_USE_WSPI!"FALSE"}
 
 /*===========================================================================*/
