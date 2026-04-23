@@ -229,17 +229,17 @@ void _usb_reset(hal_usb_driver_c *usbp) {
     usbp->epc[i] = NULL;
   }
 
-  usbp->ep0state = USB_EP0_STP_WAITING;
-  usbp->ep0setup = 0U;
-  usbp->ep0reset = 0U;
-  usb_lld_reset(usbp);
-  osalSysLockFromISR();
-  if (usbp->binder != NULL) {
-    usbBinderResetI(usbp->binder);
-  }
-  ep0_signal_resetI(usbp);
-  osalSysUnlockFromISR();
-  _usb_isr_invoke_event_cb(usbp, USB_FLAGS_RESET);
+    usbp->ep0state = USB_EP0_STP_WAITING;
+    usbp->ep0setup = 0U;
+    usbp->ep0reset = 0U;
+    usb_lld_reset(usbp);
+    osalSysLockFromISR();
+    if (usbp->binder != NULL) {
+      usbBinderResetI(usbp->binder);
+    }
+    ep0_signal_resetI(usbp);
+    osalSysUnlockFromISR();
+    _usb_isr_invoke_event_cb(usbp, USB_FLAGS_RESET);
 }
 
 /**
@@ -663,10 +663,10 @@ void usbStop(void *ip) {
 }
 
 /**
- * @brief       Binds protocol and class callbacks to the USB driver.
+ * @brief       Attaches a USB binder to the USB driver.
  *
  * @param[in,out] ip            Pointer to a @p hal_usb_driver_c instance.
- * @param[in]     bindp         Protocol binding descriptor.
+ * @param[in]     binderp       USB binder object.
  * @return                      The operation status.
  *
  * @api
@@ -696,7 +696,7 @@ msg_t usbBind(void *ip, hal_usb_binder_c *binderp) {
 }
 
 /**
- * @brief       Removes the currently bound USB protocol handler.
+ * @brief       Detaches the currently bound USB binder.
  *
  * @param[in,out] ip            Pointer to a @p hal_usb_driver_c instance.
  * @return                      The operation status.

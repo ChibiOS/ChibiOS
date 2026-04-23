@@ -42,12 +42,12 @@
 /**
  * @brief       Builds an OUT endpoint address.
  */
-#define USB_ENDPOINT_OUT(ep)                (ep)
+#define USB_ENDPOINT_OUT                    (ep)
 
 /**
  * @brief       Builds an IN endpoint address.
  */
-#define USB_ENDPOINT_IN(ep)                 ((ep) | 0x80U)
+#define USB_ENDPOINT_IN                     ((ep) | 0x80U)
 /** @} */
 
 /**
@@ -352,10 +352,10 @@ typedef struct hal_usb_driver hal_usb_driver_c;
  * @brief       Type of structure representing a USB hardware configuration.
  */
 typedef struct hal_usb_config hal_usb_config_t;
-typedef struct hal_usb_binder hal_usb_binder_c;
 
 typedef uint8_t usbep_t;
 typedef driver_state_t usbstate_t;
+typedef struct hal_usb_binder hal_usb_binder_c;
 
 #define USB_UNINIT                         HAL_DRV_STATE_UNINIT
 #define USB_STOP                           HAL_DRV_STATE_STOP
@@ -427,7 +427,7 @@ typedef struct {
 /**
  * @brief       USB hardware configuration structure.
  * @note        Protocol and class behavior are configured separately through
- *              the USB binding structure.
+ *              the USB binder object.
  */
 struct hal_usb_config {
   /* End of the mandatory fields.*/
@@ -700,7 +700,6 @@ static inline usbeventflags_t usbGetAndClearEventsX(void *ip,
 CC_FORCE_INLINE
 static inline uint16_t usbGetFrameNumberX(void *ip) {
   hal_usb_driver_c *self = (hal_usb_driver_c *)ip;
-
   (void)self;
   return usb_lld_get_frame_number(self);
 }

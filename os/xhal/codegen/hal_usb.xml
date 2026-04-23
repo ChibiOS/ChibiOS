@@ -64,6 +64,18 @@
         <define name="USB_FEATURE_DEVICE_REMOTE_WAKEUP" value="1U" />
         <define name="USB_FEATURE_TEST_MODE" value="2U" />
       </group>
+      <group description="Device addressing modes">
+        <define name="USB_EARLY_SET_ADDRESS" value="0" />
+        <define name="USB_LATE_SET_ADDRESS" value="1" />
+      </group>
+      <group description="Endpoint-zero status handling modes">
+        <define name="USB_EP0_STATUS_STAGE_SW" value="0" />
+        <define name="USB_EP0_STATUS_STAGE_HW" value="1" />
+      </group>
+      <group description="Set-address acknowledge handling modes">
+        <define name="USB_SET_ADDRESS_ACK_SW" value="0" />
+        <define name="USB_SET_ADDRESS_ACK_HW" value="1" />
+      </group>
       <group description="Endpoint types">
         <define name="USB_EP_MODE_TYPE" value="0x0003U" />
         <define name="USB_EP_MODE_TYPE_CTRL" value="0x0000U" />
@@ -117,9 +129,6 @@
           <implementation><![CDATA[
 do {
   (usbp)->events |= (usbeventflags_t)(flags);
-  if (((usbp)->bind != NULL) && ((usbp)->bind->event_cb != NULL)) {
-    (usbp)->bind->event_cb(usbp, (usbeventflags_t)(flags));
-  }
 } while (false)]]></implementation>
         </macro>
         <macro name="_usb_isr_invoke_sof_cb">
@@ -128,8 +137,22 @@ do {
           <notapi />
           <implementation><![CDATA[
 do {
-  if (((usbp)->bind != NULL) && ((usbp)->bind->sof_cb != NULL)) {
-    (usbp)->bind->sof_cb(usbp);
+  if ((usbp)->binder != NULL) {
+    osalSysLockFromISR();
+    usbBinderSOFI((usbp)->binder);
+    osalSysUnlockFromISR();
+  }
+} while (false)]]></implementation>
+        </macro>
+        <macro name="_usb_isr_invoke_setup_cb">
+          <brief>Common ISR code, setup packet callback.</brief>
+          <param name="usbp" dir="both">Pointer to the USB driver instance.</param>
+          <param name="ep" dir="in">Endpoint number.</param>
+          <notapi />
+          <implementation><![CDATA[
+do {
+  if ((usbp)->epc[ep]->setup_cb != NULL) {
+    (usbp)->epc[ep]->setup_cb(usbp, ep);
   }
 } while (false)]]></implementation>
         </macro>
@@ -209,6 +232,7 @@ do {
       <verbatim><![CDATA[
 typedef uint8_t usbep_t;
 typedef driver_state_t usbstate_t;
+typedef struct hal_usb_binder hal_usb_binder_c;
 
 #define USB_UNINIT                         HAL_DRV_STATE_UNINIT
 #define USB_STOP                           HAL_DRV_STATE_STOP
@@ -240,24 +264,11 @@ typedef struct {
 
 typedef void (*usbcallback_t)(hal_usb_driver_c *usbp);
 typedef void (*usbepcallback_t)(hal_usb_driver_c *usbp, usbep_t ep);
-typedef void (*usbeventcb_t)(hal_usb_driver_c *usbp, usbeventflags_t flags);
-typedef msg_t (*usbep0workercb_t)(hal_usb_driver_c *usbp);
-typedef const usb_descriptor_t * (*usbgetdescriptor_t)(hal_usb_driver_c *usbp,
-                                                       uint8_t dtype,
-                                                       uint8_t dindex,
-                                                       uint16_t lang);
-
-typedef struct hal_usb_bind {
-  usbgetdescriptor_t        get_descriptor;
-  usbep0workercb_t          ep0_worker;
-  usbeventcb_t              event_cb;
-  usbcallback_t             sof_cb;
-  void                     *arg;
-} hal_usb_bind_t;
 
 typedef struct {
   size_t                    txsize;
   size_t                    txcnt;
+  size_t                    txlast;
   const uint8_t            *txbuf;
 #if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
   thread_reference_t        thread;
@@ -267,6 +278,7 @@ typedef struct {
 typedef struct {
   size_t                    rxsize;
   size_t                    rxcnt;
+  size_t                    rxpkts;
   uint8_t                  *rxbuf;
 #if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
   thread_reference_t        thread;
@@ -282,20 +294,16 @@ typedef struct {
   uint16_t                  out_maxsize;
   USBInEndpointState       *in_state;
   USBOutEndpointState      *out_state;
+  unsigned                  ep_buffers;
+  uint8_t                  *setup_buf;
 } USBEndpointConfig;
-
-typedef struct usb_configurations usb_configurations_t;
-struct usb_configurations {
-  unsigned                  cfgsnum;
-  hal_usb_config_t          cfgs[];
-};
 
 /* Inclusion of LLD header.*/
 #include "hal_usb_lld.h"]]></verbatim>
       <struct name="hal_usb_config">
         <brief>USB hardware configuration structure.</brief>
         <note>Protocol and class behavior are configured separately through
-          the USB binding structure.</note>
+          the USB binder object.</note>
         <fields>
           <verbatim><![CDATA[
 /* End of the mandatory fields.*/
@@ -306,6 +314,12 @@ USB_CONFIG_EXT_FIELDS]]></verbatim>
           </condition>
         </fields>
       </struct>
+      <verbatim><![CDATA[
+typedef struct usb_configurations usb_configurations_t;
+struct usb_configurations {
+  unsigned                  cfgsnum;
+  hal_usb_config_t          cfgs[];
+};]]></verbatim>
       <class type="regular" name="hal_usb_driver" namespace="usb"
         ancestorname="hal_base_driver" descr="USB driver">
         <brief>Class of a USB driver.</brief>
@@ -314,7 +328,7 @@ USB_CONFIG_EXT_FIELDS]]></verbatim>
             <brief>Cached USB event flags.</brief>
           </field>
           <verbatim><![CDATA[
-const hal_usb_bind_t       *bind;
+hal_usb_binder_c          *binder;
 uint16_t                    transmitting;
 uint16_t                    receiving;
 const USBEndpointConfig    *epc[USB_MAX_ENDPOINTS + 1U];
@@ -346,7 +360,7 @@ usb_lld_driver_fields;]]></verbatim>
 unsigned i;
 
 self->events        = (usbeventflags_t)0U;
-self->bind          = NULL;
+self->binder        = NULL;
 self->transmitting  = 0U;
 self->receiving     = 0U;
 self->ep0state      = USB_EP0_STP_WAITING;
@@ -405,16 +419,16 @@ osalDbgCheck(self != NULL);
 drvStop(self);]]></implementation>
             </method>
             <method name="usbBind" ctype="msg_t">
-              <brief>Binds protocol and class callbacks to the USB driver.</brief>
-              <param name="bindp" ctype="const hal_usb_bind_t *" dir="in">
-                Protocol binding descriptor.
+              <brief>Attaches a USB binder to the USB driver.</brief>
+              <param name="binderp" ctype="hal_usb_binder_c *" dir="in">
+                USB binder object.
               </param>
               <return>The operation status.</return>
               <api />
               <implementation><![CDATA[
-osalDbgCheck((self != NULL) && (bindp != NULL) &&
-             (bindp->get_descriptor != NULL) &&
-             (bindp->ep0_worker != NULL));
+msg_t msg;
+
+osalDbgCheck((self != NULL) && (binderp != NULL));
 
 osalSysLock();
 if ((self->state == USB_SELECTED) ||
@@ -423,13 +437,18 @@ if ((self->state == USB_SELECTED) ||
   osalSysUnlock();
   return HAL_RET_INV_STATE;
 }
-self->bind = bindp;
+osalDbgAssert(self->binder == NULL, "binder already attached");
 osalSysUnlock();
 
-return HAL_RET_SUCCESS;]]></implementation>
+msg = usbBinderBind(binderp, self);
+if (msg == HAL_RET_SUCCESS) {
+  self->binder = binderp;
+}
+
+return msg;]]></implementation>
             </method>
             <method name="usbUnbind" ctype="msg_t">
-              <brief>Removes the currently bound USB protocol handler.</brief>
+              <brief>Detaches the currently bound USB binder.</brief>
               <return>The operation status.</return>
               <api />
               <implementation><![CDATA[
@@ -442,7 +461,10 @@ if ((self->state == USB_SELECTED) ||
   osalSysUnlock();
   return HAL_RET_INV_STATE;
 }
-self->bind = NULL;
+if (self->binder != NULL) {
+  usbBinderUnbind(self->binder);
+  self->binder = NULL;
+}
 osalSysUnlock();
 
 return HAL_RET_SUCCESS;]]></implementation>
@@ -452,7 +474,7 @@ return HAL_RET_SUCCESS;]]></implementation>
               <api />
               <implementation><![CDATA[
 osalDbgCheck(self != NULL);
-osalDbgAssert(self->bind != NULL, "no binding");
+osalDbgAssert(self->binder != NULL, "no binder");
 
 usb_lld_connect_bus(self);]]></implementation>
             </method>
@@ -552,6 +574,7 @@ osp = self->epc[ep]->out_state;
 osp->rxbuf  = buf;
 osp->rxsize = n;
 osp->rxcnt  = 0U;
+osp->rxpkts = 0U;
 #if USB_USE_WAIT == TRUE
 osp->thread = NULL;
 #endif
@@ -582,6 +605,7 @@ isp = self->epc[ep]->in_state;
 isp->txbuf  = buf;
 isp->txsize = n;
 isp->txcnt  = 0U;
+isp->txlast = 0U;
 #if USB_USE_WAIT == TRUE
 isp->thread = NULL;
 #endif
@@ -778,22 +802,31 @@ case (uint32_t)USB_RTYPE_RECIPIENT_DEVICE |
   break;
 case (uint32_t)USB_RTYPE_RECIPIENT_DEVICE |
      ((uint32_t)USB_REQ_SET_ADDRESS << 8):
+#if USB_SET_ADDRESS_MODE == USB_EARLY_SET_ADDRESS
+  self->address = self->setup[2];
+  usb_lld_set_address(self);
+#endif
   msg = usbEp0Acknowledge(self);
   if (msg == MSG_OK) {
+#if USB_SET_ADDRESS_MODE == USB_LATE_SET_ADDRESS
     set_address_thread(self);
+#else
+    usb_invoke_event_cb(self, USB_FLAGS_ADDRESS);
+    self->state = USB_SELECTED;
+#endif
   }
   break;
 case (uint32_t)USB_RTYPE_RECIPIENT_DEVICE |
      ((uint32_t)USB_REQ_GET_DESCRIPTOR << 8):
 case (uint32_t)USB_RTYPE_RECIPIENT_INTERFACE |
      ((uint32_t)USB_REQ_GET_DESCRIPTOR << 8):
-  if ((self->bind == NULL) || (self->bind->get_descriptor == NULL)) {
+  if (self->binder == NULL) {
     usbEp0Stall(self);
     break;
   }
-  dp = self->bind->get_descriptor(self, self->setup[3],
-                                  self->setup[2],
-                                  get_hword(&self->setup[4]));
+  dp = usbBinderGetDescriptor(self->binder, self->setup[3],
+                              self->setup[2],
+                              get_hword(&self->setup[4]));
   if (dp != NULL) {
     msg = usbEp0Reply(self, dp->ud_string, dp->ud_size);
   }
@@ -810,6 +843,9 @@ case (uint32_t)USB_RTYPE_RECIPIENT_DEVICE |
   if (self->state == USB_ACTIVE) {
     osalSysLock();
     usbDisableEndpointsI(self);
+    if (self->binder != NULL) {
+      usbBinderUnconfigureI(self->binder);
+    }
     osalSysUnlock();
     self->configuration = 0U;
     self->state = USB_SELECTED;
@@ -818,6 +854,11 @@ case (uint32_t)USB_RTYPE_RECIPIENT_DEVICE |
   if (self->setup[2] != 0U) {
     self->configuration = self->setup[2];
     self->state = USB_ACTIVE;
+    osalSysLock();
+    if (self->binder != NULL) {
+      usbBinderConfigureI(self->binder);
+    }
+    osalSysUnlock();
     usb_invoke_event_cb(self, USB_FLAGS_CONFIGURED);
   }
   msg = usbEp0Acknowledge(self);
@@ -957,12 +998,12 @@ if (self->state == USB_SUSPENDED) {
               <implementation><![CDATA[
 return (usbstate_t)self->state;]]></implementation>
             </method>
-            <method name="usbGetBindX" ctype="const hal_usb_bind_t *">
-              <brief>Returns the current USB protocol binding.</brief>
-              <return>The current USB binding or @p NULL.</return>
+            <method name="usbGetBinderX" ctype="hal_usb_binder_c *">
+              <brief>Returns the current USB binder.</brief>
+              <return>The current USB binder or @p NULL.</return>
               <xclass />
               <implementation><![CDATA[
-return self->bind;]]></implementation>
+return self->binder;]]></implementation>
             </method>
             <method name="usbGetEventsX" ctype="usbeventflags_t">
               <brief>Returns the cached USB event flags.</brief>
@@ -994,6 +1035,7 @@ return flags;]]></implementation>
               <return>The current USB frame number.</return>
               <xclass />
               <implementation><![CDATA[
+(void)self;
 return usb_lld_get_frame_number(self);]]></implementation>
             </method>
             <method name="usbGetReceiveTransactionSizeX" ctype="size_t">
@@ -1043,7 +1085,10 @@ return msg;]]></implementation>
 unsigned i;
 
 usb_lld_stop(self);
-self->bind          = NULL;
+if (self->binder != NULL) {
+  usbBinderUnbind(self->binder);
+  self->binder = NULL;
+}
 self->events        = (usbeventflags_t)0U;
 self->transmitting  = 0U;
 self->receiving     = 0U;
@@ -1138,14 +1183,17 @@ for (i = 0U; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
   usbp->epc[i] = NULL;
 }
 
-usbp->ep0state = USB_EP0_STP_WAITING;
-usbp->ep0setup = 0U;
-usbp->ep0reset = 0U;
-usb_lld_reset(usbp);
-osalSysLockFromISR();
-ep0_signal_resetI(usbp);
-osalSysUnlockFromISR();
-_usb_isr_invoke_event_cb(usbp, USB_FLAGS_RESET);]]></implementation>
+  usbp->ep0state = USB_EP0_STP_WAITING;
+  usbp->ep0setup = 0U;
+  usbp->ep0reset = 0U;
+  usb_lld_reset(usbp);
+  osalSysLockFromISR();
+  if (usbp->binder != NULL) {
+    usbBinderResetI(usbp->binder);
+  }
+  ep0_signal_resetI(usbp);
+  osalSysUnlockFromISR();
+  _usb_isr_invoke_event_cb(usbp, USB_FLAGS_RESET);]]></implementation>
       </function>
       <function name="_usb_suspend" ctype="void">
         <brief>Common USB suspend handler invoked by the LLD.</brief>
@@ -1177,6 +1225,9 @@ if (usbp->state != USB_SUSPENDED) {
   }
 #endif
   osalSysLockFromISR();
+  if (usbp->binder != NULL) {
+    usbBinderSuspendI(usbp->binder);
+  }
   ep0_signal_resetI(usbp);
   osalSysUnlockFromISR();
 }]]></implementation>
@@ -1190,6 +1241,11 @@ if (usbp->state != USB_SUSPENDED) {
         <implementation><![CDATA[
 if (usbp->state == USB_SUSPENDED) {
   usbp->state = usbp->saved_state;
+  osalSysLockFromISR();
+  if (usbp->binder != NULL) {
+    usbBinderWakeupI(usbp->binder);
+  }
+  osalSysUnlockFromISR();
   _usb_isr_invoke_event_cb(usbp, USB_FLAGS_WAKEUP);
 }]]></implementation>
       </function>
@@ -1210,8 +1266,8 @@ if (usbp->ep0state != USB_EP0_STP_WAITING) {
   msg = MSG_RESET;
 }
 
-usbReadSetupI(usbp, 0U, usbp->setup);
 osalSysLockFromISR();
+usbReadSetupI(usbp, 0U, usbp->setup);
 ep0_signal_setupI(usbp, msg);
 osalSysUnlockFromISR();]]></implementation>
       </function>
@@ -1324,9 +1380,7 @@ return hw;]]></implementation>
         <param name="flags" ctype="usbeventflags_t" dir="in"></param>
         <implementation><![CDATA[
 usbp->events |= flags;
-if ((usbp->bind != NULL) && (usbp->bind->event_cb != NULL)) {
-  usbp->bind->event_cb(usbp, flags);
-}]]></implementation>
+]]></implementation>
       </function>
       <function name="setup_reset" ctype="void">
         <param name="usbp" ctype="hal_usb_driver_c *" dir="both"></param>

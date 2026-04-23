@@ -199,14 +199,6 @@ static inline hal_usb_service_c *usbBinderGetFirstServiceX(void *ip) {
 }
 
 /**
- * @brief     Returns the next registered service.
- *
- * @param[in] ip            Pointer to a @p hal_usb_service_c instance.
- * @return                  Pointer to the next service or @p NULL.
- *
- * @xclass
- */
-/**
  * @brief     Returns the number of registered services.
  *
  * @param[in] ip            Pointer to a @p hal_usb_binder_c instance.
