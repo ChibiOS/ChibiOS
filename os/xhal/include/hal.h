@@ -315,8 +315,7 @@ static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
 #include "hal_cb_driver.h"
 #include "hal_channels.h"
 #include "hal_block_io.h"
-#include "hal_flash_interface.h"
-#include "hal_flash_base.h"
+#include "hal_flash.h"
 //#include "hal_mmcsd.h"
 //#include "hal_persistent.h"
 
