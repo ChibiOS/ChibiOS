@@ -266,8 +266,7 @@ static void usbcdc_out_impl(void *ip, usbep_t ep) {
 static msg_t usbcdc_setup_impl(void *ip, bool *handledp) {
   (void)ip;
 
-  *handledp = false;
-  return HAL_RET_SUCCESS;
+  return sduRequestsHook(&PORTAB_SDU1, handledp);
 }
 
 static const struct hal_usb_binder_vmt usbcdc_binder_vmt = {
@@ -298,5 +297,6 @@ const SerialUSBConfig serusbcfg = {
 };
 
 void usbcdcObjectInit(void) {
-  __usbbnd_objinit_impl(&usbcdc_binder, &usbcdc_binder_vmt);
+  usbBinderObjectInit(&usbcdc_binder);
+  usbcdc_binder.vmt = &usbcdc_binder_vmt;
 }

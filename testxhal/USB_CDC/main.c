@@ -108,6 +108,7 @@ static THD_FUNCTION(BlinkerThread, arg) {
 
 static THD_WORKING_AREA(waEp0Thread, 512);
 static THD_FUNCTION(Ep0Thread, arg) {
+  hal_usb_binder_c *binderp;
 
   (void)arg;
   chRegSetThreadName("usb-ep0");
@@ -127,9 +128,12 @@ static THD_FUNCTION(Ep0Thread, arg) {
     }
 
     if (!handled) {
-      msg = sduRequestsHook(&PORTAB_SDU1, &handled);
-      if (msg != MSG_OK) {
-        continue;
+      binderp = usbGetBinderX(&PORTAB_USB1);
+      if (binderp != NULL) {
+        msg = usbBinderSetup(binderp, &handled);
+        if (msg != MSG_OK) {
+          continue;
+        }
       }
     }
 
