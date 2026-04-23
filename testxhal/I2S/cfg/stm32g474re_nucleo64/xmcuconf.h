@@ -217,6 +217,11 @@
 #define STM32_DAC_DAC4_CH2_DMA_STREAM       STM32_DMA_STREAM_ID_ANY
 
 /*
+ * EFL driver system settings.
+ */
+#define STM32_FLASH_WAIT_TIME_MS            22
+
+/*
  * GPT driver system settings.
  */
 #define STM32_GPT_USE_TIM1                  FALSE

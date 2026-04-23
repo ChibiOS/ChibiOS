@@ -211,13 +211,13 @@ static msg_t ep0_receive_or_status(hal_usb_driver_c *usbp, uint8_t *buf,
 }
 
 static void cdcsvc_set_default_linecoding(hal_usb_cdc_service_c *self) {
-  self->linecoding.dwDTERate[0] = (uint8_t)(38400U);
-  self->linecoding.dwDTERate[1] = (uint8_t)(38400U >> 8);
-  self->linecoding.dwDTERate[2] = (uint8_t)(38400U >> 16);
-  self->linecoding.dwDTERate[3] = (uint8_t)(38400U >> 24);
-  self->linecoding.bCharFormat = 0U;
-  self->linecoding.bParityType = 0U;
-  self->linecoding.bDataBits = 8U;
+  self->linecoding.dwDTERate[0] = (uint8_t)(CDC_DEFAULT_DTE_RATE);
+  self->linecoding.dwDTERate[1] = (uint8_t)(CDC_DEFAULT_DTE_RATE >> 8);
+  self->linecoding.dwDTERate[2] = (uint8_t)(CDC_DEFAULT_DTE_RATE >> 16);
+  self->linecoding.dwDTERate[3] = (uint8_t)(CDC_DEFAULT_DTE_RATE >> 24);
+  self->linecoding.bCharFormat = CDC_DEFAULT_CHAR_FORMAT;
+  self->linecoding.bParityType = CDC_DEFAULT_PARITY;
+  self->linecoding.bDataBits = CDC_DEFAULT_DATA_BITS;
 }
 
 static void cdcsvc_endpoint_in_cb(hal_usb_driver_c *usbp, usbep_t ep) {

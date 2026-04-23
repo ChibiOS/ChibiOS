@@ -153,6 +153,12 @@
         <define name="LC_PARITY_MARK" value="3U" />
         <define name="LC_PARITY_SPACE" value="4U" />
       </group>
+      <group description="Default CDC line coding">
+        <define name="CDC_DEFAULT_DTE_RATE" value="38400U" />
+        <define name="CDC_DEFAULT_CHAR_FORMAT" value="LC_STOP_1" />
+        <define name="CDC_DEFAULT_PARITY" value="LC_PARITY_NONE" />
+        <define name="CDC_DEFAULT_DATA_BITS" value="8U" />
+      </group>
     </definitions_early>
     <configs>
       <config name="USB_USE_WAIT" default="TRUE">
@@ -3022,13 +3028,13 @@ return msg;]]></implementation>
       <function name="cdcsvc_set_default_linecoding" ctype="void">
         <param name="self" ctype="hal_usb_cdc_service_c *" dir="both"></param>
         <implementation><![CDATA[
-self->linecoding.dwDTERate[0] = (uint8_t)(38400U);
-self->linecoding.dwDTERate[1] = (uint8_t)(38400U >> 8);
-self->linecoding.dwDTERate[2] = (uint8_t)(38400U >> 16);
-self->linecoding.dwDTERate[3] = (uint8_t)(38400U >> 24);
-self->linecoding.bCharFormat = 0U;
-self->linecoding.bParityType = 0U;
-self->linecoding.bDataBits = 8U;]]></implementation>
+self->linecoding.dwDTERate[0] = (uint8_t)(CDC_DEFAULT_DTE_RATE);
+self->linecoding.dwDTERate[1] = (uint8_t)(CDC_DEFAULT_DTE_RATE >> 8);
+self->linecoding.dwDTERate[2] = (uint8_t)(CDC_DEFAULT_DTE_RATE >> 16);
+self->linecoding.dwDTERate[3] = (uint8_t)(CDC_DEFAULT_DTE_RATE >> 24);
+self->linecoding.bCharFormat = CDC_DEFAULT_CHAR_FORMAT;
+self->linecoding.bParityType = CDC_DEFAULT_PARITY;
+self->linecoding.bDataBits = CDC_DEFAULT_DATA_BITS;]]></implementation>
       </function>
       <function name="cdcsvc_endpoint_in_cb" ctype="void">
         <param name="usbp" ctype="hal_usb_driver_c *" dir="both"></param>

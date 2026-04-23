@@ -24,15 +24,21 @@
 
 #include "usbcfg.h"
 
-#define SHELL_WA_SIZE       THD_STACK_SIZE(1024)
+#define SHELL_WA_SIZE              THD_STACK_SIZE(1024)
+#define BLINKER_WA_SIZE            THD_STACK_SIZE(256)
+#define EP0_WA_SIZE                THD_STACK_SIZE(512)
+#define TEST_FAIL_BLINK_PERIOD_MS  100U
+#define BLINK_ACTIVE_PERIOD_MS     250U
+#define BLINK_IDLE_PERIOD_MS       500U
+#define USB_RECONNECT_DELAY_MS     1500U
 
 static void test_fail(void) {
 
   while (true) {
     palClearLine(PORTAB_BLINK_LED1);
-    chThdSleepMilliseconds(100);
+    chThdSleepMilliseconds(TEST_FAIL_BLINK_PERIOD_MS);
     palSetLine(PORTAB_BLINK_LED1);
-    chThdSleepMilliseconds(100);
+    chThdSleepMilliseconds(TEST_FAIL_BLINK_PERIOD_MS);
   }
 }
 
@@ -90,7 +96,11 @@ static const xshell_manager_config_t shell_cfg = {
   .stack.size       = SHELL_WA_SIZE
 };
 
-static THD_WORKING_AREA(waBlinkerThread, 256);
+/*
+ * Keep enough margin here, a too-small blinker stack can corrupt adjacent
+ * static objects such as the USB binder and make the failure mode misleading.
+ */
+static THD_WORKING_AREA(waBlinkerThread, BLINKER_WA_SIZE);
 static THD_FUNCTION(BlinkerThread, arg) {
 
   (void)arg;
@@ -98,7 +108,8 @@ static THD_FUNCTION(BlinkerThread, arg) {
   while (true) {
     systime_t time;
 
-    time = usbGetDriverStateX(&PORTAB_USB1) == USB_ACTIVE ? 250 : 500;
+    time = usbGetDriverStateX(&PORTAB_USB1) == USB_ACTIVE ?
+           BLINK_ACTIVE_PERIOD_MS : BLINK_IDLE_PERIOD_MS;
     palClearLine(PORTAB_BLINK_LED1);
     chThdSleepMilliseconds(time);
     palSetLine(PORTAB_BLINK_LED1);
@@ -106,7 +117,7 @@ static THD_FUNCTION(BlinkerThread, arg) {
   }
 }
 
-static THD_WORKING_AREA(waEp0Thread, 512);
+static THD_WORKING_AREA(waEp0Thread, EP0_WA_SIZE);
 static THD_FUNCTION(Ep0Thread, arg) {
   hal_usb_binder_c *binderp;
 
@@ -173,7 +184,7 @@ int main(void) {
               HAL_RET_SUCCESS);
 
   usbDisconnectBus(&PORTAB_USB1);
-  chThdSleepMilliseconds(1500);
+  chThdSleepMilliseconds(USB_RECONNECT_DELAY_MS);
   test_assert(usbStart(&PORTAB_USB1, NULL) == HAL_RET_SUCCESS);
   test_assert(usbBind(&PORTAB_USB1, &usbcdc_binder) == HAL_RET_SUCCESS);
   usbConnectBus(&PORTAB_USB1);

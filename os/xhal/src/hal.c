@@ -91,10 +91,8 @@ void halInit(void) {
 #if (HAL_USE_DAC == TRUE) || defined(__DOXYGEN__)
   dacInit();
 #endif
-#if 0
 #if (HAL_USE_EFL == TRUE) || defined(__DOXYGEN__)
   eflInit();
-#endif
 #endif
 #if (HAL_USE_I2C == TRUE) || defined(__DOXYGEN__)
   i2cInit();

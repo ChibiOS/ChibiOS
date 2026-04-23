@@ -51,6 +51,7 @@
 #define HAL_USE_ADC                         ${doc.HAL_USE_ADC!"FALSE"}
 #define HAL_USE_DAC                         ${doc.HAL_USE_DAC!"FALSE"}
 #define HAL_USE_CAN                         ${doc.HAL_USE_CAN!"FALSE"}
+#define HAL_USE_EFL                         ${doc.HAL_USE_EFL!"FALSE"}
 #define HAL_USE_ETH                         ${doc.HAL_USE_ETH!"FALSE"}
 #define HAL_USE_GPT                         ${doc.HAL_USE_GPT!"FALSE"}
 #define HAL_USE_I2C                         ${doc.HAL_USE_I2C!"FALSE"}

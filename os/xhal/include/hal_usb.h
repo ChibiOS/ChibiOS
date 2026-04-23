@@ -256,6 +256,16 @@
 #define LC_PARITY_SPACE                     4U
 /** @} */
 
+/**
+ * @name    Default CDC line coding
+ * @{
+ */
+#define CDC_DEFAULT_DTE_RATE                38400U
+#define CDC_DEFAULT_CHAR_FORMAT             LC_STOP_1
+#define CDC_DEFAULT_PARITY                  LC_PARITY_NONE
+#define CDC_DEFAULT_DATA_BITS               8U
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
