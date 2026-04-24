@@ -32,11 +32,11 @@
 
 static const hal_icu_config_t icu_default_config = {
   .mode           = ICU_INPUT_ACTIVE_HIGH,
-  .frequency      = ICU_DEFAULT_FREQUENCY,
+  .frequency      = 1000000U,
   .enabled_events = 0U,
   .channel        = ICU_CHANNEL_1,
   .dier           = 0U,
-  .arr            = ICU_DEFAULT_ARR
+  .arr            = 0xFFFFFFFFU
 };
 
 /*===========================================================================*/
@@ -834,17 +834,8 @@ void icu_lld_serve_interrupt(hal_icu_driver_c *icup) {
   }
 
   if ((sr & STM32_TIM_SR_UIF) != 0U) {
-#if ICU_USE_OVERFLOW_SCALING == TRUE
-    if (icup->state == ICU_ACTIVE) {
-      events |= ICU_EVENT_OVERFLOW;
-    }
-    else {
-      icup->state = ICU_WAITING;
-    }
-#else
     events |= ICU_EVENT_OVERFLOW;
     icup->state = ICU_WAITING;
-#endif
   }
 
   if (events != 0U) {

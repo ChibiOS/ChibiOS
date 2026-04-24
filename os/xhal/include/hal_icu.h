@@ -69,13 +69,6 @@
  * @{
  */
 /**
- * @brief       Enables overflow events while capture is active.
- */
-#if !defined(ICU_USE_OVERFLOW_SCALING) || defined(__DOXYGEN__)
-#define ICU_USE_OVERFLOW_SCALING            FALSE
-#endif
-
-/**
  * @brief       Support for ICU user configurations.
  * @note        When enabled the user must provide a variable named @p
  *              icu_configurations of type @p icu_configurations_t.
@@ -83,30 +76,11 @@
 #if !defined(ICU_USE_CONFIGURATIONS) || defined(__DOXYGEN__)
 #define ICU_USE_CONFIGURATIONS              FALSE
 #endif
-
-/**
- * @brief       Default ICU timer frequency.
- */
-#if !defined(ICU_DEFAULT_FREQUENCY) || defined(__DOXYGEN__)
-#define ICU_DEFAULT_FREQUENCY               1000000U
-#endif
-
-/**
- * @brief       Default ICU timer period register value.
- */
-#if !defined(ICU_DEFAULT_ARR) || defined(__DOXYGEN__)
-#define ICU_DEFAULT_ARR                     0xFFFFFFFFU
-#endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-/* Checks on ICU_USE_OVERFLOW_SCALING configuration.*/
-#if (ICU_USE_OVERFLOW_SCALING != FALSE) && (ICU_USE_OVERFLOW_SCALING != TRUE)
-#error "invalid ICU_USE_OVERFLOW_SCALING value"
-#endif
 
 /* Checks on ICU_USE_CONFIGURATIONS configuration.*/
 #if (ICU_USE_CONFIGURATIONS != FALSE) && (ICU_USE_CONFIGURATIONS != TRUE)

@@ -96,20 +96,6 @@
 #if !defined(PWM_USE_CONFIGURATIONS) || defined(__DOXYGEN__)
 #define PWM_USE_CONFIGURATIONS              FALSE
 #endif
-
-/**
- * @brief       Default PWM timer frequency.
- */
-#if !defined(PWM_DEFAULT_FREQUENCY) || defined(__DOXYGEN__)
-#define PWM_DEFAULT_FREQUENCY               1000000U
-#endif
-
-/**
- * @brief       Default PWM period.
- */
-#if !defined(PWM_DEFAULT_PERIOD) || defined(__DOXYGEN__)
-#define PWM_DEFAULT_PERIOD                  1000U
-#endif
 /** @} */
 
 /*===========================================================================*/

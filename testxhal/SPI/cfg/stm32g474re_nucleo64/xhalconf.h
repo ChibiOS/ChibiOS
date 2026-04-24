@@ -101,18 +101,13 @@
 /* ICU driver settings.                                                      */
 /*===========================================================================*/
 
-#define ICU_USE_OVERFLOW_SCALING            FALSE
 #define ICU_USE_CONFIGURATIONS              FALSE
-#define ICU_DEFAULT_FREQUENCY               1000000U
-#define ICU_DEFAULT_ARR                     0xFFFFFFFFU
 
 /*===========================================================================*/
 /* PWM driver settings.                                                      */
 /*===========================================================================*/
 
 #define PWM_USE_CONFIGURATIONS              FALSE
-#define PWM_DEFAULT_FREQUENCY               1000000U
-#define PWM_DEFAULT_PERIOD                  1000U
 
 /*===========================================================================*/
 /* PAL driver settings.                                                      */

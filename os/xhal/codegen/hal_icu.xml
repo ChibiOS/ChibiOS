@@ -28,21 +28,11 @@
       </group>
     </definitions_early>
     <configs>
-      <config name="ICU_USE_OVERFLOW_SCALING" default="FALSE">
-        <brief>Enables overflow events while capture is active.</brief>
-        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
-      </config>
       <config name="ICU_USE_CONFIGURATIONS" default="FALSE">
         <brief>Support for ICU user configurations.</brief>
         <note>When enabled the user must provide a variable named
           @p icu_configurations of type @p icu_configurations_t.</note>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
-      </config>
-      <config name="ICU_DEFAULT_FREQUENCY" default="1000000U">
-        <brief>Default ICU timer frequency.</brief>
-      </config>
-      <config name="ICU_DEFAULT_ARR" default="0xFFFFFFFFU">
-        <brief>Default ICU timer period register value.</brief>
       </config>
     </configs>
     <macros>

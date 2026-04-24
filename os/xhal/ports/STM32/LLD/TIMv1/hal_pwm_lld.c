@@ -31,8 +31,8 @@
 /*===========================================================================*/
 
 static const hal_pwm_config_t pwm_default_config = {
-  .frequency      = PWM_DEFAULT_FREQUENCY,
-  .period         = PWM_DEFAULT_PERIOD,
+  .frequency      = 1000000U,
+  .period         = 1000U,
   .enabled_events = 0U,
   .channels       = {
     { .mode = PWM_OUTPUT_DISABLED },

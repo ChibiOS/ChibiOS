@@ -45,12 +45,6 @@
           @p pwm_configurations of type @p pwm_configurations_t.</note>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
-      <config name="PWM_DEFAULT_FREQUENCY" default="1000000U">
-        <brief>Default PWM timer frequency.</brief>
-      </config>
-      <config name="PWM_DEFAULT_PERIOD" default="1000U">
-        <brief>Default PWM period.</brief>
-      </config>
     </configs>
     <macros>
       <group description="PWM duty cycle conversion">
