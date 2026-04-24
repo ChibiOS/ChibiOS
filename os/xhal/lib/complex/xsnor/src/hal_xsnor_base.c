@@ -256,7 +256,7 @@ void __xsnor_bus_acquire(void *ip) {
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
-    wspiAcquireBus(config->bus.wspi.drv);
+    drvLock(config->bus.wspi.drv);
     if (config->bus.wspi.cfg != config->bus.wspi.drv->config) {
       wspiStart(config->bus.wspi.drv, config->bus.wspi.cfg);
     }
@@ -290,7 +290,7 @@ void __xsnor_bus_release(void *ip) {
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
-    wspiReleaseBus(config->bus.wspi.drv);
+    drvUnlock(config->bus.wspi.drv);
 #endif
 #if XSNOR_USE_BOTH == TRUE
   }

@@ -96,13 +96,6 @@
 #endif
 
 /**
- * @brief       Support for mutual exclusion APIs on the I2C bus.
- */
-#if !defined(I2C_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define I2C_USE_MUTUAL_EXCLUSION            TRUE
-#endif
-
-/**
  * @brief       Support for I2C user configurations.
  * @note        When enabled the user must provide a variable named @p
  *              i2c_configurations of type @p i2c_configurations_t.
@@ -119,11 +112,6 @@
 /* Checks on I2C_USE_SYNCHRONIZATION configuration.*/
 #if (I2C_USE_SYNCHRONIZATION != FALSE) && (I2C_USE_SYNCHRONIZATION != TRUE)
 #error "invalid I2C_USE_SYNCHRONIZATION value"
-#endif
-
-/* Checks on I2C_USE_MUTUAL_EXCLUSION configuration.*/
-#if (I2C_USE_MUTUAL_EXCLUSION != FALSE) && (I2C_USE_MUTUAL_EXCLUSION != TRUE)
-#error "invalid I2C_USE_MUTUAL_EXCLUSION value"
 #endif
 
 /* Checks on I2C_USE_CONFIGURATIONS configuration.*/
@@ -370,10 +358,6 @@ extern "C" {
   msg_t i2cMasterReceiveTimeout(void *ip, i2caddr_t addr, uint8_t *rxbuf,
                                 size_t rxbytes, sysinterval_t timeout);
 #endif /* I2C_USE_SYNCHRONIZATION == TRUE */
-#if (I2C_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
-  void i2cAcquireBus(void *ip);
-  void i2cReleaseBus(void *ip);
-#endif /* I2C_USE_MUTUAL_EXCLUSION == TRUE */
   /* Regular functions.*/
   void i2cInit(void);
 #ifdef __cplusplus

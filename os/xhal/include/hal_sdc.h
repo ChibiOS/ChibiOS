@@ -137,13 +137,6 @@
 #endif
 
 /**
- * @brief       Support for SDC bus locking APIs.
- */
-#if !defined(SDC_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define SDC_USE_MUTUAL_EXCLUSION            TRUE
-#endif
-
-/**
  * @brief       Support for user-defined SDC configurations.
  * @note        When enabled the user must provide a variable named @p
  *              sdc_configurations of type @p sdc_configurations_t.
@@ -195,11 +188,6 @@
 /* Checks on SDC_USE_SYNCHRONIZATION configuration.*/
 #if (SDC_USE_SYNCHRONIZATION != FALSE) && (SDC_USE_SYNCHRONIZATION != TRUE)
 #error "invalid SDC_USE_SYNCHRONIZATION value"
-#endif
-
-/* Checks on SDC_USE_MUTUAL_EXCLUSION configuration.*/
-#if (SDC_USE_MUTUAL_EXCLUSION != FALSE) && (SDC_USE_MUTUAL_EXCLUSION != TRUE)
-#error "invalid SDC_USE_MUTUAL_EXCLUSION value"
 #endif
 
 /* Checks on SDC_USE_CONFIGURATIONS configuration.*/
@@ -582,10 +570,6 @@ extern "C" {
   bool sdcSync(void *ip);
   bool sdcGetInfo(void *ip, hal_blk_info_t *bdip);
   bool sdcErase(void *ip, uint32_t startblk, uint32_t endblk);
-#if (SDC_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
-  void sdcAcquireBus(void *ip);
-  void sdcReleaseBus(void *ip);
-#endif /* SDC_USE_MUTUAL_EXCLUSION == TRUE */
   /* Regular functions.*/
   void sdcInit(void);
 #ifdef __cplusplus

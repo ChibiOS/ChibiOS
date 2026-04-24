@@ -87,7 +87,6 @@
 /*===========================================================================*/
 
 #define I2C_USE_SYNCHRONIZATION             TRUE
-#define I2C_USE_MUTUAL_EXCLUSION            TRUE
 #define I2C_USE_CONFIGURATIONS              FALSE
 
 /*===========================================================================*/
@@ -127,7 +126,6 @@
 /*===========================================================================*/
 
 #define SDC_USE_SYNCHRONIZATION             TRUE
-#define SDC_USE_MUTUAL_EXCLUSION            TRUE
 #define SDC_USE_CONFIGURATIONS              FALSE
 #define SDC_INIT_RETRY                      100
 #define SDC_MMC_SUPPORT                     FALSE
@@ -158,7 +156,6 @@
 /*===========================================================================*/
 
 #define WSPI_USE_SYNCHRONIZATION            TRUE
-#define WSPI_USE_MUTUAL_EXCLUSION           TRUE
 
 #endif /* XHALCONF_H */
 

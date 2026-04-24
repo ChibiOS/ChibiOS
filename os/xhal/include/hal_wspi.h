@@ -49,13 +49,6 @@
 #if !defined(WSPI_USE_SYNCHRONIZATION) || defined(__DOXYGEN__)
 #define WSPI_USE_SYNCHRONIZATION            TRUE
 #endif
-
-/**
- * @brief       Support for WSPI bus locking APIs.
- */
-#if !defined(WSPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define WSPI_USE_MUTUAL_EXCLUSION           TRUE
-#endif
 /** @} */
 
 /*===========================================================================*/
@@ -65,11 +58,6 @@
 /* Checks on WSPI_USE_SYNCHRONIZATION configuration.*/
 #if (WSPI_USE_SYNCHRONIZATION != FALSE) && (WSPI_USE_SYNCHRONIZATION != TRUE)
 #error "invalid WSPI_USE_SYNCHRONIZATION value"
-#endif
-
-/* Checks on WSPI_USE_MUTUAL_EXCLUSION configuration.*/
-#if (WSPI_USE_MUTUAL_EXCLUSION != FALSE) && (WSPI_USE_MUTUAL_EXCLUSION != TRUE)
-#error "invalid WSPI_USE_MUTUAL_EXCLUSION value"
 #endif
 
 /*===========================================================================*/
@@ -373,10 +361,6 @@ extern "C" {
   void wspiUnmapFlashI(void *ip);
   void wspiUnmapFlash(void *ip);
 #endif /* WSPI_SUPPORTS_MEMMAP == TRUE */
-#if (WSPI_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
-  void wspiAcquireBus(void *ip);
-  void wspiReleaseBus(void *ip);
-#endif /* WSPI_USE_MUTUAL_EXCLUSION == TRUE */
   /* Regular functions.*/
   void wspiInit(void);
 #ifdef __cplusplus

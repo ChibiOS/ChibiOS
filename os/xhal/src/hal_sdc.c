@@ -1530,36 +1530,6 @@ bool sdcErase(void *ip, uint32_t startblk, uint32_t endblk) {
   self->state = HAL_DRV_STATE_READY;
   return HAL_FAILED;
 }
-
-#if (SDC_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
-/**
- * @brief       Gains exclusive access to the SDC bus.
- *
- * @param[in,out] ip            Pointer to a @p hal_sdc_driver_c instance.
- *
- * @api
- */
-void sdcAcquireBus(void *ip) {
-  hal_sdc_driver_c *self = (hal_sdc_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-
-  drvLock(self);
-}
-
-/**
- * @brief       Releases exclusive access to the SDC bus.
- *
- * @param[in,out] ip            Pointer to a @p hal_sdc_driver_c instance.
- *
- * @api
- */
-void sdcReleaseBus(void *ip) {
-  hal_sdc_driver_c *self = (hal_sdc_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-
-  drvUnlock(self);
-}
-#endif /* SDC_USE_MUTUAL_EXCLUSION == TRUE */
 /** @} */
 
 #endif /* HAL_USE_SDC == TRUE */

@@ -44,10 +44,6 @@
         <brief>Support for synchronous I2C master APIs.</brief>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
-      <config name="I2C_USE_MUTUAL_EXCLUSION" default="TRUE">
-        <brief>Support for mutual exclusion APIs on the I2C bus.</brief>
-        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
-      </config>
       <config name="I2C_USE_CONFIGURATIONS" default="FALSE">
         <brief>Support for I2C user configurations.</brief>
         <note>When enabled the user must provide a variable named
@@ -395,24 +391,6 @@ if (msg == HAL_RET_SUCCESS) {
 osalSysUnlock();
 
 return msg;]]></implementation>
-              </method>
-            </condition>
-            <condition check="I2C_USE_MUTUAL_EXCLUSION == TRUE">
-              <method name="i2cAcquireBus" ctype="void">
-                <brief>Gains exclusive access to the I2C bus.</brief>
-                <api />
-                <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-
-drvLock(self);]]></implementation>
-              </method>
-              <method name="i2cReleaseBus" ctype="void">
-                <brief>Releases exclusive access to the I2C bus.</brief>
-                <api />
-                <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-
-drvUnlock(self);]]></implementation>
               </method>
             </condition>
           </regular>

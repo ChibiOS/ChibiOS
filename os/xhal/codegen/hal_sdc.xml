@@ -69,10 +69,6 @@
         <brief>Support for blocking SDC transfer APIs.</brief>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
-      <config name="SDC_USE_MUTUAL_EXCLUSION" default="TRUE">
-        <brief>Support for SDC bus locking APIs.</brief>
-        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
-      </config>
       <config name="SDC_USE_CONFIGURATIONS" default="FALSE">
         <brief>Support for user-defined SDC configurations.</brief>
         <note>When enabled the user must provide a variable named
@@ -896,24 +892,6 @@ failed:
 self->state = HAL_DRV_STATE_READY;
 return HAL_FAILED;]]></implementation>
             </method>
-            <condition check="SDC_USE_MUTUAL_EXCLUSION == TRUE">
-              <method name="sdcAcquireBus" ctype="void">
-                <brief>Gains exclusive access to the SDC bus.</brief>
-                <api />
-                <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-
-drvLock(self);]]></implementation>
-              </method>
-              <method name="sdcReleaseBus" ctype="void">
-                <brief>Releases exclusive access to the SDC bus.</brief>
-                <api />
-                <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-
-drvUnlock(self);]]></implementation>
-              </method>
-            </condition>
           </regular>
           <inline>
             <method name="sdcGetErrorsX" ctype="sdcflags_t">

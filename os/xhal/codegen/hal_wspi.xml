@@ -16,10 +16,6 @@
         <brief>Support for blocking WSPI transfer APIs.</brief>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
-      <config name="WSPI_USE_MUTUAL_EXCLUSION" default="TRUE">
-        <brief>Support for WSPI bus locking APIs.</brief>
-        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
-      </config>
     </configs>
     <macros>
       <macro name="__wspi_getconf">
@@ -468,22 +464,6 @@ osalDbgCheck(self != NULL);
 osalSysLock();
 wspiUnmapFlashI(self);
 osalSysUnlock();]]></implementation>
-              </method>
-            </condition>
-            <condition check="WSPI_USE_MUTUAL_EXCLUSION == TRUE">
-              <method name="wspiAcquireBus" ctype="void">
-                <brief>Gains exclusive access to the WSPI bus.</brief>
-                <api />
-                <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-drvLock(self);]]></implementation>
-              </method>
-              <method name="wspiReleaseBus" ctype="void">
-                <brief>Releases exclusive access to the WSPI bus.</brief>
-                <api />
-                <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-drvUnlock(self);]]></implementation>
               </method>
             </condition>
           </regular>

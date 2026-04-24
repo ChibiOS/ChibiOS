@@ -514,34 +514,6 @@ void wspiUnmapFlash(void *ip) {
   osalSysUnlock();
 }
 #endif /* WSPI_SUPPORTS_MEMMAP == TRUE */
-
-#if (WSPI_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
-/**
- * @brief       Gains exclusive access to the WSPI bus.
- *
- * @param[in,out] ip            Pointer to a @p hal_wspi_driver_c instance.
- *
- * @api
- */
-void wspiAcquireBus(void *ip) {
-  hal_wspi_driver_c *self = (hal_wspi_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-  drvLock(self);
-}
-
-/**
- * @brief       Releases exclusive access to the WSPI bus.
- *
- * @param[in,out] ip            Pointer to a @p hal_wspi_driver_c instance.
- *
- * @api
- */
-void wspiReleaseBus(void *ip) {
-  hal_wspi_driver_c *self = (hal_wspi_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-  drvUnlock(self);
-}
-#endif /* WSPI_USE_MUTUAL_EXCLUSION == TRUE */
 /** @} */
 
 #endif /* HAL_USE_WSPI == TRUE */

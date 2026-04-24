@@ -483,36 +483,6 @@ msg_t i2cMasterReceiveTimeout(void *ip, i2caddr_t addr, uint8_t *rxbuf,
   return msg;
 }
 #endif /* I2C_USE_SYNCHRONIZATION == TRUE */
-
-#if (I2C_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
-/**
- * @brief       Gains exclusive access to the I2C bus.
- *
- * @param[in,out] ip            Pointer to a @p hal_i2c_driver_c instance.
- *
- * @api
- */
-void i2cAcquireBus(void *ip) {
-  hal_i2c_driver_c *self = (hal_i2c_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-
-  drvLock(self);
-}
-
-/**
- * @brief       Releases exclusive access to the I2C bus.
- *
- * @param[in,out] ip            Pointer to a @p hal_i2c_driver_c instance.
- *
- * @api
- */
-void i2cReleaseBus(void *ip) {
-  hal_i2c_driver_c *self = (hal_i2c_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-
-  drvUnlock(self);
-}
-#endif /* I2C_USE_MUTUAL_EXCLUSION == TRUE */
 /** @} */
 
 #endif /* HAL_USE_I2C == TRUE */
