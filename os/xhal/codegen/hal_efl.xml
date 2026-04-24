@@ -38,9 +38,6 @@ efl_lld_config_fields;]]></verbatim>
         ancestorname="hal_flash_base" descr="Embedded Flash driver">
         <brief>Class of an embedded flash driver.</brief>
         <fields>
-          <field name="config" ctype="const hal_efl_config_t *">
-            <brief>Current configuration data.</brief>
-          </field>
           <verbatim><![CDATA[
 /* End of the mandatory fields.*/
 efl_lld_driver_fields;]]></verbatim>
@@ -48,7 +45,7 @@ efl_lld_driver_fields;]]></verbatim>
         <methods>
           <objinit callsuper="true">
             <implementation><![CDATA[
-self->config = NULL;]]></implementation>
+]]></implementation>
           </objinit>
           <dispose>
             <implementation><![CDATA[
@@ -67,24 +64,12 @@ msg_t msg;
 
 osalDbgCheck(self != NULL);
 
-osalSysLock();
-
-osalDbgAssert((self->state == FLASH_STOP) || (self->state == FLASH_READY),
-              "invalid state");
-
-self->config = config;
-msg = efl_lld_start(self);
-if (msg == HAL_RET_SUCCESS) {
-  self->state = FLASH_READY;
-}
-else {
-  self->config = NULL;
-  self->state = FLASH_STOP;
+msg = drvSetCfgX(self, config);
+if (msg != HAL_RET_SUCCESS) {
+  return msg;
 }
 
-osalSysUnlock();
-
-return msg;]]></implementation>
+return drvStart(self);]]></implementation>
             </method>
             <method name="eflStop" ctype="void">
               <brief>Stops the driver.</brief>
@@ -92,19 +77,42 @@ return msg;]]></implementation>
               <implementation><![CDATA[
 osalDbgCheck(self != NULL);
 
-osalSysLock();
-
-osalDbgAssert((self->state == FLASH_STOP) || (self->state == FLASH_READY),
-              "invalid state");
-
-efl_lld_stop(self);
-self->config = NULL;
-self->state  = FLASH_STOP;
-
-osalSysUnlock();]]></implementation>
+drvStop(self);]]></implementation>
             </method>
           </regular>
           <override>
+            <method shortname="start">
+              <implementation><![CDATA[
+return efl_lld_start(self);]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[
+efl_lld_stop(self);]]></implementation>
+            </method>
+            <method shortname="setcfg">
+              <implementation><![CDATA[
+static const hal_efl_config_t default_config = {0};
+
+(void)self;
+
+if (config == NULL) {
+  return &default_config;
+}
+
+return config;]]></implementation>
+            </method>
+            <method shortname="selcfg">
+              <implementation><![CDATA[
+static const hal_efl_config_t default_config = {0};
+
+(void)self;
+
+if (cfgnum == 0U) {
+  return &default_config;
+}
+
+return NULL;]]></implementation>
+            </method>
             <method shortname="read">
               <implementation><![CDATA[
 return efl_lld_read(self, offset, n, rp);]]></implementation>

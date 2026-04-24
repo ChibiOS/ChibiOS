@@ -78,7 +78,6 @@ void *__xsnor_objinit_impl(void *ip, const void *vmt) {
   __flash_objinit_impl(self, vmt);
 
   /* Initialization code.*/
-  self->config   = NULL;
 #if XSNOR_USE_WSPI == TRUE
   self->commands = NULL;
 #endif
@@ -101,6 +100,112 @@ void __xsnor_dispose_impl(void *ip) {
 
   /* Finalization of the ancestors-defined parts.*/
   __flash_dispose_impl(self);
+}
+
+/**
+ * @brief       Override of method @p __drv_start().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
+ * @return                      The operation status.
+ */
+msg_t __xsnor_start_impl(void *ip) {
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  flash_error_t err;
+  const xsnor_config_t *config = self->config;
+
+  /* Bus acquisition.*/
+  __xsnor_bus_acquire(self);
+
+#if XSNOR_USE_BOTH == TRUE
+  if (config->bus_type != XSNOR_BUS_MODE_SPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+    wspiStart(config->bus.wspi.drv, config->bus.wspi.cfg);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+  else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+    (void)drvSetCfgX(config->bus.spi.drv, config->bus.spi.cfg);
+    (void)drvStart(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+#endif
+
+  /* Device identification and initialization.*/
+  err = xsnor_device_init(self);
+
+  /* Bus release.*/
+  __xsnor_bus_release(self);
+
+  if (err != FLASH_NO_ERROR) {
+    return HAL_RET_HW_FAILURE;
+  }
+
+  return HAL_RET_SUCCESS;
+}
+
+/**
+ * @brief       Override of method @p __drv_stop().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
+ */
+void __xsnor_stop_impl(void *ip) {
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  const xsnor_config_t *config = self->config;
+
+  if (config == NULL) {
+    return;
+  }
+
+  /* Stopping bus device.*/
+#if XSNOR_USE_BOTH == TRUE
+  if (config->bus_type != XSNOR_BUS_MODE_SPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+    wspiStop(config->bus.wspi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+  else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+    drvStop(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+#endif
+}
+
+/**
+ * @brief       Override of method @p __drv_set_cfg().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
+ * @param[in]     config        New driver configuration.
+ * @return                      The configuration pointer.
+ */
+const void *__xsnor_setcfg_impl(void *ip, const void *config) {
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  (void)self;
+
+  return config;
+}
+
+/**
+ * @brief       Override of method @p __drv_sel_cfg().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
+ * @param[in]     cfgnum        Driver configuration number.
+ * @return                      The configuration pointer.
+ */
+const void *__xsnor_selcfg_impl(void *ip, unsigned cfgnum) {
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  (void)self;
+  (void)cfgnum;
+
+  return NULL;
 }
 /** @} */
 
@@ -145,14 +250,15 @@ void __xsnor_spi_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset) {
  */
 void __xsnor_bus_acquire(void *ip) {
   hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-  if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
+  if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
-    wspiAcquireBus(self->config->bus.wspi.drv);
-    if (self->config->bus.wspi.cfg != self->config->bus.wspi.drv->config) {
-      wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.cfg);
+    wspiAcquireBus(config->bus.wspi.drv);
+    if (config->bus.wspi.cfg != config->bus.wspi.drv->config) {
+      wspiStart(config->bus.wspi.drv, config->bus.wspi.cfg);
     }
 #endif
 #if XSNOR_USE_BOTH == TRUE
@@ -160,11 +266,11 @@ void __xsnor_bus_acquire(void *ip) {
   else {
 #endif
 #if XSNOR_USE_SPI == TRUE
-    if (self->config->bus.spi.cfg !=
-        (const hal_spi_config_t *)self->config->bus.spi.drv->config) {
-      (void)drvSetCfgX(self->config->bus.spi.drv, self->config->bus.spi.cfg);
+    if (config->bus.spi.cfg !=
+        (const hal_spi_config_t *)config->bus.spi.drv->config) {
+      (void)drvSetCfgX(config->bus.spi.drv, config->bus.spi.cfg);
     }
-    (void)drvStart(self->config->bus.spi.drv);
+    (void)drvStart(config->bus.spi.drv);
 #endif
 #if XSNOR_USE_BOTH == TRUE
   }
@@ -178,18 +284,20 @@ void __xsnor_bus_acquire(void *ip) {
  */
 void __xsnor_bus_release(void *ip) {
   hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-  if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
+  if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
-    wspiReleaseBus(self->config->bus.wspi.drv);
+    wspiReleaseBus(config->bus.wspi.drv);
 #endif
 #if XSNOR_USE_BOTH == TRUE
   }
   else {
 #endif
 #if XSNOR_USE_SPI == TRUE
+    (void)config;
     (void)self;
 #endif
 #if XSNOR_USE_BOTH == TRUE
@@ -544,103 +652,6 @@ void __xsnor_bus_cmd_addr_dummy_receive(void *ip, uint32_t cmd,
 #if XSNOR_USE_BOTH == TRUE
   }
 #endif
-}
-
-/**
- * @brief       Configures and activates a SNOR driver.
- *
- * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
- * @param[in]     config        Pointer to the configuration.
- * @return                      An error code.
- * @retval FLASH_NO_ERROR       Operation successful.
- * @retval FLASH_ERROR_HW_FAILURE If initialization failed.
- *
- * @api
- */
-flash_error_t xsnorStart(void *ip, const xsnor_config_t *config) {
-  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
-  flash_error_t err = FLASH_NO_ERROR;
-
-  osalDbgCheck((self != NULL) && (config != NULL));
-  osalDbgAssert(self->state != FLASH_UNINIT, "invalid state");
-
-  self->config = config;
-
-  if (self->state == FLASH_STOP) {
-
-    /* Bus acquisition.*/
-    __xsnor_bus_acquire(self);
-
-#if XSNOR_USE_BOTH == TRUE
-    if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
-#endif
-#if XSNOR_USE_WSPI == TRUE
-      wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.cfg);
-#endif
-#if XSNOR_USE_BOTH == TRUE
-    }
-  else {
-#endif
-#if XSNOR_USE_SPI == TRUE
-        (void)drvSetCfgX(self->config->bus.spi.drv, self->config->bus.spi.cfg);
-        (void)drvStart(self->config->bus.spi.drv);
-#endif
-#if XSNOR_USE_BOTH == TRUE
-    }
-#endif
-
-    /* Device identification and initialization.*/
-    err = xsnor_device_init(self);
-    if (err == FLASH_NO_ERROR) {
-      /* Driver in ready state.*/
-      self->state = FLASH_READY;
-    }
-
-    /* Bus release.*/
-    __xsnor_bus_release(self);
-  }
-
-  return err;
-}
-
-/**
- * @brief       Deactivates a SNOR driver.
- *
- * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
- *
- * @api
- */
-void xsnorStop(void *ip) {
-  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
-  osalDbgCheck(self != NULL);
-  osalDbgAssert(self->state != FLASH_UNINIT, "invalid state");
-
-  if (self->state != FLASH_STOP) {
-
-    /* Stopping bus device.*/
-#if XSNOR_USE_BOTH == TRUE
-    if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
-#endif
-#if XSNOR_USE_WSPI == TRUE
-      wspiStop(self->config->bus.wspi.drv);
-#endif
-#if XSNOR_USE_BOTH == TRUE
-    }
-  else {
-#endif
-#if XSNOR_USE_SPI == TRUE
-        drvStop(self->config->bus.spi.drv);
-#endif
-#if XSNOR_USE_BOTH == TRUE
-    }
-#endif
-
-    /* Driver stopped.*/
-    self->state = FLASH_STOP;
-
-    /* Deleting current configuration.*/
-    self->config = NULL;
-  }
 }
 
 #if ((XSNOR_USE_WSPI == TRUE) && defined(WSPI_SUPPORTS_MEMMAP) && (WSPI_SUPPORTS_MEMMAP == TRUE)) || defined (__DOXYGEN__)

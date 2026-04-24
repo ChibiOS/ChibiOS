@@ -87,8 +87,7 @@ void *__efl_objinit_impl(void *ip, const void *vmt) {
   /* Initialization of the ancestors-defined parts.*/
   __flash_objinit_impl(self, vmt);
 
-  /* Initialization code.*/
-  self->config = NULL;
+  /* No initialization code.*/
 
   return self;
 }
@@ -108,6 +107,67 @@ void __efl_dispose_impl(void *ip) {
 
   /* Finalization of the ancestors-defined parts.*/
   __flash_dispose_impl(self);
+}
+
+/**
+ * @brief       Override of method @p __drv_start().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_efl_driver_c instance.
+ * @return                      The operation status.
+ */
+msg_t __efl_start_impl(void *ip) {
+  hal_efl_driver_c *self = (hal_efl_driver_c *)ip;
+  return efl_lld_start(self);
+}
+
+/**
+ * @brief       Override of method @p __drv_stop().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_efl_driver_c instance.
+ */
+void __efl_stop_impl(void *ip) {
+  hal_efl_driver_c *self = (hal_efl_driver_c *)ip;
+  efl_lld_stop(self);
+}
+
+/**
+ * @brief       Override of method @p __drv_set_cfg().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_efl_driver_c instance.
+ * @param[in]     config        New driver configuration.
+ * @return                      The configuration pointer.
+ */
+const void *__efl_setcfg_impl(void *ip, const void *config) {
+  hal_efl_driver_c *self = (hal_efl_driver_c *)ip;
+  static const hal_efl_config_t default_config = {0};
+
+  (void)self;
+
+  if (config == NULL) {
+    return &default_config;
+  }
+
+  return config;
+}
+
+/**
+ * @brief       Override of method @p __drv_sel_cfg().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_efl_driver_c instance.
+ * @param[in]     cfgnum        Driver configuration number.
+ * @return                      The configuration pointer.
+ */
+const void *__efl_selcfg_impl(void *ip, unsigned cfgnum) {
+  hal_efl_driver_c *self = (hal_efl_driver_c *)ip;
+  static const hal_efl_config_t default_config = {0};
+
+  (void)self;
+
+  if (cfgnum == 0U) {
+    return &default_config;
+  }
+
+  return NULL;
 }
 
 /**
@@ -195,6 +255,10 @@ flash_error_t __efl_verify_erase_impl(void *ip, flash_sector_t sector) {
  */
 const struct hal_efl_driver_vmt __hal_efl_driver_vmt = {
   .dispose                  = __efl_dispose_impl,
+  .start                    = __efl_start_impl,
+  .stop                     = __efl_stop_impl,
+  .setcfg                   = __efl_setcfg_impl,
+  .selcfg                   = __efl_selcfg_impl,
   .read                     = __efl_read_impl,
   .program                  = __efl_program_impl,
   .start_erase_all          = __efl_start_erase_all_impl,
@@ -222,24 +286,12 @@ msg_t eflStart(void *ip, const hal_efl_config_t *config) {
 
   osalDbgCheck(self != NULL);
 
-  osalSysLock();
-
-  osalDbgAssert((self->state == FLASH_STOP) || (self->state == FLASH_READY),
-                "invalid state");
-
-  self->config = config;
-  msg = efl_lld_start(self);
-  if (msg == HAL_RET_SUCCESS) {
-    self->state = FLASH_READY;
-  }
-  else {
-    self->config = NULL;
-    self->state = FLASH_STOP;
+  msg = drvSetCfgX(self, config);
+  if (msg != HAL_RET_SUCCESS) {
+    return msg;
   }
 
-  osalSysUnlock();
-
-  return msg;
+  return drvStart(self);
 }
 
 /**
@@ -253,16 +305,7 @@ void eflStop(void *ip) {
   hal_efl_driver_c *self = (hal_efl_driver_c *)ip;
   osalDbgCheck(self != NULL);
 
-  osalSysLock();
-
-  osalDbgAssert((self->state == FLASH_STOP) || (self->state == FLASH_READY),
-                "invalid state");
-
-  efl_lld_stop(self);
-  self->config = NULL;
-  self->state  = FLASH_STOP;
-
-  osalSysUnlock();
+  drvStop(self);
 }
 /** @} */
 

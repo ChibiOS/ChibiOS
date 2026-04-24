@@ -30,7 +30,7 @@
 #ifndef HAL_FLASH_BASE_H
 #define HAL_FLASH_BASE_H
 
-#include "oop_base_object.h"
+#include "hal_base_driver.h"
 #include "hal_flash_interface.h"
 
 /*===========================================================================*/
@@ -61,18 +61,17 @@ typedef struct hal_flash_base BaseFlash;
 /**
  * @brief       Driver state machine possible states.
  */
+typedef driver_state_t flash_state_t;
+
 typedef enum {
-  FLASH_UNINIT = 0,
-  FLASH_STOP   = 1,
-  FLASH_READY  = 2,
-  FLASH_READ   = 3,
-  FLASH_PGM    = 4,
-  FLASH_ERASE  = 5
-} flash_state_t;
+  FLASH_READ  = HAL_DRV_STATE_ACTIVE + 1U,
+  FLASH_PGM   = HAL_DRV_STATE_ACTIVE + 2U,
+  FLASH_ERASE = HAL_DRV_STATE_ACTIVE + 3U
+} flash_state_ex_t;
 
 /**
  * @class       hal_flash_base_c
- * @extends     base_object_c
+ * @extends     hal_base_driver_c
  * @implements  flash_interface_i
  *
  * @brief       Base class of all flash drivers.
@@ -92,6 +91,11 @@ typedef struct hal_flash_base hal_flash_base_c;
 struct hal_flash_base_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
+  /* From hal_base_driver_c.*/
+  msg_t (*start)(void *ip);
+  void (*stop)(void *ip);
+  const void * (*setcfg)(void *ip, const void *config);
+  const void * (*selcfg)(void *ip, unsigned cfgnum);
   /* From hal_flash_base_c.*/
   flash_error_t (*read)(void *ip, flash_offset_t offset, size_t n, uint8_t *rp);
   flash_error_t (*program)(void *ip, flash_offset_t offset, size_t n, const uint8_t *pp);
@@ -110,17 +114,41 @@ struct hal_flash_base {
    */
   const struct hal_flash_base_vmt *vmt;
   /**
+   * @brief       Driver state.
+   */
+  driver_state_t            state;
+  /**
+   * @brief       Associated configuration structure.
+   */
+  const void                *config;
+  /**
+   * @brief       Driver argument.
+   */
+  void                      *arg;
+#if (HAL_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
+  /**
+   * @brief       Driver mutex.
+   */
+  mutex_t                   mutex;
+#endif /* HAL_USE_MUTUAL_EXCLUSION == TRUE */
+#if (HAL_USE_REGISTRY == TRUE) || defined (__DOXYGEN__)
+  /**
+   * @brief       Driver identifier.
+   */
+  unsigned int              id;
+  /**
+   * @brief       Driver name.
+   */
+  const char                *name;
+  /**
+   * @brief       Registry link structure.
+   */
+  hal_regent_t              regent;
+#endif /* HAL_USE_REGISTRY == TRUE */
+  /**
    * @brief       Implemented interface @p flash_interface_i.
    */
   flash_interface_i         fls;
-  /**
-   * @brief       Driver state.
-   */
-  flash_state_t             state;
-  /**
-   * @brief       Flash access mutex.
-   */
-  mutex_t                   mutex;
   /**
    * @brief       Flash descriptor.
    */

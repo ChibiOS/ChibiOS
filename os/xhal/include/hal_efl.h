@@ -96,6 +96,11 @@ typedef struct hal_efl_driver hal_efl_driver_c;
 struct hal_efl_driver_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
+  /* From hal_base_driver_c.*/
+  msg_t (*start)(void *ip);
+  void (*stop)(void *ip);
+  const void * (*setcfg)(void *ip, const void *config);
+  const void * (*selcfg)(void *ip, unsigned cfgnum);
   /* From hal_flash_base_c.*/
   flash_error_t (*read)(void *ip, flash_offset_t offset, size_t n, uint8_t *rp);
   flash_error_t (*program)(void *ip, flash_offset_t offset, size_t n, const uint8_t *pp);
@@ -115,25 +120,45 @@ struct hal_efl_driver {
    */
   const struct hal_efl_driver_vmt *vmt;
   /**
+   * @brief       Driver state.
+   */
+  driver_state_t            state;
+  /**
+   * @brief       Associated configuration structure.
+   */
+  const void                *config;
+  /**
+   * @brief       Driver argument.
+   */
+  void                      *arg;
+#if (HAL_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
+  /**
+   * @brief       Driver mutex.
+   */
+  mutex_t                   mutex;
+#endif /* HAL_USE_MUTUAL_EXCLUSION == TRUE */
+#if (HAL_USE_REGISTRY == TRUE) || defined (__DOXYGEN__)
+  /**
+   * @brief       Driver identifier.
+   */
+  unsigned int              id;
+  /**
+   * @brief       Driver name.
+   */
+  const char                *name;
+  /**
+   * @brief       Registry link structure.
+   */
+  hal_regent_t              regent;
+#endif /* HAL_USE_REGISTRY == TRUE */
+  /**
    * @brief       Implemented interface @p flash_interface_i.
    */
   flash_interface_i         fls;
   /**
-   * @brief       Driver state.
-   */
-  flash_state_t             state;
-  /**
-   * @brief       Flash access mutex.
-   */
-  mutex_t                   mutex;
-  /**
    * @brief       Flash descriptor.
    */
   flash_descriptor_t        descriptor;
-  /**
-   * @brief       Current configuration data.
-   */
-  const hal_efl_config_t *  config;
   /* End of the mandatory fields.*/
   efl_lld_driver_fields;
 };
@@ -149,6 +174,10 @@ extern "C" {
   /* Methods of hal_efl_driver_c.*/
   void *__efl_objinit_impl(void *ip, const void *vmt);
   void __efl_dispose_impl(void *ip);
+  msg_t __efl_start_impl(void *ip);
+  void __efl_stop_impl(void *ip);
+  const void *__efl_setcfg_impl(void *ip, const void *config);
+  const void *__efl_selcfg_impl(void *ip, unsigned cfgnum);
   flash_error_t __efl_read_impl(void *ip, flash_offset_t offset, size_t n,
                                 uint8_t *rp);
   flash_error_t __efl_program_impl(void *ip, flash_offset_t offset, size_t n,

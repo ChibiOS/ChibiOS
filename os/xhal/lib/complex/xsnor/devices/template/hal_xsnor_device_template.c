@@ -262,6 +262,10 @@ void __tmpl_mmap_off_impl(void *ip) {
  */
 const struct hal_device_template_vmt __hal_device_template_vmt = {
   .dispose                  = __tmpl_dispose_impl,
+  .start                    = __xsnor_start_impl,
+  .stop                     = __xsnor_stop_impl,
+  .setcfg                   = __xsnor_setcfg_impl,
+  .selcfg                   = __xsnor_selcfg_impl,
   .read                     = __tmpl_read_impl,
   .program                  = __tmpl_program_impl,
   .start_erase_all          = __tmpl_start_erase_all_impl,

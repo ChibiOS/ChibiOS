@@ -296,6 +296,11 @@ typedef struct hal_xsnor_base hal_xsnor_base_c;
 struct hal_xsnor_base_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
+  /* From hal_base_driver_c.*/
+  msg_t (*start)(void *ip);
+  void (*stop)(void *ip);
+  const void * (*setcfg)(void *ip, const void *config);
+  const void * (*selcfg)(void *ip, unsigned cfgnum);
   /* From hal_flash_base_c.*/
   flash_error_t (*read)(void *ip, flash_offset_t offset, size_t n, uint8_t *rp);
   flash_error_t (*program)(void *ip, flash_offset_t offset, size_t n, const uint8_t *pp);
@@ -318,25 +323,45 @@ struct hal_xsnor_base {
    */
   const struct hal_xsnor_base_vmt *vmt;
   /**
+   * @brief       Driver state.
+   */
+  driver_state_t            state;
+  /**
+   * @brief       Associated configuration structure.
+   */
+  const void                *config;
+  /**
+   * @brief       Driver argument.
+   */
+  void                      *arg;
+#if (HAL_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
+  /**
+   * @brief       Driver mutex.
+   */
+  mutex_t                   mutex;
+#endif /* HAL_USE_MUTUAL_EXCLUSION == TRUE */
+#if (HAL_USE_REGISTRY == TRUE) || defined (__DOXYGEN__)
+  /**
+   * @brief       Driver identifier.
+   */
+  unsigned int              id;
+  /**
+   * @brief       Driver name.
+   */
+  const char                *name;
+  /**
+   * @brief       Registry link structure.
+   */
+  hal_regent_t              regent;
+#endif /* HAL_USE_REGISTRY == TRUE */
+  /**
    * @brief       Implemented interface @p flash_interface_i.
    */
   flash_interface_i         fls;
   /**
-   * @brief       Driver state.
-   */
-  flash_state_t             state;
-  /**
-   * @brief       Flash access mutex.
-   */
-  mutex_t                   mutex;
-  /**
    * @brief       Flash descriptor.
    */
   flash_descriptor_t        descriptor;
-  /**
-   * @brief       Driver configuration.
-   */
-  const xsnor_config_t      *config;
 #if (XSNOR_USE_WSPI == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Current commands configuration.
@@ -358,6 +383,10 @@ extern "C" {
   /* Methods of hal_xsnor_base_c.*/
   void *__xsnor_objinit_impl(void *ip, const void *vmt);
   void __xsnor_dispose_impl(void *ip);
+  msg_t __xsnor_start_impl(void *ip);
+  void __xsnor_stop_impl(void *ip);
+  const void *__xsnor_setcfg_impl(void *ip, const void *config);
+  const void *__xsnor_selcfg_impl(void *ip, unsigned cfgnum);
 #if (XSNOR_USE_SPI == TRUE) || defined (__DOXYGEN__)
   void __xsnor_spi_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset);
 #endif /* XSNOR_USE_SPI == TRUE */
@@ -379,8 +408,6 @@ extern "C" {
   void __xsnor_bus_cmd_addr_dummy_receive(void *ip, uint32_t cmd,
                                           flash_offset_t offset,
                                           uint32_t dummy, size_t n, uint8_t *p);
-  flash_error_t xsnorStart(void *ip, const xsnor_config_t *config);
-  void xsnorStop(void *ip);
 #if ((XSNOR_USE_WSPI == TRUE) && defined(WSPI_SUPPORTS_MEMMAP) && (WSPI_SUPPORTS_MEMMAP == TRUE)) || defined (__DOXYGEN__)
   flash_error_t xsnorMemoryMap(void *ip, uint8_t **addrp);
   void xsnorMemoryUnmap(void *ip);

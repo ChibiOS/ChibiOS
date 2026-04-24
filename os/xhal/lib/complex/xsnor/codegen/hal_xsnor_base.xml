@@ -182,8 +182,6 @@
         descr="XSNOR base driver" ancestorname="hal_flash_base">
         <brief>Base class of all SNOR drivers.</brief>
         <fields>
-          <field name="config" ctype="const xsnor_config_t$I*$N">
-            <brief>Driver configuration.</brief></field>
           <condition check="XSNOR_USE_WSPI == TRUE">
             <field name="commands" ctype="const xsnor_commands_t$I*$N">
               <brief>Current commands configuration.</brief>
@@ -195,7 +193,6 @@ object creation.</note>
         <methods>
           <objinit callsuper="true">
             <implementation><![CDATA[
-self->config   = NULL;
 #if XSNOR_USE_WSPI == TRUE
 self->commands = NULL;
 #endif]]></implementation>
@@ -252,14 +249,15 @@ else {
               <method name="__xsnor_bus_acquire" ctype="void">
                 <brief>Bus acquisition and lock.</brief>
                 <implementation><![CDATA[
+const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
+if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
-  wspiAcquireBus(self->config->bus.wspi.drv);
-  if (self->config->bus.wspi.cfg != self->config->bus.wspi.drv->config) {
-    wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.cfg);
+  wspiAcquireBus(config->bus.wspi.drv);
+  if (config->bus.wspi.cfg != config->bus.wspi.drv->config) {
+    wspiStart(config->bus.wspi.drv, config->bus.wspi.cfg);
   }
 #endif
 #if XSNOR_USE_BOTH == TRUE
@@ -267,11 +265,11 @@ if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
 else {
 #endif
 #if XSNOR_USE_SPI == TRUE
-  if (self->config->bus.spi.cfg !=
-      (const hal_spi_config_t *)self->config->bus.spi.drv->config) {
-    (void)drvSetCfgX(self->config->bus.spi.drv, self->config->bus.spi.cfg);
+  if (config->bus.spi.cfg !=
+      (const hal_spi_config_t *)config->bus.spi.drv->config) {
+    (void)drvSetCfgX(config->bus.spi.drv, config->bus.spi.cfg);
   }
-  (void)drvStart(self->config->bus.spi.drv);
+  (void)drvStart(config->bus.spi.drv);
 #endif
 #if XSNOR_USE_BOTH == TRUE
 }
@@ -280,18 +278,20 @@ else {
               <method name="__xsnor_bus_release" ctype="void">
                 <brief>Bus release and unlock.</brief>
                 <implementation><![CDATA[
+const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
+if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
-  wspiReleaseBus(self->config->bus.wspi.drv);
+  wspiReleaseBus(config->bus.wspi.drv);
 #endif
 #if XSNOR_USE_BOTH == TRUE
 }
 else {
 #endif
 #if XSNOR_USE_SPI == TRUE
+  (void)config;
   (void)self;
 #endif
 #if XSNOR_USE_BOTH == TRUE
@@ -599,91 +599,6 @@ else {
 }
 #endif]]></implementation>
             </method>
-            <method name="xsnorStart" ctype="flash_error_t">
-              <brief>Configures and activates a SNOR driver.</brief>
-              <param name="config" ctype="const xsnor_config_t *" dir="in">pointer to the configuration</param>
-              <return>An error code.</return>
-              <retval value="FLASH_NO_ERROR">Operation successful.</retval>
-              <retval value="FLASH_ERROR_HW_FAILURE">If initialization failed.</retval>
-              <api />
-              <implementation><![CDATA[
-flash_error_t err = FLASH_NO_ERROR;
-
-osalDbgCheck((self != NULL) && (config != NULL));
-osalDbgAssert(self->state != FLASH_UNINIT, "invalid state");
-
-self->config = config;
-
-if (self->state == FLASH_STOP) {
-
-  /* Bus acquisition.*/
-  __xsnor_bus_acquire(self);
-
-#if XSNOR_USE_BOTH == TRUE
-  if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
-#endif
-#if XSNOR_USE_WSPI == TRUE
-    wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.cfg);
-#endif
-#if XSNOR_USE_BOTH == TRUE
-  }
-else {
-#endif
-#if XSNOR_USE_SPI == TRUE
-      (void)drvSetCfgX(self->config->bus.spi.drv, self->config->bus.spi.cfg);
-      (void)drvStart(self->config->bus.spi.drv);
-#endif
-#if XSNOR_USE_BOTH == TRUE
-  }
-#endif
-
-  /* Device identification and initialization.*/
-  err = xsnor_device_init(self);
-  if (err == FLASH_NO_ERROR) {
-    /* Driver in ready state.*/
-    self->state = FLASH_READY;
-  }
-
-  /* Bus release.*/
-  __xsnor_bus_release(self);
-}
-
-return err;]]></implementation>
-            </method>
-            <method name="xsnorStop" ctype="void">
-              <brief>Deactivates a SNOR driver.</brief>
-              <api />
-              <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-osalDbgAssert(self->state != FLASH_UNINIT, "invalid state");
-
-if (self->state != FLASH_STOP) {
-
-  /* Stopping bus device.*/
-#if XSNOR_USE_BOTH == TRUE
-  if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
-#endif
-#if XSNOR_USE_WSPI == TRUE
-    wspiStop(self->config->bus.wspi.drv);
-#endif
-#if XSNOR_USE_BOTH == TRUE
-  }
-else {
-#endif
-#if XSNOR_USE_SPI == TRUE
-      drvStop(self->config->bus.spi.drv);
-#endif
-#if XSNOR_USE_BOTH == TRUE
-  }
-#endif
-
-  /* Driver stopped.*/
-  self->state = FLASH_STOP;
-
-  /* Deleting current configuration.*/
-  self->config = NULL;
-}]]></implementation>
-            </method>
             <condition check="(XSNOR_USE_WSPI == TRUE) &amp;&amp; defined(WSPI_SUPPORTS_MEMMAP) &amp;&amp; (WSPI_SUPPORTS_MEMMAP == TRUE)">
               <method name="xsnorMemoryMap" ctype="flash_error_t">
                 <brief>Enters the memory mapped mode.</brief>
@@ -710,6 +625,85 @@ xsnor_device_mmap_off(self);</implementation>
               </method>
             </condition>
           </regular>
+          <override>
+            <method shortname="start">
+              <implementation><![CDATA[
+flash_error_t err;
+const xsnor_config_t *config = self->config;
+
+/* Bus acquisition.*/
+__xsnor_bus_acquire(self);
+
+#if XSNOR_USE_BOTH == TRUE
+if (config->bus_type != XSNOR_BUS_MODE_SPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  wspiStart(config->bus.wspi.drv, config->bus.wspi.cfg);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+  (void)drvSetCfgX(config->bus.spi.drv, config->bus.spi.cfg);
+  (void)drvStart(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+#endif
+
+/* Device identification and initialization.*/
+err = xsnor_device_init(self);
+
+/* Bus release.*/
+__xsnor_bus_release(self);
+
+if (err != FLASH_NO_ERROR) {
+  return HAL_RET_HW_FAILURE;
+}
+
+return HAL_RET_SUCCESS;]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[
+const xsnor_config_t *config = self->config;
+
+if (config == NULL) {
+  return;
+}
+
+/* Stopping bus device.*/
+#if XSNOR_USE_BOTH == TRUE
+if (config->bus_type != XSNOR_BUS_MODE_SPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  wspiStop(config->bus.wspi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+  drvStop(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+#endif]]></implementation>
+            </method>
+            <method shortname="setcfg">
+              <implementation><![CDATA[
+(void)self;
+
+return config;]]></implementation>
+            </method>
+            <method shortname="selcfg">
+              <implementation><![CDATA[
+(void)self;
+(void)cfgnum;
+
+return NULL;]]></implementation>
+            </method>
+          </override>
         </methods>
       </class>
       

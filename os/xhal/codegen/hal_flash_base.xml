@@ -7,12 +7,12 @@
     interface and provides common state handling and helper functions for
     flash device drivers.]]></details>
   <imports>
-    <import>oop_base_object.xml</import>
+    <import>hal_base_driver.xml</import>
     <import>hal_flash_interface.xml</import>
   </imports>
   <public>
     <includes_always>
-      <include style="regular">oop_base_object.h</include>
+      <include style="regular">hal_base_driver.h</include>
       <include style="regular">hal_flash_interface.h</include>
     </includes_always>
     <types>
@@ -24,16 +24,15 @@
 /**
  * @brief       Driver state machine possible states.
  */
+typedef driver_state_t flash_state_t;
+
 typedef enum {
-  FLASH_UNINIT = 0,
-  FLASH_STOP   = 1,
-  FLASH_READY  = 2,
-  FLASH_READ   = 3,
-  FLASH_PGM    = 4,
-  FLASH_ERASE  = 5
-} flash_state_t;]]></verbatim>
+  FLASH_READ  = HAL_DRV_STATE_ACTIVE + 1U,
+  FLASH_PGM   = HAL_DRV_STATE_ACTIVE + 2U,
+  FLASH_ERASE = HAL_DRV_STATE_ACTIVE + 3U
+} flash_state_ex_t;]]></verbatim>
       <class type="abstract" name="hal_flash_base" namespace="flash"
-        ancestorname="base_object" descr="flash base driver">
+        ancestorname="hal_base_driver" descr="flash base driver">
         <brief>Base class of all flash drivers.</brief>
         <implements>
           <if name="flash_interface">
@@ -47,7 +46,7 @@ return &self->descriptor;]]></implementation>
 flash_error_t err;
 
 osalDbgCheck((self != NULL) && (rp != NULL) && (n > 0U));
-osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) || (self->state == FLASH_ERASE),
               "invalid state");
 
 if (self->state == FLASH_ERASE) {
@@ -56,7 +55,7 @@ if (self->state == FLASH_ERASE) {
 
 self->state = FLASH_READ;
 err = self->vmt->read(self, offset, n, rp);
-self->state = FLASH_READY;
+self->state = HAL_DRV_STATE_READY;
 
 return err;]]></implementation>
             </method>
@@ -65,7 +64,7 @@ return err;]]></implementation>
 flash_error_t err;
 
 osalDbgCheck((self != NULL) && (pp != NULL) && (n > 0U));
-osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) || (self->state == FLASH_ERASE),
               "invalid state");
 
 if (self->state == FLASH_ERASE) {
@@ -74,7 +73,7 @@ if (self->state == FLASH_ERASE) {
 
 self->state = FLASH_PGM;
 err = self->vmt->program(self, offset, n, pp);
-self->state = FLASH_READY;
+self->state = HAL_DRV_STATE_READY;
 
 return err;]]></implementation>
             </method>
@@ -83,7 +82,7 @@ return err;]]></implementation>
 flash_error_t err;
 
 osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) || (self->state == FLASH_ERASE),
               "invalid state");
 
 if (self->state == FLASH_ERASE) {
@@ -93,7 +92,7 @@ if (self->state == FLASH_ERASE) {
 self->state = FLASH_ERASE;
 err = self->vmt->start_erase_all(self);
 if (err != FLASH_NO_ERROR) {
-  self->state = FLASH_READY;
+  self->state = HAL_DRV_STATE_READY;
 }
 
 return err;]]></implementation>
@@ -103,7 +102,7 @@ return err;]]></implementation>
 flash_error_t err;
 
 osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) || (self->state == FLASH_ERASE),
               "invalid state");
 
 if (self->state == FLASH_ERASE) {
@@ -113,7 +112,7 @@ if (self->state == FLASH_ERASE) {
 self->state = FLASH_ERASE;
 err = self->vmt->start_erase_sector(self, sector);
 if (err != FLASH_NO_ERROR) {
-  self->state = FLASH_READY;
+  self->state = HAL_DRV_STATE_READY;
 }
 
 return err;]]></implementation>
@@ -123,13 +122,13 @@ return err;]]></implementation>
 flash_error_t err;
 
 osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) || (self->state == FLASH_ERASE),
               "invalid state");
 
 if (self->state == FLASH_ERASE) {
   err = self->vmt->query_erase(self, msec);
   if (err == FLASH_NO_ERROR) {
-    self->state = FLASH_READY;
+    self->state = HAL_DRV_STATE_READY;
   }
 }
 else {
@@ -143,7 +142,7 @@ return err;]]></implementation>
 flash_error_t err;
 
 osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) || (self->state == FLASH_ERASE),
               "invalid state");
 
 if (self->state == FLASH_ERASE) {
@@ -152,7 +151,7 @@ if (self->state == FLASH_ERASE) {
 
 self->state = FLASH_READ;
 err = self->vmt->verify_erase(self, sector);
-self->state = FLASH_READY;
+self->state = HAL_DRV_STATE_READY;
 
 return err;]]></implementation>
             </method>
@@ -160,7 +159,9 @@ return err;]]></implementation>
               <implementation><![CDATA[
 
 osalDbgCheck(self != NULL);
-osalMutexLock(&self->mutex);
+#if HAL_USE_MUTUAL_EXCLUSION == TRUE
+drvLock(self);
+#endif
 
 return FLASH_NO_ERROR;]]></implementation>
             </method>
@@ -168,19 +169,15 @@ return FLASH_NO_ERROR;]]></implementation>
               <implementation><![CDATA[
 
 osalDbgCheck(self != NULL);
-osalMutexUnlock(&self->mutex);
+#if HAL_USE_MUTUAL_EXCLUSION == TRUE
+drvUnlock(self);
+#endif
 
 return FLASH_NO_ERROR;]]></implementation>
             </method>
           </if>
         </implements>
         <fields>
-          <field name="state" ctype="flash_state_t">
-            <brief>Driver state.</brief>
-          </field>
-          <field name="mutex" ctype="mutex_t">
-            <brief>Flash access mutex.</brief>
-          </field>
           <field name="descriptor" ctype="flash_descriptor_t">
             <brief>Flash descriptor.</brief>
           </field>
@@ -188,19 +185,17 @@ return FLASH_NO_ERROR;]]></implementation>
         <methods>
           <objinit callsuper="true">
             <implementation><![CDATA[
-self->state                  = FLASH_STOP;
 self->descriptor.attributes  = 0U;
 self->descriptor.page_size   = 0U;
 self->descriptor.sectors_count = 0U;
 self->descriptor.sectors     = NULL;
 self->descriptor.sectors_size = 0U;
 self->descriptor.address     = NULL;
-self->descriptor.size        = 0U;
-osalMutexObjectInit(&self->mutex);]]></implementation>
+self->descriptor.size        = 0U;]]></implementation>
           </objinit>
           <dispose>
             <implementation><![CDATA[
-self->state = FLASH_UNINIT;]]></implementation>
+self->state = HAL_DRV_STATE_UNINIT;]]></implementation>
           </dispose>
           <virtual>
             <method name="__flash_read" shortname="read"

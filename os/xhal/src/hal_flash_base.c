@@ -90,7 +90,7 @@ static flash_error_t __flash_fls_read_impl(void *ip, flash_offset_t offset,
   flash_error_t err;
 
   osalDbgCheck((self != NULL) && (rp != NULL) && (n > 0U));
-  osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) || (self->state == FLASH_ERASE),
                 "invalid state");
 
   if (self->state == FLASH_ERASE) {
@@ -99,7 +99,7 @@ static flash_error_t __flash_fls_read_impl(void *ip, flash_offset_t offset,
 
   self->state = FLASH_READ;
   err = self->vmt->read(self, offset, n, rp);
-  self->state = FLASH_READY;
+  self->state = HAL_DRV_STATE_READY;
 
   return err;
 }
@@ -120,7 +120,7 @@ static flash_error_t __flash_fls_program_impl(void *ip, flash_offset_t offset,
   flash_error_t err;
 
   osalDbgCheck((self != NULL) && (pp != NULL) && (n > 0U));
-  osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) || (self->state == FLASH_ERASE),
                 "invalid state");
 
   if (self->state == FLASH_ERASE) {
@@ -129,7 +129,7 @@ static flash_error_t __flash_fls_program_impl(void *ip, flash_offset_t offset,
 
   self->state = FLASH_PGM;
   err = self->vmt->program(self, offset, n, pp);
-  self->state = FLASH_READY;
+  self->state = HAL_DRV_STATE_READY;
 
   return err;
 }
@@ -146,7 +146,7 @@ static flash_error_t __flash_fls_start_erase_all_impl(void *ip) {
   flash_error_t err;
 
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) || (self->state == FLASH_ERASE),
                 "invalid state");
 
   if (self->state == FLASH_ERASE) {
@@ -156,7 +156,7 @@ static flash_error_t __flash_fls_start_erase_all_impl(void *ip) {
   self->state = FLASH_ERASE;
   err = self->vmt->start_erase_all(self);
   if (err != FLASH_NO_ERROR) {
-    self->state = FLASH_READY;
+    self->state = HAL_DRV_STATE_READY;
   }
 
   return err;
@@ -176,7 +176,7 @@ static flash_error_t __flash_fls_start_erase_sector_impl(void *ip,
   flash_error_t err;
 
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) || (self->state == FLASH_ERASE),
                 "invalid state");
 
   if (self->state == FLASH_ERASE) {
@@ -186,7 +186,7 @@ static flash_error_t __flash_fls_start_erase_sector_impl(void *ip,
   self->state = FLASH_ERASE;
   err = self->vmt->start_erase_sector(self, sector);
   if (err != FLASH_NO_ERROR) {
-    self->state = FLASH_READY;
+    self->state = HAL_DRV_STATE_READY;
   }
 
   return err;
@@ -206,13 +206,13 @@ static flash_error_t __flash_fls_query_erase_impl(void *ip, unsigned *msec) {
   flash_error_t err;
 
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) || (self->state == FLASH_ERASE),
                 "invalid state");
 
   if (self->state == FLASH_ERASE) {
     err = self->vmt->query_erase(self, msec);
     if (err == FLASH_NO_ERROR) {
-      self->state = FLASH_READY;
+      self->state = HAL_DRV_STATE_READY;
     }
   }
   else {
@@ -236,7 +236,7 @@ static flash_error_t __flash_fls_verify_erase_impl(void *ip,
   flash_error_t err;
 
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) || (self->state == FLASH_ERASE),
                 "invalid state");
 
   if (self->state == FLASH_ERASE) {
@@ -245,7 +245,7 @@ static flash_error_t __flash_fls_verify_erase_impl(void *ip,
 
   self->state = FLASH_READ;
   err = self->vmt->verify_erase(self, sector);
-  self->state = FLASH_READY;
+  self->state = HAL_DRV_STATE_READY;
 
   return err;
 }
@@ -261,7 +261,9 @@ static flash_error_t __flash_fls_acquire_exclusive_impl(void *ip) {
   hal_flash_base_c *self = oopIfGetOwner(hal_flash_base_c, ip);
 
   osalDbgCheck(self != NULL);
-  osalMutexLock(&self->mutex);
+#if HAL_USE_MUTUAL_EXCLUSION == TRUE
+  drvLock(self);
+#endif
 
   return FLASH_NO_ERROR;
 }
@@ -277,7 +279,9 @@ static flash_error_t __flash_fls_release_exclusive_impl(void *ip) {
   hal_flash_base_c *self = oopIfGetOwner(hal_flash_base_c, ip);
 
   osalDbgCheck(self != NULL);
-  osalMutexUnlock(&self->mutex);
+#if HAL_USE_MUTUAL_EXCLUSION == TRUE
+  drvUnlock(self);
+#endif
 
   return FLASH_NO_ERROR;
 }
@@ -300,7 +304,7 @@ void *__flash_objinit_impl(void *ip, const void *vmt) {
   hal_flash_base_c *self = (hal_flash_base_c *)ip;
 
   /* Initialization of the ancestors-defined parts.*/
-  __bo_objinit_impl(self, vmt);
+  __drv_objinit_impl(self, vmt);
 
   /* Initialization of interface flash_interface_i.*/
   {
@@ -320,7 +324,6 @@ void *__flash_objinit_impl(void *ip, const void *vmt) {
   }
 
   /* Initialization code.*/
-  self->state                  = FLASH_STOP;
   self->descriptor.attributes  = 0U;
   self->descriptor.page_size   = 0U;
   self->descriptor.sectors_count = 0U;
@@ -328,7 +331,6 @@ void *__flash_objinit_impl(void *ip, const void *vmt) {
   self->descriptor.sectors_size = 0U;
   self->descriptor.address     = NULL;
   self->descriptor.size        = 0U;
-  osalMutexObjectInit(&self->mutex);
 
   return self;
 }
@@ -344,10 +346,10 @@ void __flash_dispose_impl(void *ip) {
   hal_flash_base_c *self = (hal_flash_base_c *)ip;
 
   /* Finalization code.*/
-  self->state = FLASH_UNINIT;
+  self->state = HAL_DRV_STATE_UNINIT;
 
   /* Finalization of the ancestors-defined parts.*/
-  __bo_dispose_impl(self);
+  __drv_dispose_impl(self);
 }
 /** @} */
 

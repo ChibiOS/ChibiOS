@@ -28,6 +28,7 @@
 
 #define PAGE_SIZE                                   256U
 #define PAGE_MASK                                   (PAGE_SIZE - 1U)
+#define xsnorcfg                                    ((const xsnor_config_t *)self->config)
 
 /**
  * @name    Command codes
@@ -327,17 +328,17 @@ static bool n25q_find_id(const uint8_t *set, size_t size, uint8_t element) {
 static flash_error_t n25q_poll_status(hal_xsnor_micron_n25q_c *self) {
 
   do {
-    if ((self->config->options & N25Q_OPT_NICE_WAITING) != 0U) {
+    if ((xsnorcfg->options & N25Q_OPT_NICE_WAITING) != 0U) {
       osalThreadSleepMilliseconds(1);
     }
 
     /* Read status command.*/
     __xsnor_bus_cmd_receive(self, CMD_READ_FLAG_STATUS_REGISTER,
-                            1U, &self->config->buffers->databuf[0]);
-  } while ((self->config->buffers->databuf[0] & FLAGS_PROGRAM_ERASE) == 0U);
+                            1U, &xsnorcfg->buffers->databuf[0]);
+  } while ((xsnorcfg->buffers->databuf[0] & FLAGS_PROGRAM_ERASE) == 0U);
 
   /* Checking for errors.*/
-  if ((self->config->buffers->databuf[0] & FLAGS_ALL_ERRORS) != 0U) {
+  if ((xsnorcfg->buffers->databuf[0] & FLAGS_ALL_ERRORS) != 0U) {
     /* Clearing status register.*/
     __xsnor_bus_cmd(self, CMD_CLEAR_FLAG_STATUS_REGISTER);
 
@@ -357,12 +358,12 @@ static inline bool n25q_spi_4bytes(const hal_xsnor_micron_n25q_c *self) {
 static void n25q_activate_xip(hal_xsnor_micron_n25q_c *self) {
 
   /* Configuration to be written.*/
-  self->config->buffers->databuf[0] = ((self->config->options & N25Q_OPT_DUMMY_CYCLES_MASK) << 4U) | 0x07U;
+  xsnorcfg->buffers->databuf[0] = ((xsnorcfg->options & N25Q_OPT_DUMMY_CYCLES_MASK) << 4U) | 0x07U;
 
   /* Activating XIP mode in the device.*/
   __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
   __xsnor_bus_cmd_send(self, CMD_WRITE_V_CONF_REGISTER,
-                       1, &self->config->buffers->databuf[0]);
+                       1, &xsnorcfg->buffers->databuf[0]);
 }
 
 static void n25q_reset_xip(hal_xsnor_micron_n25q_c *self) {
@@ -374,14 +375,14 @@ static void n25q_reset_xip(hal_xsnor_micron_n25q_c *self) {
   cmd.cmd   = 0U;
   cmd.addr  = 0U;
   cmd.alt   = 0xFFU;
-  cmd.dummy = (self->config->options & N25Q_OPT_DUMMY_CYCLES_MASK) - 2U;
+  cmd.dummy = (xsnorcfg->options & N25Q_OPT_DUMMY_CYCLES_MASK) - 2U;
   cmd.cfg   = WSPI_CFG_CMD_MODE_NONE |
               WSPI_CFG_ADDR_SIZE_24 |
               WSPI_CFG_ALT_MODE_FOUR_LINES |  /* Always 4 lines, note.*/
               WSPI_CFG_ALT_SIZE_8;
 
   /* Variant part of the command configuration.*/
-  switch (self->config->bus_type) {
+  switch (xsnorcfg->bus_type) {
   case XSNOR_BUS_MODE_WSPI_1LINE:
     cmd.cfg |= WSPI_CFG_ADDR_MODE_ONE_LINE | WSPI_CFG_DATA_MODE_ONE_LINE;
     break;
@@ -396,18 +397,18 @@ static void n25q_reset_xip(hal_xsnor_micron_n25q_c *self) {
   }
 
   /* Resetting XIP.*/
-  wspiReceive(self->config->bus.wspi.drv, &cmd,
-              1, &self->config->buffers->databuf[0]);
+  wspiReceive(xsnorcfg->bus.wspi.drv, &cmd,
+              1, &xsnorcfg->buffers->databuf[0]);
 
   /* Enabling write operation.*/
   __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
 
   /* Configuration to be written.*/
-  self->config->buffers->databuf[0] = ((self->config->options & N25Q_OPT_DUMMY_CYCLES_MASK) << 4U) | 0x0FU;
+  xsnorcfg->buffers->databuf[0] = ((xsnorcfg->options & N25Q_OPT_DUMMY_CYCLES_MASK) << 4U) | 0x0FU;
 
   /* Rewriting volatile configuration register.*/
   __xsnor_bus_cmd_send(self, CMD_WRITE_V_CONF_REGISTER,
-                       1, &self->config->buffers->databuf[0]);
+                       1, &xsnorcfg->buffers->databuf[0]);
 }
 
 static void n25q_reset_memory(hal_xsnor_micron_n25q_c *self) {
@@ -416,21 +417,21 @@ static void n25q_reset_memory(hal_xsnor_micron_n25q_c *self) {
      rejected because shorter than 8 bits. If the device is in multiple
      bits mode then the commands are accepted and the device is reset to
      one bit mode.*/
-  if (self->config->bus_type == XSNOR_BUS_MODE_WSPI_4LINES) {
+  if (xsnorcfg->bus_type == XSNOR_BUS_MODE_WSPI_4LINES) {
 
-    wspiCommand(self->config->bus.wspi.drv, &cmd_reset_enable_4);
-    wspiCommand(self->config->bus.wspi.drv, &cmd_reset_memory_4);
+    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_4);
+    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_4);
   }
-  else if (self->config->bus_type == XSNOR_BUS_MODE_WSPI_2LINES) {
+  else if (xsnorcfg->bus_type == XSNOR_BUS_MODE_WSPI_2LINES) {
 
-    wspiCommand(self->config->bus.wspi.drv, &cmd_reset_enable_2);
-    wspiCommand(self->config->bus.wspi.drv, &cmd_reset_memory_2);
+    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_2);
+    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_2);
   }
 
   /* Now the device should be in one bit mode for sure and we perform a
      device reset.*/
-  wspiCommand(self->config->bus.wspi.drv, &cmd_reset_enable_1);
-  wspiCommand(self->config->bus.wspi.drv, &cmd_reset_memory_1);
+  wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_1);
+  wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_1);
 }
 
 static void n25q_read_id(hal_xsnor_micron_n25q_c *self, uint8_t *buf) {
@@ -442,7 +443,7 @@ static void n25q_read_id(hal_xsnor_micron_n25q_c *self, uint8_t *buf) {
   cmd.addr  = 0U;
   cmd.alt   = 0U;
   cmd.dummy = 0U;
-  wspiReceive(self->config->bus.wspi.drv, &cmd, 3U, buf);
+  wspiReceive(xsnorcfg->bus.wspi.drv, &cmd, 3U, buf);
 }
 #endif /* XSNOR_USE_WSPI == TRUE */
 
@@ -658,7 +659,7 @@ flash_error_t __n25q_init_impl(void *ip) {
 #endif /* XSNOR_USE_WSPI == TRUE */
 
   /* Variable parts of the descriptor.*/
-  if ((self->config->options & N25Q_OPT_USE_SUBSECTORS) != 0U) {
+  if ((xsnorcfg->options & N25Q_OPT_USE_SUBSECTORS) != 0U) {
     self->descriptor.sectors_size = 0x00001000U;
   }
   else {
@@ -711,7 +712,7 @@ flash_error_t __n25q_read_impl(void *ip, flash_offset_t offset, size_t n,
 
   __xsnor_bus_acquire(self);
 
-  if (self->config->bus_type == XSNOR_BUS_MODE_SPI) {
+  if (xsnorcfg->bus_type == XSNOR_BUS_MODE_SPI) {
     /* Using normal read command because it does not require dummy cycles.*/
     __xsnor_bus_cmd_addr_receive(self,
                                  n25q_spi_4bytes(self) ? CMD_READ4B : CMD_READ,
@@ -723,7 +724,7 @@ flash_error_t __n25q_read_impl(void *ip, flash_offset_t offset, size_t n,
                                        n25q_spi_4bytes(self) ?
                                        CMD_FAST_READ4B : CMD_FAST_READ,
                                        offset,
-                                       self->config->options & N25Q_OPT_DUMMY_CYCLES_MASK,
+                                       xsnorcfg->options & N25Q_OPT_DUMMY_CYCLES_MASK,
                                        n, rp);
   }
 
@@ -826,7 +827,7 @@ flash_error_t __n25q_start_erase_sector_impl(void *ip, flash_sector_t sector) {
   __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
 
   /* Sector erase command.*/
-  if ((self->config->options & N25Q_OPT_USE_SUBSECTORS) != 0U) {
+  if ((xsnorcfg->options & N25Q_OPT_USE_SUBSECTORS) != 0U) {
     __xsnor_bus_cmd_addr(self,
                          n25q_spi_4bytes(self) ?
                          CMD_SUBSECTOR_ERASE4B : CMD_SUBSECTOR_ERASE,
@@ -861,12 +862,12 @@ flash_error_t __n25q_query_erase_impl(void *ip, unsigned *msec) {
 
   /* Read status command.*/
   __xsnor_bus_cmd_receive(self, CMD_READ_FLAG_STATUS_REGISTER,
-                          1, &self->config->buffers->databuf[0]);
+                          1, &xsnorcfg->buffers->databuf[0]);
 
   /* If the P/E bit is zero (busy) or the flash in a suspended state then
      report that the operation is still in progress.*/
-  if (((self->config->buffers->databuf[0] & FLAGS_PROGRAM_ERASE) == 0U) ||
-      ((self->config->buffers->databuf[0] & FLAGS_ERASE_SUSPEND) != 0U)) {
+  if (((xsnorcfg->buffers->databuf[0] & FLAGS_PROGRAM_ERASE) == 0U) ||
+      ((xsnorcfg->buffers->databuf[0] & FLAGS_ERASE_SUSPEND) != 0U)) {
 
     /* Recommended time before polling again, this is a simplified
        implementation.*/
@@ -879,7 +880,7 @@ flash_error_t __n25q_query_erase_impl(void *ip, unsigned *msec) {
   }
 
   /* Checking for errors.*/
-  if ((self->config->buffers->databuf[0] & FLAGS_ALL_ERRORS) != 0U) {
+  if ((xsnorcfg->buffers->databuf[0] & FLAGS_ALL_ERRORS) != 0U) {
 
     /* Clearing status register.*/
     __xsnor_bus_cmd(self, CMD_CLEAR_FLAG_STATUS_REGISTER);
@@ -914,11 +915,11 @@ flash_error_t __n25q_verify_erase_impl(void *ip, flash_sector_t sector) {
     uint8_t *p;
 
    __n25q_read_impl(self, offset,
-                    XSNOR_BUFFER_SIZE, &self->config->buffers->databuf[0]);
+                    XSNOR_BUFFER_SIZE, &xsnorcfg->buffers->databuf[0]);
 
     /* Checking for erased state of current buffer.*/
-    for (p = &self->config->buffers->databuf[0];
-         p < &self->config->buffers->databuf[XSNOR_BUFFER_SIZE];
+    for (p = &xsnorcfg->buffers->databuf[0];
+         p < &xsnorcfg->buffers->databuf[XSNOR_BUFFER_SIZE];
          p++) {
 
       if (*p != 0xFFU) {
@@ -945,7 +946,7 @@ flash_error_t __n25q_mmap_on_impl(void *ip, uint8_t **addrp) {
   hal_xsnor_micron_n25q_c *self = (hal_xsnor_micron_n25q_c *)ip;
 
 #if XSNOR_USE_BOTH == TRUE
-  if (self->config->bus_type == XSNOR_BUS_MODE_SPI) {
+  if (xsnorcfg->bus_type == XSNOR_BUS_MODE_SPI) {
     return FLASH_ERROR_UNIMPLEMENTED;
   }
 #endif
@@ -973,10 +974,10 @@ flash_error_t __n25q_mmap_on_impl(void *ip, uint8_t **addrp) {
     cmd.cmd   = n25q_spi_4bytes(self) ? CMD_FAST_READ4B : CMD_FAST_READ;
     cmd.addr  = 0U;
     cmd.alt   = 0U;
-    cmd.dummy = (self->config->options & N25Q_OPT_DUMMY_CYCLES_MASK) - 2U;
+    cmd.dummy = (xsnorcfg->options & N25Q_OPT_DUMMY_CYCLES_MASK) - 2U;
 
     /* Variant part of the command configuration.*/
-    switch (self->config->bus_type) {
+    switch (xsnorcfg->bus_type) {
     case XSNOR_BUS_MODE_WSPI_1LINE:
       cmd.cfg |= WSPI_CFG_CMD_MODE_ONE_LINE |
                  WSPI_CFG_ADDR_MODE_ONE_LINE |
@@ -995,7 +996,7 @@ flash_error_t __n25q_mmap_on_impl(void *ip, uint8_t **addrp) {
     default:
       osalDbgAssert(false, "invalid bus type");
     }
-    wspiMapFlash(self->config->bus.wspi.drv, &cmd, addrp);
+    wspiMapFlash(xsnorcfg->bus.wspi.drv, &cmd, addrp);
 
     /* Bus release.*/
     __xsnor_bus_release(self);
@@ -1023,7 +1024,7 @@ void __n25q_mmap_off_impl(void *ip) {
   __xsnor_bus_acquire(self);
 
   /* Stopping WSPI memory mapped mode.*/
-  wspiUnmapFlash(self->config->bus.wspi.drv);
+  wspiUnmapFlash(xsnorcfg->bus.wspi.drv);
 
   n25q_reset_xip(self);
 

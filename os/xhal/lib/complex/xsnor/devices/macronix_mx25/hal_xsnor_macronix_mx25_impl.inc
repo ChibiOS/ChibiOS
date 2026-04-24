@@ -30,6 +30,7 @@
 
 #define PAGE_SIZE                                   256U
 #define PAGE_MASK                                   (PAGE_SIZE - 1U)
+#define xsnorcfg                                    ((const xsnor_config_t *)self->config)
 /**
  * @name    Command codes, SPI mode
  * @{
@@ -334,34 +335,34 @@ static bool mx25_find_id(const uint8_t *set, size_t size, uint8_t element) {
 static flash_error_t mx25_poll_status(hal_xsnor_macronix_mx25_c *self) {
 
   do {
-    if ((self->config->options & MX25_OPT_NICE_WAITING) != 0U) {
+    if ((xsnorcfg->options & MX25_OPT_NICE_WAITING) != 0U) {
       osalThreadSleepMilliseconds(1);
     }
 
     /* Read status command.*/
-    if (self->config->bus_type == XSNOR_BUS_MODE_SPI) {
+    if (xsnorcfg->bus_type == XSNOR_BUS_MODE_SPI) {
       __xsnor_bus_cmd_receive(self, CMD_SPI_RDSR,
-                            1U, &self->config->buffers->databuf[0]);
+                            1U, &xsnorcfg->buffers->databuf[0]);
     }
     else {
       __xsnor_bus_cmd_addr_dummy_receive(self, CMD_OPI_RDSR,
                                          0U, 4U, 2U,
-                                         &self->config->buffers->databuf[0]);
+                                         &xsnorcfg->buffers->databuf[0]);
     }
-  } while ((self->config->buffers->databuf[0] & 1U) != 0U);
+  } while ((xsnorcfg->buffers->databuf[0] & 1U) != 0U);
 
   /* Reading security register and checking for errors.*/
-  if (self->config->bus_type == XSNOR_BUS_MODE_SPI) {
+  if (xsnorcfg->bus_type == XSNOR_BUS_MODE_SPI) {
     __xsnor_bus_cmd_receive(self, CMD_SPI_RDSCUR,
-                          1U, &self->config->buffers->databuf[0]);
+                          1U, &xsnorcfg->buffers->databuf[0]);
   }
   else {
     __xsnor_bus_cmd_addr_dummy_receive(self, CMD_OPI_RDSCUR,
                                        0U, 4U, 2U,  /* Note: always 4 dummies.*/
-                                       &self->config->buffers->databuf[0]);
+                                       &xsnorcfg->buffers->databuf[0]);
   }
 
-  if ((self->config->buffers->databuf[0] & FLAGS_ALL_ERRORS) != 0U) {
+  if ((xsnorcfg->buffers->databuf[0] & FLAGS_ALL_ERRORS) != 0U) {
 
     return FLASH_ERROR_PROGRAM;
   }
@@ -381,19 +382,19 @@ static void mx25_reset_memory(hal_xsnor_macronix_mx25_c *self) {
      rejected because shorter than 8 bits. If the device is in multiple
      bits mode then the commands are accepted and the device is reset to
      one bit mode.*/
-  if ((self->config->options &MX25_OPT_USE_DTR) != 0U) {
-    wspiCommand(self->config->bus.wspi.drv, &cmd_reset_enable_8dtr);
-    wspiCommand(self->config->bus.wspi.drv, &cmd_reset_memory_8dtr);
+  if ((xsnorcfg->options &MX25_OPT_USE_DTR) != 0U) {
+    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_8dtr);
+    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_8dtr);
   }
   else {
-    wspiCommand(self->config->bus.wspi.drv, &cmd_reset_enable_8str);
-    wspiCommand(self->config->bus.wspi.drv, &cmd_reset_memory_8str);
+    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_8str);
+    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_8str);
   }
 
   /* Now the device should be in one bit mode for sure and we perform a
      device reset.*/
-  wspiCommand(self->config->bus.wspi.drv, &cmd_reset_enable_spi);
-  wspiCommand(self->config->bus.wspi.drv, &cmd_reset_memory_spi);
+  wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_spi);
+  wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_spi);
 
   /* The device requires at least 10uS to recover after a reset, it could
      need up to 100mS in case a reset occurred during a chip erase, 50uS
@@ -404,15 +405,15 @@ static void mx25_reset_memory(hal_xsnor_macronix_mx25_c *self) {
 static void mx25_read_id(hal_xsnor_macronix_mx25_c *self, uint8_t *buf) {
   wspi_command_t cmd;
 
-  if ((self->config->options & MX25_OPT_NO_WIDTH_SWITCH) != 0U) {
+  if ((xsnorcfg->options & MX25_OPT_NO_WIDTH_SWITCH) != 0U) {
     /* Not switching, assuming it is already in final bus mode.*/
-    switch (self->config->bus_type) {
+    switch (xsnorcfg->bus_type) {
     case XSNOR_BUS_MODE_SPI:
       cmd.cfg = CFG_C8_DATA_SPI;
       cmd.cmd = CMD_SPI_RDID;
       break;
     case XSNOR_BUS_MODE_WSPI_8LINES:
-      if ((self->config->options & MX25_OPT_USE_DTR) != 0U) {
+      if ((xsnorcfg->options & MX25_OPT_USE_DTR) != 0U) {
         cmd.cfg = CFG_C16_A32_DATA_8DTR;
        }
       else {
@@ -436,22 +437,22 @@ static void mx25_read_id(hal_xsnor_macronix_mx25_c *self, uint8_t *buf) {
   cmd.addr  = 0U;
   cmd.alt   = 0U;
   cmd.dummy = 0U;
-  wspiReceive(self->config->bus.wspi.drv, &cmd, 3U, buf);
+  wspiReceive(xsnorcfg->bus.wspi.drv, &cmd, 3U, buf);
 }
 
 static void mx25_write_cr2(hal_xsnor_macronix_mx25_c *self,
                            uint32_t addr, const uint8_t *value) {
   wspi_command_t cmd;
 
-  if ((self->config->options & MX25_OPT_NO_WIDTH_SWITCH) != 0U) {
+  if ((xsnorcfg->options & MX25_OPT_NO_WIDTH_SWITCH) != 0U) {
     /* Not switching, assuming it is already in final bus mode.*/
-    switch (self->config->bus_type) {
+    switch (xsnorcfg->bus_type) {
     case XSNOR_BUS_MODE_SPI:
       cmd.cfg = CFG_C8_SPI;
       cmd.cmd = CMD_SPI_WREN;
       break;
     case XSNOR_BUS_MODE_WSPI_8LINES:
-      if ((self->config->options & MX25_OPT_USE_DTR) != 0U) {
+      if ((xsnorcfg->options & MX25_OPT_USE_DTR) != 0U) {
         cmd.cfg = CFG_C16_8DTR;
       }
       else {
@@ -472,17 +473,17 @@ static void mx25_write_cr2(hal_xsnor_macronix_mx25_c *self,
   cmd.addr  = 0U;
   cmd.alt   = 0U;
   cmd.dummy = 0U;
-  wspiCommand(self->config->bus.wspi.drv, &cmd);
+  wspiCommand(xsnorcfg->bus.wspi.drv, &cmd);
 
-  if ((self->config->options & MX25_OPT_NO_WIDTH_SWITCH) != 0U) {
+  if ((xsnorcfg->options & MX25_OPT_NO_WIDTH_SWITCH) != 0U) {
     /* Not switching, assuming it is already in final bus mode.*/
-    switch (self->config->bus_type) {
+    switch (xsnorcfg->bus_type) {
     case XSNOR_BUS_MODE_SPI:
       cmd.cfg = CFG_C8_A32_DATA_SPI;
       cmd.cmd = CMD_SPI_WRCR2;
       break;
     case XSNOR_BUS_MODE_WSPI_8LINES:
-      if ((self->config->options & MX25_OPT_USE_DTR) != 0U) {
+      if ((xsnorcfg->options & MX25_OPT_USE_DTR) != 0U) {
         cmd.cfg = CFG_C16_A32_DATA_8DTR;
       }
       else {
@@ -503,7 +504,7 @@ static void mx25_write_cr2(hal_xsnor_macronix_mx25_c *self,
   cmd.addr  = addr;
   cmd.alt   = 0U;
   cmd.dummy = 0U;
-  wspiSend(self->config->bus.wspi.drv, &cmd, 1, value);
+  wspiSend(xsnorcfg->bus.wspi.drv, &cmd, 1, value);
 }
 #endif /* XSNOR_USE_WSPI == TRUE */
 
@@ -583,7 +584,7 @@ flash_error_t __mx25_init_impl(void *ip) {
     self->commands = NULL;
     break;
   case XSNOR_BUS_MODE_WSPI_8LINES:
-    if ((self->config->options &MX25_OPT_USE_DTR) != 0U) {
+    if ((xsnorcfg->options &MX25_OPT_USE_DTR) != 0U) {
       self->commands = &cmd_8dtr;
     }
     else {
@@ -649,16 +650,16 @@ flash_error_t __mx25_init_impl(void *ip) {
     }
 
     /* Setting up dummy cycles, note this is a volatile-only setting.*/
-    config->buffers->databuf[4] = ~(((self->config->options & MX25_OPT_DUMMY_CYCLES_MASK) - 6U) / 2U) & 7U;
+    config->buffers->databuf[4] = ~(((xsnorcfg->options & MX25_OPT_DUMMY_CYCLES_MASK) - 6U) / 2U) & 7U;
     mx25_write_cr2(self, 0x00000300U, &config->buffers->databuf[4]);
 
     /* Checking if the bus switch is needed, there are extra steps in
        that case.*/
-    if ((self->config->options & MX25_OPT_NO_WIDTH_SWITCH) == 0U) {
+    if ((xsnorcfg->options & MX25_OPT_NO_WIDTH_SWITCH) == 0U) {
 
       /* Switching to final bus mode then reading the ID again for
          confirmation.*/
-      switch (self->config->bus_type) {
+      switch (xsnorcfg->bus_type) {
       case XSNOR_BUS_MODE_SPI:
         {
           static const uint8_t cr2_spi[1] = {0x00};
@@ -668,7 +669,7 @@ flash_error_t __mx25_init_impl(void *ip) {
         }
         break;
       case XSNOR_BUS_MODE_WSPI_8LINES:
-        if ((self->config->options & MX25_OPT_USE_DTR) != 0U) {
+        if ((xsnorcfg->options & MX25_OPT_USE_DTR) != 0U) {
           static const uint8_t cr2_opi_dtr[1] = {0x02};
           mx25_write_cr2(self, 0x00000000U, cr2_opi_dtr);
           __xsnor_bus_cmd_addr_dummy_receive(self, CMD_OPI_RDID,
@@ -701,7 +702,7 @@ flash_error_t __mx25_init_impl(void *ip) {
 #endif /* XSNOR_USE_WSPI == TRUE */
 
   /* Variable parts of the descriptor.*/
-  if ((self->config->options & MX25_OPT_USE_SUBSECTORS) != 0U) {
+  if ((xsnorcfg->options & MX25_OPT_USE_SUBSECTORS) != 0U) {
     self->descriptor.sectors_size = 0x00001000U;
   }
   else {
@@ -738,7 +739,7 @@ flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
   __xsnor_bus_acquire(self);
 
   /* Command depends on bus mode.*/
-  switch (self->config->bus_type) {
+  switch (xsnorcfg->bus_type) {
   case XSNOR_BUS_MODE_SPI:
     __xsnor_bus_cmd_addr_dummy_receive(self,
                                        mx25_spi_4bytes(self) ?
@@ -747,14 +748,14 @@ flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
                                        n, rp);
     break;
   case XSNOR_BUS_MODE_WSPI_8LINES:
-    if ((self->config->options & MX25_OPT_USE_DTR) != 0U) {
+    if ((xsnorcfg->options & MX25_OPT_USE_DTR) != 0U) {
       __xsnor_bus_cmd_addr_dummy_receive(self, CMD_OPI_8DTRD, offset,
-                                         self->config->options & MX25_OPT_DUMMY_CYCLES_MASK,
+                                         xsnorcfg->options & MX25_OPT_DUMMY_CYCLES_MASK,
                                          n, rp);
     }
     else {
       __xsnor_bus_cmd_addr_dummy_receive(self, CMD_OPI_8READ, offset,
-                                         self->config->options & MX25_OPT_DUMMY_CYCLES_MASK,
+                                         xsnorcfg->options & MX25_OPT_DUMMY_CYCLES_MASK,
                                          n, rp);
     }
     break;
@@ -796,7 +797,7 @@ flash_error_t __mx25_program_impl(void *ip, flash_offset_t offset, size_t n,
     }
 
     /* Command depends on bus mode.*/
-    switch (self->config->bus_type) {
+    switch (xsnorcfg->bus_type) {
     case XSNOR_BUS_MODE_SPI:
       /* Enabling write operation.*/
       __xsnor_bus_cmd(self, CMD_SPI_WREN);
@@ -851,7 +852,7 @@ flash_error_t __mx25_start_erase_all_impl(void *ip) {
   __xsnor_bus_acquire(self);
 
   /* Command depends on bus mode.*/
-  switch (self->config->bus_type) {
+  switch (xsnorcfg->bus_type) {
   case XSNOR_BUS_MODE_SPI:
     /* Enabling write operation.*/
     __xsnor_bus_cmd(self, CMD_SPI_WREN);
@@ -892,13 +893,13 @@ flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector) {
   __xsnor_bus_acquire(self);
 
   /* Command depends on bus mode.*/
-  switch (self->config->bus_type) {
+  switch (xsnorcfg->bus_type) {
   case XSNOR_BUS_MODE_SPI:
     /* Enabling write operation.*/
     __xsnor_bus_cmd(self, CMD_SPI_WREN);
 
     /* Sector erase command.*/
-    if ((self->config->options & MX25_OPT_USE_SUBSECTORS) == 0U) {
+    if ((xsnorcfg->options & MX25_OPT_USE_SUBSECTORS) == 0U) {
       __xsnor_bus_cmd_addr(self,
                            mx25_spi_4bytes(self) ?
                            CMD_SPI_BE4B : CMD_SPI_BE3B,
@@ -916,7 +917,7 @@ flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector) {
     __xsnor_bus_cmd(self, CMD_OPI_WREN);
 
     /* Sector erase command.*/
-    if ((self->config->options & MX25_OPT_USE_SUBSECTORS) == 0U) {
+    if ((xsnorcfg->options & MX25_OPT_USE_SUBSECTORS) == 0U) {
       __xsnor_bus_cmd_addr(self, CMD_OPI_BE, offset);
     }
     else {
@@ -950,26 +951,26 @@ flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec) {
   __xsnor_bus_acquire(self);
 
   /* Command depends on bus mode.*/
-  switch (self->config->bus_type) {
+  switch (xsnorcfg->bus_type) {
   case XSNOR_BUS_MODE_SPI:
     /* Reading SR.*/
     __xsnor_bus_cmd_receive(self, CMD_SPI_RDSR, 1U,
-                            &self->config->buffers->databuf[0]);
+                            &xsnorcfg->buffers->databuf[0]);
 
     /* Reading SCUR.*/
     __xsnor_bus_cmd_receive(self, CMD_SPI_RDSCUR, 1U,
-                            &self->config->buffers->databuf[16]);
+                            &xsnorcfg->buffers->databuf[16]);
     break;
   case XSNOR_BUS_MODE_WSPI_8LINES:
     /* Reading SR.*/
     __xsnor_bus_cmd_addr_dummy_receive(self, CMD_OPI_RDSR,
                                        0U, 4U, 2U,  /* Note: always 4 dummies.*/
-                                       &self->config->buffers->databuf[0]);
+                                       &xsnorcfg->buffers->databuf[0]);
 
     /* Reading SCUR.*/
     __xsnor_bus_cmd_addr_dummy_receive(self, CMD_OPI_RDSCUR,
                                        0U, 4U, 2U,  /* Note: always 4 dummies.*/
-                                       &self->config->buffers->databuf[16]);
+                                       &xsnorcfg->buffers->databuf[16]);
     break;
   default:
     osalDbgAssert(false, "invalid bus type");
@@ -979,8 +980,8 @@ flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec) {
 
   /* If the WIP bit is one (busy) or the flash in a suspended state then
      report that the operation is still in progress.*/
-  if (((self->config->buffers->databuf[0] & 1) != 0U) ||
-      ((self->config->buffers->databuf[16] & 8) != 0U)) {
+  if (((xsnorcfg->buffers->databuf[0] & 1) != 0U) ||
+      ((xsnorcfg->buffers->databuf[16] & 8) != 0U)) {
 
     /* Recommended time before polling again, this is a simplified
        implementation.*/
@@ -993,7 +994,7 @@ flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec) {
   }
 
   /* Checking for errors.*/
-  if ((self->config->buffers->databuf[16] & FLAGS_ALL_ERRORS) != 0U) {
+  if ((xsnorcfg->buffers->databuf[16] & FLAGS_ALL_ERRORS) != 0U) {
 
     /* Erase operation failed.*/
     __xsnor_bus_release(self);
@@ -1025,11 +1026,11 @@ flash_error_t __mx25_verify_erase_impl(void *ip, flash_sector_t sector) {
     uint8_t *p;
 
    __mx25_read_impl(self, offset,
-                    XSNOR_BUFFER_SIZE, &self->config->buffers->databuf[0]);
+                    XSNOR_BUFFER_SIZE, &xsnorcfg->buffers->databuf[0]);
 
     /* Checking for erased state of current buffer.*/
-    for (p = &self->config->buffers->databuf[0];
-         p < &self->config->buffers->databuf[XSNOR_BUFFER_SIZE];
+    for (p = &xsnorcfg->buffers->databuf[0];
+         p < &xsnorcfg->buffers->databuf[XSNOR_BUFFER_SIZE];
          p++) {
 
       if (*p != 0xFFU) {
@@ -1056,7 +1057,7 @@ flash_error_t __mx25_mmap_on_impl(void *ip, uint8_t **addrp) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
 
 #if XSNOR_USE_BOTH == TRUE
-  if (self->config->bus_type == XSNOR_BUS_MODE_SPI) {
+  if (xsnorcfg->bus_type == XSNOR_BUS_MODE_SPI) {
     return FLASH_ERROR_UNIMPLEMENTED;
   }
 #endif
@@ -1073,14 +1074,14 @@ flash_error_t __mx25_mmap_on_impl(void *ip, uint8_t **addrp) {
     __xsnor_bus_acquire(self);
 
     /* Command depends on bus mode.*/
-    switch (self->config->bus_type) {
+    switch (xsnorcfg->bus_type) {
     case XSNOR_BUS_MODE_SPI:
       cmd.cfg   = CFG_C8_A32_DATA_SPI;
       cmd.cmd   = CMD_SPI_FAST_READ4B;
       cmd.dummy = 8U;                   /* Note, always 8 for this command.*/
       break;
     case XSNOR_BUS_MODE_WSPI_8LINES:
-      if ((self->config->options & MX25_OPT_USE_DTR) != 0U) {
+      if ((xsnorcfg->options & MX25_OPT_USE_DTR) != 0U) {
         cmd.cfg = CFG_C16_A32_DATA_8DTR;
         cmd.cmd = CMD_OPI_8DTRD;
       }
@@ -1088,7 +1089,7 @@ flash_error_t __mx25_mmap_on_impl(void *ip, uint8_t **addrp) {
         cmd.cfg = CFG_C16_A32_DATA_8STR;
         cmd.cmd = CMD_OPI_8READ;
       }
-      cmd.dummy = (uint32_t)(self->config->options & MX25_OPT_DUMMY_CYCLES_MASK);
+      cmd.dummy = (uint32_t)(xsnorcfg->options & MX25_OPT_DUMMY_CYCLES_MASK);
       break;
     default:
       osalDbgAssert(false, "invalid bus type");
@@ -1096,7 +1097,7 @@ flash_error_t __mx25_mmap_on_impl(void *ip, uint8_t **addrp) {
     }
     cmd.addr  = 0U;
     cmd.alt   = 0U;
-    wspiMapFlash(self->config->bus.wspi.drv, &cmd, addrp);
+    wspiMapFlash(xsnorcfg->bus.wspi.drv, &cmd, addrp);
 
     /* Bus release.*/
     __xsnor_bus_release(self);
@@ -1124,7 +1125,7 @@ void __mx25_mmap_off_impl(void *ip) {
   __xsnor_bus_acquire(self);
 
   /* Stopping WSPI memory mapped mode.*/
-  wspiUnmapFlash(self->config->bus.wspi.drv);
+  wspiUnmapFlash(xsnorcfg->bus.wspi.drv);
 
   /* Bus release.*/
   __xsnor_bus_release(self);
