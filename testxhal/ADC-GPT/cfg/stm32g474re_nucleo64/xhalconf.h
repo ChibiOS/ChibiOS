@@ -37,6 +37,13 @@
 /* HAL general settings.                                                     */
 /*===========================================================================*/
 
+#define HAL_USE_MUTUAL_EXCLUSION            TRUE
+#define HAL_USE_REGISTRY                    TRUE
+
+/*===========================================================================*/
+/* HAL enabled drivers.                                                      */
+/*===========================================================================*/
+
 #define HAL_USE_PAL                         TRUE
 #define HAL_USE_ADC                         TRUE
 #define HAL_USE_DAC                         FALSE
@@ -56,6 +63,7 @@
 #define HAL_USE_USB                         FALSE
 #define HAL_USE_WDG                         FALSE
 #define HAL_USE_WSPI                        FALSE
+
 /*===========================================================================*/
 /* ADC driver settings.                                                      */
 /*===========================================================================*/
@@ -150,6 +158,23 @@
 #define SPI_USE_SYNCHRONIZATION             TRUE
 #define SPI_USE_ASSERT_ON_ERROR             FALSE
 #define SPI_USE_CONFIGURATIONS              FALSE
+
+/*===========================================================================*/
+/* USB driver settings.                                                      */
+/*===========================================================================*/
+
+#define USB_USE_WAIT                        TRUE
+#define USB_USE_CONFIGURATIONS              FALSE
+
+/*===========================================================================*/
+/* Serial USB settings.                                                      */
+/*===========================================================================*/
+
+#define SERIAL_USB_USE_MODULE               FALSE
+#define SERIAL_USB_BUFFERS_SIZE             256U
+#define SERIAL_USB_BUFFERS_NUMBER           2U
+#define SERIAL_USB_SEND_ZLP                 TRUE
+#define SERIAL_USB_RX_PACKET_MODE           FALSE
 
 /*===========================================================================*/
 /* WSPI driver settings.                                                     */

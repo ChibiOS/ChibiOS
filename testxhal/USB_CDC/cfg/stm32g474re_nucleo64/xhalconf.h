@@ -37,6 +37,13 @@
 /* HAL general settings.                                                     */
 /*===========================================================================*/
 
+#define HAL_USE_MUTUAL_EXCLUSION            TRUE
+#define HAL_USE_REGISTRY                    TRUE
+
+/*===========================================================================*/
+/* HAL enabled drivers.                                                      */
+/*===========================================================================*/
+
 #define HAL_USE_PAL                         TRUE
 #define HAL_USE_ADC                         FALSE
 #define HAL_USE_DAC                         FALSE
@@ -56,6 +63,7 @@
 #define HAL_USE_USB                         TRUE
 #define HAL_USE_WDG                         FALSE
 #define HAL_USE_WSPI                        FALSE
+
 /*===========================================================================*/
 /* ADC driver settings.                                                      */
 /*===========================================================================*/

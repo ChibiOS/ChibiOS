@@ -14,6 +14,17 @@
     limitations under the License.
 */
 
+/**
+ * @file    templates/xhalconf.h
+ * @brief   XHAL configuration header.
+ * @details XHAL configuration file, this file allows to enable or disable the
+ *          various device drivers from your application. You may also use
+ *          this file in order to override the device drivers default settings.
+ *
+ * @addtogroup XHAL_CONF
+ * @{
+ */
+
 #ifndef XHALCONF_H
 #define XHALCONF_H
 
@@ -24,6 +35,13 @@
 
 /*===========================================================================*/
 /* HAL general settings.                                                     */
+/*===========================================================================*/
+
+#define HAL_USE_MUTUAL_EXCLUSION            TRUE
+#define HAL_USE_REGISTRY                    TRUE
+
+/*===========================================================================*/
+/* HAL enabled drivers.                                                      */
 /*===========================================================================*/
 
 #define HAL_USE_PAL                         TRUE
@@ -45,11 +63,56 @@
 #define HAL_USE_USB                         FALSE
 #define HAL_USE_WDG                         FALSE
 #define HAL_USE_WSPI                        FALSE
+
+/*===========================================================================*/
+/* ADC driver settings.                                                      */
+/*===========================================================================*/
+
+#define ADC_USE_WAIT                        TRUE
+
 /*===========================================================================*/
 /* DAC driver settings.                                                      */
 /*===========================================================================*/
 
 #define DAC_USE_WAIT                        TRUE
+
+/*===========================================================================*/
+/* CAN driver settings.                                                      */
+/*===========================================================================*/
+
+#define CAN_USE_SYNCHRONIZATION             TRUE
+#define CAN_USE_SLEEP_MODE                  TRUE
+#define CAN_USE_CONFIGURATIONS              FALSE
+
+/*===========================================================================*/
+/* GPT driver settings.                                                      */
+/*===========================================================================*/
+
+#define GPT_DEFAULT_FREQUENCY               1000000U
+
+/*===========================================================================*/
+/* I2C driver settings.                                                      */
+/*===========================================================================*/
+
+#define I2C_USE_SYNCHRONIZATION             TRUE
+#define I2C_USE_CONFIGURATIONS              FALSE
+
+/*===========================================================================*/
+/* ICU driver settings.                                                      */
+/*===========================================================================*/
+
+#define ICU_USE_OVERFLOW_SCALING            FALSE
+#define ICU_USE_CONFIGURATIONS              FALSE
+#define ICU_DEFAULT_FREQUENCY               1000000U
+#define ICU_DEFAULT_ARR                     0xFFFFFFFFU
+
+/*===========================================================================*/
+/* PWM driver settings.                                                      */
+/*===========================================================================*/
+
+#define PWM_USE_CONFIGURATIONS              FALSE
+#define PWM_DEFAULT_FREQUENCY               1000000U
+#define PWM_DEFAULT_PERIOD                  1000U
 
 /*===========================================================================*/
 /* PAL driver settings.                                                      */
@@ -59,6 +122,36 @@
 #define PAL_USE_WAIT                        FALSE
 
 /*===========================================================================*/
+/* ETH driver settings.                                                      */
+/*===========================================================================*/
+
+#define ETH_USE_SYNCHRONIZATION             TRUE
+#define ETH_USE_EVENTS                      FALSE
+#define ETH_USE_CONFIGURATIONS              FALSE
+
+/*===========================================================================*/
+/* SDC driver settings.                                                      */
+/*===========================================================================*/
+
+#define SDC_USE_SYNCHRONIZATION             TRUE
+#define SDC_USE_CONFIGURATIONS              FALSE
+#define SDC_INIT_RETRY                      100
+#define SDC_MMC_SUPPORT                     FALSE
+#define SDC_NICE_WAITING                    TRUE
+#define SDC_INIT_OCR_V20                    0x50FF8000U
+#define SDC_INIT_OCR                        0x80100000U
+
+/*===========================================================================*/
+/* SIO driver settings.                                                      */
+/*===========================================================================*/
+
+#define SIO_DEFAULT_BITRATE                 38400
+#define SIO_USE_SYNCHRONIZATION             TRUE
+#define SIO_USE_STREAMS_INTERFACE           SIO_USE_SYNCHRONIZATION
+#define SIO_USE_BUFFERING                   FALSE
+#define SIO_USE_CONFIGURATIONS              FALSE
+
+/*===========================================================================*/
 /* SPI driver settings.                                                      */
 /*===========================================================================*/
 
@@ -66,4 +159,29 @@
 #define SPI_USE_ASSERT_ON_ERROR             FALSE
 #define SPI_USE_CONFIGURATIONS              FALSE
 
+/*===========================================================================*/
+/* USB driver settings.                                                      */
+/*===========================================================================*/
+
+#define USB_USE_WAIT                        TRUE
+#define USB_USE_CONFIGURATIONS              FALSE
+
+/*===========================================================================*/
+/* Serial USB settings.                                                      */
+/*===========================================================================*/
+
+#define SERIAL_USB_USE_MODULE               FALSE
+#define SERIAL_USB_BUFFERS_SIZE             256U
+#define SERIAL_USB_BUFFERS_NUMBER           2U
+#define SERIAL_USB_SEND_ZLP                 TRUE
+#define SERIAL_USB_RX_PACKET_MODE           FALSE
+
+/*===========================================================================*/
+/* WSPI driver settings.                                                     */
+/*===========================================================================*/
+
+#define WSPI_USE_SYNCHRONIZATION            TRUE
+
 #endif /* XHALCONF_H */
+
+/** @} */

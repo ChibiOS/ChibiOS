@@ -47,6 +47,13 @@
 /* HAL general settings.                                                     */
 /*===========================================================================*/
 
+#define HAL_USE_MUTUAL_EXCLUSION            ${doc.HAL_USE_MUTUAL_EXCLUSION!"TRUE"}
+#define HAL_USE_REGISTRY                    ${doc.HAL_USE_REGISTRY!"TRUE"}
+
+/*===========================================================================*/
+/* HAL enabled drivers.                                                      */
+/*===========================================================================*/
+
 #define HAL_USE_PAL                         ${doc.HAL_USE_PAL!"TRUE"}
 #define HAL_USE_ADC                         ${doc.HAL_USE_ADC!"FALSE"}
 #define HAL_USE_DAC                         ${doc.HAL_USE_DAC!"FALSE"}
