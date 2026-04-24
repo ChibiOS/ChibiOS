@@ -1219,23 +1219,14 @@ sio_lld_init();]]></implementation>
           <param name="n" ctype="size_t" />
           <param name="timeout" ctype="sysinterval_t" />
           <implementation><![CDATA[
-size_t i;
+msg_t msg;
 
-i = 0U;
-while (i < n) {
-  size_t written;
-  msg_t msg;
-
-  msg = sioSynchronizeTX(siop, timeout);
-  if (msg != MSG_OK) {
-    break;
-  }
-
-  written = sioAsyncWriteX(siop, bp, n - i);
-  i += written;
-  bp += written;
+msg = sioSynchronizeTX(siop, timeout);
+if (msg != MSG_OK) {
+  return 0U;
 }
-return i;]]></implementation>
+
+return sioAsyncWriteX(siop, bp, n);]]></implementation>
         </function>
         <function name="sio_sync_read" ctype="size_t">
           <param name="siop" ctype="hal_sio_driver_c *" />
@@ -1243,26 +1234,17 @@ return i;]]></implementation>
           <param name="n" ctype="size_t" />
           <param name="timeout" ctype="sysinterval_t" />
           <implementation><![CDATA[
-size_t i;
+msg_t msg;
 
-i = 0U;
-while (i < n) {
-  size_t read;
-  msg_t msg;
-
-  msg = sioSynchronizeRX(siop, timeout);
-  if (msg == SIO_MSG_ERRORS) {
-    (void)sioGetAndClearErrors(siop);
-  }
-  else if (msg != MSG_OK) {
-    break;
-  }
-
-  read = sioAsyncReadX(siop, bp, n - i);
-  i += read;
-  bp += read;
+msg = sioSynchronizeRX(siop, timeout);
+if (msg == SIO_MSG_ERRORS) {
+  (void)sioGetAndClearErrors(siop);
 }
-return i;]]></implementation>
+else if (msg != MSG_OK) {
+  return 0U;
+}
+
+return sioAsyncReadX(siop, bp, n);]]></implementation>
         </function>
       </condition>
       <condition check="SIO_USE_BUFFERING == TRUE">

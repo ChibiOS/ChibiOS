@@ -54,47 +54,29 @@
 #if (SIO_USE_STREAMS_INTERFACE == TRUE) || defined (__DOXYGEN__)
 static size_t sio_sync_write(hal_sio_driver_c *siop, const uint8_t *bp,
                              size_t n, sysinterval_t timeout) {
-  size_t i;
+  msg_t msg;
 
-  i = 0U;
-  while (i < n) {
-    size_t written;
-    msg_t msg;
-
-    msg = sioSynchronizeTX(siop, timeout);
-    if (msg != MSG_OK) {
-      break;
-    }
-
-    written = sioAsyncWriteX(siop, bp, n - i);
-    i += written;
-    bp += written;
+  msg = sioSynchronizeTX(siop, timeout);
+  if (msg != MSG_OK) {
+    return 0U;
   }
-  return i;
+
+  return sioAsyncWriteX(siop, bp, n);
 }
 
 static size_t sio_sync_read(hal_sio_driver_c *siop, uint8_t *bp, size_t n,
                             sysinterval_t timeout) {
-  size_t i;
+  msg_t msg;
 
-  i = 0U;
-  while (i < n) {
-    size_t read;
-    msg_t msg;
-
-    msg = sioSynchronizeRX(siop, timeout);
-    if (msg == SIO_MSG_ERRORS) {
-      (void)sioGetAndClearErrors(siop);
-    }
-    else if (msg != MSG_OK) {
-      break;
-    }
-
-    read = sioAsyncReadX(siop, bp, n - i);
-    i += read;
-    bp += read;
+  msg = sioSynchronizeRX(siop, timeout);
+  if (msg == SIO_MSG_ERRORS) {
+    (void)sioGetAndClearErrors(siop);
   }
-  return i;
+  else if (msg != MSG_OK) {
+    return 0U;
+  }
+
+  return sioAsyncReadX(siop, bp, n);
 }
 #endif /* SIO_USE_STREAMS_INTERFACE == TRUE */
 

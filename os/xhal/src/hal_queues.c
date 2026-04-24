@@ -364,14 +364,15 @@ size_t iqReadI(input_queue_t *iqp, uint8_t *bp, size_t n) {
 
 /**
  * @brief   Input queue read with timeout.
- * @details The function reads data from an input queue into a buffer. The
- *          operation completes when the specified amount of data has been
- *          transferred or after the specified timeout or if the queue has
- *          been reset.
+ * @details The function reads data from an input queue into a buffer. If
+ *          there is data immediately available then a chunk up to the
+ *          specified amount is returned without waiting. If the queue is
+ *          empty then the calling thread is suspended until at least one byte
+ *          arrives or the queue is reset or the timeout expires, then a chunk
+ *          up to the specified amount is returned.
  * @note    The function is not atomic, if you need atomicity it is suggested
  *          to use a semaphore or a mutex for mutual exclusion.
- * @note    The callback is invoked after removing each character from the
- *          queue.
+ * @note    The callback is invoked after removing a chunk from the queue.
  *
  * @param[in] iqp       pointer to an @p input_queue_t structure
  * @param[out] bp       pointer to the data buffer
@@ -389,43 +390,29 @@ size_t iqReadI(input_queue_t *iqp, uint8_t *bp, size_t n) {
 size_t iqReadTimeout(input_queue_t *iqp, uint8_t *bp,
                      size_t n, sysinterval_t timeout) {
   qnotify_t nfy = iqp->q_notify;
-  size_t max = n;
+  size_t done;
 
   osalDbgCheck(n > 0U);
 
   osalSysLock();
 
-  while (n > 0U) {
-    size_t done;
+  done = iq_read(iqp, bp, n);
+  if (done == (size_t)0) {
+    msg_t msg = osalThreadEnqueueTimeoutS(&iqp->q_waiting, timeout);
 
-    done = iq_read(iqp, bp, n);
-    if (done == (size_t)0) {
-      msg_t msg = osalThreadEnqueueTimeoutS(&iqp->q_waiting, timeout);
-
-      /* Anything except MSG_OK causes the operation to stop.*/
-      if (msg != MSG_OK) {
-        break;
-      }
-    }
-    else {
-      /* Inform the low side that the queue has at least one empty slot
-         available.*/
-      if (nfy != NULL) {
-        nfy(iqp);
-      }
-
-      /* Giving a preemption chance in a controlled point.*/
-      osalSysUnlock();
-
-      n  -= done;
-      bp += done;
-
-      osalSysLock();
+    if (msg == MSG_OK) {
+      done = iq_read(iqp, bp, n);
     }
   }
 
+  /* Inform the low side that the queue has at least one empty slot
+     available.*/
+  if ((done > (size_t)0) && (nfy != NULL)) {
+    nfy(iqp);
+  }
+
   osalSysUnlock();
-  return max - n;
+  return done;
 }
 
 /**
@@ -632,14 +619,15 @@ size_t oqWriteI(output_queue_t *oqp, const uint8_t *bp, size_t n) {
 
 /**
  * @brief   Output queue write with timeout.
- * @details The function writes data from a buffer to an output queue. The
- *          operation completes when the specified amount of data has been
- *          transferred or after the specified timeout or if the queue has
- *          been reset.
+ * @details The function writes data from a buffer to an output queue. If
+ *          there is space immediately available then a chunk up to the
+ *          specified amount is transferred without waiting. If the queue is
+ *          full then the calling thread is suspended until at least one byte
+ *          of space is available or the queue is reset or the timeout
+ *          expires, then a chunk up to the specified amount is transferred.
  * @note    The function is not atomic, if you need atomicity it is suggested
  *          to use a semaphore or a mutex for mutual exclusion.
- * @note    The callback is invoked after putting each character into the
- *          queue.
+ * @note    The callback is invoked after putting a chunk into the queue.
  *
  * @param[in] oqp       pointer to an @p output_queue_t structure
  * @param[in] bp        pointer to the data buffer
@@ -657,43 +645,29 @@ size_t oqWriteI(output_queue_t *oqp, const uint8_t *bp, size_t n) {
 size_t oqWriteTimeout(output_queue_t *oqp, const uint8_t *bp,
                       size_t n, sysinterval_t timeout) {
   qnotify_t nfy = oqp->q_notify;
-  size_t max = n;
+  size_t done;
 
   osalDbgCheck(n > 0U);
 
   osalSysLock();
 
-  while (n > 0U) {
-    size_t done;
+  done = oq_write(oqp, bp, n);
+  if (done == (size_t)0) {
+    msg_t msg = osalThreadEnqueueTimeoutS(&oqp->q_waiting, timeout);
 
-    done = oq_write(oqp, bp, n);
-    if (done == (size_t)0) {
-      msg_t msg = osalThreadEnqueueTimeoutS(&oqp->q_waiting, timeout);
-
-      /* Anything except MSG_OK causes the operation to stop.*/
-      if (msg != MSG_OK) {
-        break;
-      }
-    }
-    else {
-      /* Inform the low side that the queue has at least one character
-         available.*/
-      if (nfy != NULL) {
-        nfy(oqp);
-      }
-
-      /* Giving a preemption chance in a controlled point.*/
-      osalSysUnlock();
-
-      n  -= done;
-      bp += done;
-
-      osalSysLock();
+    if (msg == MSG_OK) {
+      done = oq_write(oqp, bp, n);
     }
   }
 
+  /* Inform the low side that the queue has at least one character
+     available.*/
+  if ((done > (size_t)0) && (nfy != NULL)) {
+    nfy(oqp);
+  }
+
   osalSysUnlock();
-  return max - n;
+  return done;
 }
 
 /** @} */
