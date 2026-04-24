@@ -661,7 +661,8 @@ struct hal_sio_driver {
 
 /**
  * @class       hal_buffered_sio_c
- * @extends     hal_buffered_serial_c
+ * @extends     hal_base_driver_c
+ * @implements  asynchronous_channel_i
  *
  * @brief       This class implements a buffered channel interface on top of
  *              SIO.
@@ -686,7 +687,6 @@ struct hal_buffered_sio_vmt {
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
-  /* From hal_buffered_serial_c.*/
   /* From hal_buffered_sio_c.*/
 };
 
@@ -787,6 +787,8 @@ extern "C" {
   msg_t __bsio_start_impl(void *ip);
   void __bsio_stop_impl(void *ip);
   const void *__bsio_setcfg_impl(void *ip, const void *config);
+  void bsIncomingDataI(void *ip, uint8_t b);
+  msg_t bsRequestDataI(void *ip);
   /* Regular functions.*/
   void sioInit(void);
 #ifdef __cplusplus
@@ -845,6 +847,27 @@ static inline hal_buffered_sio_c *bsioObjectInit(hal_buffered_sio_c *self,
 
   return __bsio_objinit_impl(self, &__hal_buffered_sio_vmt, siop, ib, ibsize,
                              ob, obsize);
+}
+/** @} */
+
+/**
+ * @name        Inline methods of hal_buffered_sio_c
+ * @{
+ */
+/**
+ * @brief       Adds status flags to the flags mask.
+ * @details     This function is usually called from the I/O ISRs in order to
+ *              notify I/O conditions such as data events, errors, signal
+ *              changes etc.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_buffered_sio_c instance.
+ * @param[in]     flags         Event flags to be added.
+ */
+CC_FORCE_INLINE
+static inline void bsAddFlagsI(void *ip, eventflags_t flags) {
+  hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
+
+  osalEventBroadcastFlagsI(&self->event, flags);
 }
 /** @} */
 

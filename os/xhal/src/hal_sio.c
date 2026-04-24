@@ -919,6 +919,208 @@ msg_t sioSynchronizeTXEnd(void *ip, sysinterval_t timeout) {
 /*===========================================================================*/
 
 /**
+ * @name        Interfaces implementation of hal_buffered_sio_c
+ * @{
+ */
+/**
+ * @brief       Implementation of interface method @p stmWrite().
+ *
+ * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
+ *                              interface.
+ * @param[in]     bp            Pointer to the data buffer.
+ * @param[in]     n             The maximum amount of data to be transferred.
+ * @return                      The number of bytes transferred. The returned
+ *                              value can be less than the specified number of
+ *                              bytes if an end-of-file condition has been met.
+ */
+static size_t __bsio_chn_write_impl(void *ip, const uint8_t *bp, size_t n) {
+  hal_buffered_sio_c *self = oopIfGetOwner(hal_buffered_sio_c, ip);
+
+  return oqWriteTimeout(&self->oqueue, bp, n, TIME_INFINITE);
+}
+
+/**
+ * @brief       Implementation of interface method @p stmRead().
+ *
+ * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
+ *                              interface.
+ * @param[out]    bp            Pointer to the data buffer.
+ * @param[in]     n             The maximum amount of data to be transferred.
+ * @return                      The number of bytes transferred. The returned
+ *                              value can be less than the specified number of
+ *                              bytes if an end-of-file condition has been met.
+ */
+static size_t __bsio_chn_read_impl(void *ip, uint8_t *bp, size_t n) {
+  hal_buffered_sio_c *self = oopIfGetOwner(hal_buffered_sio_c, ip);
+
+  return iqReadTimeout(&self->iqueue, bp, n, TIME_INFINITE);
+}
+
+/**
+ * @brief       Implementation of interface method @p stmPut().
+ *
+ * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
+ *                              interface.
+ * @param[in]     b             The byte value to be written to the stream.
+ * @return                      The operation status.
+ */
+static int __bsio_chn_put_impl(void *ip, uint8_t b) {
+  hal_buffered_sio_c *self = oopIfGetOwner(hal_buffered_sio_c, ip);
+
+  return oqPutTimeout(&self->oqueue, b, TIME_INFINITE);
+}
+
+/**
+ * @brief       Implementation of interface method @p stmGet().
+ *
+ * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
+ *                              interface.
+ * @return                      A byte value from the stream.
+ */
+static int __bsio_chn_get_impl(void *ip) {
+  hal_buffered_sio_c *self = oopIfGetOwner(hal_buffered_sio_c, ip);
+
+  return iqGetTimeout(&self->iqueue, TIME_INFINITE);
+}
+
+/**
+ * @brief       Implementation of interface method @p stmUnget().
+ *
+ * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
+ *                              interface.
+ * @param[in]     b             The byte value to be pushed back to the stream.
+ * @return                      The operation status.
+ */
+static int __bsio_chn_unget_impl(void *ip, int b) {
+  hal_buffered_sio_c *self = oopIfGetOwner(hal_buffered_sio_c, ip);
+
+  (void)self;
+  (void)b;
+
+  return STM_RESET;
+}
+
+/**
+ * @brief       Implementation of interface method @p chnWriteTimeout().
+ *
+ * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
+ *                              interface.
+ * @param[in]     bp            Pointer to the data buffer.
+ * @param[in]     n             The maximum amount of data to be transferred.
+ * @param[in]     timeout       The number of ticks before the operation
+ *                              timeouts, the following special values are
+ *                              allowed:
+ *                              - @a TIME_IMMEDIATE immediate timeout.
+ *                              - @a TIME_INFINITE no timeout.
+ *                              .
+ * @return                      The number of bytes transferred.
+ */
+static size_t __bsio_chn_writet_impl(void *ip, const uint8_t *bp, size_t n,
+                                     sysinterval_t timeout) {
+  hal_buffered_sio_c *self = oopIfGetOwner(hal_buffered_sio_c, ip);
+
+  return oqWriteTimeout(&self->oqueue, bp, n, timeout);
+}
+
+/**
+ * @brief       Implementation of interface method @p chnReadTimeout().
+ *
+ * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
+ *                              interface.
+ * @param[in]     bp            Pointer to the data buffer.
+ * @param[in]     n             The maximum amount of data to be transferred.
+ * @param[in]     timeout       The number of ticks before the operation
+ *                              timeouts, the following special values are
+ *                              allowed:
+ *                              - @a TIME_IMMEDIATE immediate timeout.
+ *                              - @a TIME_INFINITE no timeout.
+ *                              .
+ * @return                      The number of bytes transferred.
+ */
+static size_t __bsio_chn_readt_impl(void *ip, uint8_t *bp, size_t n,
+                                    sysinterval_t timeout) {
+  hal_buffered_sio_c *self = oopIfGetOwner(hal_buffered_sio_c, ip);
+
+  return iqReadTimeout(&self->iqueue, bp, n, timeout);
+}
+
+/**
+ * @brief       Implementation of interface method @p chnPutTimeout().
+ *
+ * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
+ *                              interface.
+ * @param[in]     b             The byte value to be written to the channel.
+ * @param[in]     timeout       The number of ticks before the operation
+ *                              timeouts, the following special values are
+ *                              allowed:
+ *                              - @a TIME_IMMEDIATE immediate timeout.
+ *                              - @a TIME_INFINITE no timeout.
+ *                              .
+ * @return                      The operation status.
+ */
+static msg_t __bsio_chn_putt_impl(void *ip, uint8_t b, sysinterval_t timeout) {
+  hal_buffered_sio_c *self = oopIfGetOwner(hal_buffered_sio_c, ip);
+
+  return oqPutTimeout(&self->oqueue, b, timeout);
+}
+
+/**
+ * @brief       Implementation of interface method @p chnGetTimeout().
+ *
+ * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
+ *                              interface.
+ * @param[in]     timeout       The number of ticks before the operation
+ *                              timeouts, the following special values are
+ *                              allowed:
+ *                              - @a TIME_IMMEDIATE immediate timeout.
+ *                              - @a TIME_INFINITE no timeout.
+ *                              .
+ * @return                      A byte value from the channel.
+ */
+static msg_t __bsio_chn_gett_impl(void *ip, sysinterval_t timeout) {
+  hal_buffered_sio_c *self = oopIfGetOwner(hal_buffered_sio_c, ip);
+
+  return iqGetTimeout(&self->iqueue, timeout);
+}
+
+/**
+ * @brief       Implementation of interface method @p chnGetAndClearFlags().
+ *
+ * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
+ *                              interface.
+ * @param[in]     mask          Mask of flags to be returned and cleared.
+ * @return                      The cleared event flags.
+ */
+static chnflags_t __bsio_chn_getclr_impl(void *ip, chnflags_t mask) {
+  hal_buffered_sio_c *self = oopIfGetOwner(hal_buffered_sio_c, ip);
+
+  (void)self;
+  (void)mask;
+
+  return 0;
+}
+
+/**
+ * @brief       Implementation of interface method @p chnControl().
+ *
+ * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
+ *                              interface.
+ * @param[in]     operation     Control operation code
+ * @param[in,out] arg           Operation argument.
+ * @return                      The operation status.
+ */
+static msg_t __bsio_chn_ctl_impl(void *ip, unsigned int operation, void *arg) {
+  hal_buffered_sio_c *self = oopIfGetOwner(hal_buffered_sio_c, ip);
+
+  (void)self;
+  (void)operation;
+  (void)arg;
+
+  return 0;
+}
+/** @} */
+
+/**
  * @name        Methods implementations of hal_buffered_sio_c
  * @{
  */
@@ -941,10 +1143,49 @@ void *__bsio_objinit_impl(void *ip, const void *vmt, hal_sio_driver_c *siop,
                           size_t obsize) {
   hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
 
+  /* Initialization of interface asynchronous_channel_i.*/
+  {
+    static const struct asynchronous_channel_vmt bsio_chn_vmt = {
+      .instance_offset      = offsetof(hal_buffered_sio_c, chn),
+      .write                = __bsio_chn_write_impl,
+      .read                 = __bsio_chn_read_impl,
+      .put                  = __bsio_chn_put_impl,
+      .get                  = __bsio_chn_get_impl,
+      .unget                = __bsio_chn_unget_impl,
+      .writet               = __bsio_chn_writet_impl,
+      .readt                = __bsio_chn_readt_impl,
+      .putt                 = __bsio_chn_putt_impl,
+      .gett                 = __bsio_chn_gett_impl,
+      .getclr               = __bsio_chn_getclr_impl,
+      .ctl                  = __bsio_chn_ctl_impl
+    };
+    oopIfObjectInit(&self->chn, &bsio_chn_vmt);
+  }
+
   /* Initialization code.*/
-  __bs_objinit_impl((void *)self, vmt,
-                    ib, ibsize, NULL, NULL,
-                    ob, obsize, __bsio_onotify, (void *)self);
+  __drv_objinit_impl(self, vmt);
+
+  {
+    static const struct asynchronous_channel_vmt bsio_chn_vmt = {
+      .instance_offset      = offsetof(hal_buffered_sio_c, chn),
+      .write                = __bsio_chn_write_impl,
+      .read                 = __bsio_chn_read_impl,
+      .put                  = __bsio_chn_put_impl,
+      .get                  = __bsio_chn_get_impl,
+      .unget                = __bsio_chn_unget_impl,
+      .writet               = __bsio_chn_writet_impl,
+      .readt                = __bsio_chn_readt_impl,
+      .putt                 = __bsio_chn_putt_impl,
+      .gett                 = __bsio_chn_gett_impl,
+      .getclr               = __bsio_chn_getclr_impl,
+      .ctl                  = __bsio_chn_ctl_impl
+    };
+    oopIfObjectInit(&self->chn, &bsio_chn_vmt);
+  }
+
+  osalEventObjectInit(&self->event);
+  iqObjectInit(&self->iqueue, ib, ibsize, NULL, NULL);
+  oqObjectInit(&self->oqueue, ob, obsize, __bsio_onotify, (void *)self);
   drvSetArgumentX(siop, self);
   self->siop = siop;
 
@@ -961,11 +1202,11 @@ void *__bsio_objinit_impl(void *ip, const void *vmt, hal_sio_driver_c *siop,
 void __bsio_dispose_impl(void *ip) {
   hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
 
-  /* No finalization code.*/
-  (void)self;
+  /* Finalization code.*/
+  __drv_dispose_impl(self);
 
   /* Finalization of the ancestors-defined parts.*/
-  __bs_dispose_impl(self);
+  __drv_dispose_impl(self);
 }
 
 /**
@@ -1029,6 +1270,65 @@ const struct hal_buffered_sio_vmt __hal_buffered_sio_vmt = {
   .setcfg                   = __bsio_setcfg_impl,
   .selcfg                   = NULL /* Method not found.*/
 };
+
+/**
+ * @name        Regular methods of hal_buffered_sio_c
+ * @{
+ */
+/**
+ * @brief       Handles incoming data.
+ * @details     This function must be called from the input interrupt service
+ *              routine in order to enqueue incoming data and generate the
+ *              related events.
+ * @note        The incoming data event is only generated when the input queue
+ *              becomes non-empty.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_buffered_sio_c instance.
+ * @param[in]     b             The byte to be written to the driver's Input
+ *                              Queue
+ */
+void bsIncomingDataI(void *ip, uint8_t b) {
+  hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
+
+  osalDbgCheckClassI();
+  osalDbgCheck(self != NULL);
+
+  if (iqIsEmptyI(&self->iqueue)) {
+    bsAddFlagsI(self, CHN_FL_RX_NOTEMPTY);
+  }
+
+  if (iqPutI(&self->iqueue, b) < MSG_OK) {
+    bsAddFlagsI(self, CHN_FL_BUFFER_FULL_ERR);
+  }
+}
+
+/**
+ * @brief       Handles outgoing data.
+ * @details     Must be called from the output interrupt service routine in
+ *              order to get the next byte to be transmitted.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_buffered_sio_c instance.
+ * @return                      The byte value read from the driver's output
+ *                              queue.
+ * @retval MSG_TIMEOUT          If the queue is empty.
+ */
+msg_t bsRequestDataI(void *ip) {
+  hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
+  msg_t b;
+
+  osalDbgCheckClassI();
+  osalDbgCheck(self != NULL);
+
+  b = oqGetI(&self->oqueue);
+  if (b < MSG_OK) {
+    /* Note, this event is only added when the buffer becomes fully empty in
+       order to avoid continuous reporting.*/
+    bsAddFlagsI(self, CHN_FL_TX_NOTFULL);
+  }
+
+  return b;
+}
+/** @} */
 
 #endif /* HAL_USE_SIO == TRUE */
 

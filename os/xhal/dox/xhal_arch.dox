@@ -186,15 +186,6 @@
  *     + evdGetFlagsI()
  *     + evdGetAndClearFlagsI()
  *   }
- *   abstract class hal_buffered_serial_c extends hal_events_driver_c \
- *                                        implements asynchronous_channel_i {
- *     - iqueue: input_queue_t
- *     - oqueue: output_queue_t
- *     # __bs_objinit_impl()
- *     # {abstract} __bs_dispose_impl()
- *     # bsIncomingDataI()
- *     # bsRequestDataI()
- *   }
  * }
  * package "XHAL Drivers" {
  *   class hal_sio_driver_c extends hal_base_driver_c \
@@ -221,11 +212,6 @@
  *     + sioSynchronizeTX()
  *     + sioSynchronizeTXEnd()
  *   }
- *   class hal_serial_driver_c extends hal_buffered_serial_c {
- *     ~ {static} sdInit()
- *     + sdObjectInit()
- *     + {abstract} sdDispose()
- *   }
  *   class hal_pwm_driver_c extends hal_base_driver_c {
  *     ~ {static} pwmInit()
  *     + pwmObjectInit()
@@ -233,9 +219,13 @@
  *   }
  * }
  * package "XHAL Complex Drivers" {
- *   class hal_buffered_sio_driver_c extends hal_buffered_serial_c {
+ *   class hal_buffered_sio_driver_c extends hal_base_driver_c \
+ *                                   implements asynchronous_channel_i {
+ *     - iqueue: input_queue_t
+ *     - oqueue: output_queue_t
  *     + bsioObjectInit()
- *     + {abstract} bsioDispose()
+ *     # bsIncomingDataI()
+ *     # bsRequestDataI()
  *   }
  *   hal_buffered_sio_driver_c "1" o-- hal_sio_driver_c
  * }
