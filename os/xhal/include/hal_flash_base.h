@@ -66,7 +66,8 @@ typedef driver_state_t flash_state_t;
 typedef enum {
   FLASH_READ  = HAL_DRV_STATE_ACTIVE + 1U,
   FLASH_PGM   = HAL_DRV_STATE_ACTIVE + 2U,
-  FLASH_ERASE = HAL_DRV_STATE_ACTIVE + 3U
+  FLASH_ERASE = HAL_DRV_STATE_ACTIVE + 3U,
+  FLASH_MMAP  = HAL_DRV_STATE_ACTIVE + 4U
 } flash_state_ex_t;
 
 /**

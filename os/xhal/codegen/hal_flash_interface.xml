@@ -39,6 +39,9 @@
         <define name="FLASH_ATTR_SUSPEND_ERASE_CAPABLE" value="0x00000020U">
           <brief>The device is able to suspend erase operations.</brief>
         </define>
+        <define name="FLASH_ATTR_SPI_4BYTES_ADDR_HINT" value="0x00008000U">
+          <brief>Hint to use 4 bytes addresses in SPI protocol.</brief>
+        </define>
       </group>
     </definitions_early>
     <types>

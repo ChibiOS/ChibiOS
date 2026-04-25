@@ -736,7 +736,9 @@ flash_error_t __n25q_read_impl(void *ip, flash_offset_t offset, size_t n,
                                uint8_t *rp) {
   hal_xsnor_micron_n25q_c *self = (hal_xsnor_micron_n25q_c *)ip;
 
-  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+    return FLASH_ERROR_HW_FAILURE;
+  }
 
   if (xsnorcfg->bus_type == XSNOR_BUS_MODE_SPI) {
     /* Using normal read command because it does not require dummy cycles.*/
@@ -774,7 +776,9 @@ flash_error_t __n25q_program_impl(void *ip, flash_offset_t offset, size_t n,
   hal_xsnor_micron_n25q_c *self = (hal_xsnor_micron_n25q_c *)ip;
   flash_error_t err = FLASH_NO_ERROR;
 
-  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+    return FLASH_ERROR_HW_FAILURE;
+  }
 
   /* Data is programmed page by page.*/
   while ((n > 0U) && (err == FLASH_NO_ERROR)) {
@@ -820,7 +824,9 @@ flash_error_t __n25q_program_impl(void *ip, flash_offset_t offset, size_t n,
 flash_error_t __n25q_start_erase_all_impl(void *ip) {
   hal_xsnor_micron_n25q_c *self = (hal_xsnor_micron_n25q_c *)ip;
 
-  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+    return FLASH_ERROR_HW_FAILURE;
+  }
 
   /* Enabling write operation.*/
   __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
@@ -845,7 +851,9 @@ flash_error_t __n25q_start_erase_sector_impl(void *ip, flash_sector_t sector) {
   hal_xsnor_micron_n25q_c *self = (hal_xsnor_micron_n25q_c *)ip;
   flash_offset_t offset = (flash_offset_t)(sector * self->descriptor.sectors_size);
 
-  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+    return FLASH_ERROR_HW_FAILURE;
+  }
 
   /* Enabling write operation.*/
   __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
@@ -883,7 +891,9 @@ flash_error_t __n25q_query_erase_impl(void *ip, unsigned *msec) {
   hal_xsnor_micron_n25q_c *self = (hal_xsnor_micron_n25q_c *)ip;
   flash_error_t err = FLASH_NO_ERROR;
 
-  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+    return FLASH_ERROR_HW_FAILURE;
+  }
 
   /* Read status command.*/
   __xsnor_bus_cmd_receive(self, CMD_READ_FLAG_STATUS_REGISTER,
@@ -987,9 +997,6 @@ flash_error_t __n25q_mmap_on_impl(void *ip, uint8_t **addrp) {
   {
     wspi_command_t cmd;
 
-    /* Bus acquisition.*/
-    __xsnor_bus_acquire(self);
-
     /* Activating XIP mode in the device.*/
     n25q_activate_xip(self);
 
@@ -1023,13 +1030,9 @@ flash_error_t __n25q_mmap_on_impl(void *ip, uint8_t **addrp) {
       break;
     default:
       osalDbgAssert(false, "invalid bus type");
-      __xsnor_bus_release(self);
       return FLASH_ERROR_HW_FAILURE;
     }
     wspiMapFlash(xsnorcfg->bus.wspi.drv, &cmd, addrp);
-
-    /* Bus release.*/
-    __xsnor_bus_release(self);
 
     return FLASH_NO_ERROR;
   }
@@ -1050,16 +1053,10 @@ void __n25q_mmap_off_impl(void *ip) {
 #endif
 
 #if XSNOR_USE_WSPI == TRUE
-  /* Bus acquisition.*/
-  __xsnor_bus_acquire(self);
-
   /* Stopping WSPI memory mapped mode.*/
   wspiUnmapFlash(xsnorcfg->bus.wspi.drv);
 
   n25q_reset_xip(self);
-
-  /* Bus release.*/
-  __xsnor_bus_release(self);
 #endif
 }
 /** @} */

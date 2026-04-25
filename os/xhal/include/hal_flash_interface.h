@@ -75,6 +75,11 @@
  * @brief       The device is able to suspend erase operations.
  */
 #define FLASH_ATTR_SUSPEND_ERASE_CAPABLE    0x00000020U
+
+/**
+ * @brief       Hint to use 4 bytes addresses in SPI protocol.
+ */
+#define FLASH_ATTR_SPI_4BYTES_ADDR_HINT     0x00008000U
 /** @} */
 
 /*===========================================================================*/

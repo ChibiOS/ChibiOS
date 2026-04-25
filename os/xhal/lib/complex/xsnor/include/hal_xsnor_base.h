@@ -45,12 +45,6 @@
 #define XSNOR_BUS_MODE_WSPI_8LINES          4U
 /** @} */
 
-/**
- * @brief       Hint to use 4 bytes addresses in SPI protocol.
- * @note        TODO: To be moved into the flash interface module.
- */
-#define FLASH_ATTR_SPI_4BYTES_ADDR_HINT     0x00008000U
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -141,7 +135,8 @@
  * @name    Bus mutex macros when sharing is disabled
  * @{
  */
-#define __xsnor_bus_acquire(self)
+#define __xsnor_bus_acquire(self)                                           \
+  HAL_RET_SUCCESS
 #define __xsnor_bus_release(self)
 /** @} */
 #endif /* XSNOR_SHARED_BUS == FALSE */
@@ -393,7 +388,7 @@ extern "C" {
   void __xsnor_spi_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset);
 #endif /* XSNOR_USE_SPI == TRUE */
 #if (XSNOR_SHARED_BUS == TRUE) || defined (__DOXYGEN__)
-  void __xsnor_bus_acquire(void *ip);
+  msg_t __xsnor_bus_acquire(void *ip);
   void __xsnor_bus_release(void *ip);
 #endif /* XSNOR_SHARED_BUS == TRUE */
   void __xsnor_bus_cmd(void *ip, uint32_t cmd);

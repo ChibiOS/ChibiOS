@@ -375,6 +375,19 @@ static inline bool mx25_spi_4bytes(const hal_xsnor_macronix_mx25_c *self) {
   return (self->descriptor.attributes & FLASH_ATTR_SPI_4BYTES_ADDR_HINT) != 0U;
 }
 
+#if (XSNOR_USE_SPI == TRUE) || defined(__DOXYGEN__)
+static void mx25_reset_memory_spi(hal_xsnor_macronix_mx25_c *self) {
+
+  __xsnor_bus_cmd(self, CMD_SPI_RSTEN);
+  __xsnor_bus_cmd(self, CMD_SPI_RST);
+
+  /* The device requires at least 10uS to recover after a reset, it could
+     need up to 100mS in case a reset occurred during a chip erase, 50uS
+     covers most cases.*/
+  osalThreadSleepMicroseconds(50);
+}
+#endif
+
 #if (XSNOR_USE_WSPI == TRUE) || defined(__DOXYGEN__)
 static void mx25_reset_memory(hal_xsnor_macronix_mx25_c *self) {
 
@@ -633,6 +646,8 @@ flash_error_t __mx25_init_impl(void *ip) {
   {
     /* Initialization procedure in the SPI case.
        Reading device ID.*/
+    mx25_reset_memory_spi(self);
+
     __xsnor_bus_cmd_receive(self, CMD_SPI_RDID,
                             3U, &config->buffers->databuf[0]);
 
@@ -764,7 +779,9 @@ flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
   flash_error_t err = FLASH_NO_ERROR;
 
-  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+    return FLASH_ERROR_HW_FAILURE;
+  }
 
   /* Command depends on bus mode.*/
   switch (xsnorcfg->bus_type) {
@@ -813,7 +830,9 @@ flash_error_t __mx25_program_impl(void *ip, flash_offset_t offset, size_t n,
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
   flash_error_t err = FLASH_NO_ERROR;
 
-  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+    return FLASH_ERROR_HW_FAILURE;
+  }
 
   /* Data is programmed page by page.*/
   while ((n > 0U) && (err == FLASH_NO_ERROR)) {
@@ -878,7 +897,9 @@ flash_error_t __mx25_start_erase_all_impl(void *ip) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
   flash_error_t err = FLASH_NO_ERROR;
 
-  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+    return FLASH_ERROR_HW_FAILURE;
+  }
 
   /* Command depends on bus mode.*/
   switch (xsnorcfg->bus_type) {
@@ -920,7 +941,9 @@ flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector) {
   flash_offset_t offset = (flash_offset_t)(sector * self->descriptor.sectors_size);
   flash_error_t err = FLASH_NO_ERROR;
 
-  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+    return FLASH_ERROR_HW_FAILURE;
+  }
 
   /* Command depends on bus mode.*/
   switch (xsnorcfg->bus_type) {
@@ -979,7 +1002,9 @@ flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
   flash_error_t err = FLASH_NO_ERROR;
 
-  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+    return FLASH_ERROR_HW_FAILURE;
+  }
 
   /* Command depends on bus mode.*/
   switch (xsnorcfg->bus_type) {
@@ -1105,9 +1130,6 @@ flash_error_t __mx25_mmap_on_impl(void *ip, uint8_t **addrp) {
   {
     wspi_command_t cmd;
 
-    /* Bus acquisition.*/
-    __xsnor_bus_acquire(self);
-
     /* Command depends on bus mode.*/
     switch (xsnorcfg->bus_type) {
     case XSNOR_BUS_MODE_SPI:
@@ -1128,15 +1150,11 @@ flash_error_t __mx25_mmap_on_impl(void *ip, uint8_t **addrp) {
       break;
     default:
       osalDbgAssert(false, "invalid bus type");
-      __xsnor_bus_release(self);
       return FLASH_ERROR_HW_FAILURE;
     }
     cmd.addr  = 0U;
     cmd.alt   = 0U;
     wspiMapFlash(xsnorcfg->bus.wspi.drv, &cmd, addrp);
-
-    /* Bus release.*/
-    __xsnor_bus_release(self);
 
     return FLASH_NO_ERROR;
   }
@@ -1157,14 +1175,8 @@ void __mx25_mmap_off_impl(void *ip) {
 #endif
 
 #if XSNOR_USE_WSPI == TRUE
-  /* Bus acquisition.*/
-  __xsnor_bus_acquire(self);
-
   /* Stopping WSPI memory mapped mode.*/
   wspiUnmapFlash(xsnorcfg->bus.wspi.drv);
-
-  /* Bus release.*/
-  __xsnor_bus_release(self);
 #endif
 }
 /** @} */
