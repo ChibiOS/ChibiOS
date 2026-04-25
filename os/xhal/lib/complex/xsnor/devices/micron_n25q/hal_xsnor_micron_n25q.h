@@ -178,10 +178,6 @@ struct hal_xsnor_micron_n25q {
    * @brief       Flash descriptor.
    */
   flash_descriptor_t        descriptor;
-  /**
-   * @brief       Implemented interface @p flash_interface_i.
-   */
-  flash_interface_i         fls;
 #if (XSNOR_USE_WSPI == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Current commands configuration.

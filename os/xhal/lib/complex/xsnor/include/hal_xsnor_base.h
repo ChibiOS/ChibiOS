@@ -278,7 +278,6 @@ struct xsnor_config {
 /**
  * @class       hal_xsnor_base_c
  * @extends     hal_flash_base_c
- * @implements  flash_interface_i
  *
  * @brief       Base class of all SNOR drivers.
  *
@@ -364,10 +363,6 @@ struct hal_xsnor_base {
    * @brief       Flash descriptor.
    */
   flash_descriptor_t        descriptor;
-  /**
-   * @brief       Implemented interface @p flash_interface_i.
-   */
-  flash_interface_i         fls;
 #if (XSNOR_USE_WSPI == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Current commands configuration.

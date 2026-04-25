@@ -722,7 +722,7 @@ flash_error_t __mx25_init_impl(void *ip) {
 }
 
 /**
- * @brief       Override of method @p xsnor_device_read().
+ * @brief       Override of method @p __flash_read().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
@@ -735,6 +735,8 @@ flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
                                uint8_t *rp) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
   flash_error_t err = FLASH_NO_ERROR;
+
+  __xsnor_bus_acquire(self);
 
   /* Command depends on bus mode.*/
   switch (xsnorcfg->bus_type) {
@@ -763,11 +765,13 @@ flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
     break;
   }
 
+  __xsnor_bus_release(self);
+
   return err;
 }
 
 /**
- * @brief       Override of method @p xsnor_device_program().
+ * @brief       Override of method @p __flash_program().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
@@ -779,13 +783,15 @@ flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
 flash_error_t __mx25_program_impl(void *ip, flash_offset_t offset, size_t n,
                                   const uint8_t *pp) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
+  flash_error_t err = FLASH_NO_ERROR;
+
+  __xsnor_bus_acquire(self);
 
   /* Data is programmed page by page.*/
-  while (n > 0U) {
-    flash_error_t err;
-
+  while ((n > 0U) && (err == FLASH_NO_ERROR)) {
     /* Data size that can be written in a single program page operation.*/
     size_t chunk = (size_t)(((offset | PAGE_MASK) + 1U) - offset);
+
     if (chunk > n) {
       chunk = n;
     }
@@ -811,26 +817,30 @@ flash_error_t __mx25_program_impl(void *ip, flash_offset_t offset, size_t n,
       break;
     default:
       osalDbgAssert(false, "invalid bus type");
-      return FLASH_ERROR_HW_FAILURE;
+      err = FLASH_ERROR_HW_FAILURE;
+      break;
     }
 
-    /* Wait for status and check errors.*/
-    err = mx25_poll_status(self);
-    if (err != FLASH_NO_ERROR) {
-      return err;
+    if (err == FLASH_NO_ERROR) {
+      /* Wait for status and check errors.*/
+      err = mx25_poll_status(self);
     }
 
-    /* Next page.*/
-    offset += chunk;
-    pp     += chunk;
-    n      -= chunk;
+    if (err == FLASH_NO_ERROR) {
+      /* Next page.*/
+      offset += chunk;
+      pp     += chunk;
+      n      -= chunk;
+    }
   }
 
-  return FLASH_NO_ERROR;
+  __xsnor_bus_release(self);
+
+  return err;
 }
 
 /**
- * @brief       Override of method @p xsnor_device_start_erase_all().
+ * @brief       Override of method @p __flash_start_erase_all().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
@@ -838,6 +848,9 @@ flash_error_t __mx25_program_impl(void *ip, flash_offset_t offset, size_t n,
  */
 flash_error_t __mx25_start_erase_all_impl(void *ip) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
+  flash_error_t err = FLASH_NO_ERROR;
+
+  __xsnor_bus_acquire(self);
 
   /* Command depends on bus mode.*/
   switch (xsnorcfg->bus_type) {
@@ -857,14 +870,17 @@ flash_error_t __mx25_start_erase_all_impl(void *ip) {
     break;
   default:
     osalDbgAssert(false, "invalid bus type");
-    return FLASH_ERROR_HW_FAILURE;
+    err = FLASH_ERROR_HW_FAILURE;
+    break;
   }
 
-  return FLASH_NO_ERROR;
+  __xsnor_bus_release(self);
+
+  return err;
 }
 
 /**
- * @brief       Override of method @p xsnor_device_start_erase_sector().
+ * @brief       Override of method @p __flash_start_erase_sector().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
@@ -874,6 +890,9 @@ flash_error_t __mx25_start_erase_all_impl(void *ip) {
 flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
   flash_offset_t offset = (flash_offset_t)(sector * self->descriptor.sectors_size);
+  flash_error_t err = FLASH_NO_ERROR;
+
+  __xsnor_bus_acquire(self);
 
   /* Command depends on bus mode.*/
   switch (xsnorcfg->bus_type) {
@@ -909,14 +928,17 @@ flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector) {
     break;
   default:
     osalDbgAssert(false, "invalid bus type");
-    return FLASH_ERROR_HW_FAILURE;
+    err = FLASH_ERROR_HW_FAILURE;
+    break;
   }
 
-  return FLASH_NO_ERROR;
+  __xsnor_bus_release(self);
+
+  return err;
 }
 
 /**
- * @brief       Override of method @p xsnor_device_query_erase().
+ * @brief       Override of method @p __flash_query_erase().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
@@ -927,6 +949,9 @@ flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector) {
  */
 flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
+  flash_error_t err = FLASH_NO_ERROR;
+
+  __xsnor_bus_acquire(self);
 
   /* Command depends on bus mode.*/
   switch (xsnorcfg->bus_type) {
@@ -952,13 +977,15 @@ flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec) {
     break;
   default:
     osalDbgAssert(false, "invalid bus type");
-    return FLASH_ERROR_HW_FAILURE;
+    err = FLASH_ERROR_HW_FAILURE;
+    break;
   }
 
   /* If the WIP bit is one (busy) or the flash in a suspended state then
      report that the operation is still in progress.*/
-  if (((xsnorcfg->buffers->databuf[0] & 1) != 0U) ||
-      ((xsnorcfg->buffers->databuf[16] & 8) != 0U)) {
+  if ((err == FLASH_NO_ERROR) &&
+      (((xsnorcfg->buffers->databuf[0] & 1) != 0U) ||
+       ((xsnorcfg->buffers->databuf[16] & 8) != 0U))) {
 
     /* Recommended time before polling again, this is a simplified
        implementation.*/
@@ -966,21 +993,24 @@ flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec) {
       *msec = 1U;
     }
 
-    return FLASH_BUSY_ERASING;
+    err = FLASH_BUSY_ERASING;
   }
 
   /* Checking for errors.*/
-  if ((xsnorcfg->buffers->databuf[16] & FLAGS_ALL_ERRORS) != 0U) {
+  if ((err == FLASH_NO_ERROR) &&
+      ((xsnorcfg->buffers->databuf[16] & FLAGS_ALL_ERRORS) != 0U)) {
 
     /* Erase operation failed.*/
-    return FLASH_ERROR_ERASE;
+    err = FLASH_ERROR_ERASE;
   }
 
-  return FLASH_NO_ERROR;
+  __xsnor_bus_release(self);
+
+  return err;
 }
 
 /**
- * @brief       Override of method @p xsnor_device_verify_erase().
+ * @brief       Override of method @p __flash_verify_erase().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
@@ -997,9 +1027,13 @@ flash_error_t __mx25_verify_erase_impl(void *ip, flash_sector_t sector) {
   n = self->descriptor.sectors_size;
   while (n > 0U) {
     uint8_t *p;
+    flash_error_t err;
 
-   __mx25_read_impl(self, offset,
-                    XSNOR_BUFFER_SIZE, &xsnorcfg->buffers->databuf[0]);
+    err = __mx25_read_impl(self, offset,
+                           XSNOR_BUFFER_SIZE, &xsnorcfg->buffers->databuf[0]);
+    if (err != FLASH_NO_ERROR) {
+      return err;
+    }
 
     /* Checking for erased state of current buffer.*/
     for (p = &xsnorcfg->buffers->databuf[0];
@@ -1116,14 +1150,14 @@ const struct hal_xsnor_macronix_mx25_vmt __hal_xsnor_macronix_mx25_vmt = {
   .stop                     = __xsnor_stop_impl,
   .setcfg                   = __xsnor_setcfg_impl,
   .selcfg                   = __xsnor_selcfg_impl,
-  .synchronize              = __drv_synchronize_impl,
-  .init                     = __mx25_init_impl,
+  .synchronize              = __xsnor_synchronize_impl,
   .read                     = __mx25_read_impl,
   .program                  = __mx25_program_impl,
   .start_erase_all          = __mx25_start_erase_all_impl,
   .start_erase_sector       = __mx25_start_erase_sector_impl,
   .query_erase              = __mx25_query_erase_impl,
   .verify_erase             = __mx25_verify_erase_impl,
+  .init                     = __mx25_init_impl,
   .mmap_on                  = __mx25_mmap_on_impl,
   .mmap_off                 = __mx25_mmap_off_impl
 };
