@@ -366,7 +366,8 @@ static void n25q_activate_xip(hal_xsnor_micron_n25q_c *self) {
                        1, &xsnorcfg->buffers->databuf[0]);
 }
 
-static void n25q_reset_xip(hal_xsnor_micron_n25q_c *self) {
+static void n25q_reset_xip_mode(hal_xsnor_micron_n25q_c *self,
+                                uint32_t iolines_cfg) {
   wspi_command_t cmd;
 
   /* Resetting XIP mode by reading one byte without XIP confirmation bit.
@@ -379,54 +380,35 @@ static void n25q_reset_xip(hal_xsnor_micron_n25q_c *self) {
   cmd.cfg   = WSPI_CFG_CMD_MODE_NONE |
               WSPI_CFG_ADDR_SIZE_24 |
               WSPI_CFG_ALT_MODE_FOUR_LINES |  /* Always 4 lines, note.*/
-              WSPI_CFG_ALT_SIZE_8;
-
-  /* Variant part of the command configuration.*/
-  switch (xsnorcfg->bus_type) {
-  case XSNOR_BUS_MODE_WSPI_1LINE:
-    cmd.cfg |= WSPI_CFG_ADDR_MODE_ONE_LINE | WSPI_CFG_DATA_MODE_ONE_LINE;
-    break;
-  case XSNOR_BUS_MODE_WSPI_2LINES:
-    cmd.cfg |= WSPI_CFG_ADDR_MODE_TWO_LINES | WSPI_CFG_DATA_MODE_TWO_LINES;
-    break;
-  case XSNOR_BUS_MODE_WSPI_4LINES:
-    cmd.cfg |= WSPI_CFG_ADDR_MODE_FOUR_LINES | WSPI_CFG_DATA_MODE_FOUR_LINES;
-    break;
-  default:
-    osalDbgAssert(false, "invalid bus type");
-  }
+              WSPI_CFG_ALT_SIZE_8 |
+              iolines_cfg;
 
   /* Resetting XIP.*/
   wspiReceive(xsnorcfg->bus.wspi.drv, &cmd,
               1, &xsnorcfg->buffers->databuf[0]);
+}
 
-  /* Enabling write operation.*/
-  __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
+static void n25q_reset_xip(hal_xsnor_micron_n25q_c *self) {
 
-  /* Configuration to be written.*/
-  xsnorcfg->buffers->databuf[0] = ((xsnorcfg->options & N25Q_OPT_DUMMY_CYCLES_MASK) << 4U) | 0x0FU;
-
-  /* Rewriting volatile configuration register.*/
-  __xsnor_bus_cmd_send(self, CMD_WRITE_V_CONF_REGISTER,
-                       1, &xsnorcfg->buffers->databuf[0]);
+  /* The current bus width is not known at this point, try all XIP exit forms
+     using explicit commands instead of the target-mode command table.*/
+  n25q_reset_xip_mode(self, WSPI_CFG_ADDR_MODE_FOUR_LINES |
+                            WSPI_CFG_DATA_MODE_FOUR_LINES);
+  n25q_reset_xip_mode(self, WSPI_CFG_ADDR_MODE_TWO_LINES |
+                            WSPI_CFG_DATA_MODE_TWO_LINES);
+  n25q_reset_xip_mode(self, WSPI_CFG_ADDR_MODE_ONE_LINE |
+                            WSPI_CFG_DATA_MODE_ONE_LINE);
 }
 
 static void n25q_reset_memory(hal_xsnor_micron_n25q_c *self) {
 
-  /* If the device is in one bit mode then the following commands are
-     rejected because shorter than 8 bits. If the device is in multiple
-     bits mode then the commands are accepted and the device is reset to
-     one bit mode.*/
-  if (xsnorcfg->bus_type == XSNOR_BUS_MODE_WSPI_4LINES) {
-
-    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_4);
-    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_4);
-  }
-  else if (xsnorcfg->bus_type == XSNOR_BUS_MODE_WSPI_2LINES) {
-
-    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_2);
-    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_2);
-  }
+  /* The current bus width is not known. Wrong-width reset frames are expected
+     to be ignored by the device, so try the multi-line reset forms first and
+     finish with the one-line reset that should always be valid after recovery.*/
+  wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_4);
+  wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_4);
+  wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_2);
+  wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_2);
 
   /* Now the device should be in one bit mode for sure and we perform a
      device reset.*/
@@ -728,7 +710,9 @@ flash_error_t __n25q_init_impl(void *ip) {
       wspiSend(config->bus.wspi.drv, &cmd,
                1, &config->buffers->databuf[0]);
 
-    /* Dummy cycles configuration.*/
+    /* Dummy cycles configuration, intentionally done only after reset/probe.
+       XIP reset above only exits XIP mode; rewriting V_CONF earlier would use
+       target-mode commands before the current device mode is known.*/
     __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
     config->buffers->databuf[0] = ((config->options & N25Q_OPT_DUMMY_CYCLES_MASK) << 4U) | 0x0FU;
     __xsnor_bus_cmd_send(self, CMD_WRITE_V_CONF_REGISTER,

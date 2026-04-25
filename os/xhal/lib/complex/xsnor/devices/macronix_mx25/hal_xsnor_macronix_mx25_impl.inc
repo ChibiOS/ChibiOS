@@ -394,18 +394,14 @@ static void mx25_reset_memory_spi(hal_xsnor_macronix_mx25_c *self) {
 #if (XSNOR_USE_WSPI == TRUE) || defined(__DOXYGEN__)
 static void mx25_reset_memory(hal_xsnor_macronix_mx25_c *self) {
 
-  /* If the device is in one bit mode then the following commands are
-     rejected because shorter than 8 bits. If the device is in multiple
-     bits mode then the commands are accepted and the device is reset to
-     one bit mode.*/
-  if ((xsnorcfg->options & MX25_OPT_USE_DTR) != 0U) {
-    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_8dtr);
-    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_8dtr);
-  }
-  else {
-    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_8str);
-    wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_8str);
-  }
+  /* If the device is in OPI mode then one of the two OPI reset forms is
+     accepted regardless of the requested final mode. In one-bit mode the OPI
+     command bit patterns also form valid SPI reset sequences, so all reset
+     forms are safe regardless of the device initial mode.*/
+  wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_8dtr);
+  wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_8dtr);
+  wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_8str);
+  wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_8str);
 
   /* Now the device should be in one bit mode for sure and we perform a
      device reset.*/
