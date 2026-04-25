@@ -378,6 +378,9 @@ static inline bool mx25_spi_4bytes(const hal_xsnor_macronix_mx25_c *self) {
 #if (XSNOR_USE_SPI == TRUE) || defined(__DOXYGEN__)
 static void mx25_reset_memory_spi(hal_xsnor_macronix_mx25_c *self) {
 
+  /* This reset sequence is only useful once the device is already reachable
+     through SPI. It cannot recover a device left in OPI mode by a previous
+     boot; the WSPI path handles that case with OPI reset commands first.*/
   __xsnor_bus_cmd(self, CMD_SPI_RSTEN);
   __xsnor_bus_cmd(self, CMD_SPI_RST);
 
@@ -395,7 +398,7 @@ static void mx25_reset_memory(hal_xsnor_macronix_mx25_c *self) {
      rejected because shorter than 8 bits. If the device is in multiple
      bits mode then the commands are accepted and the device is reset to
      one bit mode.*/
-  if ((xsnorcfg->options &MX25_OPT_USE_DTR) != 0U) {
+  if ((xsnorcfg->options & MX25_OPT_USE_DTR) != 0U) {
     wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_8dtr);
     wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_8dtr);
   }
@@ -523,6 +526,42 @@ static void mx25_write_cr2(hal_xsnor_macronix_mx25_c *self,
 }
 #endif /* XSNOR_USE_WSPI == TRUE */
 
+/* Caller must hold the bus and have selected the bus configuration. */
+static flash_error_t mx25_read_unlocked(hal_xsnor_macronix_mx25_c *self,
+                                        flash_offset_t offset, size_t n,
+                                        uint8_t *rp) {
+  flash_error_t err = FLASH_NO_ERROR;
+
+  /* Command depends on bus mode.*/
+  switch (xsnorcfg->bus_type) {
+  case XSNOR_BUS_MODE_SPI:
+    __xsnor_bus_cmd_addr_dummy_receive(self,
+                                       mx25_spi_4bytes(self) ?
+                                       CMD_SPI_FAST_READ4B : CMD_SPI_FAST_READ3B,
+                                       offset, 8U,   /* Always 8 dummies. */
+                                       n, rp);
+    break;
+  case XSNOR_BUS_MODE_WSPI_8LINES:
+    if ((xsnorcfg->options & MX25_OPT_USE_DTR) != 0U) {
+      __xsnor_bus_cmd_addr_dummy_receive(self, CMD_OPI_8DTRD, offset,
+                                         xsnorcfg->options & MX25_OPT_DUMMY_CYCLES_MASK,
+                                         n, rp);
+    }
+    else {
+      __xsnor_bus_cmd_addr_dummy_receive(self, CMD_OPI_8READ, offset,
+                                         xsnorcfg->options & MX25_OPT_DUMMY_CYCLES_MASK,
+                                         n, rp);
+    }
+    break;
+  default:
+    osalDbgAssert(false, "invalid bus type");
+    err = FLASH_ERROR_HW_FAILURE;
+    break;
+  }
+
+  return err;
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -617,6 +656,7 @@ const void *__mx25_setcfg_impl(void *ip, const void *config) {
 flash_error_t __mx25_init_impl(void *ip) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
   const xsnor_config_t *config = self->config;
+  const uint8_t *idp = &config->buffers->databuf[0];
 
   /* Bus type and width setup, only necessary if WSPI is in use.*/
 #if XSNOR_USE_WSPI == TRUE
@@ -625,7 +665,7 @@ flash_error_t __mx25_init_impl(void *ip) {
     self->commands = NULL;
     break;
   case XSNOR_BUS_MODE_WSPI_8LINES:
-    if ((xsnorcfg->options &MX25_OPT_USE_DTR) != 0U) {
+    if ((xsnorcfg->options & MX25_OPT_USE_DTR) != 0U) {
       self->commands = &cmd_8dtr;
     }
     else {
@@ -740,6 +780,8 @@ flash_error_t __mx25_init_impl(void *ip) {
                  &config->buffers->databuf[16], 3) != 0U) {
         return FLASH_ERROR_HW_FAILURE;
       }
+
+      idp = &config->buffers->databuf[16];
     }
   }
 #endif /* XSNOR_USE_WSPI == TRUE */
@@ -751,7 +793,7 @@ flash_error_t __mx25_init_impl(void *ip) {
   else {
     self->descriptor.sectors_size = 0x00010000U;
   }
-  self->descriptor.size = (uint32_t)(1U << ((size_t)config->buffers->databuf[2] & 0x1FU));
+  self->descriptor.size = (uint32_t)(1U << ((size_t)idp[2] & 0x1FU));
   self->descriptor.sectors_count = self->descriptor.size / self->descriptor.sectors_size;
 
   if (self->descriptor.size > 0x01000000U) {
@@ -779,36 +821,15 @@ flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
   flash_error_t err = FLASH_NO_ERROR;
 
-  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+  osalDbgAssert(self->state == FLASH_READ, "invalid state");
+
+  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_select(self) != HAL_RET_SUCCESS) {
+    __xsnor_bus_release(self);
     return FLASH_ERROR_HW_FAILURE;
   }
 
-  /* Command depends on bus mode.*/
-  switch (xsnorcfg->bus_type) {
-  case XSNOR_BUS_MODE_SPI:
-    __xsnor_bus_cmd_addr_dummy_receive(self,
-                                       mx25_spi_4bytes(self) ?
-                                       CMD_SPI_FAST_READ4B : CMD_SPI_FAST_READ3B,
-                                       offset, 8U,   /* Always 8 dummies. */
-                                       n, rp);
-    break;
-  case XSNOR_BUS_MODE_WSPI_8LINES:
-    if ((xsnorcfg->options & MX25_OPT_USE_DTR) != 0U) {
-      __xsnor_bus_cmd_addr_dummy_receive(self, CMD_OPI_8DTRD, offset,
-                                         xsnorcfg->options & MX25_OPT_DUMMY_CYCLES_MASK,
-                                         n, rp);
-    }
-    else {
-      __xsnor_bus_cmd_addr_dummy_receive(self, CMD_OPI_8READ, offset,
-                                         xsnorcfg->options & MX25_OPT_DUMMY_CYCLES_MASK,
-                                         n, rp);
-    }
-    break;
-  default:
-    osalDbgAssert(false, "invalid bus type");
-    err = FLASH_ERROR_HW_FAILURE;
-    break;
-  }
+  err = mx25_read_unlocked(self, offset, n, rp);
 
   __xsnor_bus_release(self);
 
@@ -830,7 +851,11 @@ flash_error_t __mx25_program_impl(void *ip, flash_offset_t offset, size_t n,
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
   flash_error_t err = FLASH_NO_ERROR;
 
-  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+  osalDbgAssert(self->state == FLASH_PGM, "invalid state");
+
+  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_select(self) != HAL_RET_SUCCESS) {
+    __xsnor_bus_release(self);
     return FLASH_ERROR_HW_FAILURE;
   }
 
@@ -897,7 +922,11 @@ flash_error_t __mx25_start_erase_all_impl(void *ip) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
   flash_error_t err = FLASH_NO_ERROR;
 
-  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+  osalDbgAssert(self->state == FLASH_ERASE, "invalid state");
+
+  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_select(self) != HAL_RET_SUCCESS) {
+    __xsnor_bus_release(self);
     return FLASH_ERROR_HW_FAILURE;
   }
 
@@ -941,7 +970,11 @@ flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector) {
   flash_offset_t offset = (flash_offset_t)(sector * self->descriptor.sectors_size);
   flash_error_t err = FLASH_NO_ERROR;
 
-  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+  osalDbgAssert(self->state == FLASH_ERASE, "invalid state");
+
+  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_select(self) != HAL_RET_SUCCESS) {
+    __xsnor_bus_release(self);
     return FLASH_ERROR_HW_FAILURE;
   }
 
@@ -1002,7 +1035,11 @@ flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
   flash_error_t err = FLASH_NO_ERROR;
 
-  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+  osalDbgAssert(self->state == FLASH_ERASE, "invalid state");
+
+  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_select(self) != HAL_RET_SUCCESS) {
+    __xsnor_bus_release(self);
     return FLASH_ERROR_HW_FAILURE;
   }
 
@@ -1074,35 +1111,52 @@ flash_error_t __mx25_verify_erase_impl(void *ip, flash_sector_t sector) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
   flash_offset_t offset;
   size_t n;
+  flash_error_t err = FLASH_NO_ERROR;
+
+  osalDbgAssert(self->state == FLASH_READ, "invalid state");
 
   /* Read command.*/
   offset = (flash_offset_t)(sector * self->descriptor.sectors_size);
   n = self->descriptor.sectors_size;
-  while (n > 0U) {
-    uint8_t *p;
-    flash_error_t err;
 
-    err = __mx25_read_impl(self, offset,
-                           XSNOR_BUFFER_SIZE, &xsnorcfg->buffers->databuf[0]);
+  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_select(self) != HAL_RET_SUCCESS) {
+    __xsnor_bus_release(self);
+    return FLASH_ERROR_HW_FAILURE;
+  }
+
+  while ((n > 0U) && (err == FLASH_NO_ERROR)) {
+    uint8_t *p;
+    size_t chunk;
+
+    chunk = n;
+    if (chunk > XSNOR_BUFFER_SIZE) {
+      chunk = XSNOR_BUFFER_SIZE;
+    }
+
+    err = mx25_read_unlocked(self, offset, chunk, &xsnorcfg->buffers->databuf[0]);
     if (err != FLASH_NO_ERROR) {
-      return err;
+      break;
     }
 
     /* Checking for erased state of current buffer.*/
     for (p = &xsnorcfg->buffers->databuf[0];
-         p < &xsnorcfg->buffers->databuf[XSNOR_BUFFER_SIZE];
+         p < &xsnorcfg->buffers->databuf[chunk];
          p++) {
 
       if (*p != 0xFFU) {
-        return FLASH_ERROR_VERIFY;
+        err = FLASH_ERROR_VERIFY;
+        break;
       }
     }
 
-    offset += XSNOR_BUFFER_SIZE;
-    n -= XSNOR_BUFFER_SIZE;
+    offset += chunk;
+    n -= chunk;
   }
 
-  return FLASH_NO_ERROR;
+  __xsnor_bus_release(self);
+
+  return err;
 }
 
 /**

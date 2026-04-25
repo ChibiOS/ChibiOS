@@ -63,7 +63,11 @@
         <group description="Bus mutex macros when sharing is disabled">
           <macro name="__xsnor_bus_acquire">
             <param name="self"></param>
-            <implementation>HAL_RET_SUCCESS</implementation>
+            <implementation></implementation>
+          </macro>
+          <macro name="__xsnor_bus_select">
+            <param name="self"></param>
+            <implementation>((void)(self), HAL_RET_SUCCESS)</implementation>
           </macro>
           <macro name="__xsnor_bus_release">
             <param name="self"></param>
@@ -242,11 +246,15 @@ else {
               </method>
             </condition>
             <condition check="XSNOR_SHARED_BUS == TRUE">
-              <method name="__xsnor_bus_acquire" ctype="msg_t">
+              <method name="__xsnor_bus_acquire" ctype="void">
                 <brief>Bus acquisition and lock.</brief>
                 <implementation><![CDATA[
 const xsnor_config_t *config = self->config;
-msg_t msg = HAL_RET_SUCCESS;
+
+#if HAL_USE_MUTUAL_EXCLUSION != TRUE
+(void)self;
+(void)config;
+#endif
 
 #if XSNOR_USE_BOTH == TRUE
 if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -255,18 +263,6 @@ if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #if HAL_USE_MUTUAL_EXCLUSION == TRUE
   drvLock(config->bus.wspi.drv);
 #endif
-  if (drvGetStateX(config->bus.wspi.drv) == HAL_DRV_STATE_STOP) {
-    msg = drvStart(config->bus.wspi.drv, config->bus.wspi.cfg);
-  }
-  else if (config->bus.wspi.cfg != config->bus.wspi.drv->config) {
-    msg = drvSetCfgX(config->bus.wspi.drv, config->bus.wspi.cfg);
-  }
-  if (msg != HAL_RET_SUCCESS) {
-#if HAL_USE_MUTUAL_EXCLUSION == TRUE
-    drvUnlock(config->bus.wspi.drv);
-#endif
-    return msg;
-  }
 #endif
 #if XSNOR_USE_BOTH == TRUE
 }
@@ -276,18 +272,39 @@ else {
 #if HAL_USE_MUTUAL_EXCLUSION == TRUE
   drvLock(config->bus.spi.drv);
 #endif
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+#endif]]></implementation>
+              </method>
+              <method name="__xsnor_bus_select" ctype="msg_t">
+                <brief>Bus selection and configuration.</brief>
+                <implementation><![CDATA[
+const xsnor_config_t *config = self->config;
+msg_t msg = HAL_RET_SUCCESS;
+
+#if XSNOR_USE_BOTH == TRUE
+if (config->bus_type != XSNOR_BUS_MODE_SPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  if (drvGetStateX(config->bus.wspi.drv) == HAL_DRV_STATE_STOP) {
+    msg = drvStart(config->bus.wspi.drv, config->bus.wspi.cfg);
+  }
+  else if (config->bus.wspi.cfg != config->bus.wspi.drv->config) {
+    msg = drvSetCfgX(config->bus.wspi.drv, config->bus.wspi.cfg);
+  }
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+else {
+#endif
+#if XSNOR_USE_SPI == TRUE
   if (drvGetStateX(config->bus.spi.drv) == HAL_DRV_STATE_STOP) {
     msg = drvStart(config->bus.spi.drv, config->bus.spi.cfg);
   }
   else if (config->bus.spi.cfg !=
            (const hal_spi_config_t *)config->bus.spi.drv->config) {
     msg = drvSetCfgX(config->bus.spi.drv, config->bus.spi.cfg);
-  }
-  if (msg != HAL_RET_SUCCESS) {
-#if HAL_USE_MUTUAL_EXCLUSION == TRUE
-    drvUnlock(config->bus.spi.drv);
-#endif
-    return msg;
   }
 #endif
 #if XSNOR_USE_BOTH == TRUE
@@ -643,7 +660,9 @@ flash_error_t err;
 osalDbgCheck((self != NULL) &amp;&amp; (addrp != NULL));
 osalDbgAssert(self->state == HAL_DRV_STATE_READY, "invalid state");
 
-if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+__xsnor_bus_acquire(self);
+if (__xsnor_bus_select(self) != HAL_RET_SUCCESS) {
+  __xsnor_bus_release(self);
   return FLASH_ERROR_HW_FAILURE;
 }
 
@@ -690,8 +709,10 @@ if (xcfg == NULL) {
   return HAL_RET_CONFIG_ERROR;
 }
 
-/* Bus acquisition.*/
-if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+/* Bus acquisition and selection.*/
+__xsnor_bus_acquire(self);
+if (__xsnor_bus_select(self) != HAL_RET_SUCCESS) {
+  __xsnor_bus_release(self);
   self->config = NULL;
   return HAL_RET_HW_FAILURE;
 }
@@ -766,8 +787,10 @@ if (config == NULL) {
   return;
 }
 
-/* Bus acquisition.*/
-if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+/* Bus acquisition and selection.*/
+__xsnor_bus_acquire(self);
+if (__xsnor_bus_select(self) != HAL_RET_SUCCESS) {
+  __xsnor_bus_release(self);
   return;
 }
 

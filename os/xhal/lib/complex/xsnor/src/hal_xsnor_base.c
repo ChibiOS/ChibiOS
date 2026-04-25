@@ -126,8 +126,10 @@ msg_t __xsnor_start_impl(void *ip, const void *config) {
     return HAL_RET_CONFIG_ERROR;
   }
 
-  /* Bus acquisition.*/
-  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+  /* Bus acquisition and selection.*/
+  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_select(self) != HAL_RET_SUCCESS) {
+    __xsnor_bus_release(self);
     self->config = NULL;
     return HAL_RET_HW_FAILURE;
   }
@@ -208,8 +210,10 @@ void __xsnor_stop_impl(void *ip) {
     return;
   }
 
-  /* Bus acquisition.*/
-  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+  /* Bus acquisition and selection.*/
+  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_select(self) != HAL_RET_SUCCESS) {
+    __xsnor_bus_release(self);
     return;
   }
 
@@ -365,10 +369,14 @@ void __xsnor_spi_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset) {
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  */
-msg_t __xsnor_bus_acquire(void *ip) {
+void __xsnor_bus_acquire(void *ip) {
   hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
   const xsnor_config_t *config = self->config;
-  msg_t msg = HAL_RET_SUCCESS;
+
+#if HAL_USE_MUTUAL_EXCLUSION != TRUE
+  (void)self;
+  (void)config;
+#endif
 
 #if XSNOR_USE_BOTH == TRUE
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -377,18 +385,6 @@ msg_t __xsnor_bus_acquire(void *ip) {
 #if HAL_USE_MUTUAL_EXCLUSION == TRUE
     drvLock(config->bus.wspi.drv);
 #endif
-    if (drvGetStateX(config->bus.wspi.drv) == HAL_DRV_STATE_STOP) {
-      msg = drvStart(config->bus.wspi.drv, config->bus.wspi.cfg);
-    }
-    else if (config->bus.wspi.cfg != config->bus.wspi.drv->config) {
-      msg = drvSetCfgX(config->bus.wspi.drv, config->bus.wspi.cfg);
-    }
-    if (msg != HAL_RET_SUCCESS) {
-#if HAL_USE_MUTUAL_EXCLUSION == TRUE
-      drvUnlock(config->bus.wspi.drv);
-#endif
-      return msg;
-    }
 #endif
 #if XSNOR_USE_BOTH == TRUE
   }
@@ -398,18 +394,44 @@ msg_t __xsnor_bus_acquire(void *ip) {
 #if HAL_USE_MUTUAL_EXCLUSION == TRUE
     drvLock(config->bus.spi.drv);
 #endif
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+#endif
+}
+
+/**
+ * @brief       Bus selection and configuration.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
+ */
+msg_t __xsnor_bus_select(void *ip) {
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  const xsnor_config_t *config = self->config;
+  msg_t msg = HAL_RET_SUCCESS;
+
+#if XSNOR_USE_BOTH == TRUE
+  if (config->bus_type != XSNOR_BUS_MODE_SPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+    if (drvGetStateX(config->bus.wspi.drv) == HAL_DRV_STATE_STOP) {
+      msg = drvStart(config->bus.wspi.drv, config->bus.wspi.cfg);
+    }
+    else if (config->bus.wspi.cfg != config->bus.wspi.drv->config) {
+      msg = drvSetCfgX(config->bus.wspi.drv, config->bus.wspi.cfg);
+    }
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+  else {
+#endif
+#if XSNOR_USE_SPI == TRUE
     if (drvGetStateX(config->bus.spi.drv) == HAL_DRV_STATE_STOP) {
       msg = drvStart(config->bus.spi.drv, config->bus.spi.cfg);
     }
     else if (config->bus.spi.cfg !=
              (const hal_spi_config_t *)config->bus.spi.drv->config) {
       msg = drvSetCfgX(config->bus.spi.drv, config->bus.spi.cfg);
-    }
-    if (msg != HAL_RET_SUCCESS) {
-#if HAL_USE_MUTUAL_EXCLUSION == TRUE
-      drvUnlock(config->bus.spi.drv);
-#endif
-      return msg;
     }
 #endif
 #if XSNOR_USE_BOTH == TRUE
@@ -823,7 +845,9 @@ flash_error_t xsnorMemoryMap(void *ip, uint8_t **addrp) {
   osalDbgCheck((self != NULL) && (addrp != NULL));
   osalDbgAssert(self->state == HAL_DRV_STATE_READY, "invalid state");
 
-  if (__xsnor_bus_acquire(self) != HAL_RET_SUCCESS) {
+  __xsnor_bus_acquire(self);
+  if (__xsnor_bus_select(self) != HAL_RET_SUCCESS) {
+    __xsnor_bus_release(self);
     return FLASH_ERROR_HW_FAILURE;
   }
 

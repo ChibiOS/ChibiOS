@@ -135,8 +135,9 @@
  * @name    Bus mutex macros when sharing is disabled
  * @{
  */
-#define __xsnor_bus_acquire(self)                                           \
-  HAL_RET_SUCCESS
+#define __xsnor_bus_acquire(self)
+#define __xsnor_bus_select(self)                                            \
+  ((void)(self), HAL_RET_SUCCESS)
 #define __xsnor_bus_release(self)
 /** @} */
 #endif /* XSNOR_SHARED_BUS == FALSE */
@@ -388,7 +389,8 @@ extern "C" {
   void __xsnor_spi_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset);
 #endif /* XSNOR_USE_SPI == TRUE */
 #if (XSNOR_SHARED_BUS == TRUE) || defined (__DOXYGEN__)
-  msg_t __xsnor_bus_acquire(void *ip);
+  void __xsnor_bus_acquire(void *ip);
+  msg_t __xsnor_bus_select(void *ip);
   void __xsnor_bus_release(void *ip);
 #endif /* XSNOR_SHARED_BUS == TRUE */
   void __xsnor_bus_cmd(void *ip, uint32_t cmd);
