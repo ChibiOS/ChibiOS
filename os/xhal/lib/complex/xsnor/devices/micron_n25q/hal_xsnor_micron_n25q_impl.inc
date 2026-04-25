@@ -314,17 +314,6 @@ static const uint8_t n25q_memory_type_ids[] = {0xBA, 0xBB};
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static bool n25q_find_id(const uint8_t *set, size_t size, uint8_t element) {
-  size_t i;
-
-  for (i = 0; i < size; i++) {
-    if (set[i] == element) {
-      return true;
-    }
-  }
-  return false;
-}
-
 static flash_error_t n25q_poll_status(hal_xsnor_micron_n25q_c *self) {
 
   do {
@@ -631,16 +620,16 @@ flash_error_t __n25q_init_impl(void *ip) {
                             3U, &config->buffers->databuf[0]);
 
     /* Manufacturer identifier.*/
-    if (!n25q_find_id(n25q_manufacturer_ids,
-                      sizeof n25q_manufacturer_ids,
-                      config->buffers->databuf[0])) {
+    if (!__xsnor_find_id(n25q_manufacturer_ids,
+                         sizeof n25q_manufacturer_ids,
+                         config->buffers->databuf[0])) {
       return FLASH_ERROR_HW_FAILURE;
     }
 
     /* Memory identifier.*/
-    if (!n25q_find_id(n25q_memory_type_ids,
-                      sizeof n25q_memory_type_ids,
-                      config->buffers->databuf[1])) {
+    if (!__xsnor_find_id(n25q_memory_type_ids,
+                         sizeof n25q_memory_type_ids,
+                         config->buffers->databuf[1])) {
       return FLASH_ERROR_HW_FAILURE;
     }
   }
@@ -662,16 +651,16 @@ flash_error_t __n25q_init_impl(void *ip) {
     n25q_read_id(self, &config->buffers->databuf[0]);
 
     /* Manufacturer identifier.*/
-    if (!n25q_find_id(n25q_manufacturer_ids,
-                      sizeof n25q_manufacturer_ids,
-                      config->buffers->databuf[0])) {
+    if (!__xsnor_find_id(n25q_manufacturer_ids,
+                         sizeof n25q_manufacturer_ids,
+                         config->buffers->databuf[0])) {
       return FLASH_ERROR_HW_FAILURE;
     }
 
     /* Memory identifier.*/
-    if (!n25q_find_id(n25q_memory_type_ids,
-                      sizeof n25q_memory_type_ids,
-                      config->buffers->databuf[1])) {
+    if (!__xsnor_find_id(n25q_memory_type_ids,
+                         sizeof n25q_memory_type_ids,
+                         config->buffers->databuf[1])) {
       return FLASH_ERROR_HW_FAILURE;
     }
 
@@ -710,29 +699,30 @@ flash_error_t __n25q_init_impl(void *ip) {
       wspiSend(config->bus.wspi.drv, &cmd,
                1, &config->buffers->databuf[0]);
 
-    /* Dummy cycles configuration, intentionally done only after reset/probe.
-       XIP reset above only exits XIP mode; rewriting V_CONF earlier would use
-       target-mode commands before the current device mode is known.*/
-    __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
-    config->buffers->databuf[0] = ((config->options & N25Q_OPT_DUMMY_CYCLES_MASK) << 4U) | 0x0FU;
-    __xsnor_bus_cmd_send(self, CMD_WRITE_V_CONF_REGISTER,
-                         1, &config->buffers->databuf[0]);
+      /* Dummy cycles configuration, intentionally done only after reset/probe.
+         XIP reset above only exits XIP mode; rewriting V_CONF earlier would
+         use target-mode commands before the current device mode is known.*/
+      __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
+      config->buffers->databuf[0] =
+        ((config->options & N25Q_OPT_DUMMY_CYCLES_MASK) << 4U) | 0x0FU;
+      __xsnor_bus_cmd_send(self, CMD_WRITE_V_CONF_REGISTER,
+                           1, &config->buffers->databuf[0]);
 
       /* Reading again the memory ID using final settings for confirmation that
          bus switch actually occurred.*/
       __xsnor_bus_cmd_receive(self, CMD_MULTIPLE_IO_READ_ID, 3U, &config->buffers->databuf[0]);
 
       /* Manufacturer identifier.*/
-      if (!n25q_find_id(n25q_manufacturer_ids,
-                        sizeof n25q_manufacturer_ids,
-                        config->buffers->databuf[0])) {
+      if (!__xsnor_find_id(n25q_manufacturer_ids,
+                           sizeof n25q_manufacturer_ids,
+                           config->buffers->databuf[0])) {
         return FLASH_ERROR_HW_FAILURE;
       }
 
       /* Memory identifier.*/
-      if (!n25q_find_id(n25q_memory_type_ids,
-                        sizeof n25q_memory_type_ids,
-                        config->buffers->databuf[1])) {
+      if (!__xsnor_find_id(n25q_memory_type_ids,
+                           sizeof n25q_memory_type_ids,
+                           config->buffers->databuf[1])) {
         return FLASH_ERROR_HW_FAILURE;
       }
     }
@@ -1164,5 +1154,9 @@ const struct hal_xsnor_micron_n25q_vmt __hal_xsnor_micron_n25q_vmt = {
   .mmap_on                  = __n25q_mmap_on_impl,
   .mmap_off                 = __n25q_mmap_off_impl
 };
+
+#undef PAGE_SIZE
+#undef PAGE_MASK
+#undef xsnorcfg
 
 /** @} */

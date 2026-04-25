@@ -411,6 +411,7 @@ extern "C" {
   void xsnorMemoryUnmap(void *ip);
 #endif /* (XSNOR_USE_WSPI == TRUE) && defined(WSPI_SUPPORTS_MEMMAP) && (WSPI_SUPPORTS_MEMMAP == TRUE) */
   /* Regular functions.*/
+  bool __xsnor_find_id(const uint8_t *set, size_t size, uint8_t element);
 #ifdef __cplusplus
 }
 #endif

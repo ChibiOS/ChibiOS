@@ -884,7 +884,33 @@ return NULL;]]></implementation>
       
     </types>
     <variables></variables>
-    <functions></functions>
+    <functions>
+      <function name="__xsnor_find_id" ctype="bool">
+        <brief>Checks if an identifier is in a supported identifiers table.</brief>
+        <param name="set" ctype="const uint8_t *" dir="in">
+          Pointer to the identifiers table.
+        </param>
+        <param name="size" ctype="size_t" dir="in">
+          Number of elements in the identifiers table.
+        </param>
+        <param name="element" ctype="uint8_t" dir="in">
+          Identifier to be searched.
+        </param>
+        <return>The search result.</return>
+        <retval value="true">If the identifier is present.</retval>
+        <retval value="false">If the identifier is not present.</retval>
+        <implementation><![CDATA[
+size_t i;
+
+for (i = 0U; i < size; i++) {
+  if (set[i] == element) {
+    return true;
+  }
+}
+
+return false;]]></implementation>
+      </function>
+    </functions>
   </public>
   <private>
     <includes>

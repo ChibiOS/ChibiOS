@@ -321,17 +321,6 @@ static const uint8_t mx25_memory_type_ids[] = {0x85};
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static bool mx25_find_id(const uint8_t *set, size_t size, uint8_t element) {
-  size_t i;
-
-  for (i = 0; i < size; i++) {
-    if (set[i] == element) {
-      return true;
-    }
-  }
-  return false;
-}
-
 static flash_error_t mx25_poll_status(hal_xsnor_macronix_mx25_c *self) {
 
   do {
@@ -726,16 +715,16 @@ flash_error_t __mx25_init_impl(void *ip) {
                             3U, &config->buffers->databuf[0]);
 
     /* Manufacturer identifier.*/
-    if (!mx25_find_id(mx25_manufacturer_ids,
-                      sizeof mx25_manufacturer_ids,
-                      config->buffers->databuf[0])) {
+    if (!__xsnor_find_id(mx25_manufacturer_ids,
+                         sizeof mx25_manufacturer_ids,
+                         config->buffers->databuf[0])) {
       return FLASH_ERROR_HW_FAILURE;
     }
 
     /* Memory identifier.*/
-    if (!mx25_find_id(mx25_memory_type_ids,
-                      sizeof mx25_memory_type_ids,
-                      config->buffers->databuf[1])) {
+    if (!__xsnor_find_id(mx25_memory_type_ids,
+                         sizeof mx25_memory_type_ids,
+                         config->buffers->databuf[1])) {
       return FLASH_ERROR_HW_FAILURE;
     }
   }
@@ -753,16 +742,16 @@ flash_error_t __mx25_init_impl(void *ip) {
     mx25_read_id(self, &config->buffers->databuf[0]);
 
     /* Manufacturer identifier.*/
-    if (!mx25_find_id(mx25_manufacturer_ids,
-                      sizeof mx25_manufacturer_ids,
-                      config->buffers->databuf[0])) {
+    if (!__xsnor_find_id(mx25_manufacturer_ids,
+                         sizeof mx25_manufacturer_ids,
+                         config->buffers->databuf[0])) {
       return FLASH_ERROR_HW_FAILURE;
     }
 
     /* Memory identifier.*/
-    if (!mx25_find_id(mx25_memory_type_ids,
-                      sizeof mx25_memory_type_ids,
-                      config->buffers->databuf[1])) {
+    if (!__xsnor_find_id(mx25_memory_type_ids,
+                         sizeof mx25_memory_type_ids,
+                         config->buffers->databuf[1])) {
       return FLASH_ERROR_HW_FAILURE;
     }
 
@@ -1290,5 +1279,9 @@ const struct hal_xsnor_macronix_mx25_vmt __hal_xsnor_macronix_mx25_vmt = {
   .mmap_on                  = __mx25_mmap_on_impl,
   .mmap_off                 = __mx25_mmap_off_impl
 };
+
+#undef PAGE_SIZE
+#undef PAGE_MASK
+#undef xsnorcfg
 
 /** @} */

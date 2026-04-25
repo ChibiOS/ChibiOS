@@ -54,6 +54,28 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief       Checks if an identifier is in a supported identifiers table.
+ *
+ * @param[in]     set           Pointer to the identifiers table.
+ * @param[in]     size          Number of elements in the identifiers table.
+ * @param[in]     element       Identifier to be searched.
+ * @return                      The search result.
+ * @retval true                 If the identifier is present.
+ * @retval false                If the identifier is not present.
+ */
+bool __xsnor_find_id(const uint8_t *set, size_t size, uint8_t element) {
+  size_t i;
+
+  for (i = 0U; i < size; i++) {
+    if (set[i] == element) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 /*===========================================================================*/
 /* Module class "hal_xsnor_base_c" methods.                                  */
 /*===========================================================================*/
