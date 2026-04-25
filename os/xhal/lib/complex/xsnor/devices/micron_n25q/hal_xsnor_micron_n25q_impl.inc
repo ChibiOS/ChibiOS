@@ -548,17 +548,58 @@ void __n25q_dispose_impl(void *ip) {
 const void *__n25q_setcfg_impl(void *ip, const void *config) {
   hal_xsnor_micron_n25q_c *self = (hal_xsnor_micron_n25q_c *)ip;
   const xsnor_config_t *xcfg;
+  unsigned options;
 
   xcfg = (const xsnor_config_t *)__xsnor_setcfg_impl(self, config);
   if (xcfg == NULL) {
     return NULL;
   }
 
-#if XSNOR_USE_WSPI == TRUE
-  if ((xcfg->bus_type != XSNOR_BUS_MODE_SPI) &&
-      ((xcfg->options & N25Q_OPT_DUMMY_CYCLES_MASK) < 2U)) {
+  options = (unsigned)xcfg->options;
+
+  if ((options & ~(N25Q_OPT_DUMMY_CYCLES_MASK |
+                   N25Q_OPT_NO_WIDTH_SWITCH |
+                   N25Q_OPT_USE_SUBSECTORS |
+                   N25Q_OPT_NICE_WAITING)) != 0U) {
     return NULL;
   }
+
+#if XSNOR_USE_BOTH == TRUE
+  switch (xcfg->bus_type) {
+  case XSNOR_BUS_MODE_SPI:
+    if ((options & N25Q_OPT_NO_WIDTH_SWITCH) != 0U) {
+      return NULL;
+    }
+    break;
+  case XSNOR_BUS_MODE_WSPI_1LINE:
+  case XSNOR_BUS_MODE_WSPI_2LINES:
+  case XSNOR_BUS_MODE_WSPI_4LINES:
+    if ((options & N25Q_OPT_DUMMY_CYCLES_MASK) < 2U) {
+      return NULL;
+    }
+    break;
+  default:
+    return NULL;
+  }
+#else
+#if XSNOR_USE_SPI == TRUE
+  if ((options & N25Q_OPT_NO_WIDTH_SWITCH) != 0U) {
+    return NULL;
+  }
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  switch (xcfg->bus_type) {
+  case XSNOR_BUS_MODE_WSPI_1LINE:
+  case XSNOR_BUS_MODE_WSPI_2LINES:
+  case XSNOR_BUS_MODE_WSPI_4LINES:
+    if ((options & N25Q_OPT_DUMMY_CYCLES_MASK) < 2U) {
+      return NULL;
+    }
+    break;
+  default:
+    return NULL;
+  }
+#endif
 #endif
 
   return xcfg;

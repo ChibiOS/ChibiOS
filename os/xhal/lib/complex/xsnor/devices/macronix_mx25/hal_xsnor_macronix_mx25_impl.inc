@@ -630,17 +630,55 @@ void __mx25_dispose_impl(void *ip) {
 const void *__mx25_setcfg_impl(void *ip, const void *config) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
   const xsnor_config_t *xcfg;
+  unsigned options;
 
   xcfg = (const xsnor_config_t *)__xsnor_setcfg_impl(self, config);
   if (xcfg == NULL) {
     return NULL;
   }
 
-#if XSNOR_USE_WSPI == TRUE
-  if ((xcfg->bus_type != XSNOR_BUS_MODE_SPI) &&
-      ((xcfg->options & MX25_OPT_DUMMY_CYCLES_MASK) < 6U)) {
+  options = (unsigned)xcfg->options;
+
+  if ((options & ~(MX25_OPT_DUMMY_CYCLES_MASK |
+                   MX25_OPT_NO_WIDTH_SWITCH |
+                   MX25_OPT_USE_SUBSECTORS |
+                   MX25_OPT_NICE_WAITING |
+                   MX25_OPT_USE_DTR)) != 0U) {
     return NULL;
   }
+
+#if XSNOR_USE_BOTH == TRUE
+  switch (xcfg->bus_type) {
+  case XSNOR_BUS_MODE_SPI:
+    if ((options & (MX25_OPT_NO_WIDTH_SWITCH | MX25_OPT_USE_DTR)) != 0U) {
+      return NULL;
+    }
+    break;
+  case XSNOR_BUS_MODE_WSPI_8LINES:
+    if ((options & MX25_OPT_DUMMY_CYCLES_MASK) < 6U) {
+      return NULL;
+    }
+    break;
+  default:
+    return NULL;
+  }
+#else
+#if XSNOR_USE_SPI == TRUE
+  if ((options & (MX25_OPT_NO_WIDTH_SWITCH | MX25_OPT_USE_DTR)) != 0U) {
+    return NULL;
+  }
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  switch (xcfg->bus_type) {
+  case XSNOR_BUS_MODE_WSPI_8LINES:
+    if ((options & MX25_OPT_DUMMY_CYCLES_MASK) < 6U) {
+      return NULL;
+    }
+    break;
+  default:
+    return NULL;
+  }
+#endif
 #endif
 
   return xcfg;

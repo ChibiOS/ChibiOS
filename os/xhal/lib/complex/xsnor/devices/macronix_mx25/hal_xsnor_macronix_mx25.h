@@ -83,6 +83,7 @@
 
 /**
  * @brief       Enables DTR in 8 lines mode.
+ * @note        This option is only valid in WSPI 8-lines bus mode.
  */
 #define MX25_OPT_USE_DTR                    (1U << 7)
 /** @} */
