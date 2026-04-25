@@ -217,6 +217,11 @@
 #define STM32_DAC_DAC4_CH2_DMA_STREAM       STM32_DMA_STREAM_ID_ANY
 
 /*
+ * EFL driver system settings.
+ */
+#define STM32_FLASH_WAIT_TIME_MS            22
+
+/*
  * GPT driver system settings.
  */
 #define STM32_GPT_USE_TIM1                  FALSE
@@ -340,6 +345,21 @@
 #define STM32_RTC_PRESA_VALUE               32
 #define STM32_RTC_PRESS_VALUE               1024
 #define STM32_RTC_CR_INIT                   0U
+
+/*
+ * TRNG driver system settings.
+ */
+#define STM32_TRNG_USE_RNG1                 FALSE
+#define STM32_TRNG_ERROR_CLEAR_ATTEMPTS     1000
+#define STM32_TRNG_DATA_FETCH_ATTEMPTS      1000
+
+/*
+ * USB driver system settings.
+ */
+#define STM32_USB_USE_USB1                  FALSE
+#define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
+#define STM32_USB_USB1_HP_IRQ_PRIORITY      13
+#define STM32_USB_USB1_LP_IRQ_PRIORITY      14
 
 /*
  * WDG driver system settings.

@@ -357,12 +357,24 @@
 #define STM32_RTC_CR_INIT                   ${doc.STM32_RTC_CR_INIT!"0U"}
 
 /*
+ * TRNG driver system settings.
+ */
+#define STM32_TRNG_USE_RNG1                 ${doc.STM32_TRNG_USE_RNG1!"FALSE"}
+#define STM32_TRNG_ERROR_CLEAR_ATTEMPTS     ${doc.STM32_TRNG_ERROR_CLEAR_ATTEMPTS!"1000"}
+#define STM32_TRNG_DATA_FETCH_ATTEMPTS      ${doc.STM32_TRNG_DATA_FETCH_ATTEMPTS!"1000"}
+
+/*
  * USB driver system settings.
  */
 #define STM32_USB_USE_USB1                  ${doc.STM32_USB_USE_USB1!"FALSE"}
 #define STM32_USB_LOW_POWER_ON_SUSPEND      ${doc.STM32_USB_LOW_POWER_ON_SUSPEND!"FALSE"}
 #define STM32_USB_USB1_HP_IRQ_PRIORITY      ${doc.STM32_USB_USB1_HP_IRQ_PRIORITY!"13"}
 #define STM32_USB_USB1_LP_IRQ_PRIORITY      ${doc.STM32_USB_USB1_LP_IRQ_PRIORITY!"14"}
+
+/*
+ * WDG driver system settings.
+ */
+#define STM32_WDG_USE_IWDG                  ${doc.STM32_WDG_USE_IWDG!"FALSE"}
 
 /*
  * WSPI driver system settings.

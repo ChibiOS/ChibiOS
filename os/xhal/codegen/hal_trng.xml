@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_trng" descr="TRNG Driver" check="HAL_USE_TRNG == TRUE"
+  editcode="false">
+  <brief>TRNG Driver macros and structures.</brief>
+  <imports>
+    <import>hal_base_driver.xml</import>
+  </imports>
+  <public>
+    <includes_always>
+      <include style="regular">hal_base_driver.h</include>
+    </includes_always>
+    <types>
+      <typedef name="hal_trng_driver_c">
+        <brief>Type of structure representing a TRNG driver.</brief>
+        <basetype ctype="struct hal_trng_driver" />
+      </typedef>
+      <typedef name="hal_trng_config_t">
+        <brief>Type of structure representing a TRNG configuration.</brief>
+        <basetype ctype="struct hal_trng_config" />
+      </typedef>
+      <verbatim><![CDATA[
+typedef struct hal_trng_driver TRNGDriver;
+typedef struct hal_trng_config TRNGConfig;
+
+/* Inclusion of LLD header.*/
+#include "hal_trng_lld.h"]]></verbatim>
+      <struct name="hal_trng_config">
+        <brief>Driver configuration structure.</brief>
+        <fields>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+trng_lld_config_fields;]]></verbatim>
+        </fields>
+      </struct>
+      <class type="regular" name="hal_trng_driver" namespace="trng"
+        ancestorname="hal_base_driver" descr="TRNG driver">
+        <brief>Class of a TRNG driver.</brief>
+        <fields>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+trng_lld_driver_fields;]]></verbatim>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[
+]]></implementation>
+          </dispose>
+          <regular>
+            <method name="trngGenerate" ctype="msg_t">
+              <brief>Fills a buffer with true random data.</brief>
+              <param name="size" ctype="size_t" dir="in">
+                Size of output buffer.
+              </param>
+              <param name="out" ctype="uint8_t *" dir="out">
+                Output buffer.
+              </param>
+              <return>The operation status.</return>
+              <retval value="HAL_RET_SUCCESS">Random data generated.</retval>
+              <retval value="HAL_RET_HW_FAILURE">TRNG hardware failure or timeout.</retval>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck((self != NULL) && (size > 0U) && (out != NULL));
+
+osalSysLock();
+osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+self->state = HAL_DRV_STATE_ACTIVE;
+osalSysUnlock();
+
+msg = trng_lld_generate(self, size, out);
+
+osalSysLock();
+self->state = HAL_DRV_STATE_READY;
+osalSysUnlock();
+
+return msg;]]></implementation>
+            </method>
+          </regular>
+          <override>
+            <method shortname="start">
+              <implementation><![CDATA[
+if (config != NULL) {
+  self->config = __trng_setcfg_impl(self, config);
+}
+else {
+  self->config = __trng_selcfg_impl(self, 0U);
+}
+
+if (self->config == NULL) {
+  return HAL_RET_CONFIG_ERROR;
+}
+
+return trng_lld_start(self);]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[
+trng_lld_stop(self);]]></implementation>
+            </method>
+            <method shortname="setcfg">
+              <implementation><![CDATA[
+return trng_lld_setcfg(self, (const hal_trng_config_t *)config);]]></implementation>
+            </method>
+            <method shortname="selcfg">
+              <implementation><![CDATA[
+return trng_lld_selcfg(self, cfgnum);]]></implementation>
+            </method>
+          </override>
+        </methods>
+      </class>
+    </types>
+    <functions>
+      <function name="trngInit" ctype="void">
+        <brief>TRNG Driver initialization.</brief>
+        <init />
+        <implementation><![CDATA[
+trng_lld_init();]]></implementation>
+      </function>
+    </functions>
+  </public>
+  <private>
+    <includes_always>
+      <include style="regular">hal.h</include>
+    </includes_always>
+  </private>
+</module>

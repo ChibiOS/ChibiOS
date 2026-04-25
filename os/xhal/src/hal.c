@@ -124,10 +124,10 @@ void halInit(void) {
 #if (HAL_USE_WDG == TRUE) || defined(__DOXYGEN__)
   wdgInit();
 #endif
-#if 0
 #if (HAL_USE_TRNG == TRUE) || defined(__DOXYGEN__)
   trngInit();
 #endif
+#if 0
 #if (HAL_USE_UART == TRUE) || defined(__DOXYGEN__)
   uartInit();
 #endif

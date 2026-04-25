@@ -60,6 +60,7 @@
 #define HAL_USE_SDC                         FALSE
 #define HAL_USE_SIO                         FALSE
 #define HAL_USE_SPI                         TRUE
+#define HAL_USE_TRNG                        FALSE
 #define HAL_USE_USB                         FALSE
 #define HAL_USE_WDG                         FALSE
 #define HAL_USE_WSPI                        FALSE

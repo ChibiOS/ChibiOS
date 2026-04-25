@@ -312,7 +312,7 @@
  * SPI driver system settings.
  */
 #define STM32_SPI_USE_SPI1                  FALSE
-#define STM32_SPI_USE_SPI2                  FALSE
+#define STM32_SPI_USE_SPI2                  TRUE
 #define STM32_SPI_USE_SPI3                  FALSE
 #define STM32_SPI_USE_SPI4                  FALSE
 #define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
@@ -347,6 +347,21 @@
 #define STM32_RTC_CR_INIT                   0U
 
 /*
+ * TRNG driver system settings.
+ */
+#define STM32_TRNG_USE_RNG1                 FALSE
+#define STM32_TRNG_ERROR_CLEAR_ATTEMPTS     1000
+#define STM32_TRNG_DATA_FETCH_ATTEMPTS      1000
+
+/*
+ * USB driver system settings.
+ */
+#define STM32_USB_USE_USB1                  FALSE
+#define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
+#define STM32_USB_USB1_HP_IRQ_PRIORITY      13
+#define STM32_USB_USB1_LP_IRQ_PRIORITY      14
+
+/*
  * WDG driver system settings.
  */
 #define STM32_WDG_USE_IWDG                  FALSE
@@ -360,11 +375,5 @@
 #define STM32_WSPI_QUADSPI1_DMA_PRIORITY    1
 #define STM32_WSPI_QUADSPI1_DMA_IRQ_PRIORITY 10
 #define STM32_WSPI_DMA_ERROR_HOOK(wspip)    osalSysHalt("DMA failure")
-
-/*
- * Local test overrides.
- */
-#undef STM32_SPI_USE_SPI2
-#define STM32_SPI_USE_SPI2                  TRUE
 
 #endif /* XMCUCONF_H */

@@ -13,6 +13,7 @@
 - Keep functions `static` unless they are part of the public HAL API.
 - Regenerate formatting by hand; clang-format is not used on this port—mirror the surrounding code style.
 - General rule: line endings must be LF, except for externally provided files (non-ChibiOS copyright).
+- In C functions, keep automatic variable declarations grouped at the start of the block and separate the declaration block from executable statements with an empty line.
 - In ChibiOS, API suffix semantics are critical and must drive design decisions: no suffix = thread context, `X` = any context, `S` = system-locked context, `I` = interrupt/system-locked context. Semantic compatibility comes before implementation convenience; never place calls in fastcall/ISR paths unless their suffix contract explicitly allows it.
 - While debugging new code, prefer enabling assertions, parameter checks, and the state checker in `chconf.h`. In ChibiOS, contract violations often halt early with those options enabled, which is desirable for catching context and state misuse quickly.
 - STM32 shared IRQ handlers follow the `.inc` pattern used by SPI/USART/RTC: platform `stm32_isr.c` includes the right `.inc`, vector names and numbers belong in `stm32_isr.h`, and the corresponding `driver.mk` must export the include directory that contains the shared `.inc` files.

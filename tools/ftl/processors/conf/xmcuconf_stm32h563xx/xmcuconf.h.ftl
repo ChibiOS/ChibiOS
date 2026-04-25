@@ -432,4 +432,16 @@
 #define STM32_WSPI_OCTOSPI1_DMA_IRQ_PRIORITY ${doc.STM32_WSPI_OCTOSPI1_DMA_IRQ_PRIORITY!"10"}
 #define STM32_WSPI_DMA_ERROR_HOOK(wspip)    ${doc.STM32_WSPI_DMA_ERROR_HOOK!"osalSysHalt(\"DMA failure\")"}
 
+/*
+ * TRNG driver system settings.
+ */
+#define STM32_TRNG_USE_RNG1                 ${doc.STM32_TRNG_USE_RNG1!"FALSE"}
+#define STM32_TRNG_ERROR_CLEAR_ATTEMPTS     ${doc.STM32_TRNG_ERROR_CLEAR_ATTEMPTS!"1000"}
+#define STM32_TRNG_DATA_FETCH_ATTEMPTS      ${doc.STM32_TRNG_DATA_FETCH_ATTEMPTS!"1000"}
+
+/*
+ * WDG driver system settings.
+ */
+#define STM32_WDG_USE_IWDG                  ${doc.STM32_WDG_USE_IWDG!"FALSE"}
+
 #endif /* XMCUCONF_H */

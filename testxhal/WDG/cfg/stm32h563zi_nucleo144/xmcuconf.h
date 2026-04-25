@@ -411,11 +411,6 @@
 #define STM32_SDC_SDMMC_PWRSAV              TRUE
 
 /*
- * WDG driver system settings.
- */
-#define STM32_WDG_USE_IWDG                  TRUE
-
-/*
  * WSPI driver system settings.
  */
 #define STM32_WSPI_USE_OCTOSPI1             FALSE
@@ -426,5 +421,17 @@
 #define STM32_WSPI_OCTOSPI1_DMA_PRIORITY    1
 #define STM32_WSPI_OCTOSPI1_DMA_IRQ_PRIORITY 10
 #define STM32_WSPI_DMA_ERROR_HOOK(wspip)    osalSysHalt("DMA failure")
+
+/*
+ * TRNG driver system settings.
+ */
+#define STM32_TRNG_USE_RNG1                 FALSE
+#define STM32_TRNG_ERROR_CLEAR_ATTEMPTS     1000
+#define STM32_TRNG_DATA_FETCH_ATTEMPTS      1000
+
+/*
+ * WDG driver system settings.
+ */
+#define STM32_WDG_USE_IWDG                  TRUE
 
 #endif /* XMCUCONF_H */

@@ -69,6 +69,9 @@ endif
 ifneq ($(findstring HAL_USE_SPI TRUE,$(XHALCONF)),)
 XHALSRC += $(CHIBIOS)/os/xhal/src/hal_spi.c
 endif
+ifneq ($(findstring HAL_USE_TRNG TRUE,$(XHALCONF)),)
+XHALSRC += $(CHIBIOS)/os/xhal/src/hal_trng.c
+endif
 ifneq ($(findstring HAL_USE_USB TRUE,$(XHALCONF)),)
 XHALSRC += $(CHIBIOS)/os/xhal/src/hal_usb.c
 XHALSRC += $(CHIBIOS)/os/xhal/src/hal_usb_cdc.c
@@ -102,6 +105,7 @@ XHALSRC = $(CHIBIOS)/os/xhal/src/hal.c \
           $(CHIBIOS)/os/xhal/src/hal_sdc.c \
           $(CHIBIOS)/os/xhal/src/hal_sio.c \
           $(CHIBIOS)/os/xhal/src/hal_spi.c \
+          $(CHIBIOS)/os/xhal/src/hal_trng.c \
           $(CHIBIOS)/os/xhal/src/hal_usb.c \
           $(CHIBIOS)/os/xhal/src/hal_usb_cdc.c \
           $(CHIBIOS)/os/xhal/src/hal_wdg.c \

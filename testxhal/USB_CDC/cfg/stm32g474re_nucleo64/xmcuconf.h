@@ -347,6 +347,13 @@
 #define STM32_RTC_CR_INIT                   0U
 
 /*
+ * TRNG driver system settings.
+ */
+#define STM32_TRNG_USE_RNG1                 FALSE
+#define STM32_TRNG_ERROR_CLEAR_ATTEMPTS     1000
+#define STM32_TRNG_DATA_FETCH_ATTEMPTS      1000
+
+/*
  * USB driver system settings.
  */
 #define STM32_USB_USE_USB1                  TRUE
