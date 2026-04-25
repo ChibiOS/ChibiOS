@@ -316,18 +316,6 @@ const void *__xsnor_selcfg_impl(void *ip, unsigned cfgnum) {
 
   return NULL;
 }
-
-/**
- * @brief       Override of method @p __drv_synchronize().
- *
- * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
- * @param[in]     timeout       Synchronization timeout.
- * @return                      The synchronization result.
- */
-msg_t __xsnor_synchronize_impl(void *ip, sysinterval_t timeout) {
-  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
-  return __drv_synchronize_impl(self, timeout);
-}
 /** @} */
 
 /**

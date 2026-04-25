@@ -878,10 +878,6 @@ return xcfg;]]></implementation>
 
 return NULL;]]></implementation>
             </method>
-            <method shortname="synchronize">
-              <implementation><![CDATA[
-return __drv_synchronize_impl(self, timeout);]]></implementation>
-            </method>
           </override>
         </methods>
       </class>

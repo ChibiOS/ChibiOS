@@ -384,7 +384,6 @@ extern "C" {
   void __xsnor_stop_impl(void *ip);
   const void *__xsnor_setcfg_impl(void *ip, const void *config);
   const void *__xsnor_selcfg_impl(void *ip, unsigned cfgnum);
-  msg_t __xsnor_synchronize_impl(void *ip, sysinterval_t timeout);
 #if (XSNOR_USE_SPI == TRUE) || defined (__DOXYGEN__)
   void __xsnor_spi_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset);
 #endif /* XSNOR_USE_SPI == TRUE */
