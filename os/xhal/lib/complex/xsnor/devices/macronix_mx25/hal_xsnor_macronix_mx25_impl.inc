@@ -1139,6 +1139,11 @@ void __mx25_mmap_off_impl(void *ip) {
  */
 const struct hal_xsnor_macronix_mx25_vmt __hal_xsnor_macronix_mx25_vmt = {
   .dispose                  = __mx25_dispose_impl,
+  .start                    = __xsnor_start_impl,
+  .stop                     = __xsnor_stop_impl,
+  .setcfg                   = __xsnor_setcfg_impl,
+  .selcfg                   = __xsnor_selcfg_impl,
+  .synchronize              = __drv_synchronize_impl,
   .init                     = __mx25_init_impl,
   .read                     = __mx25_read_impl,
   .program                  = __mx25_program_impl,

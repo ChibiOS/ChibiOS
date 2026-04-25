@@ -1040,6 +1040,11 @@ void __n25q_mmap_off_impl(void *ip) {
  */
 const struct hal_xsnor_micron_n25q_vmt __hal_xsnor_micron_n25q_vmt = {
   .dispose                  = __n25q_dispose_impl,
+  .start                    = __xsnor_start_impl,
+  .stop                     = __xsnor_stop_impl,
+  .setcfg                   = __xsnor_setcfg_impl,
+  .selcfg                   = __xsnor_selcfg_impl,
+  .synchronize              = __drv_synchronize_impl,
   .init                     = __n25q_init_impl,
   .read                     = __n25q_read_impl,
   .program                  = __n25q_program_impl,

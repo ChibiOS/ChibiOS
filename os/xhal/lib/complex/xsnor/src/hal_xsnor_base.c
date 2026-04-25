@@ -129,6 +129,7 @@ msg_t __xsnor_start_impl(void *ip, const void *config) {
   /* Bus acquisition.*/
   __xsnor_bus_acquire(self);
 
+#if XSNOR_SHARED_BUS != TRUE
 #if XSNOR_USE_BOTH == TRUE
   if (xcfg->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
@@ -145,6 +146,7 @@ msg_t __xsnor_start_impl(void *ip, const void *config) {
 #if XSNOR_USE_BOTH == TRUE
   }
 #endif
+#endif
 
   /* Device identification and initialization.*/
   err = xsnor_device_init(self);
@@ -153,6 +155,25 @@ msg_t __xsnor_start_impl(void *ip, const void *config) {
   __xsnor_bus_release(self);
 
   if (err != FLASH_NO_ERROR) {
+#if XSNOR_SHARED_BUS != TRUE
+#if XSNOR_USE_BOTH == TRUE
+    if (xcfg->bus_type != XSNOR_BUS_MODE_SPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+      drvStop(xcfg->bus.wspi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+    }
+    else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+      drvStop(xcfg->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+    }
+#endif
+#endif
+    self->config = NULL;
     return HAL_RET_HW_FAILURE;
   }
 
@@ -172,6 +193,9 @@ void __xsnor_stop_impl(void *ip) {
     return;
   }
 
+  /* Bus acquisition.*/
+  __xsnor_bus_acquire(self);
+
   /* Stopping bus device.*/
 #if XSNOR_USE_BOTH == TRUE
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -189,6 +213,9 @@ void __xsnor_stop_impl(void *ip) {
 #if XSNOR_USE_BOTH == TRUE
   }
 #endif
+
+  /* Bus release.*/
+  __xsnor_bus_release(self);
 }
 
 /**
@@ -268,7 +295,9 @@ void __xsnor_bus_acquire(void *ip) {
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
+#if HAL_USE_MUTUAL_EXCLUSION == TRUE
     drvLock(config->bus.wspi.drv);
+#endif
     if (config->bus.wspi.cfg != config->bus.wspi.drv->config) {
       if (drvGetStateX(config->bus.wspi.drv) == HAL_DRV_STATE_STOP) {
         (void)drvStart(config->bus.wspi.drv, config->bus.wspi.cfg);
@@ -283,6 +312,9 @@ void __xsnor_bus_acquire(void *ip) {
   else {
 #endif
 #if XSNOR_USE_SPI == TRUE
+#if HAL_USE_MUTUAL_EXCLUSION == TRUE
+    drvLock(config->bus.spi.drv);
+#endif
     if (config->bus.spi.cfg !=
         (const hal_spi_config_t *)config->bus.spi.drv->config) {
       if (drvGetStateX(config->bus.spi.drv) == HAL_DRV_STATE_STOP) {
@@ -307,19 +339,27 @@ void __xsnor_bus_release(void *ip) {
   hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
   const xsnor_config_t *config = self->config;
 
+#if HAL_USE_MUTUAL_EXCLUSION != TRUE
+  (void)self;
+  (void)config;
+#endif
+
 #if XSNOR_USE_BOTH == TRUE
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
+#if HAL_USE_MUTUAL_EXCLUSION == TRUE
     drvUnlock(config->bus.wspi.drv);
+#endif
 #endif
 #if XSNOR_USE_BOTH == TRUE
   }
   else {
 #endif
 #if XSNOR_USE_SPI == TRUE
-    (void)config;
-    (void)self;
+#if HAL_USE_MUTUAL_EXCLUSION == TRUE
+    drvUnlock(config->bus.spi.drv);
+#endif
 #endif
 #if XSNOR_USE_BOTH == TRUE
   }
