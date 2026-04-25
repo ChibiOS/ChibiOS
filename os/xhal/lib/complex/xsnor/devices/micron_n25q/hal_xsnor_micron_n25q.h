@@ -199,6 +199,7 @@ extern "C" {
   /* Methods of hal_xsnor_micron_n25q_c.*/
   void *__n25q_objinit_impl(void *ip, const void *vmt);
   void __n25q_dispose_impl(void *ip);
+  const void *__n25q_setcfg_impl(void *ip, const void *config);
   flash_error_t __n25q_init_impl(void *ip);
   flash_error_t __n25q_read_impl(void *ip, flash_offset_t offset, size_t n,
                                  uint8_t *rp);

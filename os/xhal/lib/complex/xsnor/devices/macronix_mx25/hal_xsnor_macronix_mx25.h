@@ -55,7 +55,7 @@
 /**
  * @brief       Number of dummy cycles.
  *
- * @param         n             Number of dummy cycles (2..15)
+ * @param         n             Number of dummy cycles (6..15)
  */
 #define MX25_OPT_DUMMY_CYCLES(n)            ((n) << 0)
 
@@ -204,6 +204,7 @@ extern "C" {
   /* Methods of hal_xsnor_macronix_mx25_c.*/
   void *__mx25_objinit_impl(void *ip, const void *vmt);
   void __mx25_dispose_impl(void *ip);
+  const void *__mx25_setcfg_impl(void *ip, const void *config);
   flash_error_t __mx25_init_impl(void *ip);
   flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
                                  uint8_t *rp);

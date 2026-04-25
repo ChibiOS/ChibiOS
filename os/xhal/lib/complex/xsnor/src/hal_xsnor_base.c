@@ -115,7 +115,7 @@ msg_t __xsnor_start_impl(void *ip, const void *config) {
   const xsnor_config_t *xcfg;
 
   if (config != NULL) {
-    self->config = __xsnor_setcfg_impl(self, config);
+    self->config = __drv_set_cfg(self, config);
     if (self->config == NULL) {
       return HAL_RET_CONFIG_ERROR;
     }
@@ -134,14 +134,26 @@ msg_t __xsnor_start_impl(void *ip, const void *config) {
   if (xcfg->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
-    (void)drvStart(xcfg->bus.wspi.drv, xcfg->bus.wspi.cfg);
+    msg_t msg;
+
+    msg = drvStart(xcfg->bus.wspi.drv, xcfg->bus.wspi.cfg);
+    if (msg != HAL_RET_SUCCESS) {
+      self->config = NULL;
+      return msg;
+    }
 #endif
 #if XSNOR_USE_BOTH == TRUE
   }
   else {
 #endif
 #if XSNOR_USE_SPI == TRUE
-    (void)drvStart(xcfg->bus.spi.drv, xcfg->bus.spi.cfg);
+    msg_t msg;
+
+    msg = drvStart(xcfg->bus.spi.drv, xcfg->bus.spi.cfg);
+    if (msg != HAL_RET_SUCCESS) {
+      self->config = NULL;
+      return msg;
+    }
 #endif
 #if XSNOR_USE_BOTH == TRUE
   }
@@ -196,6 +208,7 @@ void __xsnor_stop_impl(void *ip) {
   /* Bus acquisition.*/
   __xsnor_bus_acquire(self);
 
+#if XSNOR_SHARED_BUS != TRUE
   /* Stopping bus device.*/
 #if XSNOR_USE_BOTH == TRUE
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -213,6 +226,7 @@ void __xsnor_stop_impl(void *ip) {
 #if XSNOR_USE_BOTH == TRUE
   }
 #endif
+#endif
 
   /* Bus release.*/
   __xsnor_bus_release(self);
@@ -227,9 +241,56 @@ void __xsnor_stop_impl(void *ip) {
  */
 const void *__xsnor_setcfg_impl(void *ip, const void *config) {
   hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  const xsnor_config_t *xcfg = (const xsnor_config_t *)config;
+
   (void)self;
 
-  return config;
+  if ((xcfg == NULL) || (xcfg->buffers == NULL)) {
+    return NULL;
+  }
+
+#if XSNOR_USE_BOTH == TRUE
+  switch (xcfg->bus_type) {
+  case XSNOR_BUS_MODE_SPI:
+    if (xcfg->bus.spi.drv == NULL) {
+      return NULL;
+    }
+    break;
+  case XSNOR_BUS_MODE_WSPI_1LINE:
+  case XSNOR_BUS_MODE_WSPI_2LINES:
+  case XSNOR_BUS_MODE_WSPI_4LINES:
+  case XSNOR_BUS_MODE_WSPI_8LINES:
+    if (xcfg->bus.wspi.drv == NULL) {
+      return NULL;
+    }
+    break;
+  default:
+    return NULL;
+  }
+#else
+#if XSNOR_USE_SPI == TRUE
+  if ((xcfg->bus_type != XSNOR_BUS_MODE_SPI) ||
+      (xcfg->bus.spi.drv == NULL)) {
+    return NULL;
+  }
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  switch (xcfg->bus_type) {
+  case XSNOR_BUS_MODE_WSPI_1LINE:
+  case XSNOR_BUS_MODE_WSPI_2LINES:
+  case XSNOR_BUS_MODE_WSPI_4LINES:
+  case XSNOR_BUS_MODE_WSPI_8LINES:
+    if (xcfg->bus.wspi.drv == NULL) {
+      return NULL;
+    }
+    break;
+  default:
+    return NULL;
+  }
+#endif
+#endif
+
+  return xcfg;
 }
 
 /**

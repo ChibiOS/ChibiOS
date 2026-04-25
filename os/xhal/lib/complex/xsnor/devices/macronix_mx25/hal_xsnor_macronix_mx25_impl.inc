@@ -409,17 +409,19 @@ static void mx25_read_id(hal_xsnor_macronix_mx25_c *self, uint8_t *buf) {
     /* Not switching, assuming it is already in final bus mode.*/
     switch (xsnorcfg->bus_type) {
     case XSNOR_BUS_MODE_SPI:
-      cmd.cfg = CFG_C8_DATA_SPI;
-      cmd.cmd = CMD_SPI_RDID;
+      cmd.cfg   = CFG_C8_DATA_SPI;
+      cmd.cmd   = CMD_SPI_RDID;
+      cmd.dummy = 0U;
       break;
     case XSNOR_BUS_MODE_WSPI_8LINES:
       if ((xsnorcfg->options & MX25_OPT_USE_DTR) != 0U) {
         cmd.cfg = CFG_C16_A32_DATA_8DTR;
-       }
+      }
       else {
         cmd.cfg = CFG_C16_A32_DATA_8STR;
       }
-      cmd.cmd = CMD_OPI_RDID;
+      cmd.cmd   = CMD_OPI_RDID;
+      cmd.dummy = 4U;
       break;
     default:
       osalDbgAssert(false, "invalid bus type");
@@ -431,12 +433,12 @@ static void mx25_read_id(hal_xsnor_macronix_mx25_c *self, uint8_t *buf) {
   }
   else {
     /* It is post-reset, before going to switch, assuming SPI.*/
-    cmd.cfg = CFG_C8_DATA_SPI;
-    cmd.cmd = CMD_SPI_RDID;
+    cmd.cfg   = CFG_C8_DATA_SPI;
+    cmd.cmd   = CMD_SPI_RDID;
+    cmd.dummy = 0U;
   }
   cmd.addr  = 0U;
   cmd.alt   = 0U;
-  cmd.dummy = 0U;
   wspiReceive(xsnorcfg->bus.wspi.drv, &cmd, 3U, buf);
 }
 
@@ -537,8 +539,7 @@ void *__mx25_objinit_impl(void *ip, const void *vmt) {
 
   /* Initialization code.*/
   self->descriptor.attributes    = FLASH_ATTR_ERASED_IS_ONE |
-                                   FLASH_ATTR_REWRITABLE |
-                                   FLASH_ATTR_SUSPEND_ERASE_CAPABLE;
+                                   FLASH_ATTR_REWRITABLE;
   self->descriptor.page_size     = 256U;
   self->descriptor.sectors_count = 0U; /* Overwritten.*/
   self->descriptor.sectors       = NULL;
@@ -564,6 +565,33 @@ void __mx25_dispose_impl(void *ip) {
 
   /* Finalization of the ancestors-defined parts.*/
   __xsnor_dispose_impl(self);
+}
+
+/**
+ * @brief       Override of method @p __drv_set_cfg().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
+ *                              instance.
+ * @param[in]     config        New driver configuration.
+ * @return                      The configuration pointer.
+ */
+const void *__mx25_setcfg_impl(void *ip, const void *config) {
+  hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
+  const xsnor_config_t *xcfg;
+
+  xcfg = (const xsnor_config_t *)__xsnor_setcfg_impl(self, config);
+  if (xcfg == NULL) {
+    return NULL;
+  }
+
+#if XSNOR_USE_WSPI == TRUE
+  if ((xcfg->bus_type != XSNOR_BUS_MODE_SPI) &&
+      ((xcfg->options & MX25_OPT_DUMMY_CYCLES_MASK) < 6U)) {
+    return NULL;
+  }
+#endif
+
+  return xcfg;
 }
 
 /**
@@ -1100,6 +1128,7 @@ flash_error_t __mx25_mmap_on_impl(void *ip, uint8_t **addrp) {
       break;
     default:
       osalDbgAssert(false, "invalid bus type");
+      __xsnor_bus_release(self);
       return FLASH_ERROR_HW_FAILURE;
     }
     cmd.addr  = 0U;
@@ -1148,7 +1177,7 @@ const struct hal_xsnor_macronix_mx25_vmt __hal_xsnor_macronix_mx25_vmt = {
   .dispose                  = __mx25_dispose_impl,
   .start                    = __xsnor_start_impl,
   .stop                     = __xsnor_stop_impl,
-  .setcfg                   = __xsnor_setcfg_impl,
+  .setcfg                   = __mx25_setcfg_impl,
   .selcfg                   = __xsnor_selcfg_impl,
   .synchronize              = __xsnor_synchronize_impl,
   .read                     = __mx25_read_impl,

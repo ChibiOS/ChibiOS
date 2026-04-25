@@ -476,8 +476,7 @@ void *__n25q_objinit_impl(void *ip, const void *vmt) {
 
   /* Initialization code.*/
   self->descriptor.attributes    = FLASH_ATTR_ERASED_IS_ONE |
-                                   FLASH_ATTR_REWRITABLE |
-                                   FLASH_ATTR_SUSPEND_ERASE_CAPABLE;
+                                   FLASH_ATTR_REWRITABLE;
   self->descriptor.page_size     = 256U;
   self->descriptor.sectors_count = 0U; /* Overwritten.*/
   self->descriptor.sectors       = NULL;
@@ -503,6 +502,33 @@ void __n25q_dispose_impl(void *ip) {
 
   /* Finalization of the ancestors-defined parts.*/
   __xsnor_dispose_impl(self);
+}
+
+/**
+ * @brief       Override of method @p __drv_set_cfg().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_micron_n25q_c
+ *                              instance.
+ * @param[in]     config        New driver configuration.
+ * @return                      The configuration pointer.
+ */
+const void *__n25q_setcfg_impl(void *ip, const void *config) {
+  hal_xsnor_micron_n25q_c *self = (hal_xsnor_micron_n25q_c *)ip;
+  const xsnor_config_t *xcfg;
+
+  xcfg = (const xsnor_config_t *)__xsnor_setcfg_impl(self, config);
+  if (xcfg == NULL) {
+    return NULL;
+  }
+
+#if XSNOR_USE_WSPI == TRUE
+  if ((xcfg->bus_type != XSNOR_BUS_MODE_SPI) &&
+      ((xcfg->options & N25Q_OPT_DUMMY_CYCLES_MASK) < 2U)) {
+    return NULL;
+  }
+#endif
+
+  return xcfg;
 }
 
 /**
@@ -997,6 +1023,8 @@ flash_error_t __n25q_mmap_on_impl(void *ip, uint8_t **addrp) {
       break;
     default:
       osalDbgAssert(false, "invalid bus type");
+      __xsnor_bus_release(self);
+      return FLASH_ERROR_HW_FAILURE;
     }
     wspiMapFlash(xsnorcfg->bus.wspi.drv, &cmd, addrp);
 
@@ -1044,7 +1072,7 @@ const struct hal_xsnor_micron_n25q_vmt __hal_xsnor_micron_n25q_vmt = {
   .dispose                  = __n25q_dispose_impl,
   .start                    = __xsnor_start_impl,
   .stop                     = __xsnor_stop_impl,
-  .setcfg                   = __xsnor_setcfg_impl,
+  .setcfg                   = __n25q_setcfg_impl,
   .selcfg                   = __xsnor_selcfg_impl,
   .synchronize              = __xsnor_synchronize_impl,
   .read                     = __n25q_read_impl,
