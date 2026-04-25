@@ -435,8 +435,12 @@ return msg;]]></implementation>
                 state for its default synchronization point.</retval>
               <sclass />
               <implementation><![CDATA[
+
 osalDbgCheck(self != NULL);
 osalDbgCheckClassS();
+osalDbgAssert((self->state != HAL_DRV_STATE_UNINIT) &&
+              (self->state != HAL_DRV_STATE_STOP),
+              "invalid state");
 
 return __drv_synchronize(self, timeout);]]></implementation>
             </method>

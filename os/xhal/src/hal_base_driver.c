@@ -558,8 +558,12 @@ msg_t drvSynchronize(void *ip, sysinterval_t timeout) {
  */
 msg_t drvSynchronizeS(void *ip, sysinterval_t timeout) {
   hal_base_driver_c *self = (hal_base_driver_c *)ip;
+
   osalDbgCheck(self != NULL);
   osalDbgCheckClassS();
+  osalDbgAssert((self->state != HAL_DRV_STATE_UNINIT) &&
+                (self->state != HAL_DRV_STATE_STOP),
+                "invalid state");
 
   return __drv_synchronize(self, timeout);
 }
