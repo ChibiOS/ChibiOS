@@ -278,7 +278,8 @@ msg_t __drv_synchronize_impl(void *ip, sysinterval_t timeout) {
  *              using the specified configuration. If @p config is @p NULL then
  *              configuration zero is used. Calls while the driver is already
  *              @p HAL_DRV_STATE_READY with @p config equal to @p NULL are
- *              ignored.
+ *              ignored, calls with a non-@p NULL configuration perform a live
+ *              reconfiguration equivalent to @p drvSetCfgX().
  * @note        The function can fail with error @p HAL_RET_INV_STATE if called
  *              while the driver is already being started or stopped. In case
  *              you need multiple threads to perform start and stop operation
@@ -292,6 +293,8 @@ msg_t __drv_synchronize_impl(void *ip, sysinterval_t timeout) {
  * @retval HAL_RET_INV_STATE    If the driver was in one of @p
  *                              HAL_DRV_STATE_UNINIT, @p HAL_DRV_STATE_STARTING
  *                              or @p HAL_DRV_STATE_STOPPING states.
+ * @retval HAL_RET_CONFIG_ERROR If a live reconfiguration is requested and the
+ *                              configuration is invalid and has been rejected.
  * @retval HAL_RET_NO_RESOURCE  If a required resources cannot be allocated.
  * @retval HAL_RET_HW_BUSY      If a required HW resource is already in use.
  * @retval HAL_RET_HW_FAILURE   If an HW failure occurred.
@@ -301,6 +304,7 @@ msg_t __drv_synchronize_impl(void *ip, sysinterval_t timeout) {
 msg_t drvStart(void *ip, const void *config) {
   hal_base_driver_c *self = (hal_base_driver_c *)ip;
   msg_t msg = HAL_RET_SUCCESS;
+  const void *newcfg = NULL;
   bool start = false;
 
   osalDbgCheck(self != NULL);
@@ -320,8 +324,14 @@ msg_t drvStart(void *ip, const void *config) {
     start = true;
     break;
   case HAL_DRV_STATE_READY:
-    if (config != NULL) {
-      msg = HAL_RET_INV_STATE;
+    if ((config != NULL) && (config != self->config)) {
+      newcfg = __drv_set_cfg(self, config);
+      if (newcfg == NULL) {
+        msg = HAL_RET_CONFIG_ERROR;
+      }
+      else {
+        self->config = newcfg;
+      }
     }
     break;
   default:

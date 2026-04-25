@@ -418,37 +418,25 @@ void __xsnor_bus_acquire(void *ip) {
 msg_t __xsnor_bus_select(void *ip) {
   hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
   const xsnor_config_t *config = self->config;
-  msg_t msg = HAL_RET_SUCCESS;
 
 #if XSNOR_USE_BOTH == TRUE
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
-    if (drvGetStateX(config->bus.wspi.drv) == HAL_DRV_STATE_STOP) {
-      msg = drvStart(config->bus.wspi.drv, config->bus.wspi.cfg);
-    }
-    else if (config->bus.wspi.cfg != config->bus.wspi.drv->config) {
-      msg = drvSetCfgX(config->bus.wspi.drv, config->bus.wspi.cfg);
-    }
+    return drvStart(config->bus.wspi.drv, config->bus.wspi.cfg);
 #endif
 #if XSNOR_USE_BOTH == TRUE
   }
   else {
 #endif
 #if XSNOR_USE_SPI == TRUE
-    if (drvGetStateX(config->bus.spi.drv) == HAL_DRV_STATE_STOP) {
-      msg = drvStart(config->bus.spi.drv, config->bus.spi.cfg);
-    }
-    else if (config->bus.spi.cfg !=
-             (const hal_spi_config_t *)config->bus.spi.drv->config) {
-      msg = drvSetCfgX(config->bus.spi.drv, config->bus.spi.cfg);
-    }
+    return drvStart(config->bus.spi.drv, config->bus.spi.cfg);
 #endif
 #if XSNOR_USE_BOTH == TRUE
   }
 #endif
 
-  return msg;
+  return HAL_RET_SUCCESS;
 }
 
 /**

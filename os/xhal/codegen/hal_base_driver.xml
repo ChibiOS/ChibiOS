@@ -176,7 +176,8 @@ return HAL_RET_INV_STATE;]]></implementation>
                 using the specified configuration. If @p config is @p NULL then
                 configuration zero is used. Calls while the driver is already
                 @p HAL_DRV_STATE_READY with @p config equal to @p NULL are
-                ignored.]]>
+                ignored, calls with a non-@p NULL configuration perform a live
+                reconfiguration equivalent to @p drvSetCfgX().]]>
               </details>
               <param ctype="const void *" name="config" dir="in">Driver
                 configuration or @p NULL.</param>
@@ -190,6 +191,9 @@ return HAL_RET_INV_STATE;]]></implementation>
               <retval value="HAL_RET_INV_STATE"><![CDATA[If the driver was
                 in one of @p HAL_DRV_STATE_UNINIT, @p HAL_DRV_STATE_STARTING
                 or @p HAL_DRV_STATE_STOPPING states.]]></retval>
+              <retval value="HAL_RET_CONFIG_ERROR"><![CDATA[If a live
+                reconfiguration is requested and the configuration is invalid
+                and has been rejected.]]></retval>
               <retval value="HAL_RET_NO_RESOURCE">If a required resources
                 cannot be allocated.
               </retval>
@@ -200,6 +204,7 @@ return HAL_RET_INV_STATE;]]></implementation>
               <api />
               <implementation><![CDATA[
 msg_t msg = HAL_RET_SUCCESS;
+const void *newcfg = NULL;
 bool start = false;
 
 osalDbgCheck(self != NULL);
@@ -219,8 +224,14 @@ case HAL_DRV_STATE_STOP:
   start = true;
   break;
 case HAL_DRV_STATE_READY:
-  if (config != NULL) {
-    msg = HAL_RET_INV_STATE;
+  if ((config != NULL) && (config != self->config)) {
+    newcfg = __drv_set_cfg(self, config);
+    if (newcfg == NULL) {
+      msg = HAL_RET_CONFIG_ERROR;
+    }
+    else {
+      self->config = newcfg;
+    }
   }
   break;
 default:

@@ -281,37 +281,25 @@ else {
                 <brief>Bus selection and configuration.</brief>
                 <implementation><![CDATA[
 const xsnor_config_t *config = self->config;
-msg_t msg = HAL_RET_SUCCESS;
 
 #if XSNOR_USE_BOTH == TRUE
 if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
-  if (drvGetStateX(config->bus.wspi.drv) == HAL_DRV_STATE_STOP) {
-    msg = drvStart(config->bus.wspi.drv, config->bus.wspi.cfg);
-  }
-  else if (config->bus.wspi.cfg != config->bus.wspi.drv->config) {
-    msg = drvSetCfgX(config->bus.wspi.drv, config->bus.wspi.cfg);
-  }
+  return drvStart(config->bus.wspi.drv, config->bus.wspi.cfg);
 #endif
 #if XSNOR_USE_BOTH == TRUE
 }
 else {
 #endif
 #if XSNOR_USE_SPI == TRUE
-  if (drvGetStateX(config->bus.spi.drv) == HAL_DRV_STATE_STOP) {
-    msg = drvStart(config->bus.spi.drv, config->bus.spi.cfg);
-  }
-  else if (config->bus.spi.cfg !=
-           (const hal_spi_config_t *)config->bus.spi.drv->config) {
-    msg = drvSetCfgX(config->bus.spi.drv, config->bus.spi.cfg);
-  }
+  return drvStart(config->bus.spi.drv, config->bus.spi.cfg);
 #endif
 #if XSNOR_USE_BOTH == TRUE
 }
 #endif
 
-return msg;]]></implementation>
+return HAL_RET_SUCCESS;]]></implementation>
               </method>
               <method name="__xsnor_bus_release" ctype="void">
                 <brief>Bus release and unlock.</brief>
