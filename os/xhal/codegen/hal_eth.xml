@@ -370,8 +370,21 @@ return eth_lld_get_transmit_buffer(self, txh, sizep);]]></implementation>
           <override>
             <method shortname="start">
               <implementation><![CDATA[
+msg_t msg;
 
-return eth_lld_start(self);]]></implementation>
+if (config != NULL) {
+  self->config = __eth_setcfg_impl(self, config);
+  if (self->config == NULL) {
+    return HAL_RET_CONFIG_ERROR;
+  }
+}
+
+msg = eth_lld_start(self);
+if (msg != HAL_RET_SUCCESS) {
+  self->config = NULL;
+}
+
+return msg;]]></implementation>
             </method>
             <method shortname="stop">
               <implementation><![CDATA[

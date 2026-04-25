@@ -506,11 +506,16 @@ void __sio_dispose_impl(void *ip) {
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  */
-msg_t __sio_start_impl(void *ip) {
+msg_t __sio_start_impl(void *ip, const void *config) {
   hal_sio_driver_c *self = (hal_sio_driver_c *)ip;
   msg_t msg;
+
+  if (config != NULL) {
+    self->config = config;
+  }
 
   msg = sio_lld_start(self);
   if (msg == HAL_RET_SUCCESS) {
@@ -521,6 +526,9 @@ msg_t __sio_start_impl(void *ip) {
     /* If synchronization is disabled then no events by default.*/
     sioWriteEnableFlagsX(self, SIO_EV_NONE);
 #endif
+  }
+  else {
+    self->config = NULL;
   }
 
   return msg;
@@ -1195,14 +1203,15 @@ void __bsio_dispose_impl(void *ip) {
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_buffered_sio_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  */
-msg_t __bsio_start_impl(void *ip) {
+msg_t __bsio_start_impl(void *ip, const void *config) {
   hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
   msg_t msg;
 
   /* Starting the undelying SIO driver.*/
-  msg = drvStartS(self->siop);
+  msg = drvStartS(self->siop, config);
   if (msg == HAL_RET_SUCCESS) {
     self->config = self->siop->config;
     drvSetArgumentX(self->siop, self);

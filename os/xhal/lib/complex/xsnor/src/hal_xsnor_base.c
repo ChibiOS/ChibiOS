@@ -106,29 +106,41 @@ void __xsnor_dispose_impl(void *ip) {
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  */
-msg_t __xsnor_start_impl(void *ip) {
+msg_t __xsnor_start_impl(void *ip, const void *config) {
   hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
   flash_error_t err;
-  const xsnor_config_t *config = self->config;
+  const xsnor_config_t *xcfg;
+
+  if (config != NULL) {
+    self->config = __xsnor_setcfg_impl(self, config);
+    if (self->config == NULL) {
+      return HAL_RET_CONFIG_ERROR;
+    }
+  }
+
+  xcfg = self->config;
+  if (xcfg == NULL) {
+    return HAL_RET_CONFIG_ERROR;
+  }
 
   /* Bus acquisition.*/
   __xsnor_bus_acquire(self);
 
 #if XSNOR_USE_BOTH == TRUE
-  if (config->bus_type != XSNOR_BUS_MODE_SPI) {
+  if (xcfg->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
-    wspiStart(config->bus.wspi.drv, config->bus.wspi.cfg);
+    (void)drvStart(xcfg->bus.wspi.drv, xcfg->bus.wspi.cfg);
 #endif
 #if XSNOR_USE_BOTH == TRUE
   }
   else {
 #endif
 #if XSNOR_USE_SPI == TRUE
-    (void)drvSetCfgX(config->bus.spi.drv, config->bus.spi.cfg);
-    (void)drvStart(config->bus.spi.drv);
+    (void)drvStart(xcfg->bus.spi.drv, xcfg->bus.spi.cfg);
 #endif
 #if XSNOR_USE_BOTH == TRUE
   }
@@ -165,7 +177,7 @@ void __xsnor_stop_impl(void *ip) {
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
-    wspiStop(config->bus.wspi.drv);
+    drvStop(config->bus.wspi.drv);
 #endif
 #if XSNOR_USE_BOTH == TRUE
   }
@@ -258,7 +270,12 @@ void __xsnor_bus_acquire(void *ip) {
 #if XSNOR_USE_WSPI == TRUE
     drvLock(config->bus.wspi.drv);
     if (config->bus.wspi.cfg != config->bus.wspi.drv->config) {
-      wspiStart(config->bus.wspi.drv, config->bus.wspi.cfg);
+      if (drvGetStateX(config->bus.wspi.drv) == HAL_DRV_STATE_STOP) {
+        (void)drvStart(config->bus.wspi.drv, config->bus.wspi.cfg);
+      }
+      else {
+        (void)drvSetCfgX(config->bus.wspi.drv, config->bus.wspi.cfg);
+      }
     }
 #endif
 #if XSNOR_USE_BOTH == TRUE
@@ -268,9 +285,13 @@ void __xsnor_bus_acquire(void *ip) {
 #if XSNOR_USE_SPI == TRUE
     if (config->bus.spi.cfg !=
         (const hal_spi_config_t *)config->bus.spi.drv->config) {
-      (void)drvSetCfgX(config->bus.spi.drv, config->bus.spi.cfg);
+      if (drvGetStateX(config->bus.spi.drv) == HAL_DRV_STATE_STOP) {
+        (void)drvStart(config->bus.spi.drv, config->bus.spi.cfg);
+      }
+      else {
+        (void)drvSetCfgX(config->bus.spi.drv, config->bus.spi.cfg);
+      }
     }
-    (void)drvStart(config->bus.spi.drv);
 #endif
 #if XSNOR_USE_BOTH == TRUE
   }

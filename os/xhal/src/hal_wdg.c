@@ -113,10 +113,22 @@ void __wdg_dispose_impl(void *ip) {
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_wdg_driver_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  */
-msg_t __wdg_start_impl(void *ip) {
+msg_t __wdg_start_impl(void *ip, const void *config) {
   hal_wdg_driver_c *self = (hal_wdg_driver_c *)ip;
+  if (config != NULL) {
+    self->config = __wdg_setcfg_impl(self, config);
+  }
+  else {
+    self->config = __wdg_selcfg_impl(self, 0U);
+  }
+
+  if (self->config == NULL) {
+    return HAL_RET_CONFIG_ERROR;
+  }
+
   return wdg_lld_start(self);
 }
 
@@ -171,45 +183,6 @@ const struct hal_wdg_driver_vmt __hal_wdg_driver_vmt = {
  * @name        Regular methods of hal_wdg_driver_c
  * @{
  */
-/**
- * @brief       Configures and activates the watchdog peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_wdg_driver_c instance.
- * @param[in]     config        Driver configuration.
- * @return                      The operation status.
- *
- * @api
- */
-msg_t wdgStart(void *ip, const hal_wdg_config_t *config) {
-  hal_wdg_driver_c *self = (hal_wdg_driver_c *)ip;
-  msg_t msg;
-
-  osalDbgCheck((self != NULL) && (config != NULL));
-
-  msg = drvSetCfgX(self, config);
-  if (msg != HAL_RET_SUCCESS) {
-    return msg;
-  }
-
-  return drvStart(self);
-}
-
-/**
- * @brief       Deactivates the watchdog peripheral if supported.
- * @note        Some hardware implementations, such as STM32 IWDG, cannot be
- *              stopped once activated.
- *
- * @param[in,out] ip            Pointer to a @p hal_wdg_driver_c instance.
- *
- * @api
- */
-void wdgStop(void *ip) {
-  hal_wdg_driver_c *self = (hal_wdg_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-
-  drvStop(self);
-}
-
 /**
  * @brief       Resets the watchdog counter.
  *

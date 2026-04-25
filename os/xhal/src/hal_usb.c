@@ -1469,12 +1469,20 @@ void __usb_dispose_impl(void *ip) {
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_usb_driver_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  */
-msg_t __usb_start_impl(void *ip) {
+msg_t __usb_start_impl(void *ip, const void *config) {
   hal_usb_driver_c *self = (hal_usb_driver_c *)ip;
   msg_t msg;
   unsigned i;
+
+  if (config != NULL) {
+    self->config = __usb_setcfg_impl(self, config);
+    if (self->config == NULL) {
+      return HAL_RET_CONFIG_ERROR;
+    }
+  }
 
   self->events        = (usbeventflags_t)0U;
   self->transmitting  = 0U;
@@ -1603,45 +1611,6 @@ const struct hal_usb_driver_vmt __hal_usb_driver_vmt = {
  * @name        Regular methods of hal_usb_driver_c
  * @{
  */
-/**
- * @brief       Configures and activates the USB peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_usb_driver_c instance.
- * @param[in]     config        Hardware configuration or @p NULL.
- * @return                      The operation status.
- *
- * @api
- */
-msg_t usbStart(void *ip, const hal_usb_config_t *config) {
-  hal_usb_driver_c *self = (hal_usb_driver_c *)ip;
-  msg_t msg;
-
-  osalDbgCheck(self != NULL);
-
-  if (config != NULL) {
-    msg = drvSetCfgX(self, config);
-    if (msg != HAL_RET_SUCCESS) {
-      return msg;
-    }
-  }
-
-  return drvStart(self);
-}
-
-/**
- * @brief       Deactivates the USB peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_usb_driver_c instance.
- *
- * @api
- */
-void usbStop(void *ip) {
-  hal_usb_driver_c *self = (hal_usb_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-
-  drvStop(self);
-}
-
 /**
  * @brief       Attaches a USB binder to the USB driver.
  *

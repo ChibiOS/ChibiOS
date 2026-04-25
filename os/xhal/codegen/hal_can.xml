@@ -318,36 +318,6 @@ CAN_DRIVER_EXT_INIT_HOOK(self);
 ]]></implementation>
           </dispose>
           <regular>
-            <method name="canStart" ctype="msg_t">
-              <brief>Configures and activates the CAN peripheral.</brief>
-              <param name="config" ctype="const hal_can_config_t *" dir="in">
-                Driver configuration.
-              </param>
-              <return>The operation status.</return>
-              <api />
-              <implementation><![CDATA[
-msg_t msg;
-
-osalDbgCheck(self != NULL);
-osalDbgAssert(self->state == HAL_DRV_STATE_STOP, "invalid state");
-
-if (config != NULL) {
-  msg = drvSetCfgX(self, config);
-  if (msg != HAL_RET_SUCCESS) {
-    return msg;
-  }
-}
-
-return drvStart(self);]]></implementation>
-            </method>
-            <method name="canStop" ctype="void">
-              <brief>Deactivates the CAN peripheral.</brief>
-              <api />
-              <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-
-drvStop(self);]]></implementation>
-            </method>
             <method name="canTryTransmitI" ctype="bool">
               <brief>Attempts to queue a CAN frame for transmission.</brief>
               <param name="mailbox" ctype="canmbx_t" dir="in">
@@ -619,6 +589,13 @@ return errors;]]></implementation>
             <method shortname="start">
               <implementation><![CDATA[
 msg_t msg;
+
+if (config != NULL) {
+  self->config = __can_setcfg_impl(self, config);
+  if (self->config == NULL) {
+    return HAL_RET_CONFIG_ERROR;
+  }
+}
 
 msg = can_lld_start(self);
 if (msg != HAL_RET_SUCCESS) {

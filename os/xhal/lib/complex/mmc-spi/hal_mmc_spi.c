@@ -166,12 +166,15 @@ static bool mmc_spi_apply_cfg(MMCSPIDriver *mmcp,
     return HAL_FAILED;
   }
 
-  if (drvStart(mmccfg->spip) != HAL_RET_SUCCESS) {
-    return HAL_FAILED;
+  if (drvGetStateX(mmccfg->spip) == HAL_DRV_STATE_STOP) {
+    if (drvStart(mmccfg->spip, config) != HAL_RET_SUCCESS) {
+      return HAL_FAILED;
+    }
   }
-
-  if (drvSetCfgX(mmccfg->spip, config) != HAL_RET_SUCCESS) {
-    return HAL_FAILED;
+  else {
+    if (drvSetCfgX(mmccfg->spip, config) != HAL_RET_SUCCESS) {
+      return HAL_FAILED;
+    }
   }
 
   return HAL_SUCCESS;
@@ -623,8 +626,15 @@ void __mmcspi_dispose_impl(void *ip) {
   __drv_dispose_impl(self);
 }
 
-msg_t __mmcspi_start_impl(void *ip) {
+msg_t __mmcspi_start_impl(void *ip, const void *config) {
   MMCSPIDriver *self = (MMCSPIDriver *)ip;
+
+  if (config != NULL) {
+    self->config = __mmcspi_setcfg_impl(self, config);
+    if (self->config == NULL) {
+      return HAL_RET_CONFIG_ERROR;
+    }
+  }
 
   if ((self->config == NULL) || (((const MMCSPIConfig *)self->config)->spip == NULL) ||
       (((const MMCSPIConfig *)self->config)->lscfg == NULL) ||
@@ -672,25 +682,6 @@ const void *__mmcspi_selcfg_impl(void *ip, unsigned cfgnum) {
   (void)cfgnum;
 
   return NULL;
-}
-
-msg_t mmcSpiStart(MMCSPIDriver *mmcp, const MMCSPIConfig *config) {
-  msg_t msg;
-
-  osalDbgCheck((mmcp != NULL) && (config != NULL));
-
-  msg = drvSetCfgX(mmcp, config);
-  if (msg != HAL_RET_SUCCESS) {
-    return msg;
-  }
-
-  return drvStart(mmcp);
-}
-
-void mmcSpiStop(MMCSPIDriver *mmcp) {
-
-  osalDbgCheck(mmcp != NULL);
-  drvStop(mmcp);
 }
 
 bool mmcSpiConnect(MMCSPIDriver *mmcp) {

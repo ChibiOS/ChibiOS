@@ -427,7 +427,7 @@ struct hal_can_driver_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_base_driver_c.*/
-  msg_t (*start)(void *ip);
+  msg_t (*start)(void *ip, const void *config);
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
@@ -529,13 +529,11 @@ extern "C" {
   /* Methods of hal_can_driver_c.*/
   void *__can_objinit_impl(void *ip, const void *vmt);
   void __can_dispose_impl(void *ip);
-  msg_t __can_start_impl(void *ip);
+  msg_t __can_start_impl(void *ip, const void *config);
   void __can_stop_impl(void *ip);
   const void *__can_setcfg_impl(void *ip, const void *config);
   const void *__can_selcfg_impl(void *ip, unsigned cfgnum);
   void __can_setcb_impl(void *ip, drv_cb_t cb);
-  msg_t canStart(void *ip, const hal_can_config_t *config);
-  void canStop(void *ip);
   bool canTryTransmitI(void *ip, canmbx_t mailbox, const CANTxFrame *ctfp);
   bool canTryReceiveI(void *ip, canmbx_t mailbox, CANRxFrame *crfp);
   void canTryAbortX(void *ip, canmbx_t mailbox);

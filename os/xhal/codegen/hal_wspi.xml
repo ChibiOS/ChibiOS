@@ -189,35 +189,6 @@ WSPI_DRIVER_EXT_INIT_HOOK(self);
 ]]></implementation>
           </dispose>
           <regular>
-            <method name="wspiStart" ctype="msg_t">
-              <brief>Configures and activates the WSPI peripheral.</brief>
-              <param name="config" ctype="const hal_wspi_config_t *" dir="in">
-                Driver configuration or @p NULL.
-              </param>
-              <return>The operation status.</return>
-              <api />
-              <implementation><![CDATA[
-msg_t msg;
-
-osalDbgCheck(self != NULL);
-
-if (config != NULL) {
-  msg = drvSetCfgX(self, config);
-  if (msg != HAL_RET_SUCCESS) {
-    return msg;
-  }
-}
-
-return drvStart(self);]]></implementation>
-            </method>
-            <method name="wspiStop" ctype="void">
-              <brief>Deactivates the WSPI peripheral.</brief>
-              <api />
-              <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-
-drvStop(self);]]></implementation>
-            </method>
             <method name="wspiStartCommandI" ctype="void">
               <brief>Sends a command without data phase.</brief>
               <param name="cmdp" ctype="const wspi_command_t *" dir="in">
@@ -471,6 +442,13 @@ osalSysUnlock();]]></implementation>
             <method shortname="start">
               <implementation><![CDATA[
 msg_t msg;
+
+if (config != NULL) {
+  self->config = __wspi_setcfg_impl(self, config);
+  if (self->config == NULL) {
+    return HAL_RET_CONFIG_ERROR;
+  }
+}
 
 msg = wspi_lld_start(self);
 if (msg != HAL_RET_SUCCESS) {

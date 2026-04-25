@@ -640,7 +640,7 @@ struct hal_usb_driver_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_base_driver_c.*/
-  msg_t (*start)(void *ip);
+  msg_t (*start)(void *ip, const void *config);
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
@@ -760,12 +760,10 @@ extern "C" {
   /* Methods of hal_usb_driver_c.*/
   void *__usb_objinit_impl(void *ip, const void *vmt);
   void __usb_dispose_impl(void *ip);
-  msg_t __usb_start_impl(void *ip);
+  msg_t __usb_start_impl(void *ip, const void *config);
   void __usb_stop_impl(void *ip);
   const void *__usb_setcfg_impl(void *ip, const void *config);
   const void *__usb_selcfg_impl(void *ip, unsigned cfgnum);
-  msg_t usbStart(void *ip, const hal_usb_config_t *config);
-  void usbStop(void *ip);
   msg_t usbBind(void *ip, hal_usb_binder_c *binderp);
   msg_t usbUnbind(void *ip);
   void usbConnectBus(void *ip);

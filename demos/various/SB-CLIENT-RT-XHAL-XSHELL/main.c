@@ -184,7 +184,7 @@ int main(void) {
   bsioObjectInit(&bsio1, &SIOD1,
                  rxbuf, sizeof rxbuf,
                  txbuf, sizeof txbuf);
-  drvStart(&bsio1);
+  drvStart(&bsio1, NULL);
 
   /*
    * Normal main() thread activity, spawning shells.

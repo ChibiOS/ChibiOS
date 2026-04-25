@@ -64,8 +64,8 @@ int main(void) {
   bsioObjectInit(&bsio1, &PORTAB_SIO1, bsio1_ib, sizeof bsio1_ib,
                  bsio1_ob, sizeof bsio1_ob);
 
-  eflStart(&EFLD1, NULL);
-  drvStart(&bsio1);
+  drvStart(&EFLD1, NULL);
+  drvStart(&bsio1, NULL);
 
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 

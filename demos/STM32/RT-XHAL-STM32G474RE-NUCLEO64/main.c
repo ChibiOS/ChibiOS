@@ -54,7 +54,7 @@ int main(void) {
   /*
    * Starting a SIO driver then getting a stream interface.
    */
-  if (drvStart(&LPSIOD1) != HAL_RET_SUCCESS) {
+  if (drvStart(&LPSIOD1, NULL) != HAL_RET_SUCCESS) {
     chSysHalt("SIO failure");
   }
   stream = oopGetIf(&LPSIOD1, chn);

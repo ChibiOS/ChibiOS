@@ -185,7 +185,7 @@ int main(void) {
 
   usbDisconnectBus(&PORTAB_USB1);
   chThdSleepMilliseconds(USB_RECONNECT_DELAY_MS);
-  test_assert(usbStart(&PORTAB_USB1, NULL) == HAL_RET_SUCCESS);
+  test_assert(drvStart(&PORTAB_USB1, NULL) == HAL_RET_SUCCESS);
   test_assert(usbBind(&PORTAB_USB1, &usbcdc_binder) == HAL_RET_SUCCESS);
   usbConnectBus(&PORTAB_USB1);
 

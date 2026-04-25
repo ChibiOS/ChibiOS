@@ -164,7 +164,7 @@ struct hal_mmc_spi_driver_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_base_driver_c.*/
-  msg_t (*start)(void *ip);
+  msg_t (*start)(void *ip, const void *config);
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
@@ -288,12 +288,10 @@ extern "C" {
 #endif
   void *__mmcspi_objinit_impl(void *ip, const void *vmt);
   void __mmcspi_dispose_impl(void *ip);
-  msg_t __mmcspi_start_impl(void *ip);
+  msg_t __mmcspi_start_impl(void *ip, const void *config);
   void __mmcspi_stop_impl(void *ip);
   const void *__mmcspi_setcfg_impl(void *ip, const void *config);
   const void *__mmcspi_selcfg_impl(void *ip, unsigned cfgnum);
-  msg_t mmcSpiStart(MMCSPIDriver *mmcp, const MMCSPIConfig *config);
-  void mmcSpiStop(MMCSPIDriver *mmcp);
   bool mmcSpiConnect(MMCSPIDriver *mmcp);
   bool mmcSpiDisconnect(MMCSPIDriver *mmcp);
   bool mmcSpiRead(MMCSPIDriver *mmcp, uint32_t startblk,

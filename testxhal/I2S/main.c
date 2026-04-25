@@ -189,7 +189,7 @@ int main(void) {
   portab_setup();
   wait_button_release();
   drvSetCallbackX(&I2SD2, i2s_test_cb);
-  test_assert(i2sStart(&I2SD2, &i2scfg) == HAL_RET_SUCCESS, 0x00000001U);
+  test_assert(drvStart(&I2SD2, &i2scfg) == HAL_RET_SUCCESS, 0x00000001U);
   i2s_setup_pins();
 
   reset_i2s_counters();

@@ -124,12 +124,23 @@ void __spi_dispose_impl(void *ip) {
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  */
-msg_t __spi_start_impl(void *ip) {
+msg_t __spi_start_impl(void *ip, const void *config) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
 
-  return spi_lld_start(self);
+  if (config != NULL) {
+    self->config = config;
+  }
+
+  msg = spi_lld_start(self);
+  if (msg != HAL_RET_SUCCESS) {
+    self->config = NULL;
+  }
+
+  return msg;
 }
 
 /**

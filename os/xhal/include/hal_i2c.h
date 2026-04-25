@@ -253,7 +253,7 @@ struct hal_i2c_driver_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_base_driver_c.*/
-  msg_t (*start)(void *ip);
+  msg_t (*start)(void *ip, const void *config);
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
@@ -335,13 +335,11 @@ extern "C" {
   /* Methods of hal_i2c_driver_c.*/
   void *__i2c_objinit_impl(void *ip, const void *vmt);
   void __i2c_dispose_impl(void *ip);
-  msg_t __i2c_start_impl(void *ip);
+  msg_t __i2c_start_impl(void *ip, const void *config);
   void __i2c_stop_impl(void *ip);
   const void *__i2c_setcfg_impl(void *ip, const void *config);
   const void *__i2c_selcfg_impl(void *ip, unsigned cfgnum);
   void __i2c_setcb_impl(void *ip, drv_cb_t cb);
-  msg_t i2cStart(void *ip, const hal_i2c_config_t *config);
-  void i2cStop(void *ip);
   msg_t i2cStartMasterTransmitI(void *ip, i2caddr_t addr, const uint8_t *txbuf,
                                 size_t txbytes, uint8_t *rxbuf, size_t rxbytes);
   msg_t i2cStartMasterReceiveI(void *ip, i2caddr_t addr, uint8_t *rxbuf,

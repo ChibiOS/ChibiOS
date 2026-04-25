@@ -470,6 +470,7 @@ void spi_lld_init(void) {
  * @notapi
  */
 msg_t spi_lld_start(SPIDriver *spip) {
+  const hal_spi_config_t *config = (const hal_spi_config_t *)spip->config;
   msg_t msg;
 
   /* Resetting TX pattern source.*/
@@ -596,8 +597,11 @@ msg_t spi_lld_start(SPIDriver *spip) {
   dmaStreamSetPeripheral(spip->dmatx, &spip->spi->DR);
 
   /* Configures the peripheral, it is not supposed to fail.*/
-  spip->config = spi_lld_setcfg(spip, &spi_default_config);
-  osalDbgAssert(spip->config != NULL, "default configuration failed");
+  if (config == NULL) {
+    config = &spi_default_config;
+  }
+  spip->config = spi_lld_setcfg(spip, config);
+  osalDbgAssert(spip->config != NULL, "configuration failed");
 
   return HAL_RET_SUCCESS;
 }

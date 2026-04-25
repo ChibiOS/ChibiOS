@@ -932,7 +932,7 @@ void adc_lld_stop_conversion(hal_adc_driver_c *adcp) {
  * @brief   Enables the VREFEN bit.
  * @details The VREFEN bit is required in order to sample the VREF channel.
  * @note    This is an STM32-only functionality.
- * @note    This function is meant to be called after @p adcStart().
+ * @note    This function is meant to be called after @p drvStart().
  *
  * @param[in] adcp      pointer to the @p hal_adc_driver_c object
  *
@@ -947,7 +947,7 @@ void adcSTM32EnableVREF(hal_adc_driver_c *adcp) {
  * @brief   Disables the VREFEN bit.
  * @details The VREFEN bit is required in order to sample the VREF channel.
  * @note    This is an STM32-only functionality.
- * @note    This function is meant to be called after @p adcStart().
+ * @note    This function is meant to be called after @p drvStart().
  *
  * @param[in] adcp      pointer to the @p hal_adc_driver_c object
  *
@@ -992,7 +992,7 @@ void adcSTM32DisableTS(hal_adc_driver_c *adcp) {
  * @brief   Enables the VBATEN bit.
  * @details The VBATEN bit is required in order to sample the VBAT channel.
  * @note    This is an STM32-only functionality.
- * @note    This function is meant to be called after @p adcStart().
+ * @note    This function is meant to be called after @p drvStart().
  *
  * @param[in] adcp      pointer to the @p hal_adc_driver_c object
  *
@@ -1007,7 +1007,7 @@ void adcSTM32EnableVBAT(hal_adc_driver_c *adcp) {
  * @brief   Disables the VBATEN bit.
  * @details The VBATEN bit is required in order to sample the VBAT channel.
  * @note    This is an STM32-only functionality.
- * @note    This function is meant to be called after @p adcStart().
+ * @note    This function is meant to be called after @p drvStart().
  *
  * @param[in] adcp      pointer to the @p hal_adc_driver_c object
  *

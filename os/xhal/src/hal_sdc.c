@@ -857,11 +857,19 @@ void __sdc_dispose_impl(void *ip) {
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_sdc_driver_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  */
-msg_t __sdc_start_impl(void *ip) {
+msg_t __sdc_start_impl(void *ip, const void *config) {
   hal_sdc_driver_c *self = (hal_sdc_driver_c *)ip;
   msg_t msg;
+
+  if (config != NULL) {
+    self->config = __sdc_setcfg_impl(self, config);
+    if (self->config == NULL) {
+      return HAL_RET_CONFIG_ERROR;
+    }
+  }
 
   msg = sdc_lld_start(self);
   if (msg == HAL_RET_SUCCESS) {
@@ -952,51 +960,6 @@ const struct hal_sdc_driver_vmt __hal_sdc_driver_vmt = {
  * @name        Regular methods of hal_sdc_driver_c
  * @{
  */
-/**
- * @brief       Configures and activates the SDC peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_sdc_driver_c instance.
- * @param[in]     config        Driver configuration or @p NULL.
- * @return                      The operation status.
- *
- * @api
- */
-msg_t sdcStart(void *ip, const hal_sdc_config_t *config) {
-  hal_sdc_driver_c *self = (hal_sdc_driver_c *)ip;
-  msg_t msg;
-
-  osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == HAL_DRV_STATE_STOP) ||
-                (self->state == HAL_DRV_STATE_ACTIVE) ||
-                (self->state == HAL_DRV_STATE_READY), "invalid state");
-
-  if (config != NULL) {
-    msg = drvSetCfgX(self, config);
-    if (msg != HAL_RET_SUCCESS) {
-      return msg;
-    }
-  }
-
-  return drvStart(self);
-}
-
-/**
- * @brief       Deactivates the SDC peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_sdc_driver_c instance.
- *
- * @api
- */
-void sdcStop(void *ip) {
-  hal_sdc_driver_c *self = (hal_sdc_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == HAL_DRV_STATE_STOP) ||
-                (self->state == HAL_DRV_STATE_ACTIVE) ||
-                (self->state == HAL_DRV_STATE_READY), "invalid state");
-
-  drvStop(self);
-}
-
 /**
  * @brief       Performs the card initialization procedure.
  *

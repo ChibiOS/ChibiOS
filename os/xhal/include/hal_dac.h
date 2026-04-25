@@ -280,7 +280,7 @@ struct hal_dac_driver_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_base_driver_c.*/
-  msg_t (*start)(void *ip);
+  msg_t (*start)(void *ip, const void *config);
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
@@ -378,13 +378,11 @@ extern "C" {
   /* Methods of hal_dac_driver_c.*/
   void *__dac_objinit_impl(void *ip, const void *vmt);
   void __dac_dispose_impl(void *ip);
-  msg_t __dac_start_impl(void *ip);
+  msg_t __dac_start_impl(void *ip, const void *config);
   void __dac_stop_impl(void *ip);
   const void *__dac_setcfg_impl(void *ip, const void *config);
   const void *__dac_selcfg_impl(void *ip, unsigned cfgnum);
   void __dac_setcb_impl(void *ip, drv_cb_t cb);
-  msg_t dacStart(void *ip, const hal_dac_config_t *config);
-  void dacStop(void *ip);
   msg_t dacPutChannelX(void *ip, dacchannel_t channel, dacsample_t sample);
   msg_t dacStartConversionI(void *ip, const dac_conversion_group_t *grpp,
                             dacsample_t *samples, size_t depth);

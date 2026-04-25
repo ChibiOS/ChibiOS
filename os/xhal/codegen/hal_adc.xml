@@ -243,35 +243,6 @@ self->thread  = NULL;
 ]]></implementation>
           </dispose>
           <regular>
-            <method name="adcStart" ctype="msg_t">
-              <brief>Configures and activates the ADC peripheral.</brief>
-              <param name="config" ctype="const hal_adc_config_t *" dir="in">
-                Driver configuration or @p NULL.
-              </param>
-              <return>The operation status.</return>
-              <api />
-              <implementation><![CDATA[
-msg_t msg;
-
-osalDbgCheck(self != NULL);
-
-if (config != NULL) {
-  msg = drvSetCfgX(self, config);
-  if (msg != HAL_RET_SUCCESS) {
-    return msg;
-  }
-}
-
-return drvStart(self);]]></implementation>
-            </method>
-            <method name="adcStop" ctype="void">
-              <brief>Deactivates the ADC peripheral.</brief>
-              <api />
-              <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-
-drvStop(self);]]></implementation>
-            </method>
             <method name="adcStartConversionI" ctype="msg_t">
               <brief>Starts an ADC conversion.</brief>
               <param name="grpp" ctype="const adc_conversion_group_t *" dir="in">
@@ -467,6 +438,13 @@ return errors;]]></implementation>
             <method shortname="start">
               <implementation><![CDATA[
 msg_t msg;
+
+if (config != NULL) {
+  self->config = __adc_setcfg_impl(self, config);
+  if (self->config == NULL) {
+    return HAL_RET_CONFIG_ERROR;
+  }
+}
 
 self->samples = NULL;
 self->depth   = 0U;

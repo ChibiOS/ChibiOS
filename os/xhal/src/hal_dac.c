@@ -121,11 +121,19 @@ void __dac_dispose_impl(void *ip) {
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_dac_driver_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  */
-msg_t __dac_start_impl(void *ip) {
+msg_t __dac_start_impl(void *ip, const void *config) {
   hal_dac_driver_c *self = (hal_dac_driver_c *)ip;
   msg_t msg;
+
+  if (config != NULL) {
+    self->config = __dac_setcfg_impl(self, config);
+    if (self->config == NULL) {
+      return HAL_RET_CONFIG_ERROR;
+    }
+  }
 
   self->samples = NULL;
   self->depth   = 0U;
@@ -212,45 +220,6 @@ const struct hal_dac_driver_vmt __hal_dac_driver_vmt = {
  * @name        Regular methods of hal_dac_driver_c
  * @{
  */
-/**
- * @brief       Configures and activates the DAC peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_dac_driver_c instance.
- * @param[in]     config        Driver configuration or @p NULL.
- * @return                      The operation status.
- *
- * @api
- */
-msg_t dacStart(void *ip, const hal_dac_config_t *config) {
-  hal_dac_driver_c *self = (hal_dac_driver_c *)ip;
-  msg_t msg;
-
-  osalDbgCheck(self != NULL);
-
-  if (config != NULL) {
-    msg = drvSetCfgX(self, config);
-    if (msg != HAL_RET_SUCCESS) {
-      return msg;
-    }
-  }
-
-  return drvStart(self);
-}
-
-/**
- * @brief       Deactivates the DAC peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_dac_driver_c instance.
- *
- * @api
- */
-void dacStop(void *ip) {
-  hal_dac_driver_c *self = (hal_dac_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-
-  drvStop(self);
-}
-
 /**
  * @brief       Outputs a value directly on a DAC channel.
  *

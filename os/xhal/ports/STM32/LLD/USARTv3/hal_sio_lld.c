@@ -356,6 +356,7 @@ void sio_lld_init(void) {
  * @notapi
  */
 msg_t sio_lld_start(SIODriver *siop) {
+  const SIOConfig *config = (const SIOConfig *)siop->config;
 
   /* Enables the peripheral.*/
   if (false) {
@@ -431,8 +432,11 @@ msg_t sio_lld_start(SIODriver *siop) {
   }
 
   /* Configures the peripheral.*/
-  siop->config = sio_lld_setcfg(siop, &default_config);
-  osalDbgAssert(siop->config != NULL, "default configuration failed");
+  if (config == NULL) {
+    config = &default_config;
+  }
+  siop->config = sio_lld_setcfg(siop, config);
+  osalDbgAssert(siop->config != NULL, "configuration failed");
 
   return HAL_RET_SUCCESS;
 }

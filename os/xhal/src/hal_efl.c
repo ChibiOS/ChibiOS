@@ -113,10 +113,22 @@ void __efl_dispose_impl(void *ip) {
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_efl_driver_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  */
-msg_t __efl_start_impl(void *ip) {
+msg_t __efl_start_impl(void *ip, const void *config) {
   hal_efl_driver_c *self = (hal_efl_driver_c *)ip;
+  if (config != NULL) {
+    self->config = __efl_setcfg_impl(self, config);
+  }
+  else {
+    self->config = __efl_selcfg_impl(self, 0U);
+  }
+
+  if (self->config == NULL) {
+    return HAL_RET_CONFIG_ERROR;
+  }
+
   return efl_lld_start(self);
 }
 
@@ -266,48 +278,6 @@ const struct hal_efl_driver_vmt __hal_efl_driver_vmt = {
   .query_erase              = __efl_query_erase_impl,
   .verify_erase             = __efl_verify_erase_impl
 };
-
-/**
- * @name        Regular methods of hal_efl_driver_c
- * @{
- */
-/**
- * @brief       Configures and starts the driver.
- *
- * @param[in,out] ip            Pointer to a @p hal_efl_driver_c instance.
- * @param[in]     config        Driver configuration or @p NULL.
- * @return                      The operation status.
- *
- * @api
- */
-msg_t eflStart(void *ip, const hal_efl_config_t *config) {
-  hal_efl_driver_c *self = (hal_efl_driver_c *)ip;
-  msg_t msg;
-
-  osalDbgCheck(self != NULL);
-
-  msg = drvSetCfgX(self, config);
-  if (msg != HAL_RET_SUCCESS) {
-    return msg;
-  }
-
-  return drvStart(self);
-}
-
-/**
- * @brief       Stops the driver.
- *
- * @param[in,out] ip            Pointer to a @p hal_efl_driver_c instance.
- *
- * @api
- */
-void eflStop(void *ip) {
-  hal_efl_driver_c *self = (hal_efl_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-
-  drvStop(self);
-}
-/** @} */
 
 #endif /* HAL_USE_EFL == TRUE */
 

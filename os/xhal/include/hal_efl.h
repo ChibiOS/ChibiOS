@@ -97,7 +97,7 @@ struct hal_efl_driver_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_base_driver_c.*/
-  msg_t (*start)(void *ip);
+  msg_t (*start)(void *ip, const void *config);
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
@@ -174,7 +174,7 @@ extern "C" {
   /* Methods of hal_efl_driver_c.*/
   void *__efl_objinit_impl(void *ip, const void *vmt);
   void __efl_dispose_impl(void *ip);
-  msg_t __efl_start_impl(void *ip);
+  msg_t __efl_start_impl(void *ip, const void *config);
   void __efl_stop_impl(void *ip);
   const void *__efl_setcfg_impl(void *ip, const void *config);
   const void *__efl_selcfg_impl(void *ip, unsigned cfgnum);
@@ -186,8 +186,6 @@ extern "C" {
   flash_error_t __efl_start_erase_sector_impl(void *ip, flash_sector_t sector);
   flash_error_t __efl_query_erase_impl(void *ip, unsigned *msec);
   flash_error_t __efl_verify_erase_impl(void *ip, flash_sector_t sector);
-  msg_t eflStart(void *ip, const hal_efl_config_t *config);
-  void eflStop(void *ip);
   /* Regular functions.*/
   void eflInit(void);
 #ifdef __cplusplus

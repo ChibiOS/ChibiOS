@@ -182,42 +182,6 @@ ICU_DRIVER_EXT_INIT_HOOK(self);
 ]]></implementation>
           </dispose>
           <regular>
-            <method name="icuStart" ctype="msg_t">
-              <brief>Configures and activates the ICU peripheral.</brief>
-              <param name="config" ctype="const hal_icu_config_t *" dir="in">
-                Driver configuration or @p NULL.
-              </param>
-              <return>The operation status.</return>
-              <api />
-              <implementation><![CDATA[
-msg_t msg;
-
-osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == HAL_DRV_STATE_STOP) ||
-              (self->state == HAL_DRV_STATE_READY),
-              "invalid state");
-
-if (config != NULL) {
-  if (self->state == HAL_DRV_STATE_READY) {
-    icuStop(self);
-  }
-
-  msg = drvSetCfgX(self, config);
-  if (msg != HAL_RET_SUCCESS) {
-    return msg;
-  }
-}
-
-return drvStart(self);]]></implementation>
-            </method>
-            <method name="icuStop" ctype="void">
-              <brief>Deactivates the ICU peripheral.</brief>
-              <api />
-              <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-
-drvStop(self);]]></implementation>
-            </method>
             <method name="icuStartCaptureI" ctype="void">
               <brief>Starts the input capture.</brief>
               <iclass />
@@ -435,6 +399,13 @@ return events;]]></implementation>
             <method shortname="start">
               <implementation><![CDATA[
 msg_t msg;
+
+if (config != NULL) {
+  self->config = __icu_setcfg_impl(self, config);
+  if (self->config == NULL) {
+    return HAL_RET_CONFIG_ERROR;
+  }
+}
 
 msg = icu_lld_start(self);
 if (msg != HAL_RET_SUCCESS) {

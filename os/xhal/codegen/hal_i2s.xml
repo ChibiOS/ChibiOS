@@ -137,35 +137,6 @@ self->errors = I2S_NO_ERROR;]]></implementation>
 ]]></implementation>
           </dispose>
           <regular>
-            <method name="i2sStart" ctype="msg_t">
-              <brief>Configures and activates the I2S peripheral.</brief>
-              <param name="config" ctype="const hal_i2s_config_t *" dir="in">
-                Driver configuration or @p NULL.
-              </param>
-              <return>The operation status.</return>
-              <api />
-              <implementation><![CDATA[
-msg_t msg;
-
-osalDbgCheck(self != NULL);
-
-if (config != NULL) {
-  msg = drvSetCfgX(self, config);
-  if (msg != HAL_RET_SUCCESS) {
-    return msg;
-  }
-}
-
-return drvStart(self);]]></implementation>
-            </method>
-            <method name="i2sStop" ctype="void">
-              <brief>Deactivates the I2S peripheral.</brief>
-              <api />
-              <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-
-drvStop(self);]]></implementation>
-            </method>
             <method name="i2sStartExchangeI" ctype="msg_t">
               <brief>Starts an I2S data exchange.</brief>
               <return>The operation status.</return>
@@ -294,6 +265,13 @@ return errors;]]></implementation>
           <override>
             <method name="start" shortname="start" ctype="msg_t">
               <implementation><![CDATA[
+if (config != NULL) {
+  self->config = __i2s_setcfg_impl(self, config);
+  if (self->config == NULL) {
+    return HAL_RET_CONFIG_ERROR;
+  }
+}
+
 if (self->config == NULL) {
   return HAL_RET_CONFIG_ERROR;
 }

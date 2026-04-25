@@ -337,7 +337,7 @@ struct hal_pwm_driver_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_base_driver_c.*/
-  msg_t (*start)(void *ip);
+  msg_t (*start)(void *ip, const void *config);
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
@@ -429,13 +429,11 @@ extern "C" {
   /* Methods of hal_pwm_driver_c.*/
   void *__pwm_objinit_impl(void *ip, const void *vmt);
   void __pwm_dispose_impl(void *ip);
-  msg_t __pwm_start_impl(void *ip);
+  msg_t __pwm_start_impl(void *ip, const void *config);
   void __pwm_stop_impl(void *ip);
   const void *__pwm_setcfg_impl(void *ip, const void *config);
   const void *__pwm_selcfg_impl(void *ip, unsigned cfgnum);
   void __pwm_setcb_impl(void *ip, drv_cb_t cb);
-  msg_t pwmStart(void *ip, const hal_pwm_config_t *config);
-  void pwmStop(void *ip);
   void pwmChangePeriodI(void *ip, pwmcnt_t period);
   void pwmChangePeriod(void *ip, pwmcnt_t period);
   void pwmEnableChannelI(void *ip, pwmchannel_t channel, pwmcnt_t width);

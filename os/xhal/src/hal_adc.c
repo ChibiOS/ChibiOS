@@ -121,11 +121,19 @@ void __adc_dispose_impl(void *ip) {
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_adc_driver_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  */
-msg_t __adc_start_impl(void *ip) {
+msg_t __adc_start_impl(void *ip, const void *config) {
   hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
   msg_t msg;
+
+  if (config != NULL) {
+    self->config = __adc_setcfg_impl(self, config);
+    if (self->config == NULL) {
+      return HAL_RET_CONFIG_ERROR;
+    }
+  }
 
   self->samples = NULL;
   self->depth   = 0U;
@@ -211,45 +219,6 @@ const struct hal_adc_driver_vmt __hal_adc_driver_vmt = {
  * @name        Regular methods of hal_adc_driver_c
  * @{
  */
-/**
- * @brief       Configures and activates the ADC peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_adc_driver_c instance.
- * @param[in]     config        Driver configuration or @p NULL.
- * @return                      The operation status.
- *
- * @api
- */
-msg_t adcStart(void *ip, const hal_adc_config_t *config) {
-  hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
-  msg_t msg;
-
-  osalDbgCheck(self != NULL);
-
-  if (config != NULL) {
-    msg = drvSetCfgX(self, config);
-    if (msg != HAL_RET_SUCCESS) {
-      return msg;
-    }
-  }
-
-  return drvStart(self);
-}
-
-/**
- * @brief       Deactivates the ADC peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_adc_driver_c instance.
- *
- * @api
- */
-void adcStop(void *ip) {
-  hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-
-  drvStop(self);
-}
-
 /**
  * @brief       Starts an ADC conversion.
  *

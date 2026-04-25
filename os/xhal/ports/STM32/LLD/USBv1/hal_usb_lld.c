@@ -295,8 +295,12 @@ void usb_lld_init(void) {
 
 const hal_usb_config_t *usb_lld_setcfg(hal_usb_driver_c *usbp,
                                        const hal_usb_config_t *config) {
+  (void)usbp;
 
-  usbp->config = config;
+  if (config == NULL) {
+    config = &default_usb_config;
+  }
+
   return config;
 }
 

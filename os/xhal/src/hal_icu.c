@@ -121,11 +121,19 @@ void __icu_dispose_impl(void *ip) {
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_icu_driver_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  */
-msg_t __icu_start_impl(void *ip) {
+msg_t __icu_start_impl(void *ip, const void *config) {
   hal_icu_driver_c *self = (hal_icu_driver_c *)ip;
   msg_t msg;
+
+  if (config != NULL) {
+    self->config = __icu_setcfg_impl(self, config);
+    if (self->config == NULL) {
+      return HAL_RET_CONFIG_ERROR;
+    }
+  }
 
   msg = icu_lld_start(self);
   if (msg != HAL_RET_SUCCESS) {
@@ -209,52 +217,6 @@ const struct hal_icu_driver_vmt __hal_icu_driver_vmt = {
  * @name        Regular methods of hal_icu_driver_c
  * @{
  */
-/**
- * @brief       Configures and activates the ICU peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_icu_driver_c instance.
- * @param[in]     config        Driver configuration or @p NULL.
- * @return                      The operation status.
- *
- * @api
- */
-msg_t icuStart(void *ip, const hal_icu_config_t *config) {
-  hal_icu_driver_c *self = (hal_icu_driver_c *)ip;
-  msg_t msg;
-
-  osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == HAL_DRV_STATE_STOP) ||
-                (self->state == HAL_DRV_STATE_READY),
-                "invalid state");
-
-  if (config != NULL) {
-    if (self->state == HAL_DRV_STATE_READY) {
-      icuStop(self);
-    }
-
-    msg = drvSetCfgX(self, config);
-    if (msg != HAL_RET_SUCCESS) {
-      return msg;
-    }
-  }
-
-  return drvStart(self);
-}
-
-/**
- * @brief       Deactivates the ICU peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_icu_driver_c instance.
- *
- * @api
- */
-void icuStop(void *ip) {
-  hal_icu_driver_c *self = (hal_icu_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-
-  drvStop(self);
-}
-
 /**
  * @brief       Starts the input capture.
  *

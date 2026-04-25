@@ -173,41 +173,6 @@ I2C_DRIVER_EXT_INIT_HOOK(self);
 ]]></implementation>
           </dispose>
           <regular>
-            <method name="i2cStart" ctype="msg_t">
-              <brief>Configures and activates the I2C peripheral.</brief>
-              <param name="config" ctype="const hal_i2c_config_t *" dir="in">
-                Driver configuration.
-              </param>
-              <return>The operation status.</return>
-              <api />
-              <implementation><![CDATA[
-msg_t msg;
-
-osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == HAL_DRV_STATE_STOP) ||
-              (self->state == HAL_DRV_STATE_READY) ||
-              (self->state == I2C_LOCKED), "invalid state");
-
-if (config != NULL) {
-  msg = drvSetCfgX(self, config);
-  if (msg != HAL_RET_SUCCESS) {
-    return msg;
-  }
-}
-
-return drvStart(self);]]></implementation>
-            </method>
-            <method name="i2cStop" ctype="void">
-              <brief>Deactivates the I2C peripheral.</brief>
-              <api />
-              <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == HAL_DRV_STATE_STOP) ||
-              (self->state == HAL_DRV_STATE_READY) ||
-              (self->state == I2C_LOCKED), "invalid state");
-
-drvStop(self);]]></implementation>
-            </method>
             <method name="i2cStartMasterTransmitI" ctype="msg_t">
               <brief>Starts an I2C master transmit transaction.</brief>
               <details>When @p rxbytes is greater than zero, a receive phase
@@ -459,6 +424,13 @@ __i2c_wakeup_isr(self, MSG_RESET);]]></implementation>
             <method shortname="start">
               <implementation><![CDATA[
 msg_t msg;
+
+if (config != NULL) {
+  self->config = __i2c_setcfg_impl(self, config);
+  if (self->config == NULL) {
+    return HAL_RET_CONFIG_ERROR;
+  }
+}
 
 msg = i2c_lld_start(self);
 if (msg != HAL_RET_SUCCESS) {

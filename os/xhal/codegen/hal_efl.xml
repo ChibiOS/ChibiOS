@@ -51,38 +51,20 @@ efl_lld_driver_fields;]]></verbatim>
             <implementation><![CDATA[
 ]]></implementation>
           </dispose>
-          <regular>
-            <method name="eflStart" ctype="msg_t">
-              <brief>Configures and starts the driver.</brief>
-              <param name="config" ctype="const hal_efl_config_t *" dir="in">
-                Driver configuration or @p NULL.
-              </param>
-              <return>The operation status.</return>
-              <api />
-              <implementation><![CDATA[
-msg_t msg;
-
-osalDbgCheck(self != NULL);
-
-msg = drvSetCfgX(self, config);
-if (msg != HAL_RET_SUCCESS) {
-  return msg;
-}
-
-return drvStart(self);]]></implementation>
-            </method>
-            <method name="eflStop" ctype="void">
-              <brief>Stops the driver.</brief>
-              <api />
-              <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-
-drvStop(self);]]></implementation>
-            </method>
-          </regular>
           <override>
             <method shortname="start">
               <implementation><![CDATA[
+if (config != NULL) {
+  self->config = __efl_setcfg_impl(self, config);
+}
+else {
+  self->config = __efl_selcfg_impl(self, 0U);
+}
+
+if (self->config == NULL) {
+  return HAL_RET_CONFIG_ERROR;
+}
+
 return efl_lld_start(self);]]></implementation>
             </method>
             <method shortname="stop">

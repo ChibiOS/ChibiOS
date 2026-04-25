@@ -224,9 +224,9 @@ int main(void) {
 
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-  test_assert(adcStart(&PORTAB_ADC1, &portab_adccfg1) == HAL_RET_SUCCESS,
+  test_assert(drvStart(&PORTAB_ADC1, &portab_adccfg1) == HAL_RET_SUCCESS,
               TEST_STAGE_STARTUP | 0x01U);
-  test_assert(gptStart(&PORTAB_GPT1, &portab_gptcfg1) == HAL_RET_SUCCESS,
+  test_assert(drvStart(&PORTAB_GPT1, &portab_gptcfg1) == HAL_RET_SUCCESS,
               TEST_STAGE_STARTUP | 0x02U);
   drvSetCallbackX(&PORTAB_GPT1, NULL);
   drvSetCallbackX(&ADCD1, adc_test_cb);

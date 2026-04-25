@@ -885,35 +885,6 @@ for (i = 0U; i < (unsigned)USB_MAX_ENDPOINTS; i++) {
 ]]></implementation>
           </dispose>
           <regular>
-            <method name="usbStart" ctype="msg_t">
-              <brief>Configures and activates the USB peripheral.</brief>
-              <param name="config" ctype="const hal_usb_config_t *" dir="in">
-                Hardware configuration or @p NULL.
-              </param>
-              <return>The operation status.</return>
-              <api />
-              <implementation><![CDATA[
-msg_t msg;
-
-osalDbgCheck(self != NULL);
-
-if (config != NULL) {
-  msg = drvSetCfgX(self, config);
-  if (msg != HAL_RET_SUCCESS) {
-    return msg;
-  }
-}
-
-return drvStart(self);]]></implementation>
-            </method>
-            <method name="usbStop" ctype="void">
-              <brief>Deactivates the USB peripheral.</brief>
-              <api />
-              <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-
-drvStop(self);]]></implementation>
-            </method>
             <method name="usbBind" ctype="msg_t">
               <brief>Attaches a USB binder to the USB driver.</brief>
               <param name="binderp" ctype="hal_usb_binder_c *" dir="in">
@@ -1549,6 +1520,13 @@ return usb_lld_get_transaction_size(self, ep);]]></implementation>
               <implementation><![CDATA[
 msg_t msg;
 unsigned i;
+
+if (config != NULL) {
+  self->config = __usb_setcfg_impl(self, config);
+  if (self->config == NULL) {
+    return HAL_RET_CONFIG_ERROR;
+  }
+}
 
 self->events        = (usbeventflags_t)0U;
 self->transmitting  = 0U;

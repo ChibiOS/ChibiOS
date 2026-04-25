@@ -154,7 +154,7 @@ struct hal_gpt_driver_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_base_driver_c.*/
-  msg_t (*start)(void *ip);
+  msg_t (*start)(void *ip, const void *config);
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
@@ -226,13 +226,11 @@ extern "C" {
   /* Methods of hal_gpt_driver_c.*/
   void *__gpt_objinit_impl(void *ip, const void *vmt);
   void __gpt_dispose_impl(void *ip);
-  msg_t __gpt_start_impl(void *ip);
+  msg_t __gpt_start_impl(void *ip, const void *config);
   void __gpt_stop_impl(void *ip);
   const void *__gpt_setcfg_impl(void *ip, const void *config);
   const void *__gpt_selcfg_impl(void *ip, unsigned cfgnum);
   void __gpt_setcb_impl(void *ip, drv_cb_t cb);
-  msg_t gptStart(void *ip, const hal_gpt_config_t *config);
-  void gptStop(void *ip);
   void gptChangeIntervalI(void *ip, gptcnt_t interval);
   void gptChangeInterval(void *ip, gptcnt_t interval);
   void gptStartContinuousI(void *ip, gptcnt_t interval);

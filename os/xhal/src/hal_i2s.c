@@ -115,10 +115,18 @@ void __i2s_dispose_impl(void *ip) {
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_i2s_driver_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  */
-msg_t __i2s_start_impl(void *ip) {
+msg_t __i2s_start_impl(void *ip, const void *config) {
   hal_i2s_driver_c *self = (hal_i2s_driver_c *)ip;
+  if (config != NULL) {
+    self->config = __i2s_setcfg_impl(self, config);
+    if (self->config == NULL) {
+      return HAL_RET_CONFIG_ERROR;
+    }
+  }
+
   if (self->config == NULL) {
     return HAL_RET_CONFIG_ERROR;
   }
@@ -184,45 +192,6 @@ const struct hal_i2s_driver_vmt __hal_i2s_driver_vmt = {
  * @name        Regular methods of hal_i2s_driver_c
  * @{
  */
-/**
- * @brief       Configures and activates the I2S peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_i2s_driver_c instance.
- * @param[in]     config        Driver configuration or @p NULL.
- * @return                      The operation status.
- *
- * @api
- */
-msg_t i2sStart(void *ip, const hal_i2s_config_t *config) {
-  hal_i2s_driver_c *self = (hal_i2s_driver_c *)ip;
-  msg_t msg;
-
-  osalDbgCheck(self != NULL);
-
-  if (config != NULL) {
-    msg = drvSetCfgX(self, config);
-    if (msg != HAL_RET_SUCCESS) {
-      return msg;
-    }
-  }
-
-  return drvStart(self);
-}
-
-/**
- * @brief       Deactivates the I2S peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_i2s_driver_c instance.
- *
- * @api
- */
-void i2sStop(void *ip) {
-  hal_i2s_driver_c *self = (hal_i2s_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-
-  drvStop(self);
-}
-
 /**
  * @brief       Starts an I2S data exchange.
  *

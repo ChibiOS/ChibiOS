@@ -321,7 +321,21 @@ return flags;]]></implementation>
           <override>
             <method shortname="start">
               <implementation><![CDATA[
-return rtc_lld_start(self);]]></implementation>
+msg_t msg;
+
+if (config != NULL) {
+  self->config = __rtc_setcfg_impl(self, config);
+  if (self->config == NULL) {
+    return HAL_RET_CONFIG_ERROR;
+  }
+}
+
+msg = rtc_lld_start(self);
+if (msg != HAL_RET_SUCCESS) {
+  self->config = NULL;
+}
+
+return msg;]]></implementation>
             </method>
             <method shortname="stop">
               <implementation><![CDATA[

@@ -130,12 +130,26 @@ void __eth_dispose_impl(void *ip) {
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  */
-msg_t __eth_start_impl(void *ip) {
+msg_t __eth_start_impl(void *ip, const void *config) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
+  msg_t msg;
 
-  return eth_lld_start(self);
+  if (config != NULL) {
+    self->config = __eth_setcfg_impl(self, config);
+    if (self->config == NULL) {
+      return HAL_RET_CONFIG_ERROR;
+    }
+  }
+
+  msg = eth_lld_start(self);
+  if (msg != HAL_RET_SUCCESS) {
+    self->config = NULL;
+  }
+
+  return msg;
 }
 
 /**

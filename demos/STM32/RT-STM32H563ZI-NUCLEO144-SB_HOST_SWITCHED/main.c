@@ -216,7 +216,7 @@ int main(void) {
   /*
    * Starting a serial port for I/O, initializing other streams too.
    */
-  drvStart(&SIOD3);
+  drvStart(&SIOD3, NULL);
   nullstmObjectInit(&nullstream);
 
   /*

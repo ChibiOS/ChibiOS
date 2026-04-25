@@ -62,35 +62,6 @@ wdg_lld_driver_fields;]]></verbatim>
 ]]></implementation>
           </dispose>
           <regular>
-            <method name="wdgStart" ctype="msg_t">
-              <brief>Configures and activates the watchdog peripheral.</brief>
-              <param name="config" ctype="const hal_wdg_config_t *" dir="in">
-                Driver configuration.
-              </param>
-              <return>The operation status.</return>
-              <api />
-              <implementation><![CDATA[
-msg_t msg;
-
-osalDbgCheck((self != NULL) && (config != NULL));
-
-msg = drvSetCfgX(self, config);
-if (msg != HAL_RET_SUCCESS) {
-  return msg;
-}
-
-return drvStart(self);]]></implementation>
-            </method>
-            <method name="wdgStop" ctype="void">
-              <brief>Deactivates the watchdog peripheral if supported.</brief>
-              <note>Some hardware implementations, such as STM32 IWDG, cannot
-                be stopped once activated.</note>
-              <api />
-              <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-
-drvStop(self);]]></implementation>
-            </method>
             <method name="wdgReset" ctype="void">
               <brief>Resets the watchdog counter.</brief>
               <api />
@@ -106,6 +77,17 @@ osalSysUnlock();]]></implementation>
           <override>
             <method shortname="start">
               <implementation><![CDATA[
+if (config != NULL) {
+  self->config = __wdg_setcfg_impl(self, config);
+}
+else {
+  self->config = __wdg_selcfg_impl(self, 0U);
+}
+
+if (self->config == NULL) {
+  return HAL_RET_CONFIG_ERROR;
+}
+
 return wdg_lld_start(self);]]></implementation>
             </method>
             <method shortname="stop">

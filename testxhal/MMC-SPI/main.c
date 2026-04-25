@@ -63,7 +63,7 @@ int main(void) {
 
   portab_setup();
   mmcSpiObjectInit(&MMCD1, mmc_buffer);
-  (void)mmcSpiStart(&MMCD1, &mmc_config);
+  (void)drvStart(&MMCD1, &mmc_config);
 
   chThdCreateStatic(waBlinker, sizeof(waBlinker), NORMALPRIO, Blinker, NULL);
 

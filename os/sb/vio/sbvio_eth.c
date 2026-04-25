@@ -77,7 +77,7 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
 
         drvSetArgumentX(unitp->ethp, (void *)unitp);
 
-        msg = drvStart(unitp->ethp);
+        msg = drvStart(unitp->ethp, NULL);
         if (msg == HAL_RET_SUCCESS) {
           drvSetCallbackX(unitp->ethp, veth_cb);
         }

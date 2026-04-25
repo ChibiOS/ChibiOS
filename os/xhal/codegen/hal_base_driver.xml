@@ -109,6 +109,8 @@ drv_reg_remove(self);
           <virtual>
             <method name="__drv_start" shortname="start" ctype="msg_t">
               <brief>Low level driver start.</brief>
+              <param ctype="const void *" name="config" dir="in">Driver
+                configuration or @p NULL.</param>
               <return>The operation status.</return>
               <notapi />
             </method>
@@ -118,7 +120,7 @@ drv_reg_remove(self);
             </method>
             <method name="__drv_set_cfg" shortname="setcfg"
               ctype="const void *">
-              <brief>Configures the driver with a specified configuration.</brief>
+              <brief>Reconfigures a ready driver with a specified configuration.</brief>
               <note><![CDATA[The configuration pointer is retained by the
                 driver, it is not copied. The referenced object must be
                 immutable and remain valid until another configuration is
@@ -131,7 +133,7 @@ drv_reg_remove(self);
             </method>
             <method name="__drv_sel_cfg" shortname="selcfg"
               ctype="const void *">
-              <brief>Selects one of the pre-defined configurations.</brief>
+              <brief>Reconfigures a ready driver with one of the pre-defined configurations.</brief>
               <note>Only configuration zero is guaranteed to exists, it is the
                 driver default configuration.</note>
               <note><![CDATA[The returned configuration pointer can be retained
@@ -146,10 +148,15 @@ drv_reg_remove(self);
           <regular>
             <method name="drvStart" ctype="msg_t">
               <brief>Driver start.</brief>
-              <details><![CDATA[Starts driver operations, on the 1st
-                call the peripheral is physically initialized using a
-                default configuration, subsequent calls are ignored.]]>
+              <details><![CDATA[Starts driver operations. When called from
+                @p HAL_DRV_STATE_STOP the peripheral is physically initialized
+                using the specified configuration. If @p config is @p NULL then
+                configuration zero is used. Calls while the driver is already
+                @p HAL_DRV_STATE_READY with @p config equal to @p NULL are
+                ignored.]]>
               </details>
+              <param ctype="const void *" name="config" dir="in">Driver
+                configuration or @p NULL.</param>
               <note><![CDATA[The function can fail with error
                 @p HAL_RET_INV_STATE if called while the driver is already
                 being started or stopped. In case you need multiple threads
@@ -175,7 +182,7 @@ osalDbgCheck(self != NULL);
 
 osalSysLock();
 
-msg = drvStartS(self);
+msg = drvStartS(self, config);
 
 osalSysUnlock();
 
@@ -183,10 +190,15 @@ return msg;]]></implementation>
             </method>
             <method name="drvStartS" ctype="msg_t">
               <brief>Driver start.</brief>
-              <details><![CDATA[Starts driver operations, on the 1st
-                call the peripheral is physically initialized using a
-                default configuration, subsequent calls are ignored.]]>
+              <details><![CDATA[Starts driver operations. When called from
+                @p HAL_DRV_STATE_STOP the peripheral is physically initialized
+                using the specified configuration. If @p config is @p NULL then
+                configuration zero is used. Calls while the driver is already
+                @p HAL_DRV_STATE_READY with @p config equal to @p NULL are
+                ignored.]]>
               </details>
+              <param ctype="const void *" name="config" dir="in">Driver
+                configuration or @p NULL.</param>
               <note><![CDATA[The function can fail with error
                 @p HAL_RET_INV_STATE if called while the driver is already
                 being started or stopped. In case you need multiple threads
@@ -221,11 +233,11 @@ case HAL_DRV_STATE_STOPPING:
   break;
 case HAL_DRV_STATE_STOP:
   /* Physically starting the peripheral.*/
-  msg = __drv_start(self);
+  msg = __drv_start(self, config);
   if (msg == HAL_RET_SUCCESS) {
     self->state = HAL_DRV_STATE_READY;
 
-    /* LLD is supposed to set a default configuration.*/
+    /* LLD is supposed to set a configuration.*/
     osalDbgAssert(self->config != NULL, "no configuration");
   }
   else {
@@ -234,8 +246,11 @@ case HAL_DRV_STATE_STOP:
     /* LLD is supposed to not have a configuration.*/
     osalDbgAssert(self->config == NULL, "configuration");
   }
+  break;
 default:
-  /* Any other state ignored, driver already started.*/
+  if ((config != NULL) || (self->state != HAL_DRV_STATE_READY)) {
+    msg = HAL_RET_INV_STATE;
+  }
   break;
 }
 
@@ -276,35 +291,43 @@ if ((self->state != HAL_DRV_STATE_STOP) &&
 }]]></implementation>
             </method>
             <method name="drvSetCfgX" ctype="msg_t">
-              <brief>Driver configure.</brief>
-              <details><![CDATA[Applies a new configuration to the driver. The
-                configuration structure is architecture-dependent.]]>
+              <brief>Driver live reconfiguration.</brief>
+              <details><![CDATA[Applies a new configuration to a started and
+                idle driver. The configuration structure is
+                architecture-dependent.]]>
               </details>
-              <note><![CDATA[Applying a configuration should be done while the
-                peripheral is not actively operating, this function can fail
-                depending on the driver implementation and current state.]]>
+              <note><![CDATA[This function is only valid in
+                @p HAL_DRV_STATE_READY. Initial configuration is passed to
+                @p drvStart() or @p drvStartS().]]>
               </note>
               <param ctype="const void *" name="config" dir="in">New driver
                 configuration.
               </param>
               <return>The operation status.</return>
               <retval value="HAL_RET_SUCCESS">Operation successful.</retval>
+              <retval value="HAL_RET_INV_STATE">If the driver is not in
+                @p HAL_DRV_STATE_READY state.</retval>
               <retval value="HAL_RET_CONFIG_ERROR"><![CDATA[If the configuration
                 is invalid and has been rejected.]]></retval>
               <api />
               <implementation><![CDATA[]]>
 msg_t msg;
+const void *newcfg;
 
 osalSysLock();
 
-osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "invalid state");
-
-self->config = __drv_set_cfg(self, config);
-if (self->config == NULL) {
-  msg = HAL_RET_CONFIG_ERROR;
+if (self->state != HAL_DRV_STATE_READY) {
+  msg = HAL_RET_INV_STATE;
 }
 else {
-  msg = HAL_RET_SUCCESS;
+  newcfg = __drv_set_cfg(self, config);
+  if (newcfg == NULL) {
+    msg = HAL_RET_CONFIG_ERROR;
+  }
+  else {
+    self->config = newcfg;
+    msg = HAL_RET_SUCCESS;
+  }
 }
 
 osalSysUnlock();
@@ -312,12 +335,12 @@ osalSysUnlock();
 return msg;</implementation>
             </method>
             <method name="drvSelectCfgX" ctype="const void *">
-              <brief>Selects one of the pre-defined driver configurations.</brief>
+              <brief>Live reconfiguration using one of the pre-defined driver configurations.</brief>
               <note>Only configuration zero is guaranteed to exists, it is the
                 driver default configuration.</note>
-              <note><![CDATA[Applying a configuration should be done while the
-                peripheral is not actively operating, this function can fail
-                depending on the driver implementation and current state.]]>
+              <note><![CDATA[This function is only valid in
+                @p HAL_DRV_STATE_READY. Initial configuration is passed to
+                @p drvStart() or @p drvStartS().]]>
               </note>
               <param ctype="unsigned" name="cfgnum" dir="in">Driver configuration
                 index to be applied.</param>
@@ -326,16 +349,20 @@ return msg;</implementation>
                 is invalid and has been rejected.]]></retval>
               <api />
               <implementation><![CDATA[]]>
+const void *config = NULL;
 
 osalSysLock();
 
-osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "invalid state");
-
-self->config = __drv_sel_cfg(self, cfgnum);
+if (self->state == HAL_DRV_STATE_READY) {
+  config = __drv_sel_cfg(self, cfgnum);
+  if (config != NULL) {
+    self->config = config;
+  }
+}
 
 osalSysUnlock();
 
-return self->config;</implementation>
+return config;</implementation>
             </method>
           </regular>
           <inline>
@@ -511,7 +538,7 @@ drvp = drvRegGetFirstX();
 while (drvp != NULL) {
   if (strcmp(drvGetNameX(drvp), name) ==0) {
     
-    msg = drvStart(drvp);
+    msg = drvStart(drvp, NULL);
     if (msg != HAL_RET_SUCCESS) {
       drvp = NULL;
     }

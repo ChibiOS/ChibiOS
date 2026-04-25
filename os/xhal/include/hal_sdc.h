@@ -432,7 +432,7 @@ struct hal_sdc_driver_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_base_driver_c.*/
-  msg_t (*start)(void *ip);
+  msg_t (*start)(void *ip, const void *config);
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
@@ -547,13 +547,11 @@ extern "C" {
   /* Methods of hal_sdc_driver_c.*/
   void *__sdc_objinit_impl(void *ip, const void *vmt);
   void __sdc_dispose_impl(void *ip);
-  msg_t __sdc_start_impl(void *ip);
+  msg_t __sdc_start_impl(void *ip, const void *config);
   void __sdc_stop_impl(void *ip);
   const void *__sdc_setcfg_impl(void *ip, const void *config);
   const void *__sdc_selcfg_impl(void *ip, unsigned cfgnum);
   void __sdc_setcb_impl(void *ip, drv_cb_t cb);
-  msg_t sdcStart(void *ip, const hal_sdc_config_t *config);
-  void sdcStop(void *ip);
   bool sdcConnect(void *ip);
   bool sdcDisconnect(void *ip);
   msg_t sdcStartRead(void *ip, uint32_t startblk, uint8_t *buf, uint32_t n);

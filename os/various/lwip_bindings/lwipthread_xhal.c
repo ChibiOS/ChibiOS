@@ -51,7 +51,7 @@ msg_t lwip_lld_start(const lwipthread_opts_t *opts, struct netif *netif) {
     memcpy(netif->hwaddr, cfgp->mac_address, ETHARP_HWADDR_LEN);
   }
 
-  return drvStart(&ETHD1);
+  return drvStart(&ETHD1, NULL);
 }
 
 msg_t lwip_wait_transmit_handle(lwip_transmit_handle_t *txhp) {

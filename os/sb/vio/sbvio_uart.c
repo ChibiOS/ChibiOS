@@ -87,7 +87,7 @@ void sb_sysc_vio_uart(sb_class_t *sbp, struct port_extctx *ectxp) {
         /* Associating this virtual UART to the SIO driver.*/
         drvSetArgumentX(unitp->siop, (void *)unitp);
 
-        msg = drvStart(unitp->siop);
+        msg = drvStart(unitp->siop, NULL);
         if (msg == HAL_RET_SUCCESS) {
 
           /* Starting with disabled events, enabling the callback.*/

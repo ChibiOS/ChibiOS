@@ -142,7 +142,7 @@ struct hal_base_driver_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_base_driver_c.*/
-  msg_t (*start)(void *ip);
+  msg_t (*start)(void *ip, const void *config);
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
@@ -205,8 +205,8 @@ extern "C" {
   /* Methods of hal_base_driver_c.*/
   void *__drv_objinit_impl(void *ip, const void *vmt);
   void __drv_dispose_impl(void *ip);
-  msg_t drvStart(void *ip);
-  msg_t drvStartS(void *ip);
+  msg_t drvStart(void *ip, const void *config);
+  msg_t drvStartS(void *ip, const void *config);
   void drvStop(void *ip);
   void drvStopS(void *ip);
   msg_t drvSetCfgX(void *ip, const void *config);
@@ -234,15 +234,16 @@ extern "C" {
  * @brief       Low level driver start.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  *
  * @notapi
  */
 CC_FORCE_INLINE
-static inline msg_t __drv_start(void *ip) {
+static inline msg_t __drv_start(void *ip, const void *config) {
   hal_base_driver_c *self = (hal_base_driver_c *)ip;
 
-  return self->vmt->start(ip);
+  return self->vmt->start(ip, config);
 }
 
 /**
@@ -260,7 +261,7 @@ static inline void __drv_stop(void *ip) {
 }
 
 /**
- * @brief       Configures the driver with a specified configuration.
+ * @brief       Reconfigures a ready driver with a specified configuration.
  * @note        The configuration pointer is retained by the driver, it is not
  *              copied. The referenced object must be immutable and remain
  *              valid until another configuration is selected or the driver is
@@ -281,7 +282,8 @@ static inline const void *__drv_set_cfg(void *ip, const void *config) {
 }
 
 /**
- * @brief       Selects one of the pre-defined configurations.
+ * @brief       Reconfigures a ready driver with one of the pre-defined
+ *              configurations.
  * @note        Only configuration zero is guaranteed to exists, it is the
  *              driver default configuration.
  * @note        The returned configuration pointer can be retained by the

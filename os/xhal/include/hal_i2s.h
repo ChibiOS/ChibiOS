@@ -194,7 +194,7 @@ struct hal_i2s_driver_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_base_driver_c.*/
-  msg_t (*start)(void *ip);
+  msg_t (*start)(void *ip, const void *config);
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
@@ -274,12 +274,10 @@ extern "C" {
   /* Methods of hal_i2s_driver_c.*/
   void *__i2s_objinit_impl(void *ip, const void *vmt);
   void __i2s_dispose_impl(void *ip);
-  msg_t __i2s_start_impl(void *ip);
+  msg_t __i2s_start_impl(void *ip, const void *config);
   void __i2s_stop_impl(void *ip);
   const void *__i2s_setcfg_impl(void *ip, const void *config);
   const void *__i2s_selcfg_impl(void *ip, unsigned cfgnum);
-  msg_t i2sStart(void *ip, const hal_i2s_config_t *config);
-  void i2sStop(void *ip);
   msg_t i2sStartExchangeI(void *ip);
   msg_t i2sStartExchange(void *ip);
   void i2sStopExchangeI(void *ip);

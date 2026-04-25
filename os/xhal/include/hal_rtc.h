@@ -239,7 +239,7 @@ struct hal_rtc_driver_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_base_driver_c.*/
-  msg_t (*start)(void *ip);
+  msg_t (*start)(void *ip, const void *config);
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
@@ -319,7 +319,7 @@ extern "C" {
   /* Methods of hal_rtc_driver_c.*/
   void *__rtc_objinit_impl(void *ip, const void *vmt);
   void __rtc_dispose_impl(void *ip);
-  msg_t __rtc_start_impl(void *ip);
+  msg_t __rtc_start_impl(void *ip, const void *config);
   void __rtc_stop_impl(void *ip);
   const void *__rtc_setcfg_impl(void *ip, const void *config);
   const void *__rtc_selcfg_impl(void *ip, unsigned cfgnum);

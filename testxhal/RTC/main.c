@@ -186,7 +186,7 @@ int main(void) {
 
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-  test_assert(drvStart(&RTCD1) == HAL_RET_SUCCESS);
+  test_assert(drvStart(&RTCD1, NULL) == HAL_RET_SUCCESS);
   drvSetCallbackX(&RTCD1, rtc_test_cb);
 
   rtc_basic_test();

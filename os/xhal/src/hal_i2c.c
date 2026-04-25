@@ -120,11 +120,19 @@ void __i2c_dispose_impl(void *ip) {
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_i2c_driver_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  */
-msg_t __i2c_start_impl(void *ip) {
+msg_t __i2c_start_impl(void *ip, const void *config) {
   hal_i2c_driver_c *self = (hal_i2c_driver_c *)ip;
   msg_t msg;
+
+  if (config != NULL) {
+    self->config = __i2c_setcfg_impl(self, config);
+    if (self->config == NULL) {
+      return HAL_RET_CONFIG_ERROR;
+    }
+  }
 
   msg = i2c_lld_start(self);
   if (msg != HAL_RET_SUCCESS) {
@@ -205,51 +213,6 @@ const struct hal_i2c_driver_vmt __hal_i2c_driver_vmt = {
  * @name        Regular methods of hal_i2c_driver_c
  * @{
  */
-/**
- * @brief       Configures and activates the I2C peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_i2c_driver_c instance.
- * @param[in]     config        Driver configuration.
- * @return                      The operation status.
- *
- * @api
- */
-msg_t i2cStart(void *ip, const hal_i2c_config_t *config) {
-  hal_i2c_driver_c *self = (hal_i2c_driver_c *)ip;
-  msg_t msg;
-
-  osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == HAL_DRV_STATE_STOP) ||
-                (self->state == HAL_DRV_STATE_READY) ||
-                (self->state == I2C_LOCKED), "invalid state");
-
-  if (config != NULL) {
-    msg = drvSetCfgX(self, config);
-    if (msg != HAL_RET_SUCCESS) {
-      return msg;
-    }
-  }
-
-  return drvStart(self);
-}
-
-/**
- * @brief       Deactivates the I2C peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_i2c_driver_c instance.
- *
- * @api
- */
-void i2cStop(void *ip) {
-  hal_i2c_driver_c *self = (hal_i2c_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == HAL_DRV_STATE_STOP) ||
-                (self->state == HAL_DRV_STATE_READY) ||
-                (self->state == I2C_LOCKED), "invalid state");
-
-  drvStop(self);
-}
-
 /**
  * @brief       Starts an I2C master transmit transaction.
  * @details     When @p rxbytes is greater than zero, a receive phase follows

@@ -93,7 +93,7 @@ void sb_sysc_vio_spi(sb_class_t *sbp, struct port_extctx *ectxp) {
         /* Associating this virtual SPI to the SPI driver.*/
         drvSetArgumentX(unitp->spip, (void *)unitp);
 
-        msg = drvStart(unitp->spip);
+        msg = drvStart(unitp->spip, NULL);
         if (msg == HAL_RET_SUCCESS) {
 
           /* Enabling the callback.*/

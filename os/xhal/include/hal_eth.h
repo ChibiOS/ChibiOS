@@ -219,7 +219,7 @@ struct hal_eth_driver_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_base_driver_c.*/
-  msg_t (*start)(void *ip);
+  msg_t (*start)(void *ip, const void *config);
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
@@ -311,7 +311,7 @@ extern "C" {
   /* Methods of hal_eth_driver_c.*/
   void *__eth_objinit_impl(void *ip, const void *vmt);
   void __eth_dispose_impl(void *ip);
-  msg_t __eth_start_impl(void *ip);
+  msg_t __eth_start_impl(void *ip, const void *config);
   void __eth_stop_impl(void *ip);
   const void *__eth_setcfg_impl(void *ip, const void *config);
   const void *__eth_selcfg_impl(void *ip, unsigned cfgnum);

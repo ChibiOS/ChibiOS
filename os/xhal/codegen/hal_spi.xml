@@ -759,8 +759,18 @@ osalSysUnlockFromISR();]]></implementation>
           <override>
             <method shortname="start">
               <implementation><![CDATA[
+msg_t msg;
 
-return spi_lld_start(self);]]></implementation>
+if (config != NULL) {
+  self->config = config;
+}
+
+msg = spi_lld_start(self);
+if (msg != HAL_RET_SUCCESS) {
+  self->config = NULL;
+}
+
+return msg;]]></implementation>
             </method>
             <method shortname="stop">
               <implementation><![CDATA[

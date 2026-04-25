@@ -245,39 +245,6 @@ PWM_DRIVER_EXT_INIT_HOOK(self);
 ]]></implementation>
           </dispose>
           <regular>
-            <method name="pwmStart" ctype="msg_t">
-              <brief>Configures and activates the PWM peripheral.</brief>
-              <param name="config" ctype="const hal_pwm_config_t *" dir="in">
-                Driver configuration or @p NULL.
-              </param>
-              <return>The operation status.</return>
-              <api />
-              <implementation><![CDATA[
-msg_t msg;
-
-osalDbgCheck(self != NULL);
-
-if (config != NULL) {
-  if (drvGetStateX(self) == HAL_DRV_STATE_READY) {
-    pwmStop(self);
-  }
-
-  msg = drvSetCfgX(self, config);
-  if (msg != HAL_RET_SUCCESS) {
-    return msg;
-  }
-}
-
-return drvStart(self);]]></implementation>
-            </method>
-            <method name="pwmStop" ctype="void">
-              <brief>Deactivates the PWM peripheral.</brief>
-              <api />
-              <implementation><![CDATA[
-osalDbgCheck(self != NULL);
-
-drvStop(self);]]></implementation>
-            </method>
             <method name="pwmChangePeriodI" ctype="void">
               <brief>Changes the period of the PWM peripheral.</brief>
               <param name="period" ctype="pwmcnt_t" dir="in">
@@ -542,6 +509,13 @@ return events;]]></implementation>
             <method shortname="start">
               <implementation><![CDATA[
 msg_t msg;
+
+if (config != NULL) {
+  self->config = __pwm_setcfg_impl(self, config);
+  if (self->config == NULL) {
+    return HAL_RET_CONFIG_ERROR;
+  }
+}
 
 msg = pwm_lld_start(self);
 if (msg != HAL_RET_SUCCESS) {

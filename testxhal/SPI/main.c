@@ -79,7 +79,7 @@ static THD_FUNCTION(spi_thread_1, p) {
 #if defined(PORTAB_LINE_LED1)
     palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_ON);
 #endif
-    drvStart(&PORTAB_SPI1);
+    drvStart(&PORTAB_SPI1, NULL);
     drvSelectCfgX(&PORTAB_SPI1,
                   SPI_CFG_HIGH_SPEED);  /* Setup transfer parameters.       */
     spiSelectX(&PORTAB_SPI1);           /* Slave Select assertion.          */
@@ -111,7 +111,7 @@ static THD_FUNCTION(spi_thread_2, p) {
 #if defined(PORTAB_LINE_LED1)
     palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_OFF);
 #endif
-    drvStart(&PORTAB_SPI1);
+    drvStart(&PORTAB_SPI1, NULL);
     drvSelectCfgX(&PORTAB_SPI1,
                   SPI_CFG_LOW_SPEED);   /* Setup transfer parameters.       */
     spiSelectX(&PORTAB_SPI1);           /* Slave Select assertion.          */
@@ -181,9 +181,9 @@ int main(void) {
   cacheBufferFlush(&txbuf[0], sizeof txbuf);
 
 #if (SPI_SUPPORTS_SLAVE_MODE == TRUE) && defined(PORTAB_SPI2)
-  drvStart(&PORTAB_SPI1);
+  drvStart(&PORTAB_SPI1, NULL);
   drvSelectCfgX(&PORTAB_SPI1, SPI_CFG_HIGH_SPEED);  /* Master transfer.     */
-  drvStart(&PORTAB_SPI2);
+  drvStart(&PORTAB_SPI2, NULL);
   drvSelectCfgX(&PORTAB_SPI2, SPI_CFG_SLAVE);       /* Slave transfer.      */
   do {
     size_t size;
@@ -216,7 +216,7 @@ int main(void) {
   /*
    * Transfers of various sizes.
    */
-  drvStart(&PORTAB_SPI1);
+  drvStart(&PORTAB_SPI1, NULL);
   drvSelectCfgX(&PORTAB_SPI1, SPI_CFG_LOW_SPEED);
   do {
      /* Starting synchronous master 256 frames send.*/
@@ -244,7 +244,7 @@ int main(void) {
    * Starting a continuous operation for test.
    */
   drvSetCallbackX(&PORTAB_SPI1, spi_circular_cb);
-  drvStart(&PORTAB_SPI1);
+  drvStart(&PORTAB_SPI1, NULL);
   drvSelectCfgX(&PORTAB_SPI1, SPI_CFG_CIRCULAR);
   spiSelectX(&PORTAB_SPI1);           /* Slave Select assertion.          */
   spiSend(&PORTAB_SPI1, 512, txbuf);  /* Atomic transfer operations.      */
@@ -262,7 +262,7 @@ int main(void) {
   /*
    * Testing polled mixed with DMA transfers.
    */
-  drvStart(&PORTAB_SPI1);
+  drvStart(&PORTAB_SPI1, NULL);
   drvSelectCfgX(&PORTAB_SPI1, SPI_CFG_LOW_SPEED);
   do {
      /* Starting synchronous master 256 frames send.*/

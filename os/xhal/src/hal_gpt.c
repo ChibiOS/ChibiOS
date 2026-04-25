@@ -113,11 +113,19 @@ void __gpt_dispose_impl(void *ip) {
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_gpt_driver_c instance.
+ * @param[in]     config        Driver configuration or @p NULL.
  * @return                      The operation status.
  */
-msg_t __gpt_start_impl(void *ip) {
+msg_t __gpt_start_impl(void *ip, const void *config) {
   hal_gpt_driver_c *self = (hal_gpt_driver_c *)ip;
   msg_t msg;
+
+  if (config != NULL) {
+    self->config = __gpt_setcfg_impl(self, config);
+    if (self->config == NULL) {
+      return HAL_RET_CONFIG_ERROR;
+    }
+  }
 
   msg = gpt_lld_start(self);
   if (msg != HAL_RET_SUCCESS) {
@@ -193,45 +201,6 @@ const struct hal_gpt_driver_vmt __hal_gpt_driver_vmt = {
  * @name        Regular methods of hal_gpt_driver_c
  * @{
  */
-/**
- * @brief       Configures and activates the GPT peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_gpt_driver_c instance.
- * @param[in]     config        Driver configuration or @p NULL.
- * @return                      The operation status.
- *
- * @api
- */
-msg_t gptStart(void *ip, const hal_gpt_config_t *config) {
-  hal_gpt_driver_c *self = (hal_gpt_driver_c *)ip;
-  msg_t msg;
-
-  osalDbgCheck(self != NULL);
-
-  if (config != NULL) {
-    msg = drvSetCfgX(self, config);
-    if (msg != HAL_RET_SUCCESS) {
-      return msg;
-    }
-  }
-
-  return drvStart(self);
-}
-
-/**
- * @brief       Deactivates the GPT peripheral.
- *
- * @param[in,out] ip            Pointer to a @p hal_gpt_driver_c instance.
- *
- * @api
- */
-void gptStop(void *ip) {
-  hal_gpt_driver_c *self = (hal_gpt_driver_c *)ip;
-  osalDbgCheck(self != NULL);
-
-  drvStop(self);
-}
-
 /**
  * @brief       Changes the interval of GPT peripheral.
  *

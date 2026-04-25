@@ -37,7 +37,7 @@ int main(void) {
 
   portab_setup();
 
-  wdgStart(&WDGD1, &wdgcfg);
+  drvStart(&WDGD1, &wdgcfg);
 
   while (true) {
     wdgReset(&WDGD1);

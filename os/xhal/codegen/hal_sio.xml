@@ -930,6 +930,10 @@ return msg;]]></implementation>
               <implementation><![CDATA[
 msg_t msg;
 
+if (config != NULL) {
+  self->config = config;
+}
+
 msg = sio_lld_start(self);
 if (msg == HAL_RET_SUCCESS) {
 #if SIO_USE_SYNCHRONIZATION == TRUE
@@ -939,6 +943,9 @@ if (msg == HAL_RET_SUCCESS) {
   /* If synchronization is disabled then no events by default.*/
   sioWriteEnableFlagsX(self, SIO_EV_NONE);
 #endif
+}
+else {
+  self->config = NULL;
 }
 
 return msg;]]></implementation>
@@ -1103,7 +1110,7 @@ __drv_dispose_impl(self);]]></implementation>
 msg_t msg;
 
 /* Starting the undelying SIO driver.*/
-msg = drvStartS(self->siop);
+msg = drvStartS(self->siop, config);
 if (msg == HAL_RET_SUCCESS) {
   self->config = self->siop->config;
   drvSetArgumentX(self->siop, self);

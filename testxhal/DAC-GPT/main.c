@@ -235,9 +235,9 @@ int main(void) {
   portab_setup();
   wait_button_release();
 
-  test_assert(dacStart(&PORTAB_DAC1, &portab_daccfg1) == HAL_RET_SUCCESS,
+  test_assert(drvStart(&PORTAB_DAC1, &portab_daccfg1) == HAL_RET_SUCCESS,
               TEST_STAGE_STARTUP | 0x01U);
-  test_assert(gptStart(&PORTAB_GPT1, &portab_gptcfg1) == HAL_RET_SUCCESS,
+  test_assert(drvStart(&PORTAB_GPT1, &portab_gptcfg1) == HAL_RET_SUCCESS,
               TEST_STAGE_STARTUP | 0x02U);
   drvSetCallbackX(&PORTAB_DAC1, dac_test_cb);
   drvSetCallbackX(&PORTAB_GPT1, NULL);
