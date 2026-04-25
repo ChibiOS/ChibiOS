@@ -284,7 +284,7 @@ static inline const void *__drv_set_cfg(void *ip, const void *config) {
 /**
  * @brief       Reconfigures a ready driver with one of the pre-defined
  *              configurations.
- * @note        Only configuration zero is guaranteed to exists, it is the
+ * @note        Only configuration zero is guaranteed to exist, it is the
  *              driver default configuration.
  * @note        The returned configuration pointer can be retained by the
  *              driver without copying and must remain valid for the whole time

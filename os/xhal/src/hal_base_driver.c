@@ -453,7 +453,7 @@ msg_t drvSetCfgX(void *ip, const void *config) {
 /**
  * @brief       Live reconfiguration using one of the pre-defined driver
  *              configurations.
- * @note        Only configuration zero is guaranteed to exists, it is the
+ * @note        Only configuration zero is guaranteed to exist, it is the
  *              driver default configuration.
  * @note        This function is only valid in @p HAL_DRV_STATE_READY. Initial
  *              configuration is passed to @p drvStart() or @p drvStartS().

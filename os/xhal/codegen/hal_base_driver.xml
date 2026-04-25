@@ -134,7 +134,7 @@ drv_reg_remove(self);
             <method name="__drv_sel_cfg" shortname="selcfg"
               ctype="const void *">
               <brief>Reconfigures a ready driver with one of the pre-defined configurations.</brief>
-              <note>Only configuration zero is guaranteed to exists, it is the
+              <note>Only configuration zero is guaranteed to exist, it is the
                 driver default configuration.</note>
               <note><![CDATA[The returned configuration pointer can be retained
                 by the driver without copying and must remain valid for the
@@ -336,7 +336,7 @@ return msg;</implementation>
             </method>
             <method name="drvSelectCfgX" ctype="const void *">
               <brief>Live reconfiguration using one of the pre-defined driver configurations.</brief>
-              <note>Only configuration zero is guaranteed to exists, it is the
+              <note>Only configuration zero is guaranteed to exist, it is the
                 driver default configuration.</note>
               <note><![CDATA[This function is only valid in
                 @p HAL_DRV_STATE_READY. Initial configuration is passed to
