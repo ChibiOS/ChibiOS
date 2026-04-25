@@ -384,17 +384,22 @@ msg_t __xsnor_start_impl(void *ip, const void *config) {
   hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
   flash_error_t err;
   const xsnor_config_t *xcfg;
+  msg_t msg = HAL_RET_SUCCESS;
+
+  osalSysUnlock();
 
   if (config != NULL) {
     self->config = __xsnor_setcfg_impl(self, config);
     if (self->config == NULL) {
-      return HAL_RET_CONFIG_ERROR;
+      msg = HAL_RET_CONFIG_ERROR;
+      goto exit;
     }
   }
 
   xcfg = self->config;
   if (xcfg == NULL) {
-    return HAL_RET_CONFIG_ERROR;
+    msg = HAL_RET_CONFIG_ERROR;
+    goto exit;
   }
 
   /* Bus acquisition.*/
@@ -445,10 +450,14 @@ msg_t __xsnor_start_impl(void *ip, const void *config) {
 #endif
 #endif
     self->config = NULL;
-    return HAL_RET_HW_FAILURE;
+    msg = HAL_RET_HW_FAILURE;
+    goto exit;
   }
 
-  return HAL_RET_SUCCESS;
+exit:
+  osalSysLock();
+
+  return msg;
 }
 
 /**
