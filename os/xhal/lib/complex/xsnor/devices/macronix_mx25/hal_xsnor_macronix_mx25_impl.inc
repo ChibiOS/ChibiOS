@@ -736,8 +736,6 @@ flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
   flash_error_t err = FLASH_NO_ERROR;
 
-  __xsnor_bus_acquire(self);
-
   /* Command depends on bus mode.*/
   switch (xsnorcfg->bus_type) {
   case XSNOR_BUS_MODE_SPI:
@@ -765,8 +763,6 @@ flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
     break;
   }
 
-  __xsnor_bus_release(self);
-
   return err;
 }
 
@@ -783,8 +779,6 @@ flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
 flash_error_t __mx25_program_impl(void *ip, flash_offset_t offset, size_t n,
                                   const uint8_t *pp) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
-
-  __xsnor_bus_acquire(self);
 
   /* Data is programmed page by page.*/
   while (n > 0U) {
@@ -817,14 +811,12 @@ flash_error_t __mx25_program_impl(void *ip, flash_offset_t offset, size_t n,
       break;
     default:
       osalDbgAssert(false, "invalid bus type");
-      __xsnor_bus_release(self);
       return FLASH_ERROR_HW_FAILURE;
     }
 
     /* Wait for status and check errors.*/
     err = mx25_poll_status(self);
     if (err != FLASH_NO_ERROR) {
-      __xsnor_bus_release(self);
       return err;
     }
 
@@ -833,8 +825,6 @@ flash_error_t __mx25_program_impl(void *ip, flash_offset_t offset, size_t n,
     pp     += chunk;
     n      -= chunk;
   }
-
-  __xsnor_bus_release(self);
 
   return FLASH_NO_ERROR;
 }
@@ -848,8 +838,6 @@ flash_error_t __mx25_program_impl(void *ip, flash_offset_t offset, size_t n,
  */
 flash_error_t __mx25_start_erase_all_impl(void *ip) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
-
-  __xsnor_bus_acquire(self);
 
   /* Command depends on bus mode.*/
   switch (xsnorcfg->bus_type) {
@@ -869,11 +857,8 @@ flash_error_t __mx25_start_erase_all_impl(void *ip) {
     break;
   default:
     osalDbgAssert(false, "invalid bus type");
-    __xsnor_bus_release(self);
     return FLASH_ERROR_HW_FAILURE;
   }
-
-  __xsnor_bus_release(self);
 
   return FLASH_NO_ERROR;
 }
@@ -889,8 +874,6 @@ flash_error_t __mx25_start_erase_all_impl(void *ip) {
 flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
   flash_offset_t offset = (flash_offset_t)(sector * self->descriptor.sectors_size);
-
-  __xsnor_bus_acquire(self);
 
   /* Command depends on bus mode.*/
   switch (xsnorcfg->bus_type) {
@@ -926,11 +909,8 @@ flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector) {
     break;
   default:
     osalDbgAssert(false, "invalid bus type");
-    __xsnor_bus_release(self);
     return FLASH_ERROR_HW_FAILURE;
   }
-
-  __xsnor_bus_release(self);
 
   return FLASH_NO_ERROR;
 }
@@ -947,8 +927,6 @@ flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector) {
  */
 flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec) {
   hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
-
-  __xsnor_bus_acquire(self);
 
   /* Command depends on bus mode.*/
   switch (xsnorcfg->bus_type) {
@@ -974,7 +952,6 @@ flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec) {
     break;
   default:
     osalDbgAssert(false, "invalid bus type");
-    __xsnor_bus_release(self);
     return FLASH_ERROR_HW_FAILURE;
   }
 
@@ -989,7 +966,6 @@ flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec) {
       *msec = 1U;
     }
 
-    __xsnor_bus_release(self);
     return FLASH_BUSY_ERASING;
   }
 
@@ -997,11 +973,8 @@ flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec) {
   if ((xsnorcfg->buffers->databuf[16] & FLAGS_ALL_ERRORS) != 0U) {
 
     /* Erase operation failed.*/
-    __xsnor_bus_release(self);
     return FLASH_ERROR_ERASE;
   }
-
-  __xsnor_bus_release(self);
 
   return FLASH_NO_ERROR;
 }

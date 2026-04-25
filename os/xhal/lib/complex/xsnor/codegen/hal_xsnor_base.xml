@@ -181,6 +181,173 @@
       <class name="hal_xsnor_base" type="abstract" namespace="xsnor"
         descr="XSNOR base driver" ancestorname="hal_flash_base">
         <brief>Base class of all SNOR drivers.</brief>
+        <implements>
+          <if name="flash_interface">
+            <method shortname="get_descriptor">
+              <implementation><![CDATA[
+
+return &self->descriptor;]]></implementation>
+            </method>
+            <method shortname="read">
+              <implementation><![CDATA[
+flash_error_t err;
+
+osalDbgCheck((self != NULL) && (rp != NULL) && (n > 0U));
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == FLASH_ERASE), "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  return FLASH_BUSY_ERASING;
+}
+
+__xsnor_bus_acquire(self);
+
+self->state = FLASH_READ;
+err = self->vmt->read(self, offset, n, rp);
+self->state = HAL_DRV_STATE_READY;
+
+__xsnor_bus_release(self);
+
+return err;]]></implementation>
+            </method>
+            <method shortname="program">
+              <implementation><![CDATA[
+flash_error_t err;
+
+osalDbgCheck((self != NULL) && (pp != NULL) && (n > 0U));
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == FLASH_ERASE), "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  return FLASH_BUSY_ERASING;
+}
+
+__xsnor_bus_acquire(self);
+
+self->state = FLASH_PGM;
+err = self->vmt->program(self, offset, n, pp);
+self->state = HAL_DRV_STATE_READY;
+
+__xsnor_bus_release(self);
+
+return err;]]></implementation>
+            </method>
+            <method shortname="start_erase_all">
+              <implementation><![CDATA[
+flash_error_t err;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == FLASH_ERASE), "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  return FLASH_BUSY_ERASING;
+}
+
+__xsnor_bus_acquire(self);
+
+self->state = FLASH_ERASE;
+err = self->vmt->start_erase_all(self);
+if (err != FLASH_NO_ERROR) {
+  self->state = HAL_DRV_STATE_READY;
+}
+
+__xsnor_bus_release(self);
+
+return err;]]></implementation>
+            </method>
+            <method shortname="start_erase_sector">
+              <implementation><![CDATA[
+flash_error_t err;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == FLASH_ERASE), "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  return FLASH_BUSY_ERASING;
+}
+
+__xsnor_bus_acquire(self);
+
+self->state = FLASH_ERASE;
+err = self->vmt->start_erase_sector(self, sector);
+if (err != FLASH_NO_ERROR) {
+  self->state = HAL_DRV_STATE_READY;
+}
+
+__xsnor_bus_release(self);
+
+return err;]]></implementation>
+            </method>
+            <method shortname="query_erase">
+              <implementation><![CDATA[
+flash_error_t err;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == FLASH_ERASE), "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  __xsnor_bus_acquire(self);
+
+  err = self->vmt->query_erase(self, msec);
+  if (err == FLASH_NO_ERROR) {
+    self->state = HAL_DRV_STATE_READY;
+  }
+
+  __xsnor_bus_release(self);
+}
+else {
+  err = FLASH_NO_ERROR;
+}
+
+return err;]]></implementation>
+            </method>
+            <method shortname="verify_erase">
+              <implementation><![CDATA[
+flash_error_t err;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == FLASH_ERASE), "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  return FLASH_BUSY_ERASING;
+}
+
+__xsnor_bus_acquire(self);
+
+self->state = FLASH_READ;
+err = self->vmt->verify_erase(self, sector);
+self->state = HAL_DRV_STATE_READY;
+
+__xsnor_bus_release(self);
+
+return err;]]></implementation>
+            </method>
+            <method shortname="acquire_exclusive">
+              <implementation><![CDATA[
+
+osalDbgCheck(self != NULL);
+#if HAL_USE_MUTUAL_EXCLUSION == TRUE
+drvLock(self);
+#endif
+
+return FLASH_NO_ERROR;]]></implementation>
+            </method>
+            <method shortname="release_exclusive">
+              <implementation><![CDATA[
+
+osalDbgCheck(self != NULL);
+#if HAL_USE_MUTUAL_EXCLUSION == TRUE
+drvUnlock(self);
+#endif
+
+return FLASH_NO_ERROR;]]></implementation>
+            </method>
+          </if>
+        </implements>
         <fields>
           <condition check="XSNOR_USE_WSPI == TRUE">
             <field name="commands" ctype="const xsnor_commands_t$I*$N">

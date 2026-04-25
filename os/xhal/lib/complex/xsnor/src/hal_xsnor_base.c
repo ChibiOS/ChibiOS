@@ -59,6 +59,260 @@
 /*===========================================================================*/
 
 /**
+ * @name        Interfaces implementation of hal_xsnor_base_c
+ * @{
+ */
+/**
+ * @brief       Implementation of interface method @p flsGetDescriptor().
+ *
+ * @param[in,out] ip            Pointer to the @p flash_interface_i class
+ *                              interface.
+ * @return                      A flash device descriptor.
+ */
+static const flash_descriptor_t *__xsnor_fls_get_descriptor_impl(void *ip) {
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
+
+  return &self->descriptor;
+}
+
+/**
+ * @brief       Implementation of interface method @p flsRead().
+ *
+ * @param[in,out] ip            Pointer to the @p flash_interface_i class
+ *                              interface.
+ * @param[in]     offset        Flash offset.
+ * @param[in]     n             Number of bytes to be read.
+ * @param[out]    rp            Pointer to the data buffer.
+ * @return                      An error code.
+ */
+static flash_error_t __xsnor_fls_read_impl(void *ip, flash_offset_t offset,
+                                           size_t n, uint8_t *rp) {
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
+  flash_error_t err;
+
+  osalDbgCheck((self != NULL) && (rp != NULL) && (n > 0U));
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+                (self->state == FLASH_ERASE), "invalid state");
+
+  if (self->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  __xsnor_bus_acquire(self);
+
+  self->state = FLASH_READ;
+  err = self->vmt->read(self, offset, n, rp);
+  self->state = HAL_DRV_STATE_READY;
+
+  __xsnor_bus_release(self);
+
+  return err;
+}
+
+/**
+ * @brief       Implementation of interface method @p flsProgram().
+ *
+ * @param[in,out] ip            Pointer to the @p flash_interface_i class
+ *                              interface.
+ * @param[in]     offset        Flash offset.
+ * @param[in]     n             Number of bytes to be programmed.
+ * @param[in]     pp            Pointer to the data buffer.
+ * @return                      An error code.
+ */
+static flash_error_t __xsnor_fls_program_impl(void *ip, flash_offset_t offset,
+                                              size_t n, const uint8_t *pp) {
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
+  flash_error_t err;
+
+  osalDbgCheck((self != NULL) && (pp != NULL) && (n > 0U));
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+                (self->state == FLASH_ERASE), "invalid state");
+
+  if (self->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  __xsnor_bus_acquire(self);
+
+  self->state = FLASH_PGM;
+  err = self->vmt->program(self, offset, n, pp);
+  self->state = HAL_DRV_STATE_READY;
+
+  __xsnor_bus_release(self);
+
+  return err;
+}
+
+/**
+ * @brief       Implementation of interface method @p flsStartEraseAll().
+ *
+ * @param[in,out] ip            Pointer to the @p flash_interface_i class
+ *                              interface.
+ * @return                      An error code.
+ */
+static flash_error_t __xsnor_fls_start_erase_all_impl(void *ip) {
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
+  flash_error_t err;
+
+  osalDbgCheck(self != NULL);
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+                (self->state == FLASH_ERASE), "invalid state");
+
+  if (self->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  __xsnor_bus_acquire(self);
+
+  self->state = FLASH_ERASE;
+  err = self->vmt->start_erase_all(self);
+  if (err != FLASH_NO_ERROR) {
+    self->state = HAL_DRV_STATE_READY;
+  }
+
+  __xsnor_bus_release(self);
+
+  return err;
+}
+
+/**
+ * @brief       Implementation of interface method @p flsStartEraseSector().
+ *
+ * @param[in,out] ip            Pointer to the @p flash_interface_i class
+ *                              interface.
+ * @param[in]     sector        Sector to be erased.
+ * @return                      An error code.
+ */
+static flash_error_t __xsnor_fls_start_erase_sector_impl(void *ip,
+                                                         flash_sector_t sector) {
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
+  flash_error_t err;
+
+  osalDbgCheck(self != NULL);
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+                (self->state == FLASH_ERASE), "invalid state");
+
+  if (self->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  __xsnor_bus_acquire(self);
+
+  self->state = FLASH_ERASE;
+  err = self->vmt->start_erase_sector(self, sector);
+  if (err != FLASH_NO_ERROR) {
+    self->state = HAL_DRV_STATE_READY;
+  }
+
+  __xsnor_bus_release(self);
+
+  return err;
+}
+
+/**
+ * @brief       Implementation of interface method @p flsQueryErase().
+ *
+ * @param[in,out] ip            Pointer to the @p flash_interface_i class
+ *                              interface.
+ * @param[out]    msec          Recommended time, in milliseconds, before
+ *                              retrying, can be @p NULL.
+ * @return                      An error code.
+ */
+static flash_error_t __xsnor_fls_query_erase_impl(void *ip, unsigned *msec) {
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
+  flash_error_t err;
+
+  osalDbgCheck(self != NULL);
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+                (self->state == FLASH_ERASE), "invalid state");
+
+  if (self->state == FLASH_ERASE) {
+    __xsnor_bus_acquire(self);
+
+    err = self->vmt->query_erase(self, msec);
+    if (err == FLASH_NO_ERROR) {
+      self->state = HAL_DRV_STATE_READY;
+    }
+
+    __xsnor_bus_release(self);
+  }
+  else {
+    err = FLASH_NO_ERROR;
+  }
+
+  return err;
+}
+
+/**
+ * @brief       Implementation of interface method @p flsVerifyErase().
+ *
+ * @param[in,out] ip            Pointer to the @p flash_interface_i class
+ *                              interface.
+ * @param[in]     sector        Sector to be verified.
+ * @return                      An error code.
+ */
+static flash_error_t __xsnor_fls_verify_erase_impl(void *ip,
+                                                   flash_sector_t sector) {
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
+  flash_error_t err;
+
+  osalDbgCheck(self != NULL);
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+                (self->state == FLASH_ERASE), "invalid state");
+
+  if (self->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  __xsnor_bus_acquire(self);
+
+  self->state = FLASH_READ;
+  err = self->vmt->verify_erase(self, sector);
+  self->state = HAL_DRV_STATE_READY;
+
+  __xsnor_bus_release(self);
+
+  return err;
+}
+
+/**
+ * @brief       Implementation of interface method @p flsAcquireExclusive().
+ *
+ * @param[in,out] ip            Pointer to the @p flash_interface_i class
+ *                              interface.
+ * @return                      An error code.
+ */
+static flash_error_t __xsnor_fls_acquire_exclusive_impl(void *ip) {
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
+
+  osalDbgCheck(self != NULL);
+#if HAL_USE_MUTUAL_EXCLUSION == TRUE
+  drvLock(self);
+#endif
+
+  return FLASH_NO_ERROR;
+}
+
+/**
+ * @brief       Implementation of interface method @p flsReleaseExclusive().
+ *
+ * @param[in,out] ip            Pointer to the @p flash_interface_i class
+ *                              interface.
+ * @return                      An error code.
+ */
+static flash_error_t __xsnor_fls_release_exclusive_impl(void *ip) {
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
+
+  osalDbgCheck(self != NULL);
+#if HAL_USE_MUTUAL_EXCLUSION == TRUE
+  drvUnlock(self);
+#endif
+
+  return FLASH_NO_ERROR;
+}
+/** @} */
+
+/**
  * @name        Methods implementations of hal_xsnor_base_c
  * @{
  */
@@ -76,6 +330,23 @@ void *__xsnor_objinit_impl(void *ip, const void *vmt) {
 
   /* Initialization of the ancestors-defined parts.*/
   __flash_objinit_impl(self, vmt);
+
+  /* Initialization of interface flash_interface_i.*/
+  {
+    static const struct flash_interface_vmt xsnor_fls_vmt = {
+      .instance_offset      = offsetof(hal_xsnor_base_c, fls),
+      .get_descriptor       = __xsnor_fls_get_descriptor_impl,
+      .read                 = __xsnor_fls_read_impl,
+      .program              = __xsnor_fls_program_impl,
+      .start_erase_all      = __xsnor_fls_start_erase_all_impl,
+      .start_erase_sector   = __xsnor_fls_start_erase_sector_impl,
+      .query_erase          = __xsnor_fls_query_erase_impl,
+      .verify_erase         = __xsnor_fls_verify_erase_impl,
+      .acquire_exclusive    = __xsnor_fls_acquire_exclusive_impl,
+      .release_exclusive    = __xsnor_fls_release_exclusive_impl
+    };
+    oopIfObjectInit(&self->fls, &xsnor_fls_vmt);
+  }
 
   /* Initialization code.*/
 #if XSNOR_USE_WSPI == TRUE

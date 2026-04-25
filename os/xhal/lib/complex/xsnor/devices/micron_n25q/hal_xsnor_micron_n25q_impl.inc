@@ -710,8 +710,6 @@ flash_error_t __n25q_read_impl(void *ip, flash_offset_t offset, size_t n,
                                uint8_t *rp) {
   hal_xsnor_micron_n25q_c *self = (hal_xsnor_micron_n25q_c *)ip;
 
-  __xsnor_bus_acquire(self);
-
   if (xsnorcfg->bus_type == XSNOR_BUS_MODE_SPI) {
     /* Using normal read command because it does not require dummy cycles.*/
     __xsnor_bus_cmd_addr_receive(self,
@@ -727,8 +725,6 @@ flash_error_t __n25q_read_impl(void *ip, flash_offset_t offset, size_t n,
                                        xsnorcfg->options & N25Q_OPT_DUMMY_CYCLES_MASK,
                                        n, rp);
   }
-
-  __xsnor_bus_release(self);
 
   return FLASH_NO_ERROR;
 }
@@ -746,8 +742,6 @@ flash_error_t __n25q_read_impl(void *ip, flash_offset_t offset, size_t n,
 flash_error_t __n25q_program_impl(void *ip, flash_offset_t offset, size_t n,
                                   const uint8_t *pp) {
   hal_xsnor_micron_n25q_c *self = (hal_xsnor_micron_n25q_c *)ip;
-
-  __xsnor_bus_acquire(self);
 
   /* Data is programmed page by page.*/
   while (n > 0U) {
@@ -771,7 +765,6 @@ flash_error_t __n25q_program_impl(void *ip, flash_offset_t offset, size_t n,
     /* Wait for status and check errors.*/
     err = n25q_poll_status(self);
     if (err != FLASH_NO_ERROR) {
-      __xsnor_bus_release(self);
       return err;
     }
 
@@ -780,8 +773,6 @@ flash_error_t __n25q_program_impl(void *ip, flash_offset_t offset, size_t n,
     pp     += chunk;
     n      -= chunk;
   }
-
-  __xsnor_bus_release(self);
 
   return FLASH_NO_ERROR;
 }
@@ -796,15 +787,11 @@ flash_error_t __n25q_program_impl(void *ip, flash_offset_t offset, size_t n,
 flash_error_t __n25q_start_erase_all_impl(void *ip) {
   hal_xsnor_micron_n25q_c *self = (hal_xsnor_micron_n25q_c *)ip;
 
-  __xsnor_bus_acquire(self);
-
   /* Enabling write operation.*/
   __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
 
   /* Bulk erase command.*/
   __xsnor_bus_cmd(self, CMD_BULK_ERASE);
-
-  __xsnor_bus_release(self);
 
   return FLASH_NO_ERROR;
 }
@@ -820,8 +807,6 @@ flash_error_t __n25q_start_erase_all_impl(void *ip) {
 flash_error_t __n25q_start_erase_sector_impl(void *ip, flash_sector_t sector) {
   hal_xsnor_micron_n25q_c *self = (hal_xsnor_micron_n25q_c *)ip;
   flash_offset_t offset = (flash_offset_t)(sector * self->descriptor.sectors_size);
-
-  __xsnor_bus_acquire(self);
 
   /* Enabling write operation.*/
   __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
@@ -840,8 +825,6 @@ flash_error_t __n25q_start_erase_sector_impl(void *ip, flash_sector_t sector) {
                          offset);
   }
 
-  __xsnor_bus_release(self);
-
   return FLASH_NO_ERROR;
 }
 
@@ -858,8 +841,6 @@ flash_error_t __n25q_start_erase_sector_impl(void *ip, flash_sector_t sector) {
 flash_error_t __n25q_query_erase_impl(void *ip, unsigned *msec) {
   hal_xsnor_micron_n25q_c *self = (hal_xsnor_micron_n25q_c *)ip;
 
-  __xsnor_bus_acquire(self);
-
   /* Read status command.*/
   __xsnor_bus_cmd_receive(self, CMD_READ_FLAG_STATUS_REGISTER,
                           1, &xsnorcfg->buffers->databuf[0]);
@@ -875,7 +856,6 @@ flash_error_t __n25q_query_erase_impl(void *ip, unsigned *msec) {
       *msec = 1U;
     }
 
-    __xsnor_bus_release(self);
     return FLASH_BUSY_ERASING;
   }
 
@@ -886,11 +866,8 @@ flash_error_t __n25q_query_erase_impl(void *ip, unsigned *msec) {
     __xsnor_bus_cmd(self, CMD_CLEAR_FLAG_STATUS_REGISTER);
 
     /* Erase operation failed.*/
-    __xsnor_bus_release(self);
     return FLASH_ERROR_ERASE;
   }
-
-  __xsnor_bus_release(self);
 
   return FLASH_NO_ERROR;
 }
