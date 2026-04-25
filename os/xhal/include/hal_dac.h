@@ -59,10 +59,10 @@
  * @{
  */
 /**
- * @brief       Support for synchronous DAC streaming API.
+ * @brief       Support for thread synchronization API.
  */
-#if !defined(DAC_USE_WAIT) || defined(__DOXYGEN__)
-#define DAC_USE_WAIT                        TRUE
+#if !defined(DAC_USE_SYNCHRONIZATION) || defined(__DOXYGEN__)
+#define DAC_USE_SYNCHRONIZATION             TRUE
 #endif
 /** @} */
 
@@ -70,9 +70,9 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/* Checks on DAC_USE_WAIT configuration.*/
-#if (DAC_USE_WAIT != FALSE) && (DAC_USE_WAIT != TRUE)
-#error "invalid DAC_USE_WAIT value"
+/* Checks on DAC_USE_SYNCHRONIZATION configuration.*/
+#if (DAC_USE_SYNCHRONIZATION != FALSE) && (DAC_USE_SYNCHRONIZATION != TRUE)
+#error "invalid DAC_USE_SYNCHRONIZATION value"
 #endif
 
 /*===========================================================================*/
@@ -97,7 +97,7 @@
  * @name    Low level driver helper macros
  * @{
  */
-#if (DAC_USE_WAIT == TRUE) || defined (__DOXYGEN__)
+#if (DAC_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
 /**
  * @brief       Resumes a thread waiting for DAC streaming completion.
  *
@@ -152,7 +152,7 @@
 #define _dac_reset_s(dacp)
 #define _dac_wakeup_isr(dacp)
 #define _dac_error_wakeup_isr(dacp)
-#endif /* DAC_USE_WAIT == TRUE */
+#endif /* DAC_USE_SYNCHRONIZATION == TRUE */
 
 /**
  * @brief       Common ISR code, half buffer event.
@@ -284,6 +284,7 @@ struct hal_dac_driver_vmt {
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
+  msg_t (*synchronize)(void *ip, sysinterval_t timeout);
   /* From hal_cb_driver_c.*/
   void (*setcb)(void *ip, drv_cb_t cb);
   /* From hal_dac_driver_c.*/
@@ -354,12 +355,12 @@ struct hal_dac_driver {
    * @brief       Cached DAC error flags.
    */
   volatile dacerror_t       errors;
-#if (DAC_USE_WAIT == TRUE) || defined (__DOXYGEN__)
+#if (DAC_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Waiting thread reference.
    */
   thread_reference_t        thread;
-#endif /* DAC_USE_WAIT == TRUE */
+#endif /* DAC_USE_SYNCHRONIZATION == TRUE */
 #if (defined(DAC_DRIVER_EXT_FIELDS)) || defined (__DOXYGEN__)
   DAC_DRIVER_EXT_FIELDS
 #endif /* defined(DAC_DRIVER_EXT_FIELDS) */
@@ -382,6 +383,7 @@ extern "C" {
   void __dac_stop_impl(void *ip);
   const void *__dac_setcfg_impl(void *ip, const void *config);
   const void *__dac_selcfg_impl(void *ip, unsigned cfgnum);
+  msg_t __dac_synchronize_impl(void *ip, sysinterval_t timeout);
   void __dac_setcb_impl(void *ip, drv_cb_t cb);
   msg_t dacPutChannelX(void *ip, dacchannel_t channel, dacsample_t sample);
   msg_t dacStartConversionI(void *ip, const dac_conversion_group_t *grpp,
@@ -390,6 +392,12 @@ extern "C" {
                            dacsample_t *samples, size_t depth);
   void dacStopConversionI(void *ip);
   void dacStopConversion(void *ip);
+#if (DAC_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
+  msg_t dacConvert(void *ip, const dac_conversion_group_t *grpp,
+                   dacsample_t *samples, size_t depth);
+  msg_t dacSynchronizeS(void *ip, sysinterval_t timeout);
+  msg_t dacSynchronize(void *ip, sysinterval_t timeout);
+#endif /* DAC_USE_SYNCHRONIZATION == TRUE */
   /* Regular functions.*/
   void dacInit(void);
 #ifdef __cplusplus

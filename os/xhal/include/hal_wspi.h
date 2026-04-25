@@ -170,10 +170,6 @@ typedef struct hal_wspi_config hal_wspi_config_t;
  */
 typedef struct wspi_command wspi_command_t;
 
-#if !defined(WSPI_USE_WAIT) || defined(__DOXYGEN__)
-#define WSPI_USE_WAIT WSPI_USE_SYNCHRONIZATION
-#endif
-
 /**
  * @brief       WSPI driver specific states.
  */
@@ -258,6 +254,7 @@ struct hal_wspi_driver_vmt {
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
+  msg_t (*synchronize)(void *ip, sysinterval_t timeout);
   /* From hal_cb_driver_c.*/
   void (*setcb)(void *ip, drv_cb_t cb);
   /* From hal_wspi_driver_c.*/

@@ -271,6 +271,7 @@ const struct hal_efl_driver_vmt __hal_efl_driver_vmt = {
   .stop                     = __efl_stop_impl,
   .setcfg                   = __efl_setcfg_impl,
   .selcfg                   = __efl_selcfg_impl,
+  .synchronize              = __drv_synchronize_impl,
   .read                     = __efl_read_impl,
   .program                  = __efl_program_impl,
   .start_erase_all          = __efl_start_erase_all_impl,

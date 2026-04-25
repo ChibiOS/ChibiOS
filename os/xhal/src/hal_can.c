@@ -218,6 +218,7 @@ const struct hal_can_driver_vmt __hal_can_driver_vmt = {
   .stop                     = __can_stop_impl,
   .setcfg                   = __can_setcfg_impl,
   .selcfg                   = __can_selcfg_impl,
+  .synchronize              = __drv_synchronize_impl,
   .setcb                    = __can_setcb_impl
 };
 

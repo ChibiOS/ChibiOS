@@ -185,6 +185,7 @@ const struct hal_i2s_driver_vmt __hal_i2s_driver_vmt = {
   .stop                     = __i2s_stop_impl,
   .setcfg                   = __i2s_setcfg_impl,
   .selcfg                   = __i2s_selcfg_impl,
+  .synchronize              = __drv_synchronize_impl,
   .setcb                    = __cbdrv_setcb_impl
 };
 

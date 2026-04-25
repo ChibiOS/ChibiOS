@@ -108,8 +108,8 @@
       </group>
     </definitions_early>
     <configs>
-      <config name="USB_USE_WAIT" default="TRUE">
-        <brief>Support for blocking endpoint APIs.</brief>
+      <config name="USB_USE_SYNCHRONIZATION" default="TRUE">
+        <brief>Support for thread synchronization API.</brief>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
       <config name="USB_USE_CONFIGURATIONS" default="FALSE">
@@ -156,7 +156,7 @@ do {
   }
 } while (false)]]></implementation>
         </macro>
-        <condition check="USB_USE_WAIT == TRUE">
+        <condition check="USB_USE_SYNCHRONIZATION == TRUE">
           <macro name="_usb_isr_invoke_in_cb">
             <brief>Common ISR code, IN endpoint callback.</brief>
             <param name="usbp" dir="both">Pointer to the USB driver instance.</param>
@@ -268,7 +268,7 @@ typedef struct {
   size_t                    txcnt;
   size_t                    txlast;
   const uint8_t            *txbuf;
-#if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
+#if (USB_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
   thread_reference_t        thread;
 #endif
 } USBInEndpointState;
@@ -278,7 +278,7 @@ typedef struct {
   size_t                    rxcnt;
   size_t                    rxpkts;
   uint8_t                  *rxbuf;
-#if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
+#if (USB_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
   thread_reference_t        thread;
 #endif
 } USBOutEndpointState;
@@ -990,7 +990,7 @@ osalDbgAssert(self->state == USB_ACTIVE, "invalid state");
 self->transmitting &= 1U;
 self->receiving    &= 1U;
 for (i = 1U; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
-#if USB_USE_WAIT == TRUE
+#if USB_USE_SYNCHRONIZATION == TRUE
   if (self->epc[i] != NULL) {
     if (self->epc[i]->in_state != NULL) {
       osalThreadResumeI(&self->epc[i]->in_state->thread, MSG_RESET);
@@ -1042,7 +1042,7 @@ osp->rxbuf  = buf;
 osp->rxsize = n;
 osp->rxcnt  = 0U;
 osp->rxpkts = 0U;
-#if USB_USE_WAIT == TRUE
+#if USB_USE_SYNCHRONIZATION == TRUE
 osp->thread = NULL;
 #endif
 
@@ -1073,13 +1073,13 @@ isp->txbuf  = buf;
 isp->txsize = n;
 isp->txcnt  = 0U;
 isp->txlast = 0U;
-#if USB_USE_WAIT == TRUE
+#if USB_USE_SYNCHRONIZATION == TRUE
 isp->thread = NULL;
 #endif
 
 usb_lld_start_in(self, ep);]]></implementation>
             </method>
-            <condition check="USB_USE_WAIT == TRUE">
+            <condition check="USB_USE_SYNCHRONIZATION == TRUE">
               <method name="usbReceive" ctype="msg_t">
                 <brief>Performs a blocking receive transaction.</brief>
                 <param name="ep" ctype="usbep_t" dir="in">Endpoint number.</param>
@@ -1581,7 +1581,7 @@ self->address       = 0U;
 self->configuration = 0U;
 self->saved_state   = HAL_DRV_STATE_STOP;
 for (i = 0U; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
-#if USB_USE_WAIT == TRUE
+#if USB_USE_SYNCHRONIZATION == TRUE
   if (self->epc[i] != NULL) {
     if (self->epc[i]->in_state != NULL) {
       osalThreadResumeI(&self->epc[i]->in_state->thread, MSG_RESET);
@@ -2123,7 +2123,7 @@ usbp->ep0n          = 0U;
 usbp->transmitting  = 0U;
 usbp->receiving     = 0U;
 for (i = 0U; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
-#if USB_USE_WAIT == TRUE
+#if USB_USE_SYNCHRONIZATION == TRUE
   if (usbp->epc[i] != NULL) {
     osalSysLockFromISR();
     if (usbp->epc[i]->in_state != NULL) {
@@ -2165,7 +2165,7 @@ if (usbp->state != USB_SUSPENDED) {
   _usb_isr_invoke_event_cb(usbp, USB_FLAGS_SUSPEND);
   usbp->transmitting = 0U;
   usbp->receiving = 0U;
-#if USB_USE_WAIT == TRUE
+#if USB_USE_SYNCHRONIZATION == TRUE
   for (i = 0U; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
     if (usbp->epc[i] != NULL) {
       osalSysLockFromISR();

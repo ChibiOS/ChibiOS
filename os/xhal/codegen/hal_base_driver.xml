@@ -144,6 +144,29 @@ drv_reg_remove(self);
               <retval value="NULL">If the selected configuration does not exist.</retval>
               <api />
             </method>
+            <method name="__drv_synchronize" shortname="synchronize"
+              ctype="msg_t">
+              <brief>Driver default synchronization point.</brief>
+              <details><![CDATA[This weak default implementation succeeds if
+                the driver is already idle and fails otherwise. Drivers with
+                a meaningful default asynchronous operation should override
+                this method.]]></details>
+              <param ctype="sysinterval_t" name="timeout" dir="in">
+                Synchronization timeout.</param>
+              <return>The synchronization result.</return>
+              <retval value="MSG_OK">If the driver is already idle.</retval>
+              <retval value="HAL_RET_INV_STATE">If the driver is not in
+                @p HAL_DRV_STATE_READY state.</retval>
+              <notapi />
+              <implementation><![CDATA[
+(void)timeout;
+
+if (self->state == HAL_DRV_STATE_READY) {
+  return MSG_OK;
+}
+
+return HAL_RET_INV_STATE;]]></implementation>
+            </method>
           </virtual>
           <regular>
             <method name="drvStart" ctype="msg_t">
@@ -363,6 +386,59 @@ if (self->state == HAL_DRV_STATE_READY) {
 osalSysUnlock();
 
 return config;</implementation>
+            </method>
+            <method name="drvSynchronize" ctype="msg_t">
+              <brief>Driver default synchronization.</brief>
+              <details><![CDATA[Waits for the driver's default asynchronous
+                operation or synchronization point. The exact synchronization
+                point is driver-defined. Drivers without a meaningful default
+                synchronization point inherit a weak implementation which
+                succeeds only when the driver is already ready.]]></details>
+              <param ctype="sysinterval_t" name="timeout" dir="in">
+                Synchronization timeout.</param>
+              <return>The synchronization result.</return>
+              <retval value="MSG_OK">If the synchronization completed.</retval>
+              <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
+              <retval value="MSG_RESET">If the driver has been stopped while
+                waiting.</retval>
+              <retval value="HAL_RET_INV_STATE">If the driver is in an invalid
+                state for its default synchronization point.</retval>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+
+msg = drvSynchronizeS(self, timeout);
+
+osalSysUnlock();
+
+return msg;]]></implementation>
+            </method>
+            <method name="drvSynchronizeS" ctype="msg_t">
+              <brief>Driver default synchronization.</brief>
+              <details><![CDATA[Waits for the driver's default asynchronous
+                operation or synchronization point. The exact synchronization
+                point is driver-defined. Drivers without a meaningful default
+                synchronization point inherit a weak implementation which
+                succeeds only when the driver is already ready.]]></details>
+              <param ctype="sysinterval_t" name="timeout" dir="in">
+                Synchronization timeout.</param>
+              <return>The synchronization result.</return>
+              <retval value="MSG_OK">If the synchronization completed.</retval>
+              <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
+              <retval value="MSG_RESET">If the driver has been stopped while
+                waiting.</retval>
+              <retval value="HAL_RET_INV_STATE">If the driver is in an invalid
+                state for its default synchronization point.</retval>
+              <sclass />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+osalDbgCheckClassS();
+
+return __drv_synchronize(self, timeout);]]></implementation>
             </method>
           </regular>
           <inline>

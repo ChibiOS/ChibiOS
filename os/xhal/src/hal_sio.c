@@ -593,6 +593,7 @@ const struct hal_sio_driver_vmt __hal_sio_driver_vmt = {
   .stop                     = __sio_stop_impl,
   .setcfg                   = __sio_setcfg_impl,
   .selcfg                   = __sio_selcfg_impl,
+  .synchronize              = __drv_synchronize_impl,
   .setcb                    = __cbdrv_setcb_impl
 };
 
@@ -1259,7 +1260,8 @@ const struct hal_buffered_sio_vmt __hal_buffered_sio_vmt = {
   .start                    = __bsio_start_impl,
   .stop                     = __bsio_stop_impl,
   .setcfg                   = __bsio_setcfg_impl,
-  .selcfg                   = NULL /* Method not found.*/
+  .selcfg                   = NULL /* Method not found.*/,
+  .synchronize              = __drv_synchronize_impl
 };
 
 /**

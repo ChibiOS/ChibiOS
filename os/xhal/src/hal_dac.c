@@ -93,7 +93,7 @@ void *__dac_objinit_impl(void *ip, const void *vmt) {
   self->grpp    = NULL;
   self->events  = 0U;
   self->errors  = 0U;
-#if DAC_USE_WAIT == TRUE
+#if DAC_USE_SYNCHRONIZATION == TRUE
   self->thread  = NULL;
 #endif
 
@@ -190,6 +190,22 @@ const void *__dac_selcfg_impl(void *ip, unsigned cfgnum) {
 }
 
 /**
+ * @brief       Override of method @p __drv_synchronize().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_dac_driver_c instance.
+ * @param[in]     timeout       Synchronization timeout.
+ * @return                      The synchronization result.
+ */
+msg_t __dac_synchronize_impl(void *ip, sysinterval_t timeout) {
+  hal_dac_driver_c *self = (hal_dac_driver_c *)ip;
+#if DAC_USE_SYNCHRONIZATION == TRUE
+  return dacSynchronizeS(self, timeout);
+#else
+  return __drv_synchronize_impl(self, timeout);
+#endif
+}
+
+/**
  * @brief       Override of method @p drvSetCallbackX().
  *
  * @param[in,out] ip            Pointer to a @p hal_dac_driver_c instance.
@@ -213,6 +229,7 @@ const struct hal_dac_driver_vmt __hal_dac_driver_vmt = {
   .stop                     = __dac_stop_impl,
   .setcfg                   = __dac_setcfg_impl,
   .selcfg                   = __dac_selcfg_impl,
+  .synchronize              = __dac_synchronize_impl,
   .setcb                    = __dac_setcb_impl
 };
 
@@ -358,6 +375,88 @@ void dacStopConversion(void *ip) {
   }
   osalSysUnlock();
 }
+
+#if (DAC_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
+/**
+ * @brief       Starts a DAC circular conversion and waits for one full cycle.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_dac_driver_c instance.
+ * @param[in]     grpp          Conversion group.
+ * @param[in]     samples       Samples buffer.
+ * @param[in]     depth         Buffer depth.
+ * @return                      The operation result.
+ *
+ * @api
+ */
+msg_t dacConvert(void *ip, const dac_conversion_group_t *grpp,
+                 dacsample_t *samples, size_t depth) {
+  hal_dac_driver_c *self = (hal_dac_driver_c *)ip;
+  msg_t msg;
+
+  osalDbgCheck(self != NULL);
+
+  osalSysLock();
+  osalDbgAssert(self->thread == NULL, "already waiting");
+  msg = dacStartConversionI(self, grpp, samples, depth);
+  if (msg == HAL_RET_SUCCESS) {
+    msg = osalThreadSuspendS(&self->thread);
+  }
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @brief       Waits for the next full DAC buffer cycle.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_dac_driver_c instance.
+ * @param[in]     timeout       Wait timeout.
+ * @return                      The wait result.
+ *
+ * @sclass
+ */
+msg_t dacSynchronizeS(void *ip, sysinterval_t timeout) {
+  hal_dac_driver_c *self = (hal_dac_driver_c *)ip;
+  msg_t msg;
+
+  osalDbgCheckClassS();
+  osalDbgCheck(self != NULL);
+  osalDbgAssert((self->state == HAL_DRV_STATE_ACTIVE) ||
+                (self->state == HAL_DRV_STATE_READY),
+                "invalid state");
+
+  if (self->state == HAL_DRV_STATE_ACTIVE) {
+    msg = osalThreadSuspendTimeoutS(&self->thread, timeout);
+  }
+  else {
+    msg = MSG_OK;
+  }
+
+  return msg;
+}
+
+/**
+ * @brief       Waits for the next full DAC buffer cycle.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_dac_driver_c instance.
+ * @param[in]     timeout       Wait timeout.
+ * @return                      The wait result.
+ *
+ * @api
+ */
+msg_t dacSynchronize(void *ip, sysinterval_t timeout) {
+  hal_dac_driver_c *self = (hal_dac_driver_c *)ip;
+  msg_t msg;
+
+  osalDbgCheck(self != NULL);
+
+  osalSysLock();
+  msg = dacSynchronizeS(self, timeout);
+  osalSysUnlock();
+
+  return msg;
+}
+#endif /* DAC_USE_SYNCHRONIZATION == TRUE */
 /** @} */
 
 #endif /* HAL_USE_DAC == TRUE */

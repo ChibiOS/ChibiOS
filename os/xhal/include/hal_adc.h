@@ -64,10 +64,10 @@
  * @{
  */
 /**
- * @brief       Support for synchronous conversion API.
+ * @brief       Support for thread synchronization API.
  */
-#if !defined(ADC_USE_WAIT) || defined(__DOXYGEN__)
-#define ADC_USE_WAIT                        TRUE
+#if !defined(ADC_USE_SYNCHRONIZATION) || defined(__DOXYGEN__)
+#define ADC_USE_SYNCHRONIZATION             TRUE
 #endif
 /** @} */
 
@@ -75,9 +75,9 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/* Checks on ADC_USE_WAIT configuration.*/
-#if (ADC_USE_WAIT != FALSE) && (ADC_USE_WAIT != TRUE)
-#error "invalid ADC_USE_WAIT value"
+/* Checks on ADC_USE_SYNCHRONIZATION configuration.*/
+#if (ADC_USE_SYNCHRONIZATION != FALSE) && (ADC_USE_SYNCHRONIZATION != TRUE)
+#error "invalid ADC_USE_SYNCHRONIZATION value"
 #endif
 
 /*===========================================================================*/
@@ -102,7 +102,7 @@
  * @name    Low level driver helper macros
  * @{
  */
-#if (ADC_USE_WAIT == TRUE) || defined (__DOXYGEN__)
+#if (ADC_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
 /**
  * @brief       Resumes a thread waiting for conversion completion.
  *
@@ -157,7 +157,7 @@
 #define _adc_reset_s(adcp)
 #define _adc_wakeup_isr(adcp)
 #define _adc_error_wakeup_isr(adcp)
-#endif /* ADC_USE_WAIT == TRUE */
+#endif /* ADC_USE_SYNCHRONIZATION == TRUE */
 
 /**
  * @brief       Common ISR code, half buffer event.
@@ -300,6 +300,7 @@ struct hal_adc_driver_vmt {
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
+  msg_t (*synchronize)(void *ip, sysinterval_t timeout);
   /* From hal_cb_driver_c.*/
   void (*setcb)(void *ip, drv_cb_t cb);
   /* From hal_adc_driver_c.*/
@@ -370,12 +371,12 @@ struct hal_adc_driver {
    * @brief       Cached ADC error flags.
    */
   volatile adcerror_t       errors;
-#if (ADC_USE_WAIT == TRUE) || defined (__DOXYGEN__)
+#if (ADC_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Waiting thread reference.
    */
   thread_reference_t        thread;
-#endif /* ADC_USE_WAIT == TRUE */
+#endif /* ADC_USE_SYNCHRONIZATION == TRUE */
 #if (defined(ADC_DRIVER_EXT_FIELDS)) || defined (__DOXYGEN__)
   ADC_DRIVER_EXT_FIELDS
 #endif /* defined(ADC_DRIVER_EXT_FIELDS) */
@@ -405,10 +406,10 @@ extern "C" {
                            adcsample_t *samples, size_t depth);
   void adcStopConversionI(void *ip);
   void adcStopConversion(void *ip);
-#if (ADC_USE_WAIT == TRUE) || defined (__DOXYGEN__)
+#if (ADC_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
   msg_t adcConvert(void *ip, const adc_conversion_group_t *grpp,
                    adcsample_t *samples, size_t depth);
-#endif /* ADC_USE_WAIT == TRUE */
+#endif /* ADC_USE_SYNCHRONIZATION == TRUE */
   /* Regular functions.*/
   void adcInit(void);
 #ifdef __cplusplus

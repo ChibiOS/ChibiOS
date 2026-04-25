@@ -93,7 +93,7 @@ void *__adc_objinit_impl(void *ip, const void *vmt) {
   self->grpp    = NULL;
   self->events  = 0U;
   self->errors  = 0U;
-#if ADC_USE_WAIT == TRUE
+#if ADC_USE_SYNCHRONIZATION == TRUE
   self->thread  = NULL;
 #endif
 
@@ -212,6 +212,7 @@ const struct hal_adc_driver_vmt __hal_adc_driver_vmt = {
   .stop                     = __adc_stop_impl,
   .setcfg                   = __adc_setcfg_impl,
   .selcfg                   = __adc_selcfg_impl,
+  .synchronize              = __drv_synchronize_impl,
   .setcb                    = __adc_setcb_impl
 };
 
@@ -341,7 +342,7 @@ void adcStopConversion(void *ip) {
   osalSysUnlock();
 }
 
-#if (ADC_USE_WAIT == TRUE) || defined (__DOXYGEN__)
+#if (ADC_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
 /**
  * @brief       Performs a synchronous ADC conversion.
  *
@@ -370,7 +371,7 @@ msg_t adcConvert(void *ip, const adc_conversion_group_t *grpp,
 
   return msg;
 }
-#endif /* ADC_USE_WAIT == TRUE */
+#endif /* ADC_USE_SYNCHRONIZATION == TRUE */
 /** @} */
 
 #endif /* HAL_USE_ADC == TRUE */

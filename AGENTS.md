@@ -20,6 +20,17 @@
 - For primary/secondary shared vectors, keep the ISR body high level. The `.inc` should dispatch to driver service entry points, while peripheral-specific flag decoding and per-channel/per-instance detail should live inside the driver-side service functions unless the hardware has a dedicated vector and the established pattern already keeps that logic in the `.inc`.
 - XML driver descriptions must remain schema-valid and include the documentation elements expected by code generation; otherwise generated Doxygen comments disappear and regeneration becomes lossy.
 
+## XHAL Architecture Notes
+- XHAL stateful drivers derive from `hal_base_driver`; lifecycle, configuration selection, mutual exclusion, registry integration, and generic synchronization should be exposed through the base-driver API when the semantics are common.
+- `drvStart()` and `drvStartS()` are the official XHAL lifecycle entry points. Driver-specific `xxxStart()`/`xxxStop()` wrappers should not be reintroduced unless there is a deliberate compatibility layer outside the generated XHAL driver API.
+- `drvStart(ip, config)` performs initial hardware enable and configuration from `HAL_DRV_STATE_STOP`; `drvStart(ip, NULL)` uses configuration zero. Calling `drvStart(ip, NULL)` while already `HAL_DRV_STATE_READY` is idempotent, but passing a non-`NULL` config while ready is invalid.
+- Live configuration APIs such as `drvSetCfgX()` and `drvSelectCfgX()` are only valid in `HAL_DRV_STATE_READY`. Use the `config` parameter of `drvStart()` for initial configuration because hardware may be reset or clock-gated before start.
+- Driver-specific low-level start implementations need to be state-aware only where live reconfiguration requires it: STOP start enables resources and configures hardware, READY reconfiguration changes settings without tearing down resources.
+- Generic driver synchronization belongs in `hal_base_driver` as `drvSynchronize()` and `drvSynchronizeS()`. Drivers with a meaningful default synchronization point should override the base VMT method; drivers with ambiguous or resource-specific waits should inherit the base implementation and keep specialized APIs.
+- XHAL synchronization feature switches use the `XXX_USE_SYNCHRONIZATION` naming convention. Do not introduce new `XXX_USE_WAIT` settings for driver synchronization; keep `XXX_USE_WAIT` only for legacy or non-driver-event semantics such as PAL wait support.
+- Some waits are intentionally not generic driver synchronization points. Examples include SIO directional waits (`RX`, `RX idle`, `TX space`, `TX end`), USB endpoint-zero setup waits, ETH/CAN descriptor or mailbox waits, ICU capture waits, and flash erase polling.
+- XHAL generated configuration migration should be done through `tools/updater/update_xhalconf.sh` after updating `tools/ftl/processors/conf/xhalconf/xhalconf.h.ftl`; do not manually edit only local `xhalconf.h` copies.
+
 ## Build & Test Hygiene
 - Clean projects after test builds unless otherwise specified.
 - For generated or updater-managed configuration files such as `mcuconf.h`, `xmcuconf.h`, `halconf.h`, `xhalconf.h`, and similar outputs, update the corresponding `.ftl` templates and/or updater scripts as part of the same change; otherwise a regeneration pass may overwrite manual edits.

@@ -25,8 +25,8 @@
       </group>
     </definitions_early>
     <configs>
-      <config name="ADC_USE_WAIT" default="TRUE">
-        <brief>Support for synchronous conversion API.</brief>
+      <config name="ADC_USE_SYNCHRONIZATION" default="TRUE">
+        <brief>Support for thread synchronization API.</brief>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
     </configs>
@@ -41,7 +41,7 @@
         </macro>
       </group>
       <group description="Low level driver helper macros">
-        <condition check="ADC_USE_WAIT == TRUE">
+        <condition check="ADC_USE_SYNCHRONIZATION == TRUE">
           <macro name="_adc_reset_i">
             <brief>Resumes a thread waiting for conversion completion.</brief>
             <param name="adcp" dir="in">Pointer to the ADC driver instance.</param>
@@ -213,7 +213,7 @@ ADC_CONFIG_EXT_FIELDS]]></verbatim>
           <field name="errors" ctype="volatile adcerror_t">
             <brief>Cached ADC error flags.</brief>
           </field>
-          <condition check="ADC_USE_WAIT == TRUE">
+          <condition check="ADC_USE_SYNCHRONIZATION == TRUE">
             <field name="thread" ctype="thread_reference_t">
               <brief>Waiting thread reference.</brief>
             </field>
@@ -234,7 +234,7 @@ self->depth   = 0U;
 self->grpp    = NULL;
 self->events  = 0U;
 self->errors  = 0U;
-#if ADC_USE_WAIT == TRUE
+#if ADC_USE_SYNCHRONIZATION == TRUE
 self->thread  = NULL;
 #endif]]></implementation>
           </objinit>
@@ -351,7 +351,7 @@ if (self->state != HAL_DRV_STATE_READY) {
 }
 osalSysUnlock();]]></implementation>
             </method>
-            <condition check="ADC_USE_WAIT == TRUE">
+            <condition check="ADC_USE_SYNCHRONIZATION == TRUE">
               <method name="adcConvert" ctype="msg_t">
                 <brief>Performs a synchronous ADC conversion.</brief>
                 <param name="grpp" ctype="const adc_conversion_group_t *" dir="in">

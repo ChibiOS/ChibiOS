@@ -99,10 +99,6 @@ do {
         <basetype ctype="struct wspi_command" />
       </typedef>
       <verbatim><![CDATA[
-#if !defined(WSPI_USE_WAIT) || defined(__DOXYGEN__)
-#define WSPI_USE_WAIT WSPI_USE_SYNCHRONIZATION
-#endif
-
 /**
  * @brief       WSPI driver specific states.
  */

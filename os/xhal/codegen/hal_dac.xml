@@ -22,8 +22,8 @@
       </group>
     </definitions_early>
     <configs>
-      <config name="DAC_USE_WAIT" default="TRUE">
-        <brief>Support for synchronous DAC streaming API.</brief>
+      <config name="DAC_USE_SYNCHRONIZATION" default="TRUE">
+        <brief>Support for thread synchronization API.</brief>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
     </configs>
@@ -38,7 +38,7 @@
         </macro>
       </group>
       <group description="Low level driver helper macros">
-        <condition check="DAC_USE_WAIT == TRUE">
+        <condition check="DAC_USE_SYNCHRONIZATION == TRUE">
           <macro name="_dac_reset_i">
             <brief>Resumes a thread waiting for DAC streaming completion.</brief>
             <param name="dacp" dir="in">Pointer to the DAC driver instance.</param>
@@ -200,7 +200,7 @@ DAC_CONFIG_EXT_FIELDS]]></verbatim>
           <field name="errors" ctype="volatile dacerror_t">
             <brief>Cached DAC error flags.</brief>
           </field>
-          <condition check="DAC_USE_WAIT == TRUE">
+          <condition check="DAC_USE_SYNCHRONIZATION == TRUE">
             <field name="thread" ctype="thread_reference_t">
               <brief>Waiting thread reference.</brief>
             </field>
@@ -221,7 +221,7 @@ self->depth   = 0U;
 self->grpp    = NULL;
 self->events  = 0U;
 self->errors  = 0U;
-#if DAC_USE_WAIT == TRUE
+#if DAC_USE_SYNCHRONIZATION == TRUE
 self->thread  = NULL;
 #endif]]></implementation>
           </objinit>
@@ -353,9 +353,7 @@ if (self->state != HAL_DRV_STATE_READY) {
 }
 osalSysUnlock();]]></implementation>
             </method>
-          </regular>
-          <condition check="DAC_USE_WAIT == TRUE">
-            <regular>
+            <condition check="DAC_USE_SYNCHRONIZATION == TRUE">
               <method name="dacConvert" ctype="msg_t">
                 <brief>Starts a DAC circular conversion and waits for one full cycle.</brief>
                 <param name="grpp" ctype="const dac_conversion_group_t *" dir="in">
@@ -427,8 +425,8 @@ osalSysUnlock();
 
 return msg;]]></implementation>
               </method>
-            </regular>
-          </condition>
+            </condition>
+          </regular>
           <inline>
             <method name="dacGetEventsX" ctype="daceventflags_t">
               <brief>Returns the cached DAC event flags.</brief>
@@ -523,6 +521,14 @@ return (const void *)dac_lld_setcfg(self,
             <method shortname="selcfg">
               <implementation><![CDATA[
 return (const void *)dac_lld_selcfg(self, cfgnum);]]></implementation>
+            </method>
+            <method shortname="synchronize">
+              <implementation><![CDATA[
+#if DAC_USE_SYNCHRONIZATION == TRUE
+return dacSynchronizeS(self, timeout);
+#else
+return __drv_synchronize_impl(self, timeout);
+#endif]]></implementation>
             </method>
             <method shortname="setcb">
               <implementation><![CDATA[

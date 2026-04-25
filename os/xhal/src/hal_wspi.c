@@ -192,6 +192,7 @@ const struct hal_wspi_driver_vmt __hal_wspi_driver_vmt = {
   .stop                     = __wspi_stop_impl,
   .setcfg                   = __wspi_setcfg_impl,
   .selcfg                   = __wspi_selcfg_impl,
+  .synchronize              = __drv_synchronize_impl,
   .setcb                    = __cbdrv_setcb_impl
 };
 

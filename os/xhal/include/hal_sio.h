@@ -573,6 +573,7 @@ struct hal_sio_driver_vmt {
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
+  msg_t (*synchronize)(void *ip, sysinterval_t timeout);
   /* From hal_cb_driver_c.*/
   void (*setcb)(void *ip, drv_cb_t cb);
   /* From hal_sio_driver_c.*/
@@ -687,6 +688,7 @@ struct hal_buffered_sio_vmt {
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
+  msg_t (*synchronize)(void *ip, sysinterval_t timeout);
   /* From hal_buffered_sio_c.*/
 };
 

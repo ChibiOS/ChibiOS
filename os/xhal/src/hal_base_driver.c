@@ -246,6 +246,25 @@ void __drv_dispose_impl(void *ip) {
   /* Finalization of the ancestors-defined parts.*/
   __bo_dispose_impl(self);
 }
+
+/**
+ * @brief       Implementation of method @p __drv_synchronize().
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
+ * @param[in]     timeout       Synchronization timeout.
+ * @return                      The synchronization result.
+ */
+msg_t __drv_synchronize_impl(void *ip, sysinterval_t timeout) {
+  hal_base_driver_c *self = (hal_base_driver_c *)ip;
+  (void)timeout;
+
+  if (self->state == HAL_DRV_STATE_READY) {
+    return MSG_OK;
+  }
+
+  return HAL_RET_INV_STATE;
+}
 /** @} */
 
 /**
@@ -482,6 +501,67 @@ const void *drvSelectCfgX(void *ip, unsigned cfgnum) {
   osalSysUnlock();
 
   return config;
+}
+
+/**
+ * @brief       Driver default synchronization.
+ * @details     Waits for the driver's default asynchronous operation or
+ *              synchronization point. The exact synchronization point is
+ *              driver-defined. Drivers without a meaningful default
+ *              synchronization point inherit a weak implementation which
+ *              succeeds only when the driver is already ready.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
+ * @param[in]     timeout       Synchronization timeout.
+ * @return                      The synchronization result.
+ * @retval MSG_OK               If the synchronization completed.
+ * @retval MSG_TIMEOUT          If synchronization timed out.
+ * @retval MSG_RESET            If the driver has been stopped while waiting.
+ * @retval HAL_RET_INV_STATE    If the driver is in an invalid state for its
+ *                              default synchronization point.
+ *
+ * @api
+ */
+msg_t drvSynchronize(void *ip, sysinterval_t timeout) {
+  hal_base_driver_c *self = (hal_base_driver_c *)ip;
+  msg_t msg;
+
+  osalDbgCheck(self != NULL);
+
+  osalSysLock();
+
+  msg = drvSynchronizeS(self, timeout);
+
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @brief       Driver default synchronization.
+ * @details     Waits for the driver's default asynchronous operation or
+ *              synchronization point. The exact synchronization point is
+ *              driver-defined. Drivers without a meaningful default
+ *              synchronization point inherit a weak implementation which
+ *              succeeds only when the driver is already ready.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
+ * @param[in]     timeout       Synchronization timeout.
+ * @return                      The synchronization result.
+ * @retval MSG_OK               If the synchronization completed.
+ * @retval MSG_TIMEOUT          If synchronization timed out.
+ * @retval MSG_RESET            If the driver has been stopped while waiting.
+ * @retval HAL_RET_INV_STATE    If the driver is in an invalid state for its
+ *                              default synchronization point.
+ *
+ * @sclass
+ */
+msg_t drvSynchronizeS(void *ip, sysinterval_t timeout) {
+  hal_base_driver_c *self = (hal_base_driver_c *)ip;
+  osalDbgCheck(self != NULL);
+  osalDbgCheckClassS();
+
+  return __drv_synchronize(self, timeout);
 }
 /** @} */
 

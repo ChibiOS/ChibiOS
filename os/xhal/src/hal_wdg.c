@@ -176,7 +176,8 @@ const struct hal_wdg_driver_vmt __hal_wdg_driver_vmt = {
   .start                    = __wdg_start_impl,
   .stop                     = __wdg_stop_impl,
   .setcfg                   = __wdg_setcfg_impl,
-  .selcfg                   = __wdg_selcfg_impl
+  .selcfg                   = __wdg_selcfg_impl,
+  .synchronize              = __drv_synchronize_impl
 };
 
 /**

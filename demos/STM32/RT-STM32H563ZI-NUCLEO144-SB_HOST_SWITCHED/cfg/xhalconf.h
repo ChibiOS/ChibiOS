@@ -68,13 +68,13 @@
 /* ADC driver settings.                                                      */
 /*===========================================================================*/
 
-#define ADC_USE_WAIT                        TRUE
+#define ADC_USE_SYNCHRONIZATION             TRUE
 
 /*===========================================================================*/
 /* DAC driver settings.                                                      */
 /*===========================================================================*/
 
-#define DAC_USE_WAIT                        TRUE
+#define DAC_USE_SYNCHRONIZATION             TRUE
 
 /*===========================================================================*/
 /* CAN driver settings.                                                      */
@@ -158,7 +158,7 @@
 /* USB driver settings.                                                      */
 /*===========================================================================*/
 
-#define USB_USE_WAIT                        TRUE
+#define USB_USE_SYNCHRONIZATION             TRUE
 #define USB_USE_CONFIGURATIONS              FALSE
 
 /*===========================================================================*/

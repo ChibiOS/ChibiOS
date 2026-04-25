@@ -194,6 +194,7 @@ const struct hal_gpt_driver_vmt __hal_gpt_driver_vmt = {
   .stop                     = __gpt_stop_impl,
   .setcfg                   = __gpt_setcfg_impl,
   .selcfg                   = __gpt_selcfg_impl,
+  .synchronize              = __drv_synchronize_impl,
   .setcb                    = __gpt_setcb_impl
 };
 

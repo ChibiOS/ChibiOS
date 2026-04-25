@@ -146,6 +146,7 @@ struct hal_base_driver_vmt {
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
+  msg_t (*synchronize)(void *ip, sysinterval_t timeout);
 };
 
 /**
@@ -205,12 +206,15 @@ extern "C" {
   /* Methods of hal_base_driver_c.*/
   void *__drv_objinit_impl(void *ip, const void *vmt);
   void __drv_dispose_impl(void *ip);
+  msg_t __drv_synchronize_impl(void *ip, sysinterval_t timeout);
   msg_t drvStart(void *ip, const void *config);
   msg_t drvStartS(void *ip, const void *config);
   void drvStop(void *ip);
   void drvStopS(void *ip);
   msg_t drvSetCfgX(void *ip, const void *config);
   const void *drvSelectCfgX(void *ip, unsigned cfgnum);
+  msg_t drvSynchronize(void *ip, sysinterval_t timeout);
+  msg_t drvSynchronizeS(void *ip, sysinterval_t timeout);
   /* Regular functions.*/
   void drvInit(void);
 #if HAL_USE_REGISTRY == TRUE
@@ -302,6 +306,28 @@ static inline const void *__drv_sel_cfg(void *ip, unsigned cfgnum) {
   hal_base_driver_c *self = (hal_base_driver_c *)ip;
 
   return self->vmt->selcfg(ip, cfgnum);
+}
+
+/**
+ * @brief       Driver default synchronization point.
+ * @details     This weak default implementation succeeds if the driver is
+ *              already idle and fails otherwise. Drivers with a meaningful
+ *              default asynchronous operation should override this method.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
+ * @param[in]     timeout       Synchronization timeout.
+ * @return                      The synchronization result.
+ * @retval MSG_OK               If the driver is already idle.
+ * @retval HAL_RET_INV_STATE    If the driver is not in @p HAL_DRV_STATE_READY
+ *                              state.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline msg_t __drv_synchronize(void *ip, sysinterval_t timeout) {
+  hal_base_driver_c *self = (hal_base_driver_c *)ip;
+
+  return self->vmt->synchronize(ip, timeout);
 }
 /** @} */
 

@@ -436,6 +436,7 @@ struct hal_sdc_driver_vmt {
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
+  msg_t (*synchronize)(void *ip, sysinterval_t timeout);
   /* From hal_cb_driver_c.*/
   void (*setcb)(void *ip, drv_cb_t cb);
   /* From hal_sdc_driver_c.*/
@@ -551,6 +552,7 @@ extern "C" {
   void __sdc_stop_impl(void *ip);
   const void *__sdc_setcfg_impl(void *ip, const void *config);
   const void *__sdc_selcfg_impl(void *ip, unsigned cfgnum);
+  msg_t __sdc_synchronize_impl(void *ip, sysinterval_t timeout);
   void __sdc_setcb_impl(void *ip, drv_cb_t cb);
   bool sdcConnect(void *ip);
   bool sdcDisconnect(void *ip);

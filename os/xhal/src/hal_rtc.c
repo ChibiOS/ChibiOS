@@ -397,6 +397,7 @@ const struct hal_rtc_driver_vmt __hal_rtc_driver_vmt = {
   .stop                     = __rtc_stop_impl,
   .setcfg                   = __rtc_setcfg_impl,
   .selcfg                   = __rtc_selcfg_impl,
+  .synchronize              = __drv_synchronize_impl,
   .setcb                    = __rtc_setcb_impl
 };
 
