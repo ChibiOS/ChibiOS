@@ -873,9 +873,7 @@ msg_t __sdc_start_impl(void *ip, const void *config) {
 
   msg = sdc_lld_start(self);
   if (msg == HAL_RET_SUCCESS) {
-    if (self->state == HAL_DRV_STATE_STOP) {
-      self->state = HAL_DRV_STATE_ACTIVE;
-    }
+    self->state = HAL_DRV_STATE_ACTIVE;
   }
   else {
     self->config = NULL;

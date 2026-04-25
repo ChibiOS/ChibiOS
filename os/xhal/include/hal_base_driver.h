@@ -208,9 +208,7 @@ extern "C" {
   void __drv_dispose_impl(void *ip);
   msg_t __drv_synchronize_impl(void *ip, sysinterval_t timeout);
   msg_t drvStart(void *ip, const void *config);
-  msg_t drvStartS(void *ip, const void *config);
   void drvStop(void *ip);
-  void drvStopS(void *ip);
   msg_t drvSetCfgX(void *ip, const void *config);
   const void *drvSelectCfgX(void *ip, unsigned cfgnum);
   msg_t drvSynchronize(void *ip, sysinterval_t timeout);

@@ -342,7 +342,7 @@ msg_t gpt_lld_start(hal_gpt_driver_c *gptp) {
 
   gptp->config = cfg;
 
-  if (gptp->state == HAL_DRV_STATE_STOP) {
+  {
 #if STM32_GPT_USE_TIM1
     if (&GPTD1 == gptp) {
       rccEnableTIM1(true);

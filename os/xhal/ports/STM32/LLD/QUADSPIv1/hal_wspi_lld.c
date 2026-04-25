@@ -120,13 +120,13 @@ msg_t wspi_lld_start(hal_wspi_driver_c *wspip) {
     }
   }
 
-  if (wspip->state == HAL_DRV_STATE_STOP) {
+  {
 #if STM32_WSPI_USE_QUADSPI1
     if (&WSPID1 == wspip) {
-      wspip->dma = dmaStreamAllocI(STM32_WSPI_QUADSPI1_DMA_STREAM,
-                                   STM32_WSPI_QUADSPI1_DMA_IRQ_PRIORITY,
-                                   (stm32_dmaisr_t)wspi_lld_serve_dma_interrupt,
-                                   (void *)wspip);
+      wspip->dma = dmaStreamAlloc(STM32_WSPI_QUADSPI1_DMA_STREAM,
+                                  STM32_WSPI_QUADSPI1_DMA_IRQ_PRIORITY,
+                                  (stm32_dmaisr_t)wspi_lld_serve_dma_interrupt,
+                                  (void *)wspip);
       if (wspip->dma == NULL) {
         return HAL_RET_NO_RESOURCE;
       }
@@ -165,7 +165,7 @@ void wspi_lld_stop(hal_wspi_driver_c *wspip) {
   wspip->qspi->CR = 0U;
 
   if (wspip->dma != NULL) {
-    dmaStreamFreeI(wspip->dma);
+    dmaStreamFree(wspip->dma);
     wspip->dma = NULL;
   }
 

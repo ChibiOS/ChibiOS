@@ -105,13 +105,11 @@ msg_t trng_lld_start(TRNGDriver *trngp) {
                 "invalid RNG frequency");
 #endif
 
-  if (trngp->state == HAL_DRV_STATE_STOP) {
 #if STM32_TRNG_USE_RNG1
-    if (&TRNGD1 == trngp) {
-      rccEnableRNG(false);
-    }
-#endif
+  if (&TRNGD1 == trngp) {
+    rccEnableRNG(false);
   }
+#endif
 
   trng_apply_config(trngp, config);
 

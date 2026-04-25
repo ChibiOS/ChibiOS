@@ -319,18 +319,18 @@ static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
 static msg_t spi_lld_get_dma(SPIDriver *spip, uint32_t rxstream,
                              uint32_t txstream, uint32_t priority) {
 
-  spip->dmarx = dmaStreamAllocI(rxstream, priority,
-                                (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
-                                (void *)spip);
+  spip->dmarx = dmaStreamAlloc(rxstream, priority,
+                               (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
+                               (void *)spip);
   if (spip->dmarx == NULL) {
     return HAL_RET_NO_RESOURCE;
   }
 
-  spip->dmatx = dmaStreamAllocI(txstream, priority,
-                                (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
-                                (void *)spip);
+  spip->dmatx = dmaStreamAlloc(txstream, priority,
+                               (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
+                               (void *)spip);
   if (spip->dmatx == NULL) {
-    dmaStreamFreeI(spip->dmarx);
+    dmaStreamFree(spip->dmarx);
     return HAL_RET_NO_RESOURCE;
   }
 
@@ -623,8 +623,8 @@ void spi_lld_stop(SPIDriver *spip) {
   spip->spi->CR2  = 0;
 
   /* DMA channels release.*/
-  dmaStreamFreeI(spip->dmatx);
-  dmaStreamFreeI(spip->dmarx);
+  dmaStreamFree(spip->dmatx);
+  dmaStreamFree(spip->dmarx);
   spip->dmarx = NULL;
   spip->dmatx = NULL;
 

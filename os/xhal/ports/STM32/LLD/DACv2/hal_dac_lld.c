@@ -505,9 +505,8 @@ msg_t dac_lld_start(DACDriver *dacp) {
 
   dacp->config = cfg;
 
-  /* If the driver is in STOP state then a full initialization is
-     required.*/
-  if (dacp->state == HAL_DRV_STATE_STOP) {
+  /* Performing full initialization.*/
+  {
     dacchannel_t channel = 0;
 
     /* Enable DAC clock. DMA channel allocation is deferred to conversion
@@ -645,8 +644,8 @@ msg_t dac_lld_start(DACDriver *dacp) {
  */
 void dac_lld_stop(DACDriver *dacp) {
 
-  /* If in ready state then disables the DAC clock.*/
-  if (dacp->state == HAL_DRV_STATE_READY) {
+  /* If stopping then disables the DAC clock.*/
+  if (dacp->state == HAL_DRV_STATE_STOPPING) {
 
     /* Disabling DAC conditionally.*/
     dacp->params->dac->CR &= dacp->params->regmask;

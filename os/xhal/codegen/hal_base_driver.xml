@@ -199,52 +199,12 @@ return HAL_RET_INV_STATE;]]></implementation>
               <retval value="HAL_RET_HW_FAILURE">If an HW failure occurred.</retval>
               <api />
               <implementation><![CDATA[
-msg_t msg;
+msg_t msg = HAL_RET_SUCCESS;
+bool start = false;
 
 osalDbgCheck(self != NULL);
 
 osalSysLock();
-
-msg = drvStartS(self, config);
-
-osalSysUnlock();
-
-return msg;]]></implementation>
-            </method>
-            <method name="drvStartS" ctype="msg_t">
-              <brief>Driver start.</brief>
-              <details><![CDATA[Starts driver operations. When called from
-                @p HAL_DRV_STATE_STOP the peripheral is physically initialized
-                using the specified configuration. If @p config is @p NULL then
-                configuration zero is used. Calls while the driver is already
-                @p HAL_DRV_STATE_READY with @p config equal to @p NULL are
-                ignored.]]>
-              </details>
-              <param ctype="const void *" name="config" dir="in">Driver
-                configuration or @p NULL.</param>
-              <note><![CDATA[The function can fail with error
-                @p HAL_RET_INV_STATE if called while the driver is already
-                being started or stopped. In case you need multiple threads
-                to perform start and stop operation on the driver then it is
-                suggested to lock/unlock the driver during such operations.]]></note>
-              <return>The operation status.</return>
-              <retval value="HAL_RET_SUCCESS">Operation successful.</retval>
-              <retval value="HAL_RET_INV_STATE"><![CDATA[If the driver was
-                in one of @p HAL_DRV_STATE_UNINIT, @p HAL_DRV_STATE_STARTING
-                or @p HAL_DRV_STATE_STOPPING states.]]></retval>
-              <retval value="HAL_RET_NO_RESOURCE">If a required resources
-                cannot be allocated.
-              </retval>
-              <retval value="HAL_RET_HW_BUSY">If a required HW resource is
-                already in use.
-              </retval>
-              <retval value="HAL_RET_HW_FAILURE">If an HW failure occurred.</retval>
-              <sclass />
-              <implementation><![CDATA[
-msg_t msg = HAL_RET_SUCCESS;
-
-osalDbgCheck(self != NULL);
-osalDbgCheckClassS();
 
 switch (self->state) {
 case HAL_DRV_STATE_UNINIT:
@@ -255,8 +215,26 @@ case HAL_DRV_STATE_STOPPING:
   msg = HAL_RET_INV_STATE;
   break;
 case HAL_DRV_STATE_STOP:
+  self->state = HAL_DRV_STATE_STARTING;
+  start = true;
+  break;
+case HAL_DRV_STATE_READY:
+  if (config != NULL) {
+    msg = HAL_RET_INV_STATE;
+  }
+  break;
+default:
+  msg = HAL_RET_INV_STATE;
+  break;
+}
+
+osalSysUnlock();
+
+if (start) {
   /* Physically starting the peripheral.*/
   msg = __drv_start(self, config);
+
+  osalSysLock();
   if (msg == HAL_RET_SUCCESS) {
     self->state = HAL_DRV_STATE_READY;
 
@@ -265,16 +243,9 @@ case HAL_DRV_STATE_STOP:
   }
   else {
     self->state = HAL_DRV_STATE_STOP;
-
-    /* LLD is supposed to not have a configuration.*/
-    osalDbgAssert(self->config == NULL, "configuration");
+    self->config = NULL;
   }
-  break;
-default:
-  if ((config != NULL) || (self->state != HAL_DRV_STATE_READY)) {
-    msg = HAL_RET_INV_STATE;
-  }
-  break;
+  osalSysUnlock();
 }
 
 return msg;]]></implementation>
@@ -286,31 +257,35 @@ return msg;]]></implementation>
               </details>
               <api />
               <implementation><![CDATA[
+bool stop = false;
 
 osalDbgCheck(self != NULL);
 
 osalSysLock();
-
-drvStopS(self);
-
-osalSysUnlock();]]></implementation>
-            </method>
-            <method name="drvStopS" ctype="void">
-              <brief>Driver close.</brief>
-              <details><![CDATA[Stops driver operations. The peripheral
-                is physically uninitialized.]]>
-              </details>
-              <sclass />
-              <implementation><![CDATA[
-
-osalDbgCheck(self != NULL);
 osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "invalid state");
 
-if ((self->state != HAL_DRV_STATE_STOP) &&
-    (self->state != HAL_DRV_STATE_STARTING)) {
+switch (self->state) {
+case HAL_DRV_STATE_STOP:
+  /* Falls through.*/
+case HAL_DRV_STATE_STARTING:
+  /* Falls through.*/
+case HAL_DRV_STATE_STOPPING:
+  break;
+default:
+  self->state = HAL_DRV_STATE_STOPPING;
+  stop = true;
+  break;
+}
+
+osalSysUnlock();
+
+if (stop) {
   __drv_stop(self);
+
+  osalSysLock();
   self->state  = HAL_DRV_STATE_STOP;
   self->config = NULL;
+  osalSysUnlock();
 }]]></implementation>
             </method>
             <method name="drvSetCfgX" ctype="msg_t">
@@ -321,7 +296,7 @@ if ((self->state != HAL_DRV_STATE_STOP) &&
               </details>
               <note><![CDATA[This function is only valid in
                 @p HAL_DRV_STATE_READY. Initial configuration is passed to
-                @p drvStart() or @p drvStartS().]]>
+                @p drvStart().]]>
               </note>
               <param ctype="const void *" name="config" dir="in">New driver
                 configuration.
@@ -363,7 +338,7 @@ return msg;</implementation>
                 driver default configuration.</note>
               <note><![CDATA[This function is only valid in
                 @p HAL_DRV_STATE_READY. Initial configuration is passed to
-                @p drvStart() or @p drvStartS().]]>
+                @p drvStart().]]>
               </note>
               <param ctype="unsigned" name="cfgnum" dir="in">Driver configuration
                 index to be applied.</param>

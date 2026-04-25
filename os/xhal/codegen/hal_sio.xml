@@ -1110,7 +1110,7 @@ __drv_dispose_impl(self);]]></implementation>
 msg_t msg;
 
 /* Starting the undelying SIO driver.*/
-msg = drvStartS(self->siop, config);
+msg = drvStart(self->siop, config);
 if (msg == HAL_RET_SUCCESS) {
   self->config = self->siop->config;
   drvSetArgumentX(self->siop, self);
@@ -1125,7 +1125,7 @@ return msg;]]></implementation>
             <method shortname="stop">
               <implementation><![CDATA[
 
-drvStopS(self->siop);]]></implementation>
+drvStop(self->siop);]]></implementation>
             </method>
             <method shortname="setcfg">
               <implementation><![CDATA[

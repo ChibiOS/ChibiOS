@@ -107,18 +107,18 @@ __STATIC_FORCEINLINE void i2c_dma_alloc(hal_i2c_driver_c *i2cp,
                                         uint32_t irqprio) {
 
 #if defined(STM32_DMA3_PRESENT)
-  i2cp->dma = dma3ChannelAllocI(channel, irqprio, NULL, (void *)i2cp);
+  i2cp->dma = dma3ChannelAlloc(channel, irqprio, NULL, (void *)i2cp);
 #else
-  i2cp->dma = dmaStreamAllocI(channel, irqprio, NULL, (void *)i2cp);
+  i2cp->dma = dmaStreamAlloc(channel, irqprio, NULL, (void *)i2cp);
 #endif
 }
 
 __STATIC_FORCEINLINE void i2c_dma_release(hal_i2c_driver_c *i2cp) {
 
 #if defined(STM32_DMA3_PRESENT)
-  dma3ChannelFreeI(i2cp->dma);
+  dma3ChannelFree(i2cp->dma);
 #else
-  dmaStreamFreeI(i2cp->dma);
+  dmaStreamFree(i2cp->dma);
 #endif
 }
 
@@ -569,8 +569,8 @@ msg_t i2c_lld_start(hal_i2c_driver_c *i2cp) {
   /* Make sure I2C peripheral is disabled */
   dp->CR1 &= ~I2C_CR1_PE;
 
-  /* If in stopped state then enables the I2C and DMA clocks.*/
-  if (i2cp->state == HAL_DRV_STATE_STOP) {
+  /* Enabling the I2C and DMA clocks.*/
+  {
 
 #if STM32_I2C_USE_I2C1
     if (&I2CD1 == i2cp) {

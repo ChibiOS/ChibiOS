@@ -899,9 +899,7 @@ if (config != NULL) {
 
 msg = sdc_lld_start(self);
 if (msg == HAL_RET_SUCCESS) {
-  if (self->state == HAL_DRV_STATE_STOP) {
-    self->state = HAL_DRV_STATE_ACTIVE;
-  }
+  self->state = HAL_DRV_STATE_ACTIVE;
 }
 else {
   self->config = NULL;

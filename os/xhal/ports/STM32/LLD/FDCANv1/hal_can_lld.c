@@ -132,7 +132,7 @@ static bool fdcan_clock_stop(hal_can_driver_c *canp) {
     if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), start, end)) {
       return true;
     }
-    osalThreadSleepS(1);
+    osalThreadSleep(1);
   }
 
   return false;
@@ -149,7 +149,7 @@ static bool fdcan_init_mode(hal_can_driver_c *canp) {
     if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), start, end)) {
       return true;
     }
-    osalThreadSleepS(1);
+    osalThreadSleep(1);
   }
 
   return false;
@@ -166,7 +166,7 @@ static bool fdcan_active_mode(hal_can_driver_c *canp) {
     if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), start, end)) {
       return true;
     }
-    osalThreadSleepS(1);
+    osalThreadSleep(1);
   }
 
   return false;
@@ -346,8 +346,8 @@ msg_t can_lld_start(hal_can_driver_c *canp) {
  * @notapi
  */
 void can_lld_stop(hal_can_driver_c *canp) {
-  /* If in ready or sleep state then disables the CAN peripheral.*/
-  if ((canp->state == HAL_DRV_STATE_READY) || (canp->state == CAN_SLEEP)) {
+  /* If stopping or sleeping then disables the CAN peripheral.*/
+  if ((canp->state == HAL_DRV_STATE_STOPPING) || (canp->state == CAN_SLEEP)) {
     /* Disabling and clearing interrupts.*/
     canp->fdcan->IE  = 0U;
     canp->fdcan->IR  = (uint32_t)-1;

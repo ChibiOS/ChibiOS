@@ -139,13 +139,13 @@ msg_t wspi_lld_start(hal_wspi_driver_c *wspip) {
 
   dcr2 = STM32_DCR2_PRESCALER(STM32_WSPI_OCTOSPI1_PRESCALER_VALUE - 1U);
 
-  if (wspip->state == HAL_DRV_STATE_STOP) {
+  {
 #if STM32_WSPI_USE_OCTOSPI1
     if (&WSPID1 == wspip) {
-      wspip->dmachp = dma3ChannelAllocI(STM32_WSPI_OCTOSPI1_DMA3_CHANNEL,
-                                        STM32_WSPI_OCTOSPI1_DMA_IRQ_PRIORITY,
-                                        wspi_lld_serve_dma_interrupt,
-                                        (void *)wspip);
+      wspip->dmachp = dma3ChannelAlloc(STM32_WSPI_OCTOSPI1_DMA3_CHANNEL,
+                                       STM32_WSPI_OCTOSPI1_DMA_IRQ_PRIORITY,
+                                       wspi_lld_serve_dma_interrupt,
+                                       (void *)wspip);
       if (wspip->dmachp == NULL) {
         return HAL_RET_NO_RESOURCE;
       }
@@ -180,7 +180,7 @@ void wspi_lld_stop(hal_wspi_driver_c *wspip) {
 
   if (wspip->dmachp != NULL) {
     (void)dma3ChannelDisable(wspip->dmachp);
-    dma3ChannelFreeI(wspip->dmachp);
+    dma3ChannelFree(wspip->dmachp);
     wspip->dmachp = NULL;
   }
 

@@ -426,10 +426,8 @@ if (config->bus_type != XSNOR_BUS_MODE_SPI) {
   drvLock(config->bus.wspi.drv);
 #endif
   if (config->bus.wspi.cfg != config->bus.wspi.drv->config) {
-    if (drvGetStateX(config->bus.wspi.drv) == HAL_DRV_STATE_STOP) {
-      (void)drvStart(config->bus.wspi.drv, config->bus.wspi.cfg);
-    }
-    else {
+    if (drvStart(config->bus.wspi.drv, config->bus.wspi.cfg) !=
+        HAL_RET_SUCCESS) {
       (void)drvSetCfgX(config->bus.wspi.drv, config->bus.wspi.cfg);
     }
   }
@@ -444,10 +442,8 @@ else {
 #endif
   if (config->bus.spi.cfg !=
       (const hal_spi_config_t *)config->bus.spi.drv->config) {
-    if (drvGetStateX(config->bus.spi.drv) == HAL_DRV_STATE_STOP) {
-      (void)drvStart(config->bus.spi.drv, config->bus.spi.cfg);
-    }
-    else {
+    if (drvStart(config->bus.spi.drv, config->bus.spi.cfg) !=
+        HAL_RET_SUCCESS) {
       (void)drvSetCfgX(config->bus.spi.drv, config->bus.spi.cfg);
     }
   }
@@ -821,8 +817,6 @@ flash_error_t err;
 const xsnor_config_t *xcfg;
 msg_t msg = HAL_RET_SUCCESS;
 
-osalSysUnlock();
-
 if (config != NULL) {
   self->config = __xsnor_setcfg_impl(self, config);
   if (self->config == NULL) {
@@ -890,8 +884,6 @@ if (err != FLASH_NO_ERROR) {
 }
 
 exit:
-osalSysLock();
-
 return msg;]]></implementation>
             </method>
             <method shortname="stop">

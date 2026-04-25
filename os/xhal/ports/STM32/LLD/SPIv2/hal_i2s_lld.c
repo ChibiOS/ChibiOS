@@ -371,17 +371,17 @@ const I2SConfig *i2s_lld_selcfg(I2SDriver *i2sp, unsigned cfgnum) {
 msg_t i2s_lld_start(I2SDriver *i2sp) {
   const I2SConfig *config = (const I2SConfig *)i2sp->config;
 
-  if (i2sp->state == HAL_DRV_STATE_STOP) {
+  {
     if (false) {
     }
 #if STM32_I2S_USE_SPI1
     else if (&I2SD1 == i2sp) {
       rccEnableSPI1(true);
 #if STM32_I2S_RX_ENABLED(STM32_I2S_SPI1_MODE)
-      i2sp->dmarx = dmaStreamAllocI(STM32_I2S_SPI1_RX_DMA_STREAM,
-                                    STM32_I2S_SPI1_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)i2s_lld_serve_rx_interrupt,
-                                    (void *)i2sp);
+      i2sp->dmarx = dmaStreamAlloc(STM32_I2S_SPI1_RX_DMA_STREAM,
+                                   STM32_I2S_SPI1_IRQ_PRIORITY,
+                                   (stm32_dmaisr_t)i2s_lld_serve_rx_interrupt,
+                                   (void *)i2sp);
       if (i2sp->dmarx == NULL) {
         rccDisableSPI1();
         return HAL_RET_NO_RESOURCE;
@@ -391,13 +391,13 @@ msg_t i2s_lld_start(I2SDriver *i2sp) {
 #endif
 #endif
 #if STM32_I2S_TX_ENABLED(STM32_I2S_SPI1_MODE)
-      i2sp->dmatx = dmaStreamAllocI(STM32_I2S_SPI1_TX_DMA_STREAM,
-                                    STM32_I2S_SPI1_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)i2s_lld_serve_tx_interrupt,
-                                    (void *)i2sp);
+      i2sp->dmatx = dmaStreamAlloc(STM32_I2S_SPI1_TX_DMA_STREAM,
+                                   STM32_I2S_SPI1_IRQ_PRIORITY,
+                                   (stm32_dmaisr_t)i2s_lld_serve_tx_interrupt,
+                                   (void *)i2sp);
       if (i2sp->dmatx == NULL) {
         if (i2sp->dmarx != NULL) {
-          dmaStreamFreeI(i2sp->dmarx);
+          dmaStreamFree(i2sp->dmarx);
           i2sp->dmarx = NULL;
         }
         rccDisableSPI1();
@@ -413,10 +413,10 @@ msg_t i2s_lld_start(I2SDriver *i2sp) {
     else if (&I2SD2 == i2sp) {
       rccEnableSPI2(true);
 #if STM32_I2S_RX_ENABLED(STM32_I2S_SPI2_MODE)
-      i2sp->dmarx = dmaStreamAllocI(STM32_I2S_SPI2_RX_DMA_STREAM,
-                                    STM32_I2S_SPI2_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)i2s_lld_serve_rx_interrupt,
-                                    (void *)i2sp);
+      i2sp->dmarx = dmaStreamAlloc(STM32_I2S_SPI2_RX_DMA_STREAM,
+                                   STM32_I2S_SPI2_IRQ_PRIORITY,
+                                   (stm32_dmaisr_t)i2s_lld_serve_rx_interrupt,
+                                   (void *)i2sp);
       if (i2sp->dmarx == NULL) {
         rccDisableSPI2();
         return HAL_RET_NO_RESOURCE;
@@ -426,13 +426,13 @@ msg_t i2s_lld_start(I2SDriver *i2sp) {
 #endif
 #endif
 #if STM32_I2S_TX_ENABLED(STM32_I2S_SPI2_MODE)
-      i2sp->dmatx = dmaStreamAllocI(STM32_I2S_SPI2_TX_DMA_STREAM,
-                                    STM32_I2S_SPI2_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)i2s_lld_serve_tx_interrupt,
-                                    (void *)i2sp);
+      i2sp->dmatx = dmaStreamAlloc(STM32_I2S_SPI2_TX_DMA_STREAM,
+                                   STM32_I2S_SPI2_IRQ_PRIORITY,
+                                   (stm32_dmaisr_t)i2s_lld_serve_tx_interrupt,
+                                   (void *)i2sp);
       if (i2sp->dmatx == NULL) {
         if (i2sp->dmarx != NULL) {
-          dmaStreamFreeI(i2sp->dmarx);
+          dmaStreamFree(i2sp->dmarx);
           i2sp->dmarx = NULL;
         }
         rccDisableSPI2();
@@ -448,10 +448,10 @@ msg_t i2s_lld_start(I2SDriver *i2sp) {
     else if (&I2SD3 == i2sp) {
       rccEnableSPI3(true);
 #if STM32_I2S_RX_ENABLED(STM32_I2S_SPI3_MODE)
-      i2sp->dmarx = dmaStreamAllocI(STM32_I2S_SPI3_RX_DMA_STREAM,
-                                    STM32_I2S_SPI3_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)i2s_lld_serve_rx_interrupt,
-                                    (void *)i2sp);
+      i2sp->dmarx = dmaStreamAlloc(STM32_I2S_SPI3_RX_DMA_STREAM,
+                                   STM32_I2S_SPI3_IRQ_PRIORITY,
+                                   (stm32_dmaisr_t)i2s_lld_serve_rx_interrupt,
+                                   (void *)i2sp);
       if (i2sp->dmarx == NULL) {
         rccDisableSPI3();
         return HAL_RET_NO_RESOURCE;
@@ -461,13 +461,13 @@ msg_t i2s_lld_start(I2SDriver *i2sp) {
 #endif
 #endif
 #if STM32_I2S_TX_ENABLED(STM32_I2S_SPI3_MODE)
-      i2sp->dmatx = dmaStreamAllocI(STM32_I2S_SPI3_TX_DMA_STREAM,
-                                    STM32_I2S_SPI3_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)i2s_lld_serve_tx_interrupt,
-                                    (void *)i2sp);
+      i2sp->dmatx = dmaStreamAlloc(STM32_I2S_SPI3_TX_DMA_STREAM,
+                                   STM32_I2S_SPI3_IRQ_PRIORITY,
+                                   (stm32_dmaisr_t)i2s_lld_serve_tx_interrupt,
+                                   (void *)i2sp);
       if (i2sp->dmatx == NULL) {
         if (i2sp->dmarx != NULL) {
-          dmaStreamFreeI(i2sp->dmarx);
+          dmaStreamFree(i2sp->dmarx);
           i2sp->dmarx = NULL;
         }
         rccDisableSPI3();
@@ -503,16 +503,16 @@ msg_t i2s_lld_start(I2SDriver *i2sp) {
 
 void i2s_lld_stop(I2SDriver *i2sp) {
 
-  if (i2sp->state == HAL_DRV_STATE_READY) {
+  if (i2sp->state == HAL_DRV_STATE_STOPPING) {
     i2sp->spi->CR2 = 0U;
     i2sp->spi->I2SCFGR &= (uint16_t)~SPI_I2SCFGR_I2SE;
 
     if (i2sp->dmarx != NULL) {
-      dmaStreamFreeI(i2sp->dmarx);
+      dmaStreamFree(i2sp->dmarx);
       i2sp->dmarx = NULL;
     }
     if (i2sp->dmatx != NULL) {
-      dmaStreamFreeI(i2sp->dmatx);
+      dmaStreamFree(i2sp->dmatx);
       i2sp->dmatx = NULL;
     }
 

@@ -166,18 +166,15 @@ static bool mmc_spi_apply_cfg(MMCSPIDriver *mmcp,
     return HAL_FAILED;
   }
 
-  if (drvGetStateX(mmccfg->spip) == HAL_DRV_STATE_STOP) {
-    if (drvStart(mmccfg->spip, config) != HAL_RET_SUCCESS) {
-      return HAL_FAILED;
-    }
-  }
-  else {
-    if (drvSetCfgX(mmccfg->spip, config) != HAL_RET_SUCCESS) {
-      return HAL_FAILED;
-    }
+  if (drvStart(mmccfg->spip, config) == HAL_RET_SUCCESS) {
+    return HAL_SUCCESS;
   }
 
-  return HAL_SUCCESS;
+  if (drvSetCfgX(mmccfg->spip, config) == HAL_RET_SUCCESS) {
+    return HAL_SUCCESS;
+  }
+
+  return HAL_FAILED;
 }
 
 static void mmc_spi_lock_bus(MMCSPIDriver *mmcp) {

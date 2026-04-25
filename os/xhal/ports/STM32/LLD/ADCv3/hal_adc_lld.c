@@ -534,18 +534,18 @@ msg_t adc_lld_start(hal_adc_driver_c *adcp) {
     return HAL_RET_CONFIG_ERROR;
   }
 
-  /* If in stopped state then enables the ADC and DMA clocks.*/
-  if (adcp->state == HAL_DRV_STATE_STOP) {
+  /* Enabling the ADC and DMA clocks.*/
+  {
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
 
       osalDbgAssert(STM32_ADC1_CLOCK <= STM32_ADCCLK_MAX,
                     "invalid clock frequency");
 
-      adcp->dmastp = dmaStreamAllocI(STM32_ADC_ADC1_DMA_STREAM,
-                                     STM32_ADCV3_ADC1_IRQ_PRIORITY,
-                                     (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
-                                     (void *)adcp);
+      adcp->dmastp = dmaStreamAlloc(STM32_ADC_ADC1_DMA_STREAM,
+                                    STM32_ADCV3_ADC1_IRQ_PRIORITY,
+                                    (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
+                                    (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
       clkmask |= ADC1_CLKMASK;
@@ -570,10 +570,10 @@ msg_t adc_lld_start(hal_adc_driver_c *adcp) {
       osalDbgAssert(STM32_ADC2_CLOCK <= STM32_ADCCLK_MAX,
                     "invalid clock frequency");
 
-      adcp->dmastp = dmaStreamAllocI(STM32_ADC_ADC2_DMA_STREAM,
-                                     STM32_ADCV3_ADC2_IRQ_PRIORITY,
-                                     (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
-                                     (void *)adcp);
+      adcp->dmastp = dmaStreamAlloc(STM32_ADC_ADC2_DMA_STREAM,
+                                    STM32_ADCV3_ADC2_IRQ_PRIORITY,
+                                    (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
+                                    (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
       clkmask |= ADC2_CLKMASK;
@@ -595,10 +595,10 @@ msg_t adc_lld_start(hal_adc_driver_c *adcp) {
       osalDbgAssert(STM32_ADC3_CLOCK <= STM32_ADCCLK_MAX,
                     "invalid clock frequency");
 
-      adcp->dmastp = dmaStreamAllocI(STM32_ADC_ADC3_DMA_STREAM,
-                                     STM32_ADCV3_ADC3_IRQ_PRIORITY,
-                                     (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
-                                     (void *)adcp);
+      adcp->dmastp = dmaStreamAlloc(STM32_ADC_ADC3_DMA_STREAM,
+                                    STM32_ADCV3_ADC3_IRQ_PRIORITY,
+                                    (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
+                                    (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
       clkmask |= ADC3_CLKMASK;
@@ -623,10 +623,10 @@ msg_t adc_lld_start(hal_adc_driver_c *adcp) {
       osalDbgAssert(STM32_ADC4_CLOCK <= STM32_ADCCLK_MAX,
                     "invalid clock frequency");
 
-      adcp->dmastp = dmaStreamAllocI(STM32_ADC_ADC4_DMA_STREAM,
-                                     STM32_ADCV3_ADC4_IRQ_PRIORITY,
-                                     (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
-                                     (void *)adcp);
+      adcp->dmastp = dmaStreamAlloc(STM32_ADC_ADC4_DMA_STREAM,
+                                    STM32_ADCV3_ADC4_IRQ_PRIORITY,
+                                    (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
+                                    (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
       clkmask |= ADC4_CLKMASK;
@@ -650,10 +650,10 @@ msg_t adc_lld_start(hal_adc_driver_c *adcp) {
       osalDbgAssert(STM32_ADC5_CLOCK <= STM32_ADCCLK_MAX,
                     "invalid clock frequency");
 
-      adcp->dmastp = dmaStreamAllocI(STM32_ADC_ADC5_DMA_STREAM,
-                                     STM32_ADCV3_ADC5_IRQ_PRIORITY,
-                                     (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
-                                     (void *)adcp);
+      adcp->dmastp = dmaStreamAlloc(STM32_ADC_ADC5_DMA_STREAM,
+                                    STM32_ADCV3_ADC5_IRQ_PRIORITY,
+                                    (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
+                                    (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
       clkmask |= ADC5_CLKMASK;
@@ -701,11 +701,11 @@ msg_t adc_lld_start(hal_adc_driver_c *adcp) {
  */
 void adc_lld_stop(hal_adc_driver_c *adcp) {
 
-  /* If in ready state then disables the ADC clock and analog part.*/
-  if (adcp->state == HAL_DRV_STATE_READY) {
+  /* If stopping then disables the ADC clock and analog part.*/
+  if (adcp->state == HAL_DRV_STATE_STOPPING) {
 
     /* Releasing the associated DMA channel.*/
-    dmaStreamFreeI(adcp->dmastp);
+    dmaStreamFree(adcp->dmastp);
     adcp->dmastp = NULL;
 
     /* Stopping the ongoing conversion, if any.*/

@@ -1212,7 +1212,7 @@ msg_t __bsio_start_impl(void *ip, const void *config) {
   msg_t msg;
 
   /* Starting the undelying SIO driver.*/
-  msg = drvStartS(self->siop, config);
+  msg = drvStart(self->siop, config);
   if (msg == HAL_RET_SUCCESS) {
     self->config = self->siop->config;
     drvSetArgumentX(self->siop, self);
@@ -1233,7 +1233,7 @@ msg_t __bsio_start_impl(void *ip, const void *config) {
 void __bsio_stop_impl(void *ip) {
   hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
 
-  drvStopS(self->siop);
+  drvStop(self->siop);
 }
 
 /**
