@@ -67,6 +67,46 @@
         <notapi />
         <implementation><![CDATA[(__spi_getconf(ip)->field)]]></implementation>
       </macro>
+      <macro name="_spi_isr_half_code">
+        <brief>Common ISR code, half buffer event.</brief>
+        <param name="spip" dir="both">Pointer to the SPI driver instance.</param>
+        <notapi />
+        <implementation><![CDATA[
+do {
+  __cbdrv_invoke_half_cb(spip);
+  __spi_wakeup_state_isr(spip, HAL_DRV_STATE_HALF);
+} while (false)]]></implementation>
+      </macro>
+      <macro name="_spi_isr_full_code">
+        <brief>Common ISR code, full buffer event.</brief>
+        <param name="spip" dir="both">Pointer to the SPI driver instance.</param>
+        <notapi />
+        <implementation><![CDATA[
+do {
+  __cbdrv_invoke_full_cb(spip);
+  __spi_wakeup_state_isr(spip, HAL_DRV_STATE_FULL);
+} while (false)]]></implementation>
+      </macro>
+      <macro name="_spi_isr_complete_code">
+        <brief>Common ISR code, transfer complete event.</brief>
+        <param name="spip" dir="both">Pointer to the SPI driver instance.</param>
+        <notapi />
+        <implementation><![CDATA[
+do {
+  __cbdrv_invoke_complete_cb(spip);
+  __spi_wakeup_state_isr(spip, HAL_DRV_STATE_COMPLETE);
+} while (false)]]></implementation>
+      </macro>
+      <macro name="_spi_isr_error_code">
+        <brief>Common ISR code, transfer error event.</brief>
+        <param name="spip" dir="both">Pointer to the SPI driver instance.</param>
+        <notapi />
+        <implementation><![CDATA[
+do {
+  __cbdrv_invoke_error_cb(spip);
+  __spi_wakeup_isr(spip, MSG_RESET);
+} while (false)]]></implementation>
+      </macro>
     </macros>
     <types>
       <typedef name="spi_mode_t">
@@ -143,6 +183,9 @@ SPI_CONFIG_EXT_FIELDS]]></verbatim>
             <field name="sync_transfer" ctype="thread_reference_t">
               <brief>Synchronization point for transfer.</brief>
             </field>
+            <field name="sync_state" ctype="driver_state_t">
+              <brief>State being synchronized.</brief>
+            </field>
           </condition>
           <verbatim><![CDATA[
 #if defined(SPI_DRIVER_EXT_FIELDS)
@@ -157,6 +200,7 @@ spi_lld_driver_fields;]]></verbatim>
             <implementation><![CDATA[
 #if SPI_USE_SYNCHRONIZATION == TRUE
 self->sync_transfer = NULL;
+self->sync_state    = HAL_DRV_STATE_STOP;
 #endif
 
 /* Optional, user-defined initializer.*/
@@ -506,30 +550,45 @@ osalSysUnlock();
 return msg;]]></implementation>
             </method>
             <condition check="SPI_USE_SYNCHRONIZATION == TRUE">
-              <method name="spiSynchronizeS" ctype="msg_t">
-                <note><![CDATA[This function can only be called by a single thread at time.]]></note>
-                <param name="timeout" ctype="sysinterval_t" dir="in">Synchronization
-                  timeout.
+              <method name="spiSynchronizeStateS" ctype="msg_t">
+                <brief>Synchronizes with an SPI transfer state.</brief>
+                <details><![CDATA[This function synchronizes with a future
+                  occurrence of the specified transfer state. State occurrences
+                  are not buffered, the waiting thread must already be waiting
+                  when the state is reached. Waiting for
+                  @p HAL_DRV_STATE_COMPLETE in circular mode waits until the
+                  transfer is explicitly stopped or failed.]]></details>
+                <param name="state" ctype="driver_state_t" dir="in">
+                  State to synchronize with.
+                </param>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Synchronization timeout.
                 </param>
                 <return>The synchronization result.</return>
-                <retval value="MSG_OK">If operation completed without
-                  errors.
-                </retval>
-                <retval value="MSG_TIMEOUT">If synchronization timed out.
-                </retval>
-                <retval value="MSG_RESET">If the transfer has been stopped.
-                </retval>
+                <retval value="MSG_OK">If the requested state has been reached.</retval>
+                <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
+                <retval value="MSG_RESET">If transfer stopped or failed while waiting.</retval>
                 <sclass />
                 <implementation><![CDATA[
 msg_t msg;
 
 osalDbgCheck(self != NULL);
+osalDbgCheckClassS();
+osalDbgCheck((state == HAL_DRV_STATE_HALF) ||
+             (state == HAL_DRV_STATE_FULL) ||
+             (state == HAL_DRV_STATE_COMPLETE));
 osalDbgAssert((self->state == HAL_DRV_STATE_ACTIVE) ||
-              (self->state == HAL_DRV_STATE_READY),
+              ((self->state == HAL_DRV_STATE_READY) &&
+               (state == HAL_DRV_STATE_COMPLETE)),
               "invalid state");
+osalDbgCheck((state == HAL_DRV_STATE_COMPLETE) ||
+             ((__spi_getfield(self, mode) & SPI_MODE_CIRCULAR) != 0U));
+osalDbgAssert(self->sync_transfer == NULL, "already waiting");
 
 if (self->state == HAL_DRV_STATE_ACTIVE) {
+  self->sync_state = state;
   msg = osalThreadSuspendTimeoutS(&self->sync_transfer, timeout);
+  self->sync_state = HAL_DRV_STATE_STOP;
 }
 else {
   msg = MSG_OK;
@@ -537,25 +596,32 @@ else {
 
 return msg;]]></implementation>
               </method>
-              <method name="spiSynchronize" ctype="msg_t">
-                <note><![CDATA[This function can only be called by a single thread at time.]]></note>
-                <param name="timeout" ctype="sysinterval_t" dir="in">Synchronization
-                  timeout.
+              <method name="spiSynchronizeState" ctype="msg_t">
+                <brief>Synchronizes with an SPI transfer state.</brief>
+                <details><![CDATA[This function synchronizes with a future
+                  occurrence of the specified transfer state. State occurrences
+                  are not buffered, the waiting thread must already be waiting
+                  when the state is reached. Waiting for
+                  @p HAL_DRV_STATE_COMPLETE in circular mode waits until the
+                  transfer is explicitly stopped or failed.]]></details>
+                <param name="state" ctype="driver_state_t" dir="in">
+                  State to synchronize with.
+                </param>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Synchronization timeout.
                 </param>
                 <return>The synchronization result.</return>
-                <retval value="MSG_OK">If operation completed without
-                  errors.
-                </retval>
-                <retval value="MSG_TIMEOUT">If synchronization timed out.
-                </retval>
-                <retval value="MSG_RESET">If the transfer has been stopped.
-                </retval>
+                <retval value="MSG_OK">If the requested state has been reached.</retval>
+                <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
+                <retval value="MSG_RESET">If transfer stopped or failed while waiting.</retval>
                 <api />
                 <implementation><![CDATA[
 msg_t msg;
 
+osalDbgCheck(self != NULL);
+
 osalSysLock();
-msg = spiSynchronizeS(self, timeout);
+msg = spiSynchronizeStateS(self, state, timeout);
 osalSysUnlock();
 
 return msg;]]></implementation>
@@ -586,7 +652,7 @@ osalSysLock();
 
 msg = spiStartIgnoreI(self, n);
 if (msg == MSG_OK) {
-  msg = spiSynchronizeS(self, TIME_INFINITE);
+  msg = spiSynchronizeStateS(self, HAL_DRV_STATE_COMPLETE, TIME_INFINITE);
 }
 
 osalSysUnlock();
@@ -629,7 +695,7 @@ osalSysLock();
 
 msg = spiStartExchangeI(self, n, txbuf, rxbuf);
 if (msg == MSG_OK) {
-  msg = spiSynchronizeS(self, TIME_INFINITE);
+  msg = spiSynchronizeStateS(self, HAL_DRV_STATE_COMPLETE, TIME_INFINITE);
 }
 
 osalSysUnlock();
@@ -663,7 +729,7 @@ osalSysLock();
 
 msg = spiStartSendI(self, n, txbuf);
 if (msg == MSG_OK) {
-  msg = spiSynchronizeS(self, TIME_INFINITE);
+  msg = spiSynchronizeStateS(self, HAL_DRV_STATE_COMPLETE, TIME_INFINITE);
 }
 
 osalSysUnlock();
@@ -699,7 +765,7 @@ osalSysLock();
 
 msg = spiStartReceiveI(self, n, rxbuf);
 if (msg == MSG_OK) {
-  msg = spiSynchronizeS(self, TIME_INFINITE);
+  msg = spiSynchronizeStateS(self, HAL_DRV_STATE_COMPLETE, TIME_INFINITE);
 }
 
 osalSysUnlock();
@@ -746,6 +812,22 @@ osalSysLockFromISR();
 osalThreadResumeI(&self->sync_transfer, msg);
 osalSysUnlockFromISR();]]></implementation>
               </method>
+              <method name="__spi_wakeup_state_isr" ctype="void">
+                <brief>Wakes up a thread waiting for an SPI transfer state.</brief>
+                <note>This function is meant to be used in the low level
+                  drivers implementations only.</note>
+                <param name="state" ctype="driver_state_t" dir="in">State
+                  being synchronized.
+                </param>
+                <notapi />
+                <implementation><![CDATA[
+
+osalSysLockFromISR();
+if (self->sync_state == state) {
+  osalThreadResumeI(&self->sync_transfer, MSG_OK);
+}
+osalSysUnlockFromISR();]]></implementation>
+              </method>
               <elseif />
               <method name="__spi_wakeup_isr" ctype="void">
                 <param name="msg" ctype="msg_t" dir="in" />
@@ -753,6 +835,13 @@ osalSysUnlockFromISR();]]></implementation>
 
 (void)self;
 (void)msg;]]></implementation>
+              </method>
+              <method name="__spi_wakeup_state_isr" ctype="void">
+                <param name="state" ctype="driver_state_t" dir="in" />
+                <implementation><![CDATA[
+
+(void)self;
+(void)state;]]></implementation>
               </method>
             </condition>
           </inline>

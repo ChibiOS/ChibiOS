@@ -156,6 +156,58 @@
 #define __spi_getfield(ip, field)                                           \
   (__spi_getconf(ip)->field)
 
+/**
+ * @brief       Common ISR code, half buffer event.
+ *
+ * @param[in,out] spip          Pointer to the SPI driver instance.
+ *
+ * @notapi
+ */
+#define _spi_isr_half_code(spip)                                            \
+  do {                                                                      \
+    __cbdrv_invoke_half_cb(spip);                                           \
+    __spi_wakeup_state_isr(spip, HAL_DRV_STATE_HALF);                       \
+  } while (false)
+
+/**
+ * @brief       Common ISR code, full buffer event.
+ *
+ * @param[in,out] spip          Pointer to the SPI driver instance.
+ *
+ * @notapi
+ */
+#define _spi_isr_full_code(spip)                                            \
+  do {                                                                      \
+    __cbdrv_invoke_full_cb(spip);                                           \
+    __spi_wakeup_state_isr(spip, HAL_DRV_STATE_FULL);                       \
+  } while (false)
+
+/**
+ * @brief       Common ISR code, transfer complete event.
+ *
+ * @param[in,out] spip          Pointer to the SPI driver instance.
+ *
+ * @notapi
+ */
+#define _spi_isr_complete_code(spip)                                        \
+  do {                                                                      \
+    __cbdrv_invoke_complete_cb(spip);                                       \
+    __spi_wakeup_state_isr(spip, HAL_DRV_STATE_COMPLETE);                   \
+  } while (false)
+
+/**
+ * @brief       Common ISR code, transfer error event.
+ *
+ * @param[in,out] spip          Pointer to the SPI driver instance.
+ *
+ * @notapi
+ */
+#define _spi_isr_error_code(spip)                                           \
+  do {                                                                      \
+    __cbdrv_invoke_error_cb(spip);                                          \
+    __spi_wakeup_isr(spip, MSG_RESET);                                      \
+  } while (false)
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -313,6 +365,10 @@ struct hal_spi_driver {
    * @brief       Synchronization point for transfer.
    */
   thread_reference_t        sync_transfer;
+  /**
+   * @brief       State being synchronized.
+   */
+  driver_state_t            sync_state;
 #endif /* SPI_USE_SYNCHRONIZATION == TRUE */
 #if defined(SPI_DRIVER_EXT_FIELDS)
   SPI_DRIVER_EXT_FIELDS
@@ -347,8 +403,10 @@ extern "C" {
   msg_t spiStopTransferI(void *ip, size_t *np);
   msg_t spiStopTransfer(void *ip, size_t *np);
 #if (SPI_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
-  msg_t spiSynchronizeS(void *ip, sysinterval_t timeout);
-  msg_t spiSynchronize(void *ip, sysinterval_t timeout);
+  msg_t spiSynchronizeStateS(void *ip, driver_state_t state,
+                             sysinterval_t timeout);
+  msg_t spiSynchronizeState(void *ip, driver_state_t state,
+                            sysinterval_t timeout);
   msg_t spiIgnore(void *ip, size_t n);
   msg_t spiExchange(void *ip, size_t n, const void *txbuf, void *rxbuf);
   msg_t spiSend(void *ip, size_t n, const void *txbuf);
@@ -449,6 +507,27 @@ static inline void __spi_wakeup_isr(void *ip, msg_t msg) {
   osalSysUnlockFromISR();
 }
 
+/**
+ * @brief       Wakes up a thread waiting for an SPI transfer state.
+ * @note        This function is meant to be used in the low level drivers
+ *              implementations only.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     state         State being synchronized.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline void __spi_wakeup_state_isr(void *ip, driver_state_t state) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  osalSysLockFromISR();
+  if (self->sync_state == state) {
+    osalThreadResumeI(&self->sync_transfer, MSG_OK);
+  }
+  osalSysUnlockFromISR();
+}
+
 #else
 
 CC_FORCE_INLINE
@@ -457,6 +536,14 @@ static inline void __spi_wakeup_isr(void *ip, msg_t msg) {
 
   (void)self;
   (void)msg;
+}
+
+CC_FORCE_INLINE
+static inline void __spi_wakeup_state_isr(void *ip, driver_state_t state) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  (void)self;
+  (void)state;
 }
 #endif /* SPI_USE_SYNCHRONIZATION == TRUE */
 /** @} */
