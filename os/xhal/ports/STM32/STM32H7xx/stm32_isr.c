@@ -88,6 +88,9 @@
 #include "stm32_tim16.inc"
 #include "stm32_tim17.inc"
 
+#include "stm32_octospi1.inc"
+#include "stm32_octospi2.inc"
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -98,6 +101,10 @@
  * @notapi
  */
 void irqInit(void) {
+
+#if defined(STM32_MDMA_REQUIRED)
+  mdma_irq_init();
+#endif
 
   exti0_irq_init();
   exti1_irq_init();
@@ -124,6 +131,9 @@ void irqInit(void) {
   tim16_irq_init();
   tim17_irq_init();
 
+  octospi1_irq_init();
+  octospi2_irq_init();
+
   usart1_irq_init();
   usart2_irq_init();
   usart3_irq_init();
@@ -143,6 +153,10 @@ void irqInit(void) {
  * @notapi
  */
 void irqDeinit(void) {
+
+#if defined(STM32_MDMA_REQUIRED)
+  mdma_irq_deinit();
+#endif
 
   exti0_irq_deinit();
   exti1_irq_deinit();
@@ -168,6 +182,9 @@ void irqDeinit(void) {
   tim15_irq_deinit();
   tim16_irq_deinit();
   tim17_irq_deinit();
+
+  octospi1_irq_deinit();
+  octospi2_irq_deinit();
 
   usart1_irq_deinit();
   usart2_irq_deinit();

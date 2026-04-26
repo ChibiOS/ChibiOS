@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    OCTOSPIv2/hal_wspi_lld.c
+ * @file    OCTOSPIv3/hal_wspi_lld.c
  * @brief   STM32 WSPI subsystem low level driver source.
  *
  * @addtogroup WSPI
@@ -30,18 +30,6 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-/* @brief MDMA HW request is OSPI FIFO threshold flag. */
-#define MDMA_REQUEST_OCTOSPI1_FIFO_TH       ((uint32_t)0x00000016U)
-
-/* @brief MDMA HW request is OSPI transfer complete flag. */
-#define MDMA_REQUEST_OCTOSPI1_TC            ((uint32_t)0x00000017U)
-
-/* @brief MDMA HW request is OSPI FIFO threshold flag. */
-#define MDMA_REQUEST_OCTOSPI2_FIFO_TH       ((uint32_t)0x00000020U)
-
-/* @brief MDMA HW request is OSPI transfer complete flag. */
-#define MDMA_REQUEST_OCTOSPI2_TC            ((uint32_t)0x00000021U)
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -49,11 +37,6 @@
 /** @brief OCTOSPI1 driver identifier.*/
 #if STM32_WSPI_USE_OCTOSPI1 || defined(__DOXYGEN__)
 hal_wspi_driver_c WSPID1;
-#endif
-
-/** @brief OCTOSPI2 driver identifier.*/
-#if STM32_WSPI_USE_OCTOSPI2 || defined(__DOXYGEN__)
-hal_wspi_driver_c WSPID2;
 #endif
 
 /*===========================================================================*/
@@ -84,20 +67,27 @@ static inline void wspi_lld_sync(hal_wspi_driver_c *wspip) {
 }
 
 /**
- * @brief   Shared MDMA service routine.
+ * @brief   Shared DMA3 service routine.
  *
- * @param[in] wspip     pointer to the @p hal_wspi_driver_c object
- * @param[in] flags     pre-shifted content of the ISR register
+ * @param[in] p         parameter for the registered function
+ * @param[in] csr       content of the CxSR register
  */
-static void wspi_lld_serve_mdma_interrupt(hal_wspi_driver_c *wspip,
-                                          uint32_t flags) {
+static void wspi_lld_serve_dma_interrupt(void *p, uint32_t csr) {
+  hal_wspi_driver_c *wspip = (hal_wspi_driver_c *)p;
+  bool data_transfer;
 
-  (void)wspip;
+  data_transfer = (wspip->state == WSPI_STATE_SEND) ||
+                  (wspip->state == WSPI_STATE_RECEIVE);
 
-  if ((flags & STM32_MDMA_CISR_TEIF) != 0U) {
-#if defined(STM32_WSPI_MDMA_ERROR_HOOK)
-    STM32_WSPI_MDMA_ERROR_HOOK(wspip);
+  if ((csr & STM32_DMA3_CSR_ERRORS) != 0U) {
+#if defined(STM32_WSPI_DMA_ERROR_HOOK)
+    STM32_WSPI_DMA_ERROR_HOOK(wspip);
 #endif
+    if (data_transfer && (wspip->dmachp != NULL)) {
+      (void)dma3ChannelDisable(wspip->dmachp);
+    }
+    wspip->ospi->CR &= ~OCTOSPI_CR_DMAEN;
+    _wspi_isr_error_code(wspip);
   }
 }
 
@@ -123,24 +113,10 @@ void wspi_lld_init(void) {
 #endif
                      ;
   WSPID1.ospi      = OCTOSPI1;
-  WSPID1.mdma      = NULL;
+  WSPID1.dmachp    = NULL;
+  WSPID1.dreq      = STM32_DMA3_REQ_OSPI1;
+  WSPID1.dprio     = STM32_WSPI_OCTOSPI1_DMA_PRIORITY;
 #endif
-
-#if STM32_WSPI_USE_OCTOSPI2
-  wspiObjectInit(&WSPID2);
-  WSPID2.extra_tcr = 0U
-#if STM32_WSPI_OCTOSPI2_SSHIFT
-                     | OCTOSPI_TCR_SSHIFT
-#endif
-#if STM32_WSPI_OCTOSPI2_DHQC
-                     | OCTOSPI_TCR_DHQC
-#endif
-                     ;
-  WSPID2.ospi      = OCTOSPI2;
-  WSPID2.mdma      = NULL;
-#endif
-
-  rccEnableOCTOSPIM(false);
 }
 
 /**
@@ -161,33 +137,22 @@ msg_t wspi_lld_start(hal_wspi_driver_c *wspip) {
     }
   }
 
-#if STM32_WSPI_USE_OCTOSPI1
-  if (&WSPID1 == wspip) {
-    wspip->mdma = mdmaChannelAlloc(STM32_WSPI_OCTOSPI1_MDMA_CHANNEL,
-                                   (stm32_mdmaisr_t)wspi_lld_serve_mdma_interrupt,
-                                   (void *)wspip);
-    if (wspip->mdma == NULL) {
-      return HAL_RET_NO_RESOURCE;
-    }
-    rccEnableOCTOSPI1(true);
-    mdmaChannelSetTrigModeX(wspip->mdma, MDMA_REQUEST_OCTOSPI1_FIFO_TH);
-    dcr2 = STM32_DCR2_PRESCALER(STM32_WSPI_OCTOSPI1_PRESCALER_VALUE - 1U);
-  }
-#endif
+  dcr2 = STM32_DCR2_PRESCALER(STM32_WSPI_OCTOSPI1_PRESCALER_VALUE - 1U);
 
-#if STM32_WSPI_USE_OCTOSPI2
-  if (&WSPID2 == wspip) {
-    wspip->mdma = mdmaChannelAlloc(STM32_WSPI_OCTOSPI2_MDMA_CHANNEL,
-                                   (stm32_mdmaisr_t)wspi_lld_serve_mdma_interrupt,
-                                   (void *)wspip);
-    if (wspip->mdma == NULL) {
-      return HAL_RET_NO_RESOURCE;
+  {
+#if STM32_WSPI_USE_OCTOSPI1
+    if (&WSPID1 == wspip) {
+      wspip->dmachp = dma3ChannelAlloc(STM32_WSPI_OCTOSPI1_DMA3_CHANNEL,
+                                       STM32_WSPI_OCTOSPI1_DMA_IRQ_PRIORITY,
+                                       wspi_lld_serve_dma_interrupt,
+                                       (void *)wspip);
+      if (wspip->dmachp == NULL) {
+        return HAL_RET_NO_RESOURCE;
+      }
+      rccEnableOCTOSPI1(true);
     }
-    rccEnableOCTOSPI2(true);
-    mdmaChannelSetTrigModeX(wspip->mdma, MDMA_REQUEST_OCTOSPI2_FIFO_TH);
-    dcr2 = STM32_DCR2_PRESCALER(STM32_WSPI_OCTOSPI2_PRESCALER_VALUE - 1U);
-  }
 #endif
+  }
 
   wspip->ospi->DCR1 = __wspi_getfield(wspip, dcr1);
   wspip->ospi->DCR2 = __wspi_getfield(wspip, dcr2) | dcr2;
@@ -213,23 +178,15 @@ void wspi_lld_stop(hal_wspi_driver_c *wspip) {
   wspi_lld_sync(wspip);
   wspip->ospi->CR = 0U;
 
-  if (wspip->mdma != NULL) {
-    osalSysLock();
-    mdmaChannelDisableX(wspip->mdma);
-    osalSysUnlock();
-    mdmaChannelFree(wspip->mdma);
-    wspip->mdma = NULL;
+  if (wspip->dmachp != NULL) {
+    (void)dma3ChannelDisable(wspip->dmachp);
+    dma3ChannelFree(wspip->dmachp);
+    wspip->dmachp = NULL;
   }
 
 #if STM32_WSPI_USE_OCTOSPI1
   if (&WSPID1 == wspip) {
     rccDisableOCTOSPI1();
-  }
-#endif
-
-#if STM32_WSPI_USE_OCTOSPI2
-  if (&WSPID2 == wspip) {
-    rccDisableOCTOSPI2();
   }
 #endif
 }
@@ -292,10 +249,8 @@ void wspi_lld_serve_interrupt(hal_wspi_driver_c *wspip) {
                      OCTOSPI_FCR_CSMF | OCTOSPI_FCR_CTOF;
 
   if ((sr & OCTOSPI_SR_TEF) != 0U) {
-    if (data_transfer && (wspip->mdma != NULL)) {
-      osalSysLockFromISR();
-      mdmaChannelDisableX(wspip->mdma);
-      osalSysUnlockFromISR();
+    if (data_transfer && (wspip->dmachp != NULL)) {
+      (void)dma3ChannelDisable(wspip->dmachp);
     }
     wspip->ospi->CR &= ~OCTOSPI_CR_DMAEN;
     _wspi_isr_error_code(wspip);
@@ -304,8 +259,12 @@ void wspi_lld_serve_interrupt(hal_wspi_driver_c *wspip) {
 
   _wspi_isr_complete_code(wspip);
 
-  while (data_transfer && (wspip->mdma != NULL) &&
-         mdmaChannelIsEnabled(wspip->mdma)) {
+  while (data_transfer && (wspip->dmachp != NULL) &&
+         (dma3ChannelGetTransactionSize(wspip->dmachp) > 0U)) {
+  }
+
+  if (data_transfer && (wspip->dmachp != NULL)) {
+    (void)dma3ChannelDisable(wspip->dmachp);
   }
 }
 
@@ -342,31 +301,23 @@ void wspi_lld_command(hal_wspi_driver_c *wspip, const wspi_command_t *cmdp) {
  */
 void wspi_lld_send(hal_wspi_driver_c *wspip, const wspi_command_t *cmdp,
                    size_t n, const uint8_t *txbuf) {
-  uint32_t ctcr = STM32_MDMA_CTCR_BWM_NON_BUFF |
-                  STM32_MDMA_CTCR_TRGM_BUFFER  |
-                  STM32_MDMA_CTCR_TLEN(0U)     |
-                  STM32_MDMA_CTCR_DBURST_1     |
-                  STM32_MDMA_CTCR_SBURST_1     |
-                  STM32_MDMA_CTCR_DINCOS_BYTE  |
-                  STM32_MDMA_CTCR_SINCOS_BYTE  |
-                  STM32_MDMA_CTCR_DSIZE_BYTE   |
-                  STM32_MDMA_CTCR_SSIZE_BYTE   |
-                  STM32_MDMA_CTCR_DINC_FIXED   |
-                  STM32_MDMA_CTCR_SINC_INC;
-  uint32_t priority = STM32_WSPI_OCTOSPI1_MDMA_PRIORITY;
-  uint32_t ccr;
+  uint32_t ccr = STM32_DMA3_CCR_PRIO(wspip->dprio) |
+                 STM32_DMA3_CCR_USEIE |
+                 STM32_DMA3_CCR_ULEIE |
+                 STM32_DMA3_CCR_DTEIE;
 
-#if STM32_WSPI_USE_OCTOSPI2
-  if (&WSPID2 == wspip) {
-    priority = STM32_WSPI_OCTOSPI2_MDMA_PRIORITY;
-  }
-#endif
-  ccr = STM32_MDMA_CCR_PL(priority) | STM32_MDMA_CCR_TEIE;
-
-  mdmaChannelSetSourceX(wspip->mdma, txbuf);
-  mdmaChannelSetDestinationX(wspip->mdma, &wspip->ospi->DR);
-  mdmaChannelSetTransactionSizeX(wspip->mdma, n, 0U, 0U);
-  mdmaChannelSetModeX(wspip->mdma, ctcr, ccr);
+  dma3ChannelSetSource(wspip->dmachp, txbuf);
+  dma3ChannelSetDestination(wspip->dmachp, &wspip->ospi->DR);
+  dma3ChannelSetTransactionSize(wspip->dmachp, n);
+  dma3ChannelSetMode(wspip->dmachp,
+                     ccr,
+                     STM32_DMA3_CTR1_DAP_PER |
+                     STM32_DMA3_CTR1_DDW_BYTE |
+                     STM32_DMA3_CTR1_SAP_MEM |
+                     STM32_DMA3_CTR1_SINC |
+                     STM32_DMA3_CTR1_SDW_BYTE,
+                     STM32_DMA3_CTR2_REQSEL(wspip->dreq),
+                     0U);
 
   wspip->ospi->CR &= ~OCTOSPI_CR_FMODE;
   wspip->ospi->DLR = n - 1U;
@@ -378,7 +329,7 @@ void wspi_lld_send(hal_wspi_driver_c *wspip, const wspi_command_t *cmdp,
     wspip->ospi->AR = cmdp->addr;
   }
 
-  mdmaChannelEnableX(wspip->mdma);
+  dma3ChannelEnable(wspip->dmachp);
 }
 
 /**
@@ -393,31 +344,23 @@ void wspi_lld_send(hal_wspi_driver_c *wspip, const wspi_command_t *cmdp,
  */
 void wspi_lld_receive(hal_wspi_driver_c *wspip, const wspi_command_t *cmdp,
                       size_t n, uint8_t *rxbuf) {
-  uint32_t ctcr = STM32_MDMA_CTCR_BWM_NON_BUFF |
-                  STM32_MDMA_CTCR_TRGM_BUFFER  |
-                  STM32_MDMA_CTCR_TLEN(0U)     |
-                  STM32_MDMA_CTCR_DBURST_1     |
-                  STM32_MDMA_CTCR_SBURST_1     |
-                  STM32_MDMA_CTCR_DINCOS_BYTE  |
-                  STM32_MDMA_CTCR_SINCOS_BYTE  |
-                  STM32_MDMA_CTCR_DSIZE_BYTE   |
-                  STM32_MDMA_CTCR_SSIZE_BYTE   |
-                  STM32_MDMA_CTCR_DINC_INC     |
-                  STM32_MDMA_CTCR_SINC_FIXED;
-  uint32_t priority = STM32_WSPI_OCTOSPI1_MDMA_PRIORITY;
-  uint32_t ccr;
+  uint32_t ccr = STM32_DMA3_CCR_PRIO(wspip->dprio) |
+                 STM32_DMA3_CCR_USEIE |
+                 STM32_DMA3_CCR_ULEIE |
+                 STM32_DMA3_CCR_DTEIE;
 
-#if STM32_WSPI_USE_OCTOSPI2
-  if (&WSPID2 == wspip) {
-    priority = STM32_WSPI_OCTOSPI2_MDMA_PRIORITY;
-  }
-#endif
-  ccr = STM32_MDMA_CCR_PL(priority) | STM32_MDMA_CCR_TEIE;
-
-  mdmaChannelSetSourceX(wspip->mdma, &wspip->ospi->DR);
-  mdmaChannelSetDestinationX(wspip->mdma, rxbuf);
-  mdmaChannelSetTransactionSizeX(wspip->mdma, n, 0U, 0U);
-  mdmaChannelSetModeX(wspip->mdma, ctcr, ccr);
+  dma3ChannelSetSource(wspip->dmachp, &wspip->ospi->DR);
+  dma3ChannelSetDestination(wspip->dmachp, rxbuf);
+  dma3ChannelSetTransactionSize(wspip->dmachp, n);
+  dma3ChannelSetMode(wspip->dmachp,
+                     ccr,
+                     STM32_DMA3_CTR1_DAP_MEM |
+                     STM32_DMA3_CTR1_DINC |
+                     STM32_DMA3_CTR1_DDW_BYTE |
+                     STM32_DMA3_CTR1_SAP_PER |
+                     STM32_DMA3_CTR1_SDW_BYTE,
+                     STM32_DMA3_CTR2_REQSEL(wspip->dreq),
+                     0U);
 
   wspip->ospi->CR  = (wspip->ospi->CR & ~OCTOSPI_CR_FMODE) | OCTOSPI_CR_FMODE_0;
   wspip->ospi->DLR = n - 1U;
@@ -429,7 +372,7 @@ void wspi_lld_receive(hal_wspi_driver_c *wspip, const wspi_command_t *cmdp,
     wspip->ospi->AR = cmdp->addr;
   }
 
-  mdmaChannelEnableX(wspip->mdma);
+  dma3ChannelEnable(wspip->dmachp);
 }
 
 #if WSPI_SUPPORTS_MEMMAP == TRUE || defined(__DOXYGEN__)
@@ -457,14 +400,9 @@ void wspi_lld_map_flash(hal_wspi_driver_c *wspip,
   wspip->ospi->WIR  = 0U;
   wspip->ospi->WABR = 0U;
 
-  if ((addrp != NULL) && (&WSPID1 == wspip)) {
+  if (addrp != NULL) {
     *addrp = (uint8_t *)0x90000000U;
   }
-#if STM32_WSPI_USE_OCTOSPI2
-  if ((addrp != NULL) && (&WSPID2 == wspip)) {
-    *addrp = (uint8_t *)0x70000000U;
-  }
-#endif
 }
 
 /**

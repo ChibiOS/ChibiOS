@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    WSPI/stm32_quadspi1.inc
+ * @file    QUADSPI/stm32_quadspi1.inc
  * @brief   Shared QUADSPI1 handler.
  *
  * @addtogroup STM32_QUADSPI1_HANDLER

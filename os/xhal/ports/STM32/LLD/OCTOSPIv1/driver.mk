@@ -6,5 +6,5 @@ else
 PLATFORMSRC += $(CHIBIOS)/os/xhal/ports/STM32/LLD/OCTOSPIv1/hal_wspi_lld.c
 endif
 
-PLATFORMINC += $(CHIBIOS)/os/xhal/ports/STM32/LLD/WSPI \
+PLATFORMINC += $(CHIBIOS)/os/xhal/ports/STM32/LLD/OCTOSPI \
                $(CHIBIOS)/os/xhal/ports/STM32/LLD/OCTOSPIv1
