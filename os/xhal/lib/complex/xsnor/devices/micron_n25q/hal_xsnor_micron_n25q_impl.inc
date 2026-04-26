@@ -359,9 +359,10 @@ static void n25q_reset_xip_mode(hal_xsnor_micron_n25q_c *self,
                                 uint32_t iolines_cfg) {
   wspi_command_t cmd;
 
-  /* Resetting XIP mode by reading one byte without XIP confirmation bit.
-     The XIP confirmation bit is sent by using one ALT byte over 4 lines,
-     because of this 2 cycles are subtracted to the dummy cycles.*/
+  /* See N25Q "Terminating XIP After a Controller and Memory Reset".
+     Resetting XIP is done by forcing the XIP confirmation bit to one. The
+     confirmation bit is sent by using one ALT byte over four lines, because of
+     this two cycles are subtracted from the configured dummy cycles.*/
   cmd.cmd   = 0U;
   cmd.addr  = 0U;
   cmd.alt   = 0xFFU;
@@ -391,9 +392,10 @@ static void n25q_reset_xip(hal_xsnor_micron_n25q_c *self) {
 
 static void n25q_reset_memory(hal_xsnor_micron_n25q_c *self) {
 
-  /* The current bus width is not known. Wrong-width reset frames are expected
-     to be ignored by the device, so try the multi-line reset forms first and
-     finish with the one-line reset that should always be valid after recovery.*/
+  /* See N25Q "RESET ENABLE and RESET MEMORY Command". The number of I/O lines
+     varies with the active protocol, and the current bus width is not known.
+     Try multi-line reset forms first, then finish with the one-line reset that
+     should always be valid after XIP/protocol recovery.*/
   wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_4);
   wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_4);
   wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_2);
@@ -700,8 +702,9 @@ flash_error_t __n25q_init_impl(void *ip) {
                1, &config->buffers->databuf[0]);
 
       /* Dummy cycles configuration, intentionally done only after reset/probe.
-         XIP reset above only exits XIP mode; rewriting V_CONF earlier would
-         use target-mode commands before the current device mode is known.*/
+         The N25Q XIP termination sequence exits XIP but does not rewrite
+         V_CONF; rewriting V_CONF earlier would use target-mode commands before
+         the current device mode is known.*/
       __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
       config->buffers->databuf[0] =
         ((config->options & N25Q_OPT_DUMMY_CYCLES_MASK) << 4U) | 0x0FU;

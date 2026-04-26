@@ -383,10 +383,11 @@ static void mx25_reset_memory_spi(hal_xsnor_macronix_mx25_c *self) {
 #if (XSNOR_USE_WSPI == TRUE) || defined(__DOXYGEN__)
 static void mx25_reset_memory(hal_xsnor_macronix_mx25_c *self) {
 
-  /* If the device is in OPI mode then one of the two OPI reset forms is
-     accepted regardless of the requested final mode. In one-bit mode the OPI
-     command bit patterns also form valid SPI reset sequences, so all reset
-     forms are safe regardless of the device initial mode.*/
+  /* See MX25LM51245G "Software Reset" SPI/STR-OPI/DTR-OPI sequences. If the
+     device is in OPI mode then one of the two OPI reset forms is accepted
+     regardless of the requested final mode. In one-bit mode the OPI command
+     bit patterns also form valid SPI reset sequences, so all reset forms are
+     safe regardless of the initial device mode.*/
   wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_8dtr);
   wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_memory_8dtr);
   wspiCommand(xsnorcfg->bus.wspi.drv, &cmd_reset_enable_8str);
@@ -422,6 +423,8 @@ static void mx25_read_id(hal_xsnor_macronix_mx25_c *self, uint8_t *buf) {
         cmd.cfg = CFG_C16_A32_DATA_8STR;
       }
       cmd.cmd   = CMD_OPI_RDID;
+      /* See MX25LM51245G RDID STR-OPI/DTR-OPI sequences: command,
+         four address cycles, four dummy cycles, then pre-drive/data.*/
       cmd.dummy = 4U;
       break;
     default:
@@ -779,7 +782,7 @@ flash_error_t __mx25_init_impl(void *ip) {
           static const uint8_t cr2_opi_dtr[1] = {0x02};
           mx25_write_cr2(self, 0x00000000U, cr2_opi_dtr);
           __xsnor_bus_cmd_addr_dummy_receive(self, CMD_OPI_RDID,
-                                             0U, 4U, 6U, /* Note: always 4 dummies.*/
+                                             0U, 4U, 6U, /* RDID OPI: 4 dummies.*/
                                              &config->buffers->databuf[16]);
 
           /* In DTR mode bytes are read twice, adjusting.*/
@@ -790,7 +793,7 @@ flash_error_t __mx25_init_impl(void *ip) {
           static const uint8_t cr2_opi_str[1] = {0x01};
           mx25_write_cr2(self, 0x00000000U, cr2_opi_str);
           __xsnor_bus_cmd_addr_dummy_receive(self, CMD_OPI_RDID,
-                                             0U, 4U, 3U, /* Note: always 4 dummies.*/
+                                             0U, 4U, 3U, /* RDID OPI: 4 dummies.*/
                                              &config->buffers->databuf[16]);
         }
         break;
