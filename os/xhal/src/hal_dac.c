@@ -94,7 +94,8 @@ void *__dac_objinit_impl(void *ip, const void *vmt) {
   self->events  = 0U;
   self->errors  = 0U;
 #if DAC_USE_SYNCHRONIZATION == TRUE
-  self->thread  = NULL;
+  self->thread     = NULL;
+  self->sync_state = HAL_DRV_STATE_STOP;
 #endif
 
   return self;
@@ -382,7 +383,7 @@ msg_t dacConvert(void *ip, const dac_conversion_group_t *grpp,
   osalDbgAssert(self->thread == NULL, "already waiting");
   msg = dacStartConversionI(self, grpp, samples, depth);
   if (msg == HAL_RET_SUCCESS) {
-    msg = osalThreadSuspendS(&self->thread);
+    msg = dacSynchronizeStateS(self, HAL_DRV_STATE_FULL, TIME_INFINITE);
   }
   osalSysUnlock();
 
@@ -390,51 +391,67 @@ msg_t dacConvert(void *ip, const dac_conversion_group_t *grpp,
 }
 
 /**
- * @brief       Waits for the next full DAC buffer cycle.
+ * @brief       Synchronizes with a DAC streaming state.
+ * @details     This function synchronizes with a future occurrence of the
+ *              specified streaming state. State occurrences are not buffered,
+ *              the waiting thread must already be waiting when the state is
+ *              reached.
  *
  * @param[in,out] ip            Pointer to a @p hal_dac_driver_c instance.
- * @param[in]     timeout       Wait timeout.
- * @return                      The wait result.
+ * @param[in]     state         State to synchronize with.
+ * @param[in]     timeout       Synchronization timeout.
+ * @return                      The synchronization result.
+ * @retval MSG_OK               If the requested state has been reached.
+ * @retval MSG_TIMEOUT          If synchronization timed out.
+ * @retval MSG_RESET            If conversion stopped or failed while waiting.
  *
  * @sclass
  */
-msg_t dacSynchronizeS(void *ip, sysinterval_t timeout) {
+msg_t dacSynchronizeStateS(void *ip, driver_state_t state,
+                           sysinterval_t timeout) {
   hal_dac_driver_c *self = (hal_dac_driver_c *)ip;
   msg_t msg;
 
-  osalDbgCheckClassS();
   osalDbgCheck(self != NULL);
-  osalDbgAssert((self->state == HAL_DRV_STATE_ACTIVE) ||
-                (self->state == HAL_DRV_STATE_READY),
-                "invalid state");
+  osalDbgCheckClassS();
+  osalDbgCheck((state == HAL_DRV_STATE_HALF) ||
+               (state == HAL_DRV_STATE_FULL));
+  osalDbgAssert(self->state == HAL_DRV_STATE_ACTIVE, "invalid state");
+  osalDbgAssert(self->thread == NULL, "already waiting");
 
-  if (self->state == HAL_DRV_STATE_ACTIVE) {
-    msg = osalThreadSuspendTimeoutS(&self->thread, timeout);
-  }
-  else {
-    msg = MSG_OK;
-  }
+  self->sync_state = state;
+  msg = osalThreadSuspendTimeoutS(&self->thread, timeout);
+  self->sync_state = HAL_DRV_STATE_STOP;
 
   return msg;
 }
 
 /**
- * @brief       Waits for the next full DAC buffer cycle.
+ * @brief       Synchronizes with a DAC streaming state.
+ * @details     This function synchronizes with a future occurrence of the
+ *              specified streaming state. State occurrences are not buffered,
+ *              the waiting thread must already be waiting when the state is
+ *              reached.
  *
  * @param[in,out] ip            Pointer to a @p hal_dac_driver_c instance.
- * @param[in]     timeout       Wait timeout.
- * @return                      The wait result.
+ * @param[in]     state         State to synchronize with.
+ * @param[in]     timeout       Synchronization timeout.
+ * @return                      The synchronization result.
+ * @retval MSG_OK               If the requested state has been reached.
+ * @retval MSG_TIMEOUT          If synchronization timed out.
+ * @retval MSG_RESET            If conversion stopped or failed while waiting.
  *
  * @api
  */
-msg_t dacSynchronize(void *ip, sysinterval_t timeout) {
+msg_t dacSynchronizeState(void *ip, driver_state_t state,
+                          sysinterval_t timeout) {
   hal_dac_driver_c *self = (hal_dac_driver_c *)ip;
   msg_t msg;
 
   osalDbgCheck(self != NULL);
 
   osalSysLock();
-  msg = dacSynchronizeS(self, timeout);
+  msg = dacSynchronizeStateS(self, state, timeout);
   osalSysUnlock();
 
   return msg;

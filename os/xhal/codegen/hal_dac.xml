@@ -52,13 +52,16 @@
             <implementation><![CDATA[osalThreadResumeS(&(dacp)->thread, MSG_RESET)]]></implementation>
           </macro>
           <macro name="_dac_wakeup_isr">
-            <brief>Wakes up a thread waiting for DAC streaming completion.</brief>
+            <brief>Wakes up a thread waiting for a DAC streaming state.</brief>
             <param name="dacp" dir="in">Pointer to the DAC driver instance.</param>
+            <param name="state" dir="in">State being synchronized.</param>
             <notapi />
             <implementation><![CDATA[
 do {
   osalSysLockFromISR();
-  osalThreadResumeI(&(dacp)->thread, MSG_OK);
+  if ((dacp)->sync_state == (state)) {
+    osalThreadResumeI(&(dacp)->thread, MSG_OK);
+  }
   osalSysUnlockFromISR();
 } while (false)]]></implementation>
           </macro>
@@ -69,7 +72,7 @@ do {
             <implementation><![CDATA[
 do {
   osalSysLockFromISR();
-  osalThreadResumeI(&(dacp)->thread, MSG_TIMEOUT);
+  osalThreadResumeI(&(dacp)->thread, MSG_RESET);
   osalSysUnlockFromISR();
 } while (false)]]></implementation>
           </macro>
@@ -84,6 +87,7 @@ do {
           </macro>
           <macro name="_dac_wakeup_isr">
             <param name="dacp" dir="in" />
+            <param name="state" dir="in" />
             <implementation><![CDATA[]]></implementation>
           </macro>
           <macro name="_dac_error_wakeup_isr">
@@ -99,6 +103,7 @@ do {
 do {
   (dacp)->events |= DAC_EVENT_HALF;
   __cbdrv_invoke_half_cb(dacp);
+  _dac_wakeup_isr(dacp, HAL_DRV_STATE_HALF);
 } while (false)]]></implementation>
         </macro>
         <macro name="_dac_isr_full_code">
@@ -109,7 +114,7 @@ do {
 do {
   (dacp)->events |= DAC_EVENT_FULL;
   __cbdrv_invoke_full_cb(dacp);
-  _dac_wakeup_isr(dacp);
+  _dac_wakeup_isr(dacp, HAL_DRV_STATE_FULL);
 } while (false)]]></implementation>
         </macro>
         <macro name="_dac_isr_error_code">
@@ -204,6 +209,9 @@ DAC_CONFIG_EXT_FIELDS]]></verbatim>
             <field name="thread" ctype="thread_reference_t">
               <brief>Waiting thread reference.</brief>
             </field>
+            <field name="sync_state" ctype="driver_state_t">
+              <brief>State being synchronized.</brief>
+            </field>
           </condition>
           <condition check="defined(DAC_DRIVER_EXT_FIELDS)">
             <verbatim><![CDATA[
@@ -222,7 +230,8 @@ self->grpp    = NULL;
 self->events  = 0U;
 self->errors  = 0U;
 #if DAC_USE_SYNCHRONIZATION == TRUE
-self->thread  = NULL;
+self->thread     = NULL;
+self->sync_state = HAL_DRV_STATE_STOP;
 #endif]]></implementation>
           </objinit>
           <dispose>
@@ -376,43 +385,61 @@ osalSysLock();
 osalDbgAssert(self->thread == NULL, "already waiting");
 msg = dacStartConversionI(self, grpp, samples, depth);
 if (msg == HAL_RET_SUCCESS) {
-  msg = osalThreadSuspendS(&self->thread);
+  msg = dacSynchronizeStateS(self, HAL_DRV_STATE_FULL, TIME_INFINITE);
 }
 osalSysUnlock();
 
 return msg;]]></implementation>
               </method>
-              <method name="dacSynchronizeS" ctype="msg_t">
-                <brief>Waits for the next full DAC buffer cycle.</brief>
-                <param name="timeout" ctype="sysinterval_t" dir="in">
-                  Wait timeout.
+              <method name="dacSynchronizeStateS" ctype="msg_t">
+                <brief>Synchronizes with a DAC streaming state.</brief>
+                <details><![CDATA[This function synchronizes with a future
+                  occurrence of the specified streaming state. State
+                  occurrences are not buffered, the waiting thread must already
+                  be waiting when the state is reached.]]></details>
+                <param name="state" ctype="driver_state_t" dir="in">
+                  State to synchronize with.
                 </param>
-                <return>The wait result.</return>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Synchronization timeout.
+                </param>
+                <return>The synchronization result.</return>
+                <retval value="MSG_OK">If the requested state has been reached.</retval>
+                <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
+                <retval value="MSG_RESET">If conversion stopped or failed while waiting.</retval>
                 <sclass />
                 <implementation><![CDATA[
 msg_t msg;
 
-osalDbgCheckClassS();
 osalDbgCheck(self != NULL);
-osalDbgAssert((self->state == HAL_DRV_STATE_ACTIVE) ||
-              (self->state == HAL_DRV_STATE_READY),
-              "invalid state");
+osalDbgCheckClassS();
+osalDbgCheck((state == HAL_DRV_STATE_HALF) ||
+             (state == HAL_DRV_STATE_FULL));
+osalDbgAssert(self->state == HAL_DRV_STATE_ACTIVE, "invalid state");
+osalDbgAssert(self->thread == NULL, "already waiting");
 
-if (self->state == HAL_DRV_STATE_ACTIVE) {
-  msg = osalThreadSuspendTimeoutS(&self->thread, timeout);
-}
-else {
-  msg = MSG_OK;
-}
+self->sync_state = state;
+msg = osalThreadSuspendTimeoutS(&self->thread, timeout);
+self->sync_state = HAL_DRV_STATE_STOP;
 
 return msg;]]></implementation>
               </method>
-              <method name="dacSynchronize" ctype="msg_t">
-                <brief>Waits for the next full DAC buffer cycle.</brief>
-                <param name="timeout" ctype="sysinterval_t" dir="in">
-                  Wait timeout.
+              <method name="dacSynchronizeState" ctype="msg_t">
+                <brief>Synchronizes with a DAC streaming state.</brief>
+                <details><![CDATA[This function synchronizes with a future
+                  occurrence of the specified streaming state. State
+                  occurrences are not buffered, the waiting thread must already
+                  be waiting when the state is reached.]]></details>
+                <param name="state" ctype="driver_state_t" dir="in">
+                  State to synchronize with.
                 </param>
-                <return>The wait result.</return>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Synchronization timeout.
+                </param>
+                <return>The synchronization result.</return>
+                <retval value="MSG_OK">If the requested state has been reached.</retval>
+                <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
+                <retval value="MSG_RESET">If conversion stopped or failed while waiting.</retval>
                 <api />
                 <implementation><![CDATA[
 msg_t msg;
@@ -420,7 +447,7 @@ msg_t msg;
 osalDbgCheck(self != NULL);
 
 osalSysLock();
-msg = dacSynchronizeS(self, timeout);
+msg = dacSynchronizeStateS(self, state, timeout);
 osalSysUnlock();
 
 return msg;]]></implementation>

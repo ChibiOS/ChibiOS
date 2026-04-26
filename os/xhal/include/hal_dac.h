@@ -119,16 +119,19 @@
   osalThreadResumeS(&(dacp)->thread, MSG_RESET)
 
 /**
- * @brief       Wakes up a thread waiting for DAC streaming completion.
+ * @brief       Wakes up a thread waiting for a DAC streaming state.
  *
  * @param[in]     dacp          Pointer to the DAC driver instance.
+ * @param[in]     state         State being synchronized.
  *
  * @notapi
  */
-#define _dac_wakeup_isr(dacp)                                               \
+#define _dac_wakeup_isr(dacp, state)                                        \
   do {                                                                      \
     osalSysLockFromISR();                                                   \
-    osalThreadResumeI(&(dacp)->thread, MSG_OK);                             \
+    if ((dacp)->sync_state == (state)) {                                    \
+      osalThreadResumeI(&(dacp)->thread, MSG_OK);                           \
+    }                                                                       \
     osalSysUnlockFromISR();                                                 \
   } while (false)
 
@@ -143,14 +146,14 @@
 #define _dac_error_wakeup_isr(dacp)                                         \
   do {                                                                      \
     osalSysLockFromISR();                                                   \
-    osalThreadResumeI(&(dacp)->thread, MSG_TIMEOUT);                        \
+    osalThreadResumeI(&(dacp)->thread, MSG_RESET);                          \
     osalSysUnlockFromISR();                                                 \
   } while (false)
 
 #else
 #define _dac_reset_i(dacp)
 #define _dac_reset_s(dacp)
-#define _dac_wakeup_isr(dacp)
+#define _dac_wakeup_isr(dacp, state)
 #define _dac_error_wakeup_isr(dacp)
 #endif /* DAC_USE_SYNCHRONIZATION == TRUE */
 
@@ -165,6 +168,7 @@
   do {                                                                      \
     (dacp)->events |= DAC_EVENT_HALF;                                       \
     __cbdrv_invoke_half_cb(dacp);                                           \
+    _dac_wakeup_isr(dacp, HAL_DRV_STATE_HALF);                              \
   } while (false)
 
 /**
@@ -178,7 +182,7 @@
   do {                                                                      \
     (dacp)->events |= DAC_EVENT_FULL;                                       \
     __cbdrv_invoke_full_cb(dacp);                                           \
-    _dac_wakeup_isr(dacp);                                                  \
+    _dac_wakeup_isr(dacp, HAL_DRV_STATE_FULL);                              \
   } while (false)
 
 /**
@@ -359,6 +363,10 @@ struct hal_dac_driver {
    * @brief       Waiting thread reference.
    */
   thread_reference_t        thread;
+  /**
+   * @brief       State being synchronized.
+   */
+  driver_state_t            sync_state;
 #endif /* DAC_USE_SYNCHRONIZATION == TRUE */
 #if (defined(DAC_DRIVER_EXT_FIELDS)) || defined (__DOXYGEN__)
   DAC_DRIVER_EXT_FIELDS
@@ -393,8 +401,10 @@ extern "C" {
 #if (DAC_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
   msg_t dacConvert(void *ip, const dac_conversion_group_t *grpp,
                    dacsample_t *samples, size_t depth);
-  msg_t dacSynchronizeS(void *ip, sysinterval_t timeout);
-  msg_t dacSynchronize(void *ip, sysinterval_t timeout);
+  msg_t dacSynchronizeStateS(void *ip, driver_state_t state,
+                             sysinterval_t timeout);
+  msg_t dacSynchronizeState(void *ip, driver_state_t state,
+                            sysinterval_t timeout);
 #endif /* DAC_USE_SYNCHRONIZATION == TRUE */
   /* Regular functions.*/
   void dacInit(void);
