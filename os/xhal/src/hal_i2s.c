@@ -90,6 +90,10 @@ void *__i2s_objinit_impl(void *ip, const void *vmt) {
   /* Initialization code.*/
   self->events = 0U;
   self->errors = I2S_NO_ERROR;
+#if I2S_USE_SYNCHRONIZATION == TRUE
+  self->thread     = NULL;
+  self->sync_state = HAL_DRV_STATE_STOP;
+#endif
 
   return self;
 }
@@ -260,6 +264,7 @@ void i2sStopExchangeI(void *ip) {
   if (self->state != HAL_DRV_STATE_READY) {
     i2s_lld_stop_exchange(self);
     self->state = HAL_DRV_STATE_READY;
+    _i2s_reset_i(self);
   }
 }
 
@@ -284,9 +289,79 @@ void i2sStopExchange(void *ip) {
   if (self->state != HAL_DRV_STATE_READY) {
     i2s_lld_stop_exchange(self);
     self->state = HAL_DRV_STATE_READY;
+    _i2s_reset_s(self);
   }
   osalSysUnlock();
 }
+
+#if (I2S_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
+/**
+ * @brief       Synchronizes with an I2S exchange state.
+ * @details     This function synchronizes with a future occurrence of the
+ *              specified exchange state. State occurrences are not buffered,
+ *              the waiting thread must already be waiting when the state is
+ *              reached.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_i2s_driver_c instance.
+ * @param[in]     state         State to synchronize with.
+ * @param[in]     timeout       Synchronization timeout.
+ * @return                      The synchronization result.
+ * @retval MSG_OK               If the requested state has been reached.
+ * @retval MSG_TIMEOUT          If synchronization timed out.
+ * @retval MSG_RESET            If exchange stopped or failed while waiting.
+ *
+ * @sclass
+ */
+msg_t i2sSynchronizeStateS(void *ip, driver_state_t state,
+                           sysinterval_t timeout) {
+  hal_i2s_driver_c *self = (hal_i2s_driver_c *)ip;
+  msg_t msg;
+
+  osalDbgCheck(self != NULL);
+  osalDbgCheckClassS();
+  osalDbgCheck((state == HAL_DRV_STATE_HALF) ||
+               (state == HAL_DRV_STATE_FULL));
+  osalDbgAssert(self->state == HAL_DRV_STATE_ACTIVE, "invalid state");
+  osalDbgAssert(self->thread == NULL, "already waiting");
+
+  self->sync_state = state;
+  msg = osalThreadSuspendTimeoutS(&self->thread, timeout);
+  self->sync_state = HAL_DRV_STATE_STOP;
+
+  return msg;
+}
+
+/**
+ * @brief       Synchronizes with an I2S exchange state.
+ * @details     This function synchronizes with a future occurrence of the
+ *              specified exchange state. State occurrences are not buffered,
+ *              the waiting thread must already be waiting when the state is
+ *              reached.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_i2s_driver_c instance.
+ * @param[in]     state         State to synchronize with.
+ * @param[in]     timeout       Synchronization timeout.
+ * @return                      The synchronization result.
+ * @retval MSG_OK               If the requested state has been reached.
+ * @retval MSG_TIMEOUT          If synchronization timed out.
+ * @retval MSG_RESET            If exchange stopped or failed while waiting.
+ *
+ * @api
+ */
+msg_t i2sSynchronizeState(void *ip, driver_state_t state,
+                          sysinterval_t timeout) {
+  hal_i2s_driver_c *self = (hal_i2s_driver_c *)ip;
+  msg_t msg;
+
+  osalDbgCheck(self != NULL);
+
+  osalSysLock();
+  msg = i2sSynchronizeStateS(self, state, timeout);
+  osalSysUnlock();
+
+  return msg;
+}
+#endif /* I2S_USE_SYNCHRONIZATION == TRUE */
 /** @} */
 
 #endif /* HAL_USE_I2S == TRUE */

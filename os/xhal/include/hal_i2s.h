@@ -54,9 +54,26 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief       Support for thread synchronization API.
+ */
+#if !defined(I2S_USE_SYNCHRONIZATION) || defined(__DOXYGEN__)
+#define I2S_USE_SYNCHRONIZATION             TRUE
+#endif
+/** @} */
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/* Checks on I2S_USE_SYNCHRONIZATION configuration.*/
+#if (I2S_USE_SYNCHRONIZATION != FALSE) && (I2S_USE_SYNCHRONIZATION != TRUE)
+#error "invalid I2S_USE_SYNCHRONIZATION value"
+#endif
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -80,6 +97,66 @@
  * @name    Low level driver helper macros
  * @{
  */
+#if (I2S_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
+/**
+ * @brief       Resumes a thread waiting for I2S exchange completion.
+ *
+ * @param[in]     i2sp          Pointer to the I2S driver instance.
+ *
+ * @notapi
+ */
+#define _i2s_reset_i(i2sp)                                                  \
+  osalThreadResumeI(&(i2sp)->thread, MSG_RESET)
+
+/**
+ * @brief       Resumes a thread waiting for I2S exchange completion.
+ *
+ * @param[in]     i2sp          Pointer to the I2S driver instance.
+ *
+ * @notapi
+ */
+#define _i2s_reset_s(i2sp)                                                  \
+  osalThreadResumeS(&(i2sp)->thread, MSG_RESET)
+
+/**
+ * @brief       Wakes up a thread waiting for an I2S exchange state.
+ *
+ * @param[in]     i2sp          Pointer to the I2S driver instance.
+ * @param[in]     state         State being synchronized.
+ *
+ * @notapi
+ */
+#define _i2s_wakeup_isr(i2sp, state)                                        \
+  do {                                                                      \
+    osalSysLockFromISR();                                                   \
+    if ((i2sp)->sync_state == (state)) {                                    \
+      osalThreadResumeI(&(i2sp)->thread, MSG_OK);                           \
+    }                                                                       \
+    osalSysUnlockFromISR();                                                 \
+  } while (false)
+
+/**
+ * @brief       Wakes up a thread waiting for I2S exchange termination because
+ *              of an error.
+ *
+ * @param[in]     i2sp          Pointer to the I2S driver instance.
+ *
+ * @notapi
+ */
+#define _i2s_error_wakeup_isr(i2sp)                                         \
+  do {                                                                      \
+    osalSysLockFromISR();                                                   \
+    osalThreadResumeI(&(i2sp)->thread, MSG_RESET);                          \
+    osalSysUnlockFromISR();                                                 \
+  } while (false)
+
+#else
+#define _i2s_reset_i(i2sp)
+#define _i2s_reset_s(i2sp)
+#define _i2s_wakeup_isr(i2sp, state)
+#define _i2s_error_wakeup_isr(i2sp)
+#endif /* I2S_USE_SYNCHRONIZATION == TRUE */
+
 /**
  * @brief       Common ISR code, half buffer event.
  *
@@ -91,6 +168,7 @@
   do {                                                                      \
     (i2sp)->events |= I2S_EVENT_HALF;                                       \
     __cbdrv_invoke_half_cb(i2sp);                                           \
+    _i2s_wakeup_isr(i2sp, HAL_DRV_STATE_HALF);                              \
   } while (false)
 
 /**
@@ -104,6 +182,7 @@
   do {                                                                      \
     (i2sp)->events |= I2S_EVENT_FULL;                                       \
     __cbdrv_invoke_full_cb(i2sp);                                           \
+    _i2s_wakeup_isr(i2sp, HAL_DRV_STATE_FULL);                              \
   } while (false)
 
 /**
@@ -121,6 +200,7 @@
     __cbdrv_invoke_cb_with_transition(i2sp,                                 \
                                       HAL_DRV_STATE_ERROR,                  \
                                       HAL_DRV_STATE_READY);                 \
+    _i2s_error_wakeup_isr(i2sp);                                            \
   } while (false)
 /** @} */
 
@@ -256,6 +336,16 @@ struct hal_i2s_driver {
    * @brief       Cached I2S error flags.
    */
   volatile i2serror_t       errors;
+#if (I2S_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
+  /**
+   * @brief       Waiting thread reference.
+   */
+  thread_reference_t        thread;
+  /**
+   * @brief       State being synchronized.
+   */
+  driver_state_t            sync_state;
+#endif /* I2S_USE_SYNCHRONIZATION == TRUE */
 #if (defined(I2S_DRIVER_EXT_FIELDS)) || defined (__DOXYGEN__)
   I2S_DRIVER_EXT_FIELDS
 #endif /* defined(I2S_DRIVER_EXT_FIELDS) */
@@ -282,6 +372,12 @@ extern "C" {
   msg_t i2sStartExchange(void *ip);
   void i2sStopExchangeI(void *ip);
   void i2sStopExchange(void *ip);
+#if (I2S_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
+  msg_t i2sSynchronizeStateS(void *ip, driver_state_t state,
+                             sysinterval_t timeout);
+  msg_t i2sSynchronizeState(void *ip, driver_state_t state,
+                            sysinterval_t timeout);
+#endif /* I2S_USE_SYNCHRONIZATION == TRUE */
   /* Regular functions.*/
   void i2sInit(void);
 #ifdef __cplusplus

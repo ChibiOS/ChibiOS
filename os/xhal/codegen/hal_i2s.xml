@@ -11,6 +11,12 @@
     <includes_always>
       <include style="regular">hal_cb_driver.h</include>
     </includes_always>
+    <configs>
+      <config name="I2S_USE_SYNCHRONIZATION" default="TRUE">
+        <brief>Support for thread synchronization API.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+    </configs>
     <definitions_early>
       <group description="I2S event flags">
         <define name="I2S_EVENT_HALF" value="(1U &lt;&lt; 0)">
@@ -32,6 +38,63 @@
         </macro>
       </group>
       <group description="Low level driver helper macros">
+        <condition check="I2S_USE_SYNCHRONIZATION == TRUE">
+          <macro name="_i2s_reset_i">
+            <brief>Resumes a thread waiting for I2S exchange completion.</brief>
+            <param name="i2sp" dir="in">Pointer to the I2S driver instance.</param>
+            <notapi />
+            <implementation><![CDATA[osalThreadResumeI(&(i2sp)->thread, MSG_RESET)]]></implementation>
+          </macro>
+          <macro name="_i2s_reset_s">
+            <brief>Resumes a thread waiting for I2S exchange completion.</brief>
+            <param name="i2sp" dir="in">Pointer to the I2S driver instance.</param>
+            <notapi />
+            <implementation><![CDATA[osalThreadResumeS(&(i2sp)->thread, MSG_RESET)]]></implementation>
+          </macro>
+          <macro name="_i2s_wakeup_isr">
+            <brief>Wakes up a thread waiting for an I2S exchange state.</brief>
+            <param name="i2sp" dir="in">Pointer to the I2S driver instance.</param>
+            <param name="state" dir="in">State being synchronized.</param>
+            <notapi />
+            <implementation><![CDATA[
+do {
+  osalSysLockFromISR();
+  if ((i2sp)->sync_state == (state)) {
+    osalThreadResumeI(&(i2sp)->thread, MSG_OK);
+  }
+  osalSysUnlockFromISR();
+} while (false)]]></implementation>
+          </macro>
+          <macro name="_i2s_error_wakeup_isr">
+            <brief>Wakes up a thread waiting for I2S exchange termination because of an error.</brief>
+            <param name="i2sp" dir="in">Pointer to the I2S driver instance.</param>
+            <notapi />
+            <implementation><![CDATA[
+do {
+  osalSysLockFromISR();
+  osalThreadResumeI(&(i2sp)->thread, MSG_RESET);
+  osalSysUnlockFromISR();
+} while (false)]]></implementation>
+          </macro>
+          <elseif />
+          <macro name="_i2s_reset_i">
+            <param name="i2sp" dir="in" />
+            <implementation><![CDATA[]]></implementation>
+          </macro>
+          <macro name="_i2s_reset_s">
+            <param name="i2sp" dir="in" />
+            <implementation><![CDATA[]]></implementation>
+          </macro>
+          <macro name="_i2s_wakeup_isr">
+            <param name="i2sp" dir="in" />
+            <param name="state" dir="in" />
+            <implementation><![CDATA[]]></implementation>
+          </macro>
+          <macro name="_i2s_error_wakeup_isr">
+            <param name="i2sp" dir="in" />
+            <implementation><![CDATA[]]></implementation>
+          </macro>
+        </condition>
         <macro name="_i2s_isr_half_code">
           <brief>Common ISR code, half buffer event.</brief>
           <param name="i2sp" dir="both">Pointer to the I2S driver instance.</param>
@@ -40,6 +103,7 @@
 do {
   (i2sp)->events |= I2S_EVENT_HALF;
   __cbdrv_invoke_half_cb(i2sp);
+  _i2s_wakeup_isr(i2sp, HAL_DRV_STATE_HALF);
 } while (false)]]></implementation>
         </macro>
         <macro name="_i2s_isr_full_code">
@@ -50,6 +114,7 @@ do {
 do {
   (i2sp)->events |= I2S_EVENT_FULL;
   __cbdrv_invoke_full_cb(i2sp);
+  _i2s_wakeup_isr(i2sp, HAL_DRV_STATE_FULL);
 } while (false)]]></implementation>
         </macro>
         <macro name="_i2s_isr_error_code">
@@ -64,6 +129,7 @@ do {
   __cbdrv_invoke_cb_with_transition(i2sp,
                                     HAL_DRV_STATE_ERROR,
                                     HAL_DRV_STATE_READY);
+  _i2s_error_wakeup_isr(i2sp);
 } while (false)]]></implementation>
         </macro>
       </group>
@@ -118,6 +184,14 @@ I2S_CONFIG_EXT_FIELDS]]></verbatim>
           <field name="errors" ctype="volatile i2serror_t">
             <brief>Cached I2S error flags.</brief>
           </field>
+          <condition check="I2S_USE_SYNCHRONIZATION == TRUE">
+            <field name="thread" ctype="thread_reference_t">
+              <brief>Waiting thread reference.</brief>
+            </field>
+            <field name="sync_state" ctype="driver_state_t">
+              <brief>State being synchronized.</brief>
+            </field>
+          </condition>
           <condition check="defined(I2S_DRIVER_EXT_FIELDS)">
             <verbatim><![CDATA[
 I2S_DRIVER_EXT_FIELDS]]></verbatim>
@@ -130,7 +204,11 @@ i2s_lld_driver_fields;]]></verbatim>
           <objinit callsuper="true">
             <implementation><![CDATA[
 self->events = 0U;
-self->errors = I2S_NO_ERROR;]]></implementation>
+self->errors = I2S_NO_ERROR;
+#if I2S_USE_SYNCHRONIZATION == TRUE
+self->thread     = NULL;
+self->sync_state = HAL_DRV_STATE_STOP;
+#endif]]></implementation>
           </objinit>
           <dispose>
             <implementation><![CDATA[
@@ -188,6 +266,7 @@ osalDbgAssert((self->state == HAL_DRV_STATE_READY)  ||
 if (self->state != HAL_DRV_STATE_READY) {
   i2s_lld_stop_exchange(self);
   self->state = HAL_DRV_STATE_READY;
+  _i2s_reset_i(self);
 }]]></implementation>
             </method>
             <method name="i2sStopExchange" ctype="void">
@@ -206,9 +285,73 @@ osalDbgAssert((self->state == HAL_DRV_STATE_READY)  ||
 if (self->state != HAL_DRV_STATE_READY) {
   i2s_lld_stop_exchange(self);
   self->state = HAL_DRV_STATE_READY;
+  _i2s_reset_s(self);
 }
 osalSysUnlock();]]></implementation>
             </method>
+            <condition check="I2S_USE_SYNCHRONIZATION == TRUE">
+              <method name="i2sSynchronizeStateS" ctype="msg_t">
+                <brief>Synchronizes with an I2S exchange state.</brief>
+                <details><![CDATA[This function synchronizes with a future
+                  occurrence of the specified exchange state. State occurrences
+                  are not buffered, the waiting thread must already be waiting
+                  when the state is reached.]]></details>
+                <param name="state" ctype="driver_state_t" dir="in">
+                  State to synchronize with.
+                </param>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Synchronization timeout.
+                </param>
+                <return>The synchronization result.</return>
+                <retval value="MSG_OK">If the requested state has been reached.</retval>
+                <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
+                <retval value="MSG_RESET">If exchange stopped or failed while waiting.</retval>
+                <sclass />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+osalDbgCheckClassS();
+osalDbgCheck((state == HAL_DRV_STATE_HALF) ||
+             (state == HAL_DRV_STATE_FULL));
+osalDbgAssert(self->state == HAL_DRV_STATE_ACTIVE, "invalid state");
+osalDbgAssert(self->thread == NULL, "already waiting");
+
+self->sync_state = state;
+msg = osalThreadSuspendTimeoutS(&self->thread, timeout);
+self->sync_state = HAL_DRV_STATE_STOP;
+
+return msg;]]></implementation>
+              </method>
+              <method name="i2sSynchronizeState" ctype="msg_t">
+                <brief>Synchronizes with an I2S exchange state.</brief>
+                <details><![CDATA[This function synchronizes with a future
+                  occurrence of the specified exchange state. State occurrences
+                  are not buffered, the waiting thread must already be waiting
+                  when the state is reached.]]></details>
+                <param name="state" ctype="driver_state_t" dir="in">
+                  State to synchronize with.
+                </param>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Synchronization timeout.
+                </param>
+                <return>The synchronization result.</return>
+                <retval value="MSG_OK">If the requested state has been reached.</retval>
+                <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
+                <retval value="MSG_RESET">If exchange stopped or failed while waiting.</retval>
+                <api />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+msg = i2sSynchronizeStateS(self, state, timeout);
+osalSysUnlock();
+
+return msg;]]></implementation>
+              </method>
+            </condition>
           </regular>
           <inline>
             <method name="i2sGetEventsX" ctype="i2seventflags_t">
