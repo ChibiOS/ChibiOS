@@ -47,7 +47,9 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
+#if defined (__TEST_RT) || defined (__TEST_OSLIB)
   BaseSequentialStream *stream;
+#endif
   msg_t msg;
 
   /*
@@ -70,7 +72,9 @@ int main(void) {
    */
   msg = drvStart(&PORTAB_SIO1, NULL);
   osalDbgAssert(msg == HAL_RET_SUCCESS, "SIO start failed");
+#if defined (__TEST_RT) || defined (__TEST_OSLIB)
   stream = (BaseSequentialStream *)&PORTAB_SIO1.chn;
+#endif
 
   /*
    * Creates the blinker thread.
