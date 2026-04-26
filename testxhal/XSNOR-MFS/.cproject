@@ -105,17 +105,17 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="XHAL-XSNOR-MFS.null.1682829602" name="XHAL-XSNOR-MFS"/>
+		<project id="XHAL-WSPI-XSNOR-MFS.null.1682829602" name="XHAL-WSPI-XSNOR-MFS"/>
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Build for STM32H735IG-Discovery">
-			<resource resourceType="PROJECT" workspacePath="/XHAL-XSNOR-MFS"/>
+			<resource resourceType="PROJECT" workspacePath="/XHAL-WSPI-XSNOR-MFS"/>
 		</configuration>
 		<configuration configurationName="Build for STM32L4R9I-Discovery">
-			<resource resourceType="PROJECT" workspacePath="/XHAL-XSNOR-MFS"/>
+			<resource resourceType="PROJECT" workspacePath="/XHAL-WSPI-XSNOR-MFS"/>
 		</configuration>
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/XHAL-XSNOR-MFS"/>
+			<resource resourceType="PROJECT" workspacePath="/XHAL-WSPI-XSNOR-MFS"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
