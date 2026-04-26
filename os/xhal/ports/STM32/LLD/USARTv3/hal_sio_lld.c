@@ -929,7 +929,8 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   USART_TypeDef *u = siop->usart;
   uint32_t cr1, cr2, cr3, isr, isrmask;
 
-  osalDbgAssert(siop->state == HAL_DRV_STATE_READY, "invalid state");
+  osalDbgAssert((siop->state == HAL_DRV_STATE_STARTING) ||
+                (siop->state == HAL_DRV_STATE_READY), "invalid state");
 
   /* Read on control registers.*/
   cr1 = u->CR1;

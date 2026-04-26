@@ -102,7 +102,9 @@
  */
 #define _wspi_wakeup_isr(wspip, msg)                                        \
   do {                                                                      \
+    osalSysLockFromISR();                                                   \
     osalThreadResumeI(&(wspip)->sync_transfer, msg);                        \
+    osalSysUnlockFromISR();                                                 \
   } while (false)
 #endif /* WSPI_USE_SYNCHRONIZATION == TRUE */
 

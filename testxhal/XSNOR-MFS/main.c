@@ -53,7 +53,7 @@ static const xsnor_config_t snorcfg_mx25 = {
 };
 
 const MFSConfig mfscfg1 = {
-  .flashp           = (BaseFlash *)&snor1.n25q.fls,
+  .flashp           = (BaseFlash *)&snor1.n25q,
   .erased           = 0xFFFFFFFFU,
   .bank_size        = 4096U,
   .bank0_start      = 0U,
@@ -78,6 +78,8 @@ static THD_FUNCTION(Thread1, arg) {
 static hal_buffered_sio_c bsio1;
 static uint8_t bsio1_ib[128];
 static uint8_t bsio1_ob[512];
+static volatile msg_t mfs_test_result;
+static volatile bool mfs_test_done;
 
 int main(void) {
   bool button_pressed;
@@ -107,7 +109,9 @@ int main(void) {
 
     current_pressed = palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED;
     if (current_pressed && !button_pressed) {
-      test_execute((BaseSequentialStream *)&bsio1.chn, &mfs_test_suite);
+      mfs_test_result = test_execute((BaseSequentialStream *)&bsio1.chn,
+                                     &mfs_test_suite);
+      mfs_test_done = true;
     }
     button_pressed = current_pressed;
     chThdSleepMilliseconds(100);

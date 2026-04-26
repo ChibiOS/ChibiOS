@@ -44,7 +44,9 @@
             <notapi />
             <implementation><![CDATA[
 do {
+  osalSysLockFromISR();
   osalThreadResumeI(&(wspip)->sync_transfer, msg);
+  osalSysUnlockFromISR();
 } while (false)]]></implementation>
           </macro>
         </condition>
