@@ -71,6 +71,9 @@
 #include "stm32_uart5.inc"
 #include "stm32_lpuart1.inc"
 
+#include "stm32_octospi1.inc"
+#include "stm32_octospi2.inc"
+
 #include "stm32_tim1_15_16_17.inc"
 #include "stm32_tim2.inc"
 #include "stm32_tim3.inc"
@@ -118,6 +121,9 @@ void irqInit(void) {
   uart4_irq_init();
   uart5_irq_init();
   lpuart1_irq_init();
+
+  octospi1_irq_init();
+  octospi2_irq_init();
 }
 
 /**
@@ -154,6 +160,9 @@ void irqDeinit(void) {
   uart4_irq_deinit();
   uart5_irq_deinit();
   lpuart1_irq_deinit();
+
+  octospi1_irq_deinit();
+  octospi2_irq_deinit();
 }
 
 /** @} */
