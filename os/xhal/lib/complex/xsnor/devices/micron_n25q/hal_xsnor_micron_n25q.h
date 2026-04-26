@@ -115,7 +115,6 @@ struct hal_xsnor_micron_n25q_vmt {
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
-  msg_t (*synchronize)(void *ip, sysinterval_t timeout);
   /* From hal_flash_base_c.*/
   flash_error_t (*read)(void *ip, flash_offset_t offset, size_t n, uint8_t *rp);
   flash_error_t (*program)(void *ip, flash_offset_t offset, size_t n, const uint8_t *pp);

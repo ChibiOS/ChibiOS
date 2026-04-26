@@ -176,8 +176,7 @@ const struct hal_trng_driver_vmt __hal_trng_driver_vmt = {
   .start                    = __trng_start_impl,
   .stop                     = __trng_stop_impl,
   .setcfg                   = __trng_setcfg_impl,
-  .selcfg                   = __trng_selcfg_impl,
-  .synchronize              = __drv_synchronize_impl
+  .selcfg                   = __trng_selcfg_impl
 };
 
 /**

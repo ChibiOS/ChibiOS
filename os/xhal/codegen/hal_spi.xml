@@ -787,14 +787,6 @@ return (const void *)spi_lld_setcfg(self, (const hal_spi_config_t *)config);]]><
 
 return (const void *)spi_lld_selcfg(self, cfgnum);]]></implementation>
             </method>
-            <method shortname="synchronize">
-              <implementation><![CDATA[
-#if SPI_USE_SYNCHRONIZATION == TRUE
-return spiSynchronizeS(self, timeout);
-#else
-return __drv_synchronize_impl(self, timeout);
-#endif]]></implementation>
-            </method>
           </override>
         </methods>
       </class>

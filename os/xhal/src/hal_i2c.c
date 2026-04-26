@@ -183,22 +183,6 @@ const void *__i2c_selcfg_impl(void *ip, unsigned cfgnum) {
 }
 
 /**
- * @brief       Override of method @p __drv_synchronize().
- *
- * @param[in,out] ip            Pointer to a @p hal_i2c_driver_c instance.
- * @param[in]     timeout       Synchronization timeout.
- * @return                      The synchronization result.
- */
-msg_t __i2c_synchronize_impl(void *ip, sysinterval_t timeout) {
-  hal_i2c_driver_c *self = (hal_i2c_driver_c *)ip;
-#if I2C_USE_SYNCHRONIZATION == TRUE
-  return i2cSynchronizeS(self, timeout);
-#else
-  return __drv_synchronize_impl(self, timeout);
-#endif
-}
-
-/**
  * @brief       Override of method @p drvSetCallbackX().
  *
  * @param[in,out] ip            Pointer to a @p hal_i2c_driver_c instance.
@@ -222,7 +206,6 @@ const struct hal_i2c_driver_vmt __hal_i2c_driver_vmt = {
   .stop                     = __i2c_stop_impl,
   .setcfg                   = __i2c_setcfg_impl,
   .selcfg                   = __i2c_selcfg_impl,
-  .synchronize              = __i2c_synchronize_impl,
   .setcb                    = __i2c_setcb_impl
 };
 

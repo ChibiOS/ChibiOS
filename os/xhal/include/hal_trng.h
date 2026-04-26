@@ -101,7 +101,6 @@ struct hal_trng_driver_vmt {
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
-  msg_t (*synchronize)(void *ip, sysinterval_t timeout);
   /* From hal_trng_driver_c.*/
 };
 

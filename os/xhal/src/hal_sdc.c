@@ -928,22 +928,6 @@ const void *__sdc_selcfg_impl(void *ip, unsigned cfgnum) {
 }
 
 /**
- * @brief       Override of method @p __drv_synchronize().
- *
- * @param[in,out] ip            Pointer to a @p hal_sdc_driver_c instance.
- * @param[in]     timeout       Synchronization timeout.
- * @return                      The synchronization result.
- */
-msg_t __sdc_synchronize_impl(void *ip, sysinterval_t timeout) {
-  hal_sdc_driver_c *self = (hal_sdc_driver_c *)ip;
-#if SDC_USE_SYNCHRONIZATION == TRUE
-  return sdcSynchronizeS(self, timeout);
-#else
-  return __drv_synchronize_impl(self, timeout);
-#endif
-}
-
-/**
  * @brief       Override of method @p drvSetCallbackX().
  *
  * @param[in,out] ip            Pointer to a @p hal_sdc_driver_c instance.
@@ -967,7 +951,6 @@ const struct hal_sdc_driver_vmt __hal_sdc_driver_vmt = {
   .stop                     = __sdc_stop_impl,
   .setcfg                   = __sdc_setcfg_impl,
   .selcfg                   = __sdc_selcfg_impl,
-  .synchronize              = __sdc_synchronize_impl,
   .setcb                    = __sdc_setcb_impl
 };
 

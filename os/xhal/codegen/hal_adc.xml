@@ -55,13 +55,16 @@
             <implementation><![CDATA[osalThreadResumeS(&(adcp)->thread, MSG_RESET)]]></implementation>
           </macro>
           <macro name="_adc_wakeup_isr">
-            <brief>Wakes up a thread waiting for conversion completion.</brief>
+            <brief>Wakes up a thread waiting for a conversion state.</brief>
             <param name="adcp" dir="in">Pointer to the ADC driver instance.</param>
+            <param name="state" dir="in">State being synchronized.</param>
             <notapi />
             <implementation><![CDATA[
 do {
   osalSysLockFromISR();
-  osalThreadResumeI(&(adcp)->thread, MSG_OK);
+  if ((adcp)->sync_state == (state)) {
+    osalThreadResumeI(&(adcp)->thread, MSG_OK);
+  }
   osalSysUnlockFromISR();
 } while (false)]]></implementation>
           </macro>
@@ -87,6 +90,7 @@ do {
           </macro>
           <macro name="_adc_wakeup_isr">
             <param name="adcp" dir="in" />
+            <param name="state" dir="in" />
             <implementation><![CDATA[]]></implementation>
           </macro>
           <macro name="_adc_error_wakeup_isr">
@@ -102,6 +106,7 @@ do {
 do {
   (adcp)->events |= ADC_EVENT_HALF;
   __cbdrv_invoke_half_cb(adcp);
+  _adc_wakeup_isr(adcp, HAL_DRV_STATE_HALF);
 } while (false)]]></implementation>
         </macro>
         <macro name="_adc_isr_full_code">
@@ -113,6 +118,7 @@ do {
   if ((adcp)->grpp->circular) {
     (adcp)->events |= ADC_EVENT_FULL;
     __cbdrv_invoke_full_cb(adcp);
+    _adc_wakeup_isr(adcp, HAL_DRV_STATE_FULL);
   }
   else {
     adc_lld_stop_conversion(adcp);
@@ -121,7 +127,7 @@ do {
                                       HAL_DRV_STATE_COMPLETE,
                                       HAL_DRV_STATE_READY);
     (adcp)->grpp = NULL;
-    _adc_wakeup_isr(adcp);
+    _adc_wakeup_isr(adcp, HAL_DRV_STATE_COMPLETE);
   }
 } while (false)]]></implementation>
         </macro>
@@ -217,6 +223,9 @@ ADC_CONFIG_EXT_FIELDS]]></verbatim>
             <field name="thread" ctype="thread_reference_t">
               <brief>Waiting thread reference.</brief>
             </field>
+            <field name="sync_state" ctype="driver_state_t">
+              <brief>State being synchronized.</brief>
+            </field>
           </condition>
           <condition check="defined(ADC_DRIVER_EXT_FIELDS)">
             <verbatim><![CDATA[
@@ -235,7 +244,8 @@ self->grpp    = NULL;
 self->events  = 0U;
 self->errors  = 0U;
 #if ADC_USE_SYNCHRONIZATION == TRUE
-self->thread  = NULL;
+self->thread     = NULL;
+self->sync_state = HAL_DRV_STATE_STOP;
 #endif]]></implementation>
           </objinit>
           <dispose>
@@ -374,8 +384,70 @@ osalSysLock();
 osalDbgAssert(self->thread == NULL, "already waiting");
 msg = adcStartConversionI(self, grpp, samples, depth);
 if (msg == HAL_RET_SUCCESS) {
-  msg = osalThreadSuspendS(&self->thread);
+  msg = adcSynchronizeStateS(self, HAL_DRV_STATE_COMPLETE, TIME_INFINITE);
 }
+osalSysUnlock();
+
+return msg;]]></implementation>
+              </method>
+              <method name="adcSynchronizeStateS" ctype="msg_t">
+                <brief>Synchronizes with an ADC conversion state.</brief>
+                <details><![CDATA[This function synchronizes with a future
+                  occurrence of the specified conversion state. State
+                  occurrences are not buffered, the waiting thread must already
+                  be waiting when the state is reached.]]></details>
+                <param name="state" ctype="driver_state_t" dir="in">
+                  State to synchronize with.
+                </param>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Synchronization timeout.
+                </param>
+                <return>The synchronization result.</return>
+                <retval value="MSG_OK">If the requested state has been reached.</retval>
+                <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
+                <retval value="MSG_RESET">If conversion stopped or failed while waiting.</retval>
+                <sclass />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+osalDbgCheckClassS();
+osalDbgCheck((state == HAL_DRV_STATE_HALF) ||
+             (state == HAL_DRV_STATE_FULL) ||
+             (state == HAL_DRV_STATE_COMPLETE));
+osalDbgAssert(self->state == HAL_DRV_STATE_ACTIVE, "invalid state");
+osalDbgAssert(self->thread == NULL, "already waiting");
+
+self->sync_state = state;
+msg = osalThreadSuspendTimeoutS(&self->thread, timeout);
+self->sync_state = HAL_DRV_STATE_STOP;
+
+return msg;]]></implementation>
+              </method>
+              <method name="adcSynchronizeState" ctype="msg_t">
+                <brief>Synchronizes with an ADC conversion state.</brief>
+                <details><![CDATA[This function synchronizes with a future
+                  occurrence of the specified conversion state. State
+                  occurrences are not buffered, the waiting thread must already
+                  be waiting when the state is reached.]]></details>
+                <param name="state" ctype="driver_state_t" dir="in">
+                  State to synchronize with.
+                </param>
+                <param name="timeout" ctype="sysinterval_t" dir="in">
+                  Synchronization timeout.
+                </param>
+                <return>The synchronization result.</return>
+                <retval value="MSG_OK">If the requested state has been reached.</retval>
+                <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
+                <retval value="MSG_RESET">If conversion stopped or failed while waiting.</retval>
+                <api />
+                <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+msg = adcSynchronizeStateS(self, state, timeout);
 osalSysUnlock();
 
 return msg;]]></implementation>

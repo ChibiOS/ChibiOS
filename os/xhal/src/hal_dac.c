@@ -190,22 +190,6 @@ const void *__dac_selcfg_impl(void *ip, unsigned cfgnum) {
 }
 
 /**
- * @brief       Override of method @p __drv_synchronize().
- *
- * @param[in,out] ip            Pointer to a @p hal_dac_driver_c instance.
- * @param[in]     timeout       Synchronization timeout.
- * @return                      The synchronization result.
- */
-msg_t __dac_synchronize_impl(void *ip, sysinterval_t timeout) {
-  hal_dac_driver_c *self = (hal_dac_driver_c *)ip;
-#if DAC_USE_SYNCHRONIZATION == TRUE
-  return dacSynchronizeS(self, timeout);
-#else
-  return __drv_synchronize_impl(self, timeout);
-#endif
-}
-
-/**
  * @brief       Override of method @p drvSetCallbackX().
  *
  * @param[in,out] ip            Pointer to a @p hal_dac_driver_c instance.
@@ -229,7 +213,6 @@ const struct hal_dac_driver_vmt __hal_dac_driver_vmt = {
   .stop                     = __dac_stop_impl,
   .setcfg                   = __dac_setcfg_impl,
   .selcfg                   = __dac_selcfg_impl,
-  .synchronize              = __dac_synchronize_impl,
   .setcb                    = __dac_setcb_impl
 };
 

@@ -211,7 +211,6 @@ const struct hal_pwm_driver_vmt __hal_pwm_driver_vmt = {
   .stop                     = __pwm_stop_impl,
   .setcfg                   = __pwm_setcfg_impl,
   .selcfg                   = __pwm_selcfg_impl,
-  .synchronize              = __drv_synchronize_impl,
   .setcb                    = __pwm_setcb_impl
 };
 

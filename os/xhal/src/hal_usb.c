@@ -1604,8 +1604,7 @@ const struct hal_usb_driver_vmt __hal_usb_driver_vmt = {
   .start                    = __usb_start_impl,
   .stop                     = __usb_stop_impl,
   .setcfg                   = __usb_setcfg_impl,
-  .selcfg                   = __usb_selcfg_impl,
-  .synchronize              = __drv_synchronize_impl
+  .selcfg                   = __usb_selcfg_impl
 };
 
 /**

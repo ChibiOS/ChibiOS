@@ -200,7 +200,6 @@ const struct hal_eth_driver_vmt __hal_eth_driver_vmt = {
   .stop                     = __eth_stop_impl,
   .setcfg                   = __eth_setcfg_impl,
   .selcfg                   = __eth_selcfg_impl,
-  .synchronize              = __drv_synchronize_impl,
   .setcb                    = __cbdrv_setcb_impl
 };
 

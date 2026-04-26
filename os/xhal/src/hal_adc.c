@@ -94,7 +94,8 @@ void *__adc_objinit_impl(void *ip, const void *vmt) {
   self->events  = 0U;
   self->errors  = 0U;
 #if ADC_USE_SYNCHRONIZATION == TRUE
-  self->thread  = NULL;
+  self->thread     = NULL;
+  self->sync_state = HAL_DRV_STATE_STOP;
 #endif
 
   return self;
@@ -212,7 +213,6 @@ const struct hal_adc_driver_vmt __hal_adc_driver_vmt = {
   .stop                     = __adc_stop_impl,
   .setcfg                   = __adc_setcfg_impl,
   .selcfg                   = __adc_selcfg_impl,
-  .synchronize              = __drv_synchronize_impl,
   .setcb                    = __adc_setcb_impl
 };
 
@@ -365,8 +365,76 @@ msg_t adcConvert(void *ip, const adc_conversion_group_t *grpp,
   osalDbgAssert(self->thread == NULL, "already waiting");
   msg = adcStartConversionI(self, grpp, samples, depth);
   if (msg == HAL_RET_SUCCESS) {
-    msg = osalThreadSuspendS(&self->thread);
+    msg = adcSynchronizeStateS(self, HAL_DRV_STATE_COMPLETE, TIME_INFINITE);
   }
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @brief       Synchronizes with an ADC conversion state.
+ * @details     This function synchronizes with a future occurrence of the
+ *              specified conversion state. State occurrences are not buffered,
+ *              the waiting thread must already be waiting when the state is
+ *              reached.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_adc_driver_c instance.
+ * @param[in]     state         State to synchronize with.
+ * @param[in]     timeout       Synchronization timeout.
+ * @return                      The synchronization result.
+ * @retval MSG_OK               If the requested state has been reached.
+ * @retval MSG_TIMEOUT          If synchronization timed out.
+ * @retval MSG_RESET            If conversion stopped or failed while waiting.
+ *
+ * @sclass
+ */
+msg_t adcSynchronizeStateS(void *ip, driver_state_t state,
+                           sysinterval_t timeout) {
+  hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
+  msg_t msg;
+
+  osalDbgCheck(self != NULL);
+  osalDbgCheckClassS();
+  osalDbgCheck((state == HAL_DRV_STATE_HALF) ||
+               (state == HAL_DRV_STATE_FULL) ||
+               (state == HAL_DRV_STATE_COMPLETE));
+  osalDbgAssert(self->state == HAL_DRV_STATE_ACTIVE, "invalid state");
+  osalDbgAssert(self->thread == NULL, "already waiting");
+
+  self->sync_state = state;
+  msg = osalThreadSuspendTimeoutS(&self->thread, timeout);
+  self->sync_state = HAL_DRV_STATE_STOP;
+
+  return msg;
+}
+
+/**
+ * @brief       Synchronizes with an ADC conversion state.
+ * @details     This function synchronizes with a future occurrence of the
+ *              specified conversion state. State occurrences are not buffered,
+ *              the waiting thread must already be waiting when the state is
+ *              reached.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_adc_driver_c instance.
+ * @param[in]     state         State to synchronize with.
+ * @param[in]     timeout       Synchronization timeout.
+ * @return                      The synchronization result.
+ * @retval MSG_OK               If the requested state has been reached.
+ * @retval MSG_TIMEOUT          If synchronization timed out.
+ * @retval MSG_RESET            If conversion stopped or failed while waiting.
+ *
+ * @api
+ */
+msg_t adcSynchronizeState(void *ip, driver_state_t state,
+                          sysinterval_t timeout) {
+  hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
+  msg_t msg;
+
+  osalDbgCheck(self != NULL);
+
+  osalSysLock();
+  msg = adcSynchronizeStateS(self, state, timeout);
   osalSysUnlock();
 
   return msg;

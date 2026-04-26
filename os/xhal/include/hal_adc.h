@@ -124,16 +124,19 @@
   osalThreadResumeS(&(adcp)->thread, MSG_RESET)
 
 /**
- * @brief       Wakes up a thread waiting for conversion completion.
+ * @brief       Wakes up a thread waiting for a conversion state.
  *
  * @param[in]     adcp          Pointer to the ADC driver instance.
+ * @param[in]     state         State being synchronized.
  *
  * @notapi
  */
-#define _adc_wakeup_isr(adcp)                                               \
+#define _adc_wakeup_isr(adcp, state)                                        \
   do {                                                                      \
     osalSysLockFromISR();                                                   \
-    osalThreadResumeI(&(adcp)->thread, MSG_OK);                             \
+    if ((adcp)->sync_state == (state)) {                                    \
+      osalThreadResumeI(&(adcp)->thread, MSG_OK);                           \
+    }                                                                       \
     osalSysUnlockFromISR();                                                 \
   } while (false)
 
@@ -155,7 +158,7 @@
 #else
 #define _adc_reset_i(adcp)
 #define _adc_reset_s(adcp)
-#define _adc_wakeup_isr(adcp)
+#define _adc_wakeup_isr(adcp, state)
 #define _adc_error_wakeup_isr(adcp)
 #endif /* ADC_USE_SYNCHRONIZATION == TRUE */
 
@@ -170,6 +173,7 @@
   do {                                                                      \
     (adcp)->events |= ADC_EVENT_HALF;                                       \
     __cbdrv_invoke_half_cb(adcp);                                           \
+    _adc_wakeup_isr(adcp, HAL_DRV_STATE_HALF);                              \
   } while (false)
 
 /**
@@ -184,6 +188,7 @@
     if ((adcp)->grpp->circular) {                                           \
       (adcp)->events |= ADC_EVENT_FULL;                                     \
       __cbdrv_invoke_full_cb(adcp);                                         \
+      _adc_wakeup_isr(adcp, HAL_DRV_STATE_FULL);                            \
     }                                                                       \
     else {                                                                  \
       adc_lld_stop_conversion(adcp);                                        \
@@ -192,7 +197,7 @@
                                         HAL_DRV_STATE_COMPLETE,             \
                                         HAL_DRV_STATE_READY);               \
       (adcp)->grpp = NULL;                                                  \
-      _adc_wakeup_isr(adcp);                                                \
+      _adc_wakeup_isr(adcp, HAL_DRV_STATE_COMPLETE);                        \
     }                                                                       \
   } while (false)
 
@@ -300,7 +305,6 @@ struct hal_adc_driver_vmt {
   void (*stop)(void *ip);
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
-  msg_t (*synchronize)(void *ip, sysinterval_t timeout);
   /* From hal_cb_driver_c.*/
   void (*setcb)(void *ip, drv_cb_t cb);
   /* From hal_adc_driver_c.*/
@@ -376,6 +380,10 @@ struct hal_adc_driver {
    * @brief       Waiting thread reference.
    */
   thread_reference_t        thread;
+  /**
+   * @brief       State being synchronized.
+   */
+  driver_state_t            sync_state;
 #endif /* ADC_USE_SYNCHRONIZATION == TRUE */
 #if (defined(ADC_DRIVER_EXT_FIELDS)) || defined (__DOXYGEN__)
   ADC_DRIVER_EXT_FIELDS
@@ -409,6 +417,10 @@ extern "C" {
 #if (ADC_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
   msg_t adcConvert(void *ip, const adc_conversion_group_t *grpp,
                    adcsample_t *samples, size_t depth);
+  msg_t adcSynchronizeStateS(void *ip, driver_state_t state,
+                             sysinterval_t timeout);
+  msg_t adcSynchronizeState(void *ip, driver_state_t state,
+                            sysinterval_t timeout);
 #endif /* ADC_USE_SYNCHRONIZATION == TRUE */
   /* Regular functions.*/
   void adcInit(void);

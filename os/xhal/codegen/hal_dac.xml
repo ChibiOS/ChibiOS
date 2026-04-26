@@ -522,14 +522,6 @@ return (const void *)dac_lld_setcfg(self,
               <implementation><![CDATA[
 return (const void *)dac_lld_selcfg(self, cfgnum);]]></implementation>
             </method>
-            <method shortname="synchronize">
-              <implementation><![CDATA[
-#if DAC_USE_SYNCHRONIZATION == TRUE
-return dacSynchronizeS(self, timeout);
-#else
-return __drv_synchronize_impl(self, timeout);
-#endif]]></implementation>
-            </method>
             <method shortname="setcb">
               <implementation><![CDATA[
 __cbdrv_setcb_impl(self, cb);

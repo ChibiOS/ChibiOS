@@ -210,7 +210,6 @@ const struct hal_icu_driver_vmt __hal_icu_driver_vmt = {
   .stop                     = __icu_stop_impl,
   .setcfg                   = __icu_setcfg_impl,
   .selcfg                   = __icu_selcfg_impl,
-  .synchronize              = __drv_synchronize_impl,
   .setcb                    = __icu_setcb_impl
 };
 
