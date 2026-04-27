@@ -154,61 +154,71 @@ void sb_fastc_vio_gpt(sb_class_t *sbp, struct port_extctx *ectxp) {
       {
         uint32_t mode = ectxp->r1;
         gptcnt_t interval = (gptcnt_t)ectxp->r2;
+        msg_t msg;
 
         if (interval == (gptcnt_t)0) {
           ectxp->r0 = (uint32_t)CH_RET_EINVAL;
           break;
         }
 
+        chSysLock();
         if (drvGetStateX(unitp->gptp) != HAL_DRV_STATE_READY) {
-          ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
-          break;
+          msg = HAL_RET_INV_STATE;
         }
-
-        if (mode == SB_VGPT_CONTINUOUS) {
-          unitp->gptp->state = GPT_CONTINUOUS;
+        else if (mode == SB_VGPT_CONTINUOUS) {
+          gptStartContinuousI(unitp->gptp, interval);
+          msg = HAL_RET_SUCCESS;
         }
         else if (mode == SB_VGPT_ONESHOT) {
-          unitp->gptp->state = GPT_ONESHOT;
+          gptStartOneShotI(unitp->gptp, interval);
+          msg = HAL_RET_SUCCESS;
         }
         else {
-          ectxp->r0 = (uint32_t)CH_RET_EINVAL;
-          break;
+          msg = CH_RET_EINVAL;
         }
+        chSysUnlock();
 
-        gpt_lld_start_timer(unitp->gptp, interval);
-        ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+        ectxp->r0 = (uint32_t)msg;
         break;
       }
     case SB_VGPT_STOP:
       {
+        msg_t msg;
+
+        chSysLock();
         if (drvGetStateX(unitp->gptp) == HAL_DRV_STATE_STOP) {
-          ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
-          break;
+          msg = HAL_RET_INV_STATE;
         }
+        else {
+          gptStopTimerI(unitp->gptp);
+          msg = HAL_RET_SUCCESS;
+        }
+        chSysUnlock();
 
-        unitp->gptp->state = HAL_DRV_STATE_READY;
-        gpt_lld_stop_timer(unitp->gptp);
-
-        ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+        ectxp->r0 = (uint32_t)msg;
         break;
       }
     case SB_VGPT_CHGI:
       {
         gptcnt_t interval = (gptcnt_t)ectxp->r1;
+        msg_t msg;
 
         if (interval == (gptcnt_t)0) {
           ectxp->r0 = (uint32_t)CH_RET_EINVAL;
           break;
         }
 
+        chSysLock();
         if (drvGetStateX(unitp->gptp) != GPT_CONTINUOUS) {
-          ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
-          break;
+          msg = HAL_RET_INV_STATE;
         }
+        else {
+          gptChangeIntervalI(unitp->gptp, interval);
+          msg = HAL_RET_SUCCESS;
+        }
+        chSysUnlock();
 
-        gpt_lld_change_interval(unitp->gptp, interval);
-        ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+        ectxp->r0 = (uint32_t)msg;
         break;
       }
     case SB_VGPT_GETI:
