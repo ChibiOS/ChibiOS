@@ -31,6 +31,13 @@
 #define __CHIBIOS_VIO_CONF_VER_1_0__
 
 /**
+ * @brief   Enables the Virtual ADC support.
+ */
+#if !defined(VIO_CFG_ENABLE_ADC) || defined(__DOXYGEN__)
+#define VIO_CFG_ENABLE_ADC                  FALSE
+#endif
+
+/**
  * @brief   Enables the Virtual ETH support.
  */
 #if !defined(VIO_CFG_ENABLE_ETH) || defined(__DOXYGEN__)

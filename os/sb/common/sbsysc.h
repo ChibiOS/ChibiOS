@@ -45,6 +45,8 @@
 #define SB_FASTC_VIO_VGPIO      96
 #define SB_FASTC_VIO_VUART      97
 #define SB_FASTC_VIO_VSPI       98
+#define SB_FASTC_VIO_VETH       99
+#define SB_FASTC_VIO_VADC       100
 #define SB_FASTC_VRQ_GCSTS      119
 #define SB_FASTC_VRQ_SETWT      120
 #define SB_FASTC_VRQ_CLRWT      121
@@ -73,6 +75,8 @@
 #define SB_SYSC_LOADELF         138
 #define SB_SYSC_VIO_VUART       225
 #define SB_SYSC_VIO_VSPI        226
+#define SB_SYSC_VIO_VETH        227
+#define SB_SYSC_VIO_VADC        228
 #define SB_SYSC_VRQ_SET_ALARM   253
 #define SB_SYSC_VRQ_RESET_ALARM 254
 #define SB_SYSC_VRQ_WAIT        255
@@ -98,6 +102,18 @@
 #define SB_POSIX_MKDIR          14
 #define SB_POSIX_RMDIR          15
 #define SB_POSIX_STAT           16
+/** @} */
+
+/**
+ * @name    Virtual ADC syscall sub-codes
+ * @{
+ */
+#define SB_VADC_INIT            0
+#define SB_VADC_DEINIT          1
+#define SB_VADC_START           2
+#define SB_VADC_STOP            3
+#define SB_VADC_ISCIRC          0
+#define SB_VADC_GCERR           1
 /** @} */
 
 /**

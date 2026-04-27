@@ -30,6 +30,7 @@
 #if (SB_CFG_ENABLE_VIO == TRUE) || defined(__DOXYGEN__)
 
 #include "vioconf.h"
+#include "sbvio_adc.h"
 #include "sbvio_eth.h"
 #include "sbvio_gpio.h"
 #include "sbvio_spi.h"
@@ -48,6 +49,10 @@
 /*===========================================================================*/
 
 /* Checks on configuration options.*/
+#if !defined(VIO_CFG_ENABLE_ADC) || defined(__DOXYGEN__)
+#error "VIO_CFG_ENABLE_ADC not defined in vioconf.h"
+#endif
+
 #if !defined(VIO_CFG_ENABLE_GPIO) || defined(__DOXYGEN__)
 #error "VIO_CFG_ENABLE_GPIO not defined in vioconf.h"
 #endif
@@ -72,6 +77,12 @@
  * @brief   Type of a VIO instance configuration structure.
  */
 typedef struct vio_conf {
+#if (VIO_CFG_ENABLE_ADC == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Virtual ADC units.
+   */
+  const vio_adc_units_t         *adcs;
+#endif
 #if (VIO_CFG_ENABLE_ETH == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Virtual ETH units.
