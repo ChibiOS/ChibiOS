@@ -26,7 +26,22 @@
 
 #if HAL_USE_ADC || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Driver local definitions.                                                 */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver exported variables.                                                */
+/*===========================================================================*/
+
+/** @brief ADC1 driver identifier.*/
+#if VIO_ADC_USE_VADC1 || defined(__DOXYGEN__)
 hal_adc_driver_c ADCD1;
+#endif
+
+/*===========================================================================*/
+/* Driver local variables and types.                                         */
+/*===========================================================================*/
 
 static const hal_adc_config_t default_config = {
   .grps = NULL
@@ -80,6 +95,12 @@ static inline uint32_t __adc_vadc_gcerr(uint32_t nvadc) {
   return (uint32_t)r0;
 }
 
+/**
+ * @brief   Shared VADC interrupt service routine.
+ *
+ * @param[in] adcp      pointer to the @p hal_adc_driver_c object
+ * @param[in] nvrq      VADC virtual IRQ number
+ */
 static void adc_lld_serve_interrupt(hal_adc_driver_c *adcp, uint32_t nvrq) {
   uint32_t sts;
 
@@ -144,13 +165,28 @@ OSAL_IRQ_HANDLER(MK_VECTOR(VIO_VADC1_IRQ)) {
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   Low level ADC driver initialization.
+ *
+ * @notapi
+ */
 void adc_lld_init(void) {
 
+#if VIO_ADC_USE_VADC1 == TRUE
   adcObjectInit(&ADCD1);
   ADCD1.nvadc = 0U;
   __sb_vrq_seten(1U << VIO_VADC1_IRQ);
+#endif
 }
 
+/**
+ * @brief   Configures and activates the ADC peripheral.
+ *
+ * @param[in] adcp      pointer to the @p hal_adc_driver_c object
+ * @return              The operation status.
+ *
+ * @notapi
+ */
 msg_t adc_lld_start(hal_adc_driver_c *adcp) {
   msg_t msg = HAL_RET_SUCCESS;
 
@@ -168,6 +204,13 @@ msg_t adc_lld_start(hal_adc_driver_c *adcp) {
   return msg;
 }
 
+/**
+ * @brief   Deactivates the ADC peripheral.
+ *
+ * @param[in] adcp      pointer to the @p hal_adc_driver_c object
+ *
+ * @notapi
+ */
 void adc_lld_stop(hal_adc_driver_c *adcp) {
   msg_t msg = HAL_RET_SUCCESS;
 
@@ -185,6 +228,17 @@ void adc_lld_stop(hal_adc_driver_c *adcp) {
   osalDbgAssert(msg == HAL_RET_SUCCESS, "unexpected failure");
 }
 
+/**
+ * @brief   Applies an explicit ADC configuration.
+ * @note    The VIO port does not accept sandbox-provided conversion group
+ *          structures. Only the local default configuration is accepted.
+ *
+ * @param[in] adcp      pointer to the @p hal_adc_driver_c object
+ * @param[in] config    pointer to the @p hal_adc_config_t structure
+ * @return              The configuration pointer or @p NULL on failure.
+ *
+ * @notapi
+ */
 const hal_adc_config_t *adc_lld_setcfg(hal_adc_driver_c *adcp,
                                        const hal_adc_config_t *config) {
 
@@ -195,6 +249,17 @@ const hal_adc_config_t *adc_lld_setcfg(hal_adc_driver_c *adcp,
   return NULL;
 }
 
+/**
+ * @brief   Selects a predefined ADC configuration.
+ * @note    In the VIO port configuration zero is a local placeholder. The
+ *          conversion groups remain host-owned and are referenced by index.
+ *
+ * @param[in] adcp      pointer to the @p hal_adc_driver_c object
+ * @param[in] cfgnum    driver configuration number
+ * @return              The configuration pointer or @p NULL on failure.
+ *
+ * @notapi
+ */
 const hal_adc_config_t *adc_lld_selcfg(hal_adc_driver_c *adcp,
                                        unsigned cfgnum) {
 
@@ -207,12 +272,35 @@ const hal_adc_config_t *adc_lld_selcfg(hal_adc_driver_c *adcp,
   return &default_config;
 }
 
+/**
+ * @brief   Updates the ADC callback.
+ * @note    The VIO port uses the common driver callback field only, no
+ *          low-level callback programming is required.
+ *
+ * @param[in] adcp      pointer to the @p hal_adc_driver_c object
+ * @param[in] cb        driver callback
+ *
+ * @notapi
+ */
 void adc_lld_set_callback(hal_adc_driver_c *adcp, drv_cb_t cb) {
 
   (void)adcp;
   (void)cb;
 }
 
+/**
+ * @brief   Starts an ADC conversion.
+ * @details The conversion group is identified by index and resolved by the
+ *          host-side VADC service.
+ *
+ * @param[in] adcp      pointer to the @p hal_adc_driver_c object
+ * @param[in] grpnum    conversion group index
+ * @param[out] samples  pointer to the samples buffer
+ * @param[in] depth     buffer depth
+ * @return              The operation status.
+ *
+ * @notapi
+ */
 msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp, unsigned grpnum,
                                adcsample_t *samples,
                                size_t depth) {
@@ -226,6 +314,13 @@ msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp, unsigned grpnum,
   return msg;
 }
 
+/**
+ * @brief   Stops an ongoing ADC conversion.
+ *
+ * @param[in] adcp      pointer to the @p hal_adc_driver_c object
+ *
+ * @notapi
+ */
 void adc_lld_stop_conversion(hal_adc_driver_c *adcp) {
   msg_t msg;
 

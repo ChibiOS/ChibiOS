@@ -27,6 +27,23 @@
 
 #if HAL_USE_ADC || defined(__DOXYGEN__)
 
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   ADC1 driver enable switch.
+ * @details If set to @p TRUE the support for VADC1 is included.
+ * @note    The default is @p FALSE.
+ */
 #if !defined(VIO_ADC_USE_VADC1) || defined(__DOXYGEN__)
 #define VIO_ADC_USE_VADC1                   FALSE
 #endif
@@ -38,14 +55,27 @@
 #if !defined(VIO_VADC1_IRQ) || defined(__DOXYGEN__)
 #define VIO_VADC1_IRQ                       12
 #endif
+/** @} */
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
 
 #if !VIO_ADC_USE_VADC1
 #error "ADC driver activated but no VADC peripheral assigned"
 #endif
 
+/*===========================================================================*/
+/* Driver data structures and types.                                         */
+/*===========================================================================*/
+
 typedef uint16_t adcsample_t;
 typedef uint16_t adc_channels_num_t;
 typedef uint32_t adcerror_t;
+
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
 
 #define ADC_ERR_DMAFAILURE                  1U
 #define ADC_ERR_OVERFLOW                    2U
@@ -53,17 +83,36 @@ typedef uint32_t adcerror_t;
 #define ADC_ERR_AWD2                        8U
 #define ADC_ERR_AWD3                        16U
 
+/**
+ * @brief   Low level fields of the ADC driver structure.
+ */
 #define adc_lld_driver_fields                                               \
+  /* Number of the associated VADC.*/                                       \
   uint32_t                  nvadc
 
+/**
+ * @brief   Low level fields of the ADC configuration structure.
+ * @note    In the VIO port the actual conversion groups are host-owned and
+ *          are selected by index through the VADC API.
+ */
 #define adc_lld_config_fields
 
+/**
+ * @brief   Low level fields of the ADC conversion group structure.
+ */
 #define adc_lld_configuration_group_fields
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+#if VIO_ADC_USE_VADC1 && !defined(__DOXYGEN__)
+extern hal_adc_driver_c ADCD1;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  extern hal_adc_driver_c ADCD1;
   void adc_lld_init(void);
   msg_t adc_lld_start(hal_adc_driver_c *adcp);
   void adc_lld_stop(hal_adc_driver_c *adcp);
