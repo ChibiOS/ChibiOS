@@ -32,81 +32,85 @@ const hal_gpt_config_t portab_gptcfg1 = {
   .dier                        = 0U
 };
 
-const hal_adc_config_t portab_adccfg1 = {
-  .difsel                      = 0U
-};
-
-const adc_conversion_group_t portab_adcgrpcfg1 = {
-  .circular                    = false,
-  .num_channels                = ADC_GRP1_NUM_CHANNELS,
-  .cfgr                        = 0U,
-  .cfgr2                       = 0U,
-  .tr1                         = ADC_TR_DISABLED,
-  .tr2                         = ADC_TR_DISABLED,
-  .tr3                         = ADC_TR_DISABLED,
-  .awd2cr                      = 0U,
-  .awd3cr                      = 0U,
-  .smpr                        = {
-    ADC_SMPR1_SMP_AN1(ADC_SMPR_SMP_247P5) |
-    ADC_SMPR1_SMP_AN2(ADC_SMPR_SMP_247P5),
-    0U
-  },
-  .sqr                         = {
-    ADC_SQR1_SQ1_N(ADC_CHANNEL_IN1) |
-    ADC_SQR1_SQ2_N(ADC_CHANNEL_IN2),
-    0U,
-    0U,
-    0U
-  }
-};
-
-const adc_conversion_group_t portab_adcgrpcfg2 = {
-  .circular                    = true,
-  .num_channels                = ADC_GRP2_NUM_CHANNELS,
-  .cfgr                        = ADC_CFGR_CONT,
-  .cfgr2                       = 0U,
-  .tr1                         = ADC_TR_DISABLED,
-  .tr2                         = ADC_TR_DISABLED,
-  .tr3                         = ADC_TR_DISABLED,
-  .awd2cr                      = 0U,
-  .awd3cr                      = 0U,
-  .smpr                        = {
-    ADC_SMPR1_SMP_AN1(ADC_SMPR_SMP_247P5) |
-    ADC_SMPR1_SMP_AN2(ADC_SMPR_SMP_247P5),
-    0U
-  },
-  .sqr                         = {
-    ADC_SQR1_SQ1_N(ADC_CHANNEL_IN1) |
-    ADC_SQR1_SQ2_N(ADC_CHANNEL_IN2),
-    0U,
-    0U,
-    0U
-  }
-};
-
-const adc_conversion_group_t portab_adcgrpcfg3 = {
-  .circular                    = true,
-  .num_channels                = ADC_GRP3_NUM_CHANNELS,
-  .cfgr                        = ADC_CFGR_EXTEN_RISING |
+static const adc_conversion_groups_t portab_adcgrps1 = {
+  .grpsnum                     = 3U,
+  .grps                        = {
+    [ADC_GRP1] = {
+      .circular                = false,
+      .num_channels            = ADC_GRP1_NUM_CHANNELS,
+      .cfgr                    = 0U,
+      .cfgr2                   = 0U,
+      .tr1                     = ADC_TR_DISABLED,
+      .tr2                     = ADC_TR_DISABLED,
+      .tr3                     = ADC_TR_DISABLED,
+      .awd2cr                  = 0U,
+      .awd3cr                  = 0U,
+      .smpr                    = {
+        ADC_SMPR1_SMP_AN1(ADC_SMPR_SMP_247P5) |
+        ADC_SMPR1_SMP_AN2(ADC_SMPR_SMP_247P5),
+        0U
+      },
+      .sqr                     = {
+        ADC_SQR1_SQ1_N(ADC_CHANNEL_IN1) |
+        ADC_SQR1_SQ2_N(ADC_CHANNEL_IN2),
+        0U,
+        0U,
+        0U
+      }
+    },
+    [ADC_GRP2] = {
+      .circular                = true,
+      .num_channels            = ADC_GRP2_NUM_CHANNELS,
+      .cfgr                    = ADC_CFGR_CONT,
+      .cfgr2                   = 0U,
+      .tr1                     = ADC_TR_DISABLED,
+      .tr2                     = ADC_TR_DISABLED,
+      .tr3                     = ADC_TR_DISABLED,
+      .awd2cr                  = 0U,
+      .awd3cr                  = 0U,
+      .smpr                    = {
+        ADC_SMPR1_SMP_AN1(ADC_SMPR_SMP_247P5) |
+        ADC_SMPR1_SMP_AN2(ADC_SMPR_SMP_247P5),
+        0U
+      },
+      .sqr                     = {
+        ADC_SQR1_SQ1_N(ADC_CHANNEL_IN1) |
+        ADC_SQR1_SQ2_N(ADC_CHANNEL_IN2),
+        0U,
+        0U,
+        0U
+      }
+    },
+    [ADC_GRP3] = {
+      .circular                = true,
+      .num_channels            = ADC_GRP3_NUM_CHANNELS,
+      .cfgr                    = ADC_CFGR_EXTEN_RISING |
                                  ADC_CFGR_EXTSEL_SRC(12),
-  .cfgr2                       = 0U,
-  .tr1                         = ADC_TR_DISABLED,
-  .tr2                         = ADC_TR_DISABLED,
-  .tr3                         = ADC_TR_DISABLED,
-  .awd2cr                      = 0U,
-  .awd3cr                      = 0U,
-  .smpr                        = {
-    ADC_SMPR1_SMP_AN1(ADC_SMPR_SMP_247P5) |
-    ADC_SMPR1_SMP_AN2(ADC_SMPR_SMP_247P5),
-    0U
-  },
-  .sqr                         = {
-    ADC_SQR1_SQ1_N(ADC_CHANNEL_IN1) |
-    ADC_SQR1_SQ2_N(ADC_CHANNEL_IN2),
-    0U,
-    0U,
-    0U
+      .cfgr2                   = 0U,
+      .tr1                     = ADC_TR_DISABLED,
+      .tr2                     = ADC_TR_DISABLED,
+      .tr3                     = ADC_TR_DISABLED,
+      .awd2cr                  = 0U,
+      .awd3cr                  = 0U,
+      .smpr                    = {
+        ADC_SMPR1_SMP_AN1(ADC_SMPR_SMP_247P5) |
+        ADC_SMPR1_SMP_AN2(ADC_SMPR_SMP_247P5),
+        0U
+      },
+      .sqr                     = {
+        ADC_SQR1_SQ1_N(ADC_CHANNEL_IN1) |
+        ADC_SQR1_SQ2_N(ADC_CHANNEL_IN2),
+        0U,
+        0U,
+        0U
+      }
+    }
   }
+};
+
+const hal_adc_config_t portab_adccfg1 = {
+  .grps                        = &portab_adcgrps1,
+  .difsel                      = 0U
 };
 
 void portab_setup(void) {

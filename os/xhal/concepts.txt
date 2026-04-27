@@ -187,8 +187,9 @@ API direction:
   `adcStopConversion()`.
 - Adapt the names and method signatures to XHAL object conventions but avoid
   changing behavior unless there is a clear XHAL benefit.
-- Keep the conversion descriptor immutable and separate from the samples
-  buffer. The samples pointer and depth remain per-execution parameters.
+- Keep conversion descriptors immutable and attached to the active ADC
+  configuration. Runtime conversion calls select one descriptor by index,
+  while the samples pointer and depth remain per-execution parameters.
 
 Proposed public API:
 - `void adcInit(void);`
@@ -197,7 +198,7 @@ Proposed public API:
 - `const hal_adc_config_t *adcSetCfgX(hal_adc_driver_c *self,
   const hal_adc_config_t *config);`
 - `msg_t adcStartConversion(hal_adc_driver_c *self,
-  const adc_conversion_group_t *grpp, adcsample_t *samples, size_t depth);`
+  unsigned grpnum, adcsample_t *samples, size_t depth);`
 - `msg_t adcStopConversion(hal_adc_driver_c *self);`
 - `adceventflags_t adcGetEventsX(hal_adc_driver_c *self);`
 - `adceventflags_t adcGetAndClearEventsX(hal_adc_driver_c *self,
@@ -230,17 +231,20 @@ Why the samples pointer must stay outside the group:
   existing HAL ADC call shape.
 
 Conversion-group policy:
-- Keep `circular`, `num_channels`, `end_cb`, `error_cb` in the mandatory
-  generic fields, mirroring HAL ADC closely.
+- Keep `circular` and `num_channels` in the mandatory generic fields,
+  mirroring HAL ADC closely.
 - Keep hardware-specific register fields inside
   `adc_lld_conversion_group_fields`.
 - Preserve the current HAL expectation that the conversion group is an
-  implementation-aware structure describing one regular conversion sequence.
+  implementation-aware structure describing one regular conversion sequence,
+  but expose it to runtime users through a configuration-scoped index.
 
 Configuration policy:
 - Keep `hal_adc_config_t` minimal and close to HAL `ADCConfig`.
 - Provide a built-in default configuration so the driver can be started
   without a user-supplied config, consistent with XHAL conventions.
+- Attach a conversion group table to `hal_adc_config_t`; a @p NULL table means
+  that no conversion groups are available for indexed conversion calls.
 - Keep all STM32 register details in `adc_lld_config_fields`.
 
 First-iteration feature scope:
@@ -271,11 +275,14 @@ LLD shape proposal:
 - `const hal_adc_config_t *adc_lld_setcfg(hal_adc_driver_c *self,
   const hal_adc_config_t *config)`
 - `msg_t adc_lld_start_conversion(hal_adc_driver_c *self,
-  const adc_conversion_group_t *grpp, adcsample_t *samples, size_t depth)`
+  unsigned grpnum, adcsample_t *samples, size_t depth)`
 - `msg_t adc_lld_stop_conversion(hal_adc_driver_c *self)`
 - `void adc_lld_setcb(hal_adc_driver_c *self, drv_cb_t cb)`
-- The LLD remains responsible for register programming, DMA setup, IRQ
-  service and extraction of hardware error bits.
+- The LLD receives the configuration-scoped group index and resolves it from
+  the active ADC configuration. Native LLDs cache the resolved group in
+  `self->grpp`; VIO-style LLDs can also forward the index.
+- The LLD remains responsible for register programming, DMA setup, IRQ service
+  and extraction of hardware error bits.
 - The common XHAL layer remains responsible for state assertions, callback
   dispatch conventions, and cached event/error flag management.
 

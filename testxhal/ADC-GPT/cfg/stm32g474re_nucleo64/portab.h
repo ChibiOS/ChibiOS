@@ -39,12 +39,12 @@
 #define ADC_GRP1_NUM_CHANNELS               2U
 #define ADC_GRP2_NUM_CHANNELS               2U
 #define ADC_GRP3_NUM_CHANNELS               2U
+#define ADC_GRP1                            0U
+#define ADC_GRP2                            1U
+#define ADC_GRP3                            2U
 
 extern const hal_adc_config_t portab_adccfg1;
 extern const hal_gpt_config_t portab_gptcfg1;
-extern const adc_conversion_group_t portab_adcgrpcfg1;
-extern const adc_conversion_group_t portab_adcgrpcfg2;
-extern const adc_conversion_group_t portab_adcgrpcfg3;
 
 #ifdef __cplusplus
 extern "C" {

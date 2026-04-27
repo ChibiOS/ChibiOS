@@ -245,6 +245,11 @@ typedef struct hal_adc_config hal_adc_config_t;
  */
 typedef struct hal_adc_conversion_group adc_conversion_group_t;
 
+/**
+ * @brief       Type of structure representing ADC conversion groups.
+ */
+typedef struct hal_adc_conversion_groups adc_conversion_groups_t;
+
 /* Including the low level driver header, it exports information required
    for completing types.*/
 #include "hal_adc_lld.h"
@@ -269,9 +274,27 @@ struct hal_adc_conversion_group {
 };
 
 /**
+ * @brief       Conversion groups structure.
+ */
+struct hal_adc_conversion_groups {
+  /**
+   * @brief       Number of conversion groups in the open array.
+   */
+  unsigned                  grpsnum;
+  /**
+   * @brief       ADC conversion groups.
+   */
+  adc_conversion_group_t    grps[];
+};
+
+/**
  * @brief       Driver configuration structure.
  */
 struct hal_adc_config {
+  /**
+   * @brief       ADC conversion groups or @p NULL.
+   */
+  const adc_conversion_groups_t * grps;
   /* End of the mandatory fields.*/
   adc_lld_config_fields;
 #if (defined(ADC_CONFIG_EXT_FIELDS)) || defined (__DOXYGEN__)
@@ -408,14 +431,14 @@ extern "C" {
   const void *__adc_setcfg_impl(void *ip, const void *config);
   const void *__adc_selcfg_impl(void *ip, unsigned cfgnum);
   void __adc_setcb_impl(void *ip, drv_cb_t cb);
-  msg_t adcStartConversionI(void *ip, const adc_conversion_group_t *grpp,
+  msg_t adcStartConversionI(void *ip, unsigned grpnum,
                             adcsample_t *samples, size_t depth);
-  msg_t adcStartConversion(void *ip, const adc_conversion_group_t *grpp,
+  msg_t adcStartConversion(void *ip, unsigned grpnum,
                            adcsample_t *samples, size_t depth);
   void adcStopConversionI(void *ip);
   void adcStopConversion(void *ip);
 #if (ADC_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
-  msg_t adcConvert(void *ip, const adc_conversion_group_t *grpp,
+  msg_t adcConvert(void *ip, unsigned grpnum,
                    adcsample_t *samples, size_t depth);
   msg_t adcSynchronizeStateS(void *ip, driver_state_t state,
                              sysinterval_t timeout);

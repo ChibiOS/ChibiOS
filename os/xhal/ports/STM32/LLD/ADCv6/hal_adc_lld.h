@@ -698,8 +698,7 @@ extern "C" {
   const hal_adc_config_t *adc_lld_selcfg(hal_adc_driver_c *adcp,
                                          unsigned cfgnum);
   void adc_lld_set_callback(hal_adc_driver_c *adcp, drv_cb_t cb);
-  msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp,
-                                 const adc_conversion_group_t *grpp,
+  msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp, unsigned grpnum,
                                  adcsample_t *samples,
                                  size_t depth);
   void adc_lld_stop_conversion(hal_adc_driver_c *adcp);

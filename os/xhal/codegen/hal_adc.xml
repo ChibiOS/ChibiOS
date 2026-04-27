@@ -166,6 +166,10 @@ do {
         <brief>Type of structure representing an ADC conversion group.</brief>
         <basetype ctype="struct hal_adc_conversion_group" />
       </typedef>
+      <typedef name="adc_conversion_groups_t">
+        <brief>Type of structure representing ADC conversion groups.</brief>
+        <basetype ctype="struct hal_adc_conversion_groups" />
+      </typedef>
       <verbatim><![CDATA[
 /* Including the low level driver header, it exports information required
    for completing types.*/
@@ -188,9 +192,23 @@ ADC_CONVERSION_GROUP_EXT_FIELDS]]></verbatim>
           </condition>
         </fields>
       </struct>
+      <struct name="hal_adc_conversion_groups">
+        <brief>Conversion groups structure.</brief>
+        <fields>
+          <field name="grpsnum" ctype="unsigned">
+            <brief>Number of conversion groups in the open array.</brief>
+          </field>
+          <field name="grps" ctype="adc_conversion_group_t$I$N[]">
+            <brief>ADC conversion groups.</brief>
+          </field>
+        </fields>
+      </struct>
       <struct name="hal_adc_config">
         <brief>Driver configuration structure.</brief>
         <fields>
+          <field name="grps" ctype="const adc_conversion_groups_t *">
+            <brief>ADC conversion groups or @p NULL.</brief>
+          </field>
           <verbatim><![CDATA[
 /* End of the mandatory fields.*/
 adc_lld_config_fields;]]></verbatim>
@@ -255,8 +273,8 @@ self->sync_state = HAL_DRV_STATE_STOP;
           <regular>
             <method name="adcStartConversionI" ctype="msg_t">
               <brief>Starts an ADC conversion.</brief>
-              <param name="grpp" ctype="const adc_conversion_group_t *" dir="in">
-                Conversion group.
+              <param name="grpnum" ctype="unsigned" dir="in">
+                Conversion group number.
               </param>
               <param name="samples" ctype="adcsample_t *" dir="out">
                 Samples buffer.
@@ -270,7 +288,7 @@ self->sync_state = HAL_DRV_STATE_STOP;
 msg_t msg;
 
 osalDbgCheckClassI();
-osalDbgCheck((self != NULL) && (grpp != NULL) && (samples != NULL) &&
+osalDbgCheck((self != NULL) && (samples != NULL) &&
              (depth > 0U) && ((depth == 1U) || ((depth & 1U) == 0U)));
 osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
               (self->state == HAL_DRV_STATE_ERROR),
@@ -278,24 +296,27 @@ osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
 
 self->samples = samples;
 self->depth   = depth;
-self->grpp    = grpp;
+self->grpp    = NULL;
 self->events  = 0U;
 self->errors  = 0U;
 self->state   = HAL_DRV_STATE_ACTIVE;
-msg = adc_lld_start_conversion(self, grpp, samples, depth);
+msg = adc_lld_start_conversion(self, grpnum, samples, depth);
 if (msg != HAL_RET_SUCCESS) {
   self->samples = NULL;
   self->depth   = 0U;
   self->grpp    = NULL;
   self->state   = HAL_DRV_STATE_READY;
 }
+else {
+  osalDbgAssert(self->grpp != NULL, "no conversion group");
+}
 
 return msg;]]></implementation>
             </method>
             <method name="adcStartConversion" ctype="msg_t">
               <brief>Starts an ADC conversion.</brief>
-              <param name="grpp" ctype="const adc_conversion_group_t *" dir="in">
-                Conversion group.
+              <param name="grpnum" ctype="unsigned" dir="in">
+                Conversion group number.
               </param>
               <param name="samples" ctype="adcsample_t *" dir="out">
                 Samples buffer.
@@ -309,7 +330,7 @@ return msg;]]></implementation>
 msg_t msg;
 
 osalSysLock();
-msg = adcStartConversionI(self, grpp, samples, depth);
+msg = adcStartConversionI(self, grpnum, samples, depth);
 osalSysUnlock();
 
 return msg;]]></implementation>
@@ -364,8 +385,8 @@ osalSysUnlock();]]></implementation>
             <condition check="ADC_USE_SYNCHRONIZATION == TRUE">
               <method name="adcConvert" ctype="msg_t">
                 <brief>Performs a synchronous ADC conversion.</brief>
-                <param name="grpp" ctype="const adc_conversion_group_t *" dir="in">
-                  Conversion group.
+                <param name="grpnum" ctype="unsigned" dir="in">
+                  Conversion group number.
                 </param>
                 <param name="samples" ctype="adcsample_t *" dir="out">
                   Samples buffer.
@@ -382,7 +403,7 @@ osalDbgCheck(self != NULL);
 
 osalSysLock();
 osalDbgAssert(self->thread == NULL, "already waiting");
-msg = adcStartConversionI(self, grpp, samples, depth);
+msg = adcStartConversionI(self, grpnum, samples, depth);
 if (msg == HAL_RET_SUCCESS) {
   msg = adcSynchronizeStateS(self, HAL_DRV_STATE_COMPLETE, TIME_INFINITE);
 }
@@ -511,11 +532,9 @@ return errors;]]></implementation>
               <implementation><![CDATA[
 msg_t msg;
 
-if (config != NULL) {
-  self->config = __adc_setcfg_impl(self, config);
-  if (self->config == NULL) {
-    return HAL_RET_CONFIG_ERROR;
-  }
+self->config = __adc_setcfg_impl(self, config);
+if (self->config == NULL) {
+  return HAL_RET_CONFIG_ERROR;
 }
 
 self->samples = NULL;

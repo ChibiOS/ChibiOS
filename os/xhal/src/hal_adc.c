@@ -129,11 +129,9 @@ msg_t __adc_start_impl(void *ip, const void *config) {
   hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
   msg_t msg;
 
-  if (config != NULL) {
-    self->config = __adc_setcfg_impl(self, config);
-    if (self->config == NULL) {
-      return HAL_RET_CONFIG_ERROR;
-    }
+  self->config = __adc_setcfg_impl(self, config);
+  if (self->config == NULL) {
+    return HAL_RET_CONFIG_ERROR;
   }
 
   self->samples = NULL;
@@ -224,20 +222,20 @@ const struct hal_adc_driver_vmt __hal_adc_driver_vmt = {
  * @brief       Starts an ADC conversion.
  *
  * @param[in,out] ip            Pointer to a @p hal_adc_driver_c instance.
- * @param[in]     grpp          Conversion group.
+ * @param[in]     grpnum        Conversion group number.
  * @param[out]    samples       Samples buffer.
  * @param[in]     depth         Buffer depth.
  * @return                      The operation status.
  *
  * @iclass
  */
-msg_t adcStartConversionI(void *ip, const adc_conversion_group_t *grpp,
+msg_t adcStartConversionI(void *ip, unsigned grpnum,
                           adcsample_t *samples, size_t depth) {
   hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
   msg_t msg;
 
   osalDbgCheckClassI();
-  osalDbgCheck((self != NULL) && (grpp != NULL) && (samples != NULL) &&
+  osalDbgCheck((self != NULL) && (samples != NULL) &&
                (depth > 0U) && ((depth == 1U) || ((depth & 1U) == 0U)));
   osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
                 (self->state == HAL_DRV_STATE_ERROR),
@@ -245,16 +243,19 @@ msg_t adcStartConversionI(void *ip, const adc_conversion_group_t *grpp,
 
   self->samples = samples;
   self->depth   = depth;
-  self->grpp    = grpp;
+  self->grpp    = NULL;
   self->events  = 0U;
   self->errors  = 0U;
   self->state   = HAL_DRV_STATE_ACTIVE;
-  msg = adc_lld_start_conversion(self, grpp, samples, depth);
+  msg = adc_lld_start_conversion(self, grpnum, samples, depth);
   if (msg != HAL_RET_SUCCESS) {
     self->samples = NULL;
     self->depth   = 0U;
     self->grpp    = NULL;
     self->state   = HAL_DRV_STATE_READY;
+  }
+  else {
+    osalDbgAssert(self->grpp != NULL, "no conversion group");
   }
 
   return msg;
@@ -264,20 +265,20 @@ msg_t adcStartConversionI(void *ip, const adc_conversion_group_t *grpp,
  * @brief       Starts an ADC conversion.
  *
  * @param[in,out] ip            Pointer to a @p hal_adc_driver_c instance.
- * @param[in]     grpp          Conversion group.
+ * @param[in]     grpnum        Conversion group number.
  * @param[out]    samples       Samples buffer.
  * @param[in]     depth         Buffer depth.
  * @return                      The operation status.
  *
  * @api
  */
-msg_t adcStartConversion(void *ip, const adc_conversion_group_t *grpp,
+msg_t adcStartConversion(void *ip, unsigned grpnum,
                          adcsample_t *samples, size_t depth) {
   hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
   msg_t msg;
 
   osalSysLock();
-  msg = adcStartConversionI(self, grpp, samples, depth);
+  msg = adcStartConversionI(self, grpnum, samples, depth);
   osalSysUnlock();
 
   return msg;
@@ -347,14 +348,14 @@ void adcStopConversion(void *ip) {
  * @brief       Performs a synchronous ADC conversion.
  *
  * @param[in,out] ip            Pointer to a @p hal_adc_driver_c instance.
- * @param[in]     grpp          Conversion group.
+ * @param[in]     grpnum        Conversion group number.
  * @param[out]    samples       Samples buffer.
  * @param[in]     depth         Buffer depth.
  * @return                      The conversion status.
  *
  * @api
  */
-msg_t adcConvert(void *ip, const adc_conversion_group_t *grpp,
+msg_t adcConvert(void *ip, unsigned grpnum,
                  adcsample_t *samples, size_t depth) {
   hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
   msg_t msg;
@@ -363,7 +364,7 @@ msg_t adcConvert(void *ip, const adc_conversion_group_t *grpp,
 
   osalSysLock();
   osalDbgAssert(self->thread == NULL, "already waiting");
-  msg = adcStartConversionI(self, grpp, samples, depth);
+  msg = adcStartConversionI(self, grpnum, samples, depth);
   if (msg == HAL_RET_SUCCESS) {
     msg = adcSynchronizeStateS(self, HAL_DRV_STATE_COMPLETE, TIME_INFINITE);
   }

@@ -92,6 +92,7 @@ hal_adc_driver_c ADCD4;
 /*===========================================================================*/
 
 static const hal_adc_config_t default_config = {
+  .grps   = NULL,
   .difsel = 0
 };
 
@@ -623,15 +624,26 @@ void adc_lld_set_callback(hal_adc_driver_c *adcp, drv_cb_t cb) {
   (void)cb;
 }
 
-msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp,
-                               const adc_conversion_group_t *grpp,
+msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp, unsigned grpnum,
                                adcsample_t *samples,
                                size_t depth) {
+  const hal_adc_config_t *cfg = (const hal_adc_config_t *)adcp->config;
+  const adc_conversion_group_t *grpp;
   uint32_t cfgr, dmaccr, dmallr;
 #if STM32_ADC_DUAL_MODE
-  uint32_t ccr = grpp->ccr & ~(ADC_CCR_CKMODE_MASK | ADC_CCR_MDMA_MASK);
+  uint32_t ccr;
 #endif
-  const hal_adc_config_t *cfg = (const hal_adc_config_t *)adcp->config;
+
+  if ((cfg == NULL) || (cfg->grps == NULL) ||
+      (grpnum >= cfg->grps->grpsnum)) {
+    return HAL_RET_CONFIG_ERROR;
+  }
+
+  grpp = &cfg->grps->grps[grpnum];
+  adcp->grpp = grpp;
+#if STM32_ADC_DUAL_MODE
+  ccr = grpp->ccr & ~(ADC_CCR_CKMODE_MASK | ADC_CCR_MDMA_MASK);
+#endif
 
   osalDbgAssert(!STM32_ADC_DUAL_MODE || ((grpp->num_channels & 1) == 0),
                 "odd number of channels in dual mode");
