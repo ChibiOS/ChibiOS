@@ -52,6 +52,13 @@
 #endif
 
 /**
+ * @brief   Enables the Virtual I2C support.
+ */
+#if !defined(VIO_CFG_ENABLE_I2C) || defined(__DOXYGEN__)
+#define VIO_CFG_ENABLE_I2C                  FALSE
+#endif
+
+/**
  * @brief   Enables the Virtual GPIO support.
  */
 #if !defined(VIO_CFG_ENABLE_GPIO) || defined(__DOXYGEN__)

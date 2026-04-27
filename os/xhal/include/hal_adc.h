@@ -487,6 +487,20 @@ static inline hal_adc_driver_c *adcObjectInit(hal_adc_driver_c *self) {
  * @{
  */
 /**
+ * @brief       Returns the current conversion circular mode.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_adc_driver_c instance.
+ * @return                      The current circular mode.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline bool adcIsCircularX(void *ip) {
+  hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
+  return self->circular;
+}
+
+/**
  * @brief       Returns the cached ADC event flags.
  *
  * @param[in,out] ip            Pointer to a @p hal_adc_driver_c instance.

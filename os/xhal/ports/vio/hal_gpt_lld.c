@@ -75,21 +75,21 @@ CC_FORCE_INLINE
 static inline uint32_t __gpt_vgpt_start(uint32_t nvgpt, uint32_t mode,
                                         gptcnt_t interval) {
 
-  __syscall3r(101, VIO_CALL(SB_VGPT_START, nvgpt), mode, interval);
+  __syscall3r(229, VIO_CALL(SB_VGPT_START, nvgpt), mode, interval);
   return (uint32_t)r0;
 }
 
 CC_FORCE_INLINE
 static inline uint32_t __gpt_vgpt_stop(uint32_t nvgpt) {
 
-  __syscall1r(101, VIO_CALL(SB_VGPT_STOP, nvgpt));
+  __syscall1r(229, VIO_CALL(SB_VGPT_STOP, nvgpt));
   return (uint32_t)r0;
 }
 
 CC_FORCE_INLINE
 static inline uint32_t __gpt_vgpt_chgi(uint32_t nvgpt, gptcnt_t interval) {
 
-  __syscall2r(101, VIO_CALL(SB_VGPT_CHGI, nvgpt), interval);
+  __syscall2r(229, VIO_CALL(SB_VGPT_CHGI, nvgpt), interval);
   return (uint32_t)r0;
 }
 

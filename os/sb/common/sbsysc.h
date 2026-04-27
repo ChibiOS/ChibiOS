@@ -48,6 +48,7 @@
 #define SB_FASTC_VIO_VETH       99
 #define SB_FASTC_VIO_VADC       100
 #define SB_FASTC_VIO_VGPT       101
+#define SB_FASTC_VIO_VI2C       102
 #define SB_FASTC_VRQ_GCSTS      119
 #define SB_FASTC_VRQ_SETWT      120
 #define SB_FASTC_VRQ_CLRWT      121
@@ -79,6 +80,7 @@
 #define SB_SYSC_VIO_VETH        227
 #define SB_SYSC_VIO_VADC        228
 #define SB_SYSC_VIO_VGPT        229
+#define SB_SYSC_VIO_VI2C        230
 #define SB_SYSC_VRQ_SET_ALARM   253
 #define SB_SYSC_VRQ_RESET_ALARM 254
 #define SB_SYSC_VRQ_WAIT        255
@@ -113,14 +115,27 @@
 #define SB_VGPT_INIT            0
 #define SB_VGPT_DEINIT          1
 #define SB_VGPT_PDELAY          2
-#define SB_VGPT_START           0
-#define SB_VGPT_STOP            1
-#define SB_VGPT_CHGI            2
-#define SB_VGPT_GETI            3
-#define SB_VGPT_GETC            4
-#define SB_VGPT_GETFREQ         5
+#define SB_VGPT_START           3
+#define SB_VGPT_STOP            4
+#define SB_VGPT_CHGI            5
+#define SB_VGPT_GETI            0
+#define SB_VGPT_GETC            1
+#define SB_VGPT_GETFREQ         2
 #define SB_VGPT_CONTINUOUS      0
 #define SB_VGPT_ONESHOT         1
+/** @} */
+
+/**
+ * @name    Virtual I2C syscall sub-codes
+ * @{
+ */
+#define SB_VI2C_INIT            0
+#define SB_VI2C_DEINIT          1
+#define SB_VI2C_TX              2
+#define SB_VI2C_RX              3
+#define SB_VI2C_STOP            4
+#define SB_VI2C_GCERR           0
+#define SB_VI2C_SELCFG          1
 /** @} */
 
 /**
@@ -214,6 +229,17 @@
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   I2C transfer descriptor shared by the sandbox and host.
+ */
+typedef struct sb_vi2c_transfer {
+  uint32_t                  addr;
+  const void                *txbuf;
+  uint32_t                  txbytes;
+  void                      *rxbuf;
+  uint32_t                  rxbytes;
+} sb_vi2c_transfer_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */

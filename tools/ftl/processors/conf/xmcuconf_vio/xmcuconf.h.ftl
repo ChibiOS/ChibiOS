@@ -45,6 +45,7 @@
 #define VIO_VSPI2_IRQ                       ${doc.VIO_VSPI2_IRQ!"7"}
 #define VIO_VADC1_IRQ                       ${doc.VIO_VADC1_IRQ!"12"}
 #define VIO_VGPT1_IRQ                       ${doc.VIO_VGPT1_IRQ!"13"}
+#define VIO_VI2C1_IRQ                       ${doc.VIO_VI2C1_IRQ!"14"}
 
 /*
  * ETH driver system settings.
@@ -61,6 +62,11 @@
  * GPT driver system settings.
  */
 #define VIO_GPT_USE_VGPT1                   ${doc.VIO_GPT_USE_VGPT1!"FALSE"}
+
+/*
+ * I2C driver system settings.
+ */
+#define VIO_I2C_USE_VI2C1                   ${doc.VIO_I2C_USE_VI2C1!"FALSE"}
 
 /*
  * SIO driver system settings.

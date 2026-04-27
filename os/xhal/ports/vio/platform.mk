@@ -36,6 +36,9 @@ endif
 ifneq ($(findstring HAL_USE_GPT TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/xhal/ports/vio/hal_gpt_lld.c
 endif
+ifneq ($(findstring HAL_USE_I2C TRUE,$(HALCONF)),)
+PLATFORMSRC += $(CHIBIOS)/os/xhal/ports/vio/hal_i2c_lld.c
+endif
 
 # Shared variables
 ALLCSRC += $(PLATFORMSRC)

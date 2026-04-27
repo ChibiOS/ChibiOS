@@ -211,7 +211,7 @@ void sb_fastc_vio_adc(sb_class_t *sbp, struct port_extctx *ectxp) {
     switch (sub) {
     case SB_VADC_ISCIRC:
       {
-        ectxp->r0 = (uint32_t)unitp->adcp->circular;
+        ectxp->r0 = (uint32_t)adcIsCircularX(unitp->adcp);
         break;
       }
     case SB_VADC_GCERR:

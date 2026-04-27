@@ -34,6 +34,7 @@
 #include "sbvio_eth.h"
 #include "sbvio_gpt.h"
 #include "sbvio_gpio.h"
+#include "sbvio_i2c.h"
 #include "sbvio_spi.h"
 #include "sbvio_uart.h"
 
@@ -64,6 +65,10 @@
 
 #if !defined(VIO_CFG_ENABLE_GPT) || defined(__DOXYGEN__)
 #error "VIO_CFG_ENABLE_GPT not defined in vioconf.h"
+#endif
+
+#if !defined(VIO_CFG_ENABLE_I2C) || defined(__DOXYGEN__)
+#error "VIO_CFG_ENABLE_I2C not defined in vioconf.h"
 #endif
 
 #if !defined(VIO_CFG_ENABLE_SPI) || defined(__DOXYGEN__)
@@ -105,6 +110,16 @@ typedef struct vio_conf {
    * @brief   Virtual GPIO units.
    */
   const vio_gpio_units_t        *gpios;
+#endif
+#if (VIO_CFG_ENABLE_I2C == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Virtual I2C units.
+   */
+  const vio_i2c_units_t         *i2cs;
+  /**
+   * @brief   Virtual I2C configurations.
+   */
+  const i2c_configurations_t    *i2cconfs;
 #endif
 #if (VIO_CFG_ENABLE_UART == TRUE) || defined(__DOXYGEN__)
   /**
