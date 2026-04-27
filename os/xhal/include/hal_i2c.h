@@ -440,10 +440,11 @@ static inline i2cflags_t i2cGetAndClearErrorsX(void *ip) {
 CC_FORCE_INLINE
 static inline void __i2c_wakeup_isr(void *ip, msg_t msg) {
   hal_i2c_driver_c *self = (hal_i2c_driver_c *)ip;
+
   osalSysLockFromISR();
   osalThreadResumeI(&self->sync_transfer, msg);
-  __cbdrv_invoke_cb(self);
   osalSysUnlockFromISR();
+  __cbdrv_invoke_cb(self);
 }
 
 #else
@@ -453,9 +454,7 @@ static inline void __i2c_wakeup_isr(void *ip, msg_t msg) {
   hal_i2c_driver_c *self = (hal_i2c_driver_c *)ip;
   (void)msg;
 
-  osalSysLockFromISR();
   __cbdrv_invoke_cb(self);
-  osalSysUnlockFromISR();
 }
 #endif /* I2C_USE_SYNCHRONIZATION == TRUE */
 

@@ -227,8 +227,8 @@
     (canp)->events          |= CAN_EVENT_TX;                                \
     osalSysLockFromISR();                                                   \
     osalThreadDequeueAllI(&(canp)->txqueue, MSG_OK);                        \
-    __cbdrv_invoke_cb(canp);                                                \
     osalSysUnlockFromISR();                                                 \
+    __cbdrv_invoke_cb(canp);                                                \
   } while (false)
 
 /**
@@ -245,8 +245,8 @@
     (canp)->events          |= CAN_EVENT_RX;                                \
     osalSysLockFromISR();                                                   \
     osalThreadDequeueAllI(&(canp)->rxqueue, MSG_OK);                        \
-    __cbdrv_invoke_cb(canp);                                                \
     osalSysUnlockFromISR();                                                 \
+    __cbdrv_invoke_cb(canp);                                                \
   } while (false)
 
 #else
@@ -264,9 +264,7 @@
     (canp)->tx_mailbox_mask |= (canmbxmask_t)((flags) & 0xFFFFU);           \
     (canp)->tx_error_mask   |= (canmbxmask_t)(((flags) >> 16U) & 0xFFFFU);  \
     (canp)->events          |= CAN_EVENT_TX;                                \
-    osalSysLockFromISR();                                                   \
     __cbdrv_invoke_cb(canp);                                                \
-    osalSysUnlockFromISR();                                                 \
   } while (false)
 
 /**
@@ -281,9 +279,7 @@
   do {                                                                      \
     (canp)->rx_mailbox_mask |= (canmbxmask_t)(flags);                       \
     (canp)->events          |= CAN_EVENT_RX;                                \
-    osalSysLockFromISR();                                                   \
     __cbdrv_invoke_cb(canp);                                                \
-    osalSysUnlockFromISR();                                                 \
   } while (false)
 #endif /* CAN_USE_SYNCHRONIZATION == TRUE */
 
@@ -298,9 +294,7 @@
   do {                                                                      \
     (canp)->state  = HAL_DRV_STATE_READY;                                   \
     (canp)->events |= CAN_EVENT_WAKEUP;                                     \
-    osalSysLockFromISR();                                                   \
     __cbdrv_invoke_cb(canp);                                                \
-    osalSysUnlockFromISR();                                                 \
   } while (false)
 
 /**
@@ -315,9 +309,7 @@
   do {                                                                      \
     (canp)->errors |= (canerror_t)(flags);                                  \
     (canp)->events |= CAN_EVENT_ERROR;                                      \
-    osalSysLockFromISR();                                                   \
     __cbdrv_invoke_cb(canp);                                                \
-    osalSysUnlockFromISR();                                                 \
   } while (false)
 /** @} */
 

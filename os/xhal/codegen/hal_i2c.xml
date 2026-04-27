@@ -391,8 +391,8 @@ return errors;]]></implementation>
                 <implementation><![CDATA[
 osalSysLockFromISR();
 osalThreadResumeI(&self->sync_transfer, msg);
-__cbdrv_invoke_cb(self);
-osalSysUnlockFromISR();]]></implementation>
+osalSysUnlockFromISR();
+__cbdrv_invoke_cb(self);]]></implementation>
               </method>
               <elseif />
               <method name="__i2c_wakeup_isr" ctype="void">
@@ -400,9 +400,7 @@ osalSysUnlockFromISR();]]></implementation>
                 <implementation><![CDATA[
 (void)msg;
 
-osalSysLockFromISR();
-__cbdrv_invoke_cb(self);
-osalSysUnlockFromISR();]]></implementation>
+__cbdrv_invoke_cb(self);]]></implementation>
               </method>
             </condition>
             <method name="__i2c_complete_isr" ctype="void">

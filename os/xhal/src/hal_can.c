@@ -386,6 +386,7 @@ msg_t canReceiveTimeout(void *ip, canmbx_t mailbox, CANRxFrame *crfp,
  */
 void canSleep(void *ip) {
   hal_can_driver_c *self = (hal_can_driver_c *)ip;
+
   osalDbgCheck(self != NULL);
 
   osalSysLock();
@@ -396,7 +397,6 @@ void canSleep(void *ip) {
     can_lld_sleep(self);
     self->state = CAN_SLEEP;
     self->events |= CAN_EVENT_SLEEP;
-    __cbdrv_invoke_cb(self);
   }
   osalSysUnlock();
 }
@@ -410,6 +410,7 @@ void canSleep(void *ip) {
  */
 void canWakeup(void *ip) {
   hal_can_driver_c *self = (hal_can_driver_c *)ip;
+
   osalDbgCheck(self != NULL);
 
   osalSysLock();
@@ -420,7 +421,6 @@ void canWakeup(void *ip) {
     can_lld_wakeup(self);
     self->state = HAL_DRV_STATE_READY;
     self->events |= CAN_EVENT_WAKEUP;
-    __cbdrv_invoke_cb(self);
   }
   osalSysUnlock();
 }

@@ -15,6 +15,7 @@
 - General rule: line endings must be LF, except for externally provided files (non-ChibiOS copyright).
 - In C functions, keep automatic variable declarations grouped at the start of the block and separate the declaration block from executable statements with an empty line.
 - In ChibiOS, API suffix semantics are critical and must drive design decisions: no suffix = thread context, `X` = any context, `S` = system-locked context, `I` = interrupt/system-locked context. Semantic compatibility comes before implementation convenience; never place calls in fastcall/ISR paths unless their suffix contract explicitly allows it.
+- Driver callbacks must follow their context contract. Generic XHAL driver callbacks are invoked from ISR context and out of system locks; do not call them from thread-context APIs, and do not invoke them while holding `osalSysLock*()`/`chSysLock*()`. If an ISR helper must wake waiters, lock only around the `I`-class wakeup/VRQ operations, unlock, then invoke the callback.
 - While debugging new code, prefer enabling assertions, parameter checks, and the state checker in `chconf.h`. In ChibiOS, contract violations often halt early with those options enabled, which is desirable for catching context and state misuse quickly.
 - STM32 shared IRQ handlers follow the `.inc` pattern used by SPI/USART/RTC: platform `stm32_isr.c` includes the right `.inc`, vector names and numbers belong in `stm32_isr.h`, and the corresponding `driver.mk` must export the include directory that contains the shared `.inc` files.
 - For STM32 vectors shared by multiple peripherals, choose one peripheral as the primary owner and treat the others as secondaries. The shared `.inc` filename and the IRQ priority macro must name all participating peripherals, while the primary peripheral defines the overall handler structure and inclusion point.
@@ -31,6 +32,9 @@
 - XHAL synchronization feature switches use the `XXX_USE_SYNCHRONIZATION` naming convention. Do not introduce new `XXX_USE_WAIT` settings for driver synchronization; keep `XXX_USE_WAIT` only for legacy or non-driver-event semantics such as PAL wait support.
 - Some waits are intentionally not generic driver synchronization points. Examples include SIO directional waits (`RX`, `RX idle`, `TX space`, `TX end`), USB endpoint-zero setup waits, ETH/CAN descriptor or mailbox waits, ICU capture waits, and flash erase polling.
 - XHAL generated configuration migration should be done through `tools/updater/update_xhalconf.sh` after updating `tools/ftl/processors/conf/xhalconf/xhalconf.h.ftl`; do not manually edit only local `xhalconf.h` copies.
+- XHAL generated driver sources and headers are derived from XML under `os/xhal/codegen`; when changing generated behavior, update the XML description and the checked-in generated file together.
+- SB VIO host code must use public XHAL APIs and must not call XHAL low-level driver entry points directly. Fastcall handlers are restricted to `X`-class APIs and lock-free state queries; operations requiring thread context, blocking behavior, or non-`X` APIs belong in the syscall path.
+- SB VIO sandbox LLDs should avoid requiring sandbox-visible hardware configuration structures. Prefer opaque configuration indices and VIO query operations for runtime state needed by sandbox code.
 
 ## Build & Test Hygiene
 - Clean projects after test builds unless otherwise specified.

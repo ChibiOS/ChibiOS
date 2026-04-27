@@ -48,9 +48,12 @@ static void vi2c_cb(void *ip) {
     flags = 1U << HAL_DRV_STATE_COMPLETE;
   }
 
-  /* I2C common ISR code invokes the callback from ISR-locked context. */
+  chSysLockFromISR();
+
   sbVRQSetFlagsI(unitp->vrqsb, unitp->vrqn, flags);
   sbVRQTriggerI(unitp->vrqsb, unitp->vrqn);
+
+  chSysUnlockFromISR();
 }
 
 static bool vi2c_get_transfer(sb_class_t *sbp,

@@ -113,8 +113,8 @@ do {
   (canp)->events          |= CAN_EVENT_TX;
   osalSysLockFromISR();
   osalThreadDequeueAllI(&(canp)->txqueue, MSG_OK);
-  __cbdrv_invoke_cb(canp);
   osalSysUnlockFromISR();
+  __cbdrv_invoke_cb(canp);
 } while (false)]]></implementation>
           </macro>
           <macro name="_can_rx_full_isr">
@@ -128,8 +128,8 @@ do {
   (canp)->events          |= CAN_EVENT_RX;
   osalSysLockFromISR();
   osalThreadDequeueAllI(&(canp)->rxqueue, MSG_OK);
-  __cbdrv_invoke_cb(canp);
   osalSysUnlockFromISR();
+  __cbdrv_invoke_cb(canp);
 } while (false)]]></implementation>
           </macro>
           <elseif />
@@ -143,9 +143,7 @@ do {
   (canp)->tx_mailbox_mask |= (canmbxmask_t)((flags) & 0xFFFFU);
   (canp)->tx_error_mask   |= (canmbxmask_t)(((flags) >> 16U) & 0xFFFFU);
   (canp)->events          |= CAN_EVENT_TX;
-  osalSysLockFromISR();
   __cbdrv_invoke_cb(canp);
-  osalSysUnlockFromISR();
 } while (false)]]></implementation>
           </macro>
           <macro name="_can_rx_full_isr">
@@ -157,9 +155,7 @@ do {
 do {
   (canp)->rx_mailbox_mask |= (canmbxmask_t)(flags);
   (canp)->events          |= CAN_EVENT_RX;
-  osalSysLockFromISR();
   __cbdrv_invoke_cb(canp);
-  osalSysUnlockFromISR();
 } while (false)]]></implementation>
           </macro>
         </condition>
@@ -171,9 +167,7 @@ do {
 do {
   (canp)->state  = HAL_DRV_STATE_READY;
   (canp)->events |= CAN_EVENT_WAKEUP;
-  osalSysLockFromISR();
   __cbdrv_invoke_cb(canp);
-  osalSysUnlockFromISR();
 } while (false)]]></implementation>
         </macro>
         <macro name="_can_error_isr">
@@ -185,9 +179,7 @@ do {
 do {
   (canp)->errors |= (canerror_t)(flags);
   (canp)->events |= CAN_EVENT_ERROR;
-  osalSysLockFromISR();
   __cbdrv_invoke_cb(canp);
-  osalSysUnlockFromISR();
 } while (false)]]></implementation>
         </macro>
       </group>
@@ -474,7 +466,6 @@ if (self->state == HAL_DRV_STATE_READY) {
   can_lld_sleep(self);
   self->state = CAN_SLEEP;
   self->events |= CAN_EVENT_SLEEP;
-  __cbdrv_invoke_cb(self);
 }
 osalSysUnlock();]]></implementation>
               </method>
@@ -492,7 +483,6 @@ if (self->state == CAN_SLEEP) {
   can_lld_wakeup(self);
   self->state = HAL_DRV_STATE_READY;
   self->events |= CAN_EVENT_WAKEUP;
-  __cbdrv_invoke_cb(self);
 }
 osalSysUnlock();]]></implementation>
               </method>
