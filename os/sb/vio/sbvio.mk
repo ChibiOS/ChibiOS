@@ -2,6 +2,7 @@
 SBVHALSRC = $(CHIBIOS)/os/sb/vio/sbvio.c \
             $(CHIBIOS)/os/sb/vio/sbvio_adc.c \
             $(CHIBIOS)/os/sb/vio/sbvio_eth.c \
+            $(CHIBIOS)/os/sb/vio/sbvio_gpt.c \
             $(CHIBIOS)/os/sb/vio/sbvio_gpio.c \
             $(CHIBIOS)/os/sb/vio/sbvio_spi.c \
             $(CHIBIOS)/os/sb/vio/sbvio_uart.c

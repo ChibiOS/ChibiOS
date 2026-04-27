@@ -32,6 +32,7 @@
 #include "vioconf.h"
 #include "sbvio_adc.h"
 #include "sbvio_eth.h"
+#include "sbvio_gpt.h"
 #include "sbvio_gpio.h"
 #include "sbvio_spi.h"
 #include "sbvio_uart.h"
@@ -61,6 +62,10 @@
 #error "VIO_CFG_ENABLE_ETH not defined in vioconf.h"
 #endif
 
+#if !defined(VIO_CFG_ENABLE_GPT) || defined(__DOXYGEN__)
+#error "VIO_CFG_ENABLE_GPT not defined in vioconf.h"
+#endif
+
 #if !defined(VIO_CFG_ENABLE_SPI) || defined(__DOXYGEN__)
 #error "VIO_CFG_ENABLE_SPI not defined in vioconf.h"
 #endif
@@ -88,6 +93,12 @@ typedef struct vio_conf {
    * @brief   Virtual ETH units.
    */
   const vio_eth_units_t         *eths;
+#endif
+#if (VIO_CFG_ENABLE_GPT == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Virtual GPT units.
+   */
+  const vio_gpt_units_t         *gpts;
 #endif
 #if (VIO_CFG_ENABLE_GPIO == TRUE) || defined(__DOXYGEN__)
   /**

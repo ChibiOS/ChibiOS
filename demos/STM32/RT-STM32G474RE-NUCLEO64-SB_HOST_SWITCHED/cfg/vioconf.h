@@ -45,6 +45,13 @@
 #endif
 
 /**
+ * @brief   Enables the Virtual GPT support.
+ */
+#if !defined(VIO_CFG_ENABLE_GPT) || defined(__DOXYGEN__)
+#define VIO_CFG_ENABLE_GPT                  FALSE
+#endif
+
+/**
  * @brief   Enables the Virtual GPIO support.
  */
 #if !defined(VIO_CFG_ENABLE_GPIO) || defined(__DOXYGEN__)

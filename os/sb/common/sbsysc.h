@@ -47,6 +47,7 @@
 #define SB_FASTC_VIO_VSPI       98
 #define SB_FASTC_VIO_VETH       99
 #define SB_FASTC_VIO_VADC       100
+#define SB_FASTC_VIO_VGPT       101
 #define SB_FASTC_VRQ_GCSTS      119
 #define SB_FASTC_VRQ_SETWT      120
 #define SB_FASTC_VRQ_CLRWT      121
@@ -77,6 +78,7 @@
 #define SB_SYSC_VIO_VSPI        226
 #define SB_SYSC_VIO_VETH        227
 #define SB_SYSC_VIO_VADC        228
+#define SB_SYSC_VIO_VGPT        229
 #define SB_SYSC_VRQ_SET_ALARM   253
 #define SB_SYSC_VRQ_RESET_ALARM 254
 #define SB_SYSC_VRQ_WAIT        255
@@ -102,6 +104,23 @@
 #define SB_POSIX_MKDIR          14
 #define SB_POSIX_RMDIR          15
 #define SB_POSIX_STAT           16
+/** @} */
+
+/**
+ * @name    Virtual GPT syscall sub-codes
+ * @{
+ */
+#define SB_VGPT_INIT            0
+#define SB_VGPT_DEINIT          1
+#define SB_VGPT_PDELAY          2
+#define SB_VGPT_START           0
+#define SB_VGPT_STOP            1
+#define SB_VGPT_CHGI            2
+#define SB_VGPT_GETI            3
+#define SB_VGPT_GETC            4
+#define SB_VGPT_GETFREQ         5
+#define SB_VGPT_CONTINUOUS      0
+#define SB_VGPT_ONESHOT         1
 /** @} */
 
 /**

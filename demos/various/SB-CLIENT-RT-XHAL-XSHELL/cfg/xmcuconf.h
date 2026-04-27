@@ -34,6 +34,7 @@
 #define VIO_VSPI1_IRQ                       6
 #define VIO_VSPI2_IRQ                       7
 #define VIO_VADC1_IRQ                       12
+#define VIO_VGPT1_IRQ                       13
 
 /*
  * ETH driver system settings.
@@ -45,6 +46,11 @@
  * ADC driver system settings.
  */
 #define VIO_ADC_USE_VADC1                   FALSE
+
+/*
+ * GPT driver system settings.
+ */
+#define VIO_GPT_USE_VGPT1                   FALSE
 
 /*
  * SIO driver system settings.

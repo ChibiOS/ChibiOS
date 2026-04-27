@@ -1,0 +1,238 @@
+/*
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
+
+    This file is part of ChibiOS.
+
+    ChibiOS is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation version 3 of the License.
+
+    ChibiOS is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @file    sb/vhal/sbvio_gpt.c
+ * @brief   ARM SandBox host Virtual GPT code.
+ *
+ * @addtogroup ARM_SANDBOX_HOST_VIO_GPT
+ * @{
+ */
+
+#include "sb.h"
+
+#if (VIO_CFG_ENABLE_GPT == TRUE) || defined(__DOXYGEN__)
+
+/*===========================================================================*/
+/* Module local functions.                                                   */
+/*===========================================================================*/
+
+static void vgpt_cb(void *ip) {
+  hal_gpt_driver_c *gptp = (hal_gpt_driver_c *)ip;
+  const vio_gpt_unit_t *unitp = (const vio_gpt_unit_t *)drvGetArgumentX(gptp);
+
+  if (unitp == NULL) {
+    return;
+  }
+
+  chSysLockFromISR();
+
+  sbVRQSetFlagsI(unitp->vrqsb, unitp->vrqn, 1U << drvGetStateX(gptp));
+  sbVRQTriggerI(unitp->vrqsb, unitp->vrqn);
+
+  chSysUnlockFromISR();
+}
+
+static gptfreq_t vgpt_get_frequency(const vio_gpt_unit_t *unitp) {
+
+  if (unitp->config != NULL) {
+    return unitp->config->frequency;
+  }
+
+  return (gptfreq_t)GPT_DEFAULT_FREQUENCY;
+}
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
+
+void sb_sysc_vio_gpt(sb_class_t *sbp, struct port_extctx *ectxp) {
+  uint32_t sub  = VIO_CALL_SUBCODE(ectxp->r0);
+  uint32_t unit = VIO_CALL_UNIT(ectxp->r0);
+  ectxp->r0 = (uint32_t)CH_RET_INNER_ERROR;
+
+  /* VIO not associated.*/
+  if ((sbp->vioconf == NULL) || (sbp->vioconf->gpts == NULL)) {
+    ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
+    return;
+  }
+
+  if (unit >= sbp->vioconf->gpts->n) {
+    ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
+    return;
+  }
+
+  /* API processing.*/
+  {
+    const vio_gpt_unit_t *unitp = &sbp->vioconf->gpts->units[unit];
+
+    switch (sub) {
+    case SB_VGPT_INIT:
+      {
+        msg_t msg;
+
+        drvSetArgumentX(unitp->gptp, (void *)unitp);
+
+        msg = drvStart(unitp->gptp, unitp->config);
+        if (msg == HAL_RET_SUCCESS) {
+          drvSetCallbackX(unitp->gptp, vgpt_cb);
+        }
+
+        ectxp->r0 = (uint32_t)msg;
+        break;
+      }
+    case SB_VGPT_DEINIT:
+      {
+        drvSetCallbackX(unitp->gptp, NULL);
+        drvStop(unitp->gptp);
+        drvSetArgumentX(unitp->gptp, NULL);
+
+        ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+        break;
+      }
+    case SB_VGPT_PDELAY:
+      {
+        gptcnt_t interval = (gptcnt_t)ectxp->r1;
+
+        if (interval == (gptcnt_t)0) {
+          ectxp->r0 = (uint32_t)CH_RET_EINVAL;
+          break;
+        }
+
+        if (drvGetStateX(unitp->gptp) != HAL_DRV_STATE_READY) {
+          ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
+          break;
+        }
+
+        gptPolledDelay(unitp->gptp, interval);
+        ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+        break;
+      }
+    default:
+      ectxp->r0 = (uint32_t)CH_RET_ENOSYS;
+      break;
+    }
+  }
+}
+
+void sb_fastc_vio_gpt(sb_class_t *sbp, struct port_extctx *ectxp) {
+  uint32_t sub  = VIO_CALL_SUBCODE(ectxp->r0);
+  uint32_t unit = VIO_CALL_UNIT(ectxp->r0);
+
+  /* VIO not associated.*/
+  if ((sbp->vioconf == NULL) || (sbp->vioconf->gpts == NULL)) {
+    ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
+    return;
+  }
+
+  if (unit >= sbp->vioconf->gpts->n) {
+    ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
+    return;
+  }
+
+  /* API processing.*/
+  {
+    const vio_gpt_unit_t *unitp = &sbp->vioconf->gpts->units[unit];
+
+    switch (sub) {
+    case SB_VGPT_START:
+      {
+        uint32_t mode = ectxp->r1;
+        gptcnt_t interval = (gptcnt_t)ectxp->r2;
+
+        if (interval == (gptcnt_t)0) {
+          ectxp->r0 = (uint32_t)CH_RET_EINVAL;
+          break;
+        }
+
+        if (drvGetStateX(unitp->gptp) != HAL_DRV_STATE_READY) {
+          ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
+          break;
+        }
+
+        if (mode == SB_VGPT_CONTINUOUS) {
+          unitp->gptp->state = GPT_CONTINUOUS;
+        }
+        else if (mode == SB_VGPT_ONESHOT) {
+          unitp->gptp->state = GPT_ONESHOT;
+        }
+        else {
+          ectxp->r0 = (uint32_t)CH_RET_EINVAL;
+          break;
+        }
+
+        gpt_lld_start_timer(unitp->gptp, interval);
+        ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+        break;
+      }
+    case SB_VGPT_STOP:
+      {
+        if (drvGetStateX(unitp->gptp) == HAL_DRV_STATE_STOP) {
+          ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
+          break;
+        }
+
+        unitp->gptp->state = HAL_DRV_STATE_READY;
+        gpt_lld_stop_timer(unitp->gptp);
+
+        ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+        break;
+      }
+    case SB_VGPT_CHGI:
+      {
+        gptcnt_t interval = (gptcnt_t)ectxp->r1;
+
+        if (interval == (gptcnt_t)0) {
+          ectxp->r0 = (uint32_t)CH_RET_EINVAL;
+          break;
+        }
+
+        if (drvGetStateX(unitp->gptp) != GPT_CONTINUOUS) {
+          ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
+          break;
+        }
+
+        gpt_lld_change_interval(unitp->gptp, interval);
+        ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+        break;
+      }
+    case SB_VGPT_GETI:
+      {
+        ectxp->r0 = (uint32_t)gptGetIntervalX(unitp->gptp);
+        break;
+      }
+    case SB_VGPT_GETC:
+      {
+        ectxp->r0 = (uint32_t)gptGetCounterX(unitp->gptp);
+        break;
+      }
+    case SB_VGPT_GETFREQ:
+      {
+        ectxp->r0 = (uint32_t)vgpt_get_frequency(unitp);
+        break;
+      }
+    default:
+      ectxp->r0 = (uint32_t)CH_RET_ENOSYS;
+      break;
+    }
+  }
+}
+
+#endif /* VIO_CFG_ENABLE_GPT == TRUE */
+
+/** @} */
