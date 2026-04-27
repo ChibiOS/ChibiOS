@@ -115,7 +115,7 @@ do {
           <notapi />
           <implementation><![CDATA[
 do {
-  if ((adcp)->grpp->circular) {
+  if ((adcp)->circular) {
     (adcp)->events |= ADC_EVENT_FULL;
     __cbdrv_invoke_full_cb(adcp);
     _adc_wakeup_isr(adcp, HAL_DRV_STATE_FULL);
@@ -127,6 +127,7 @@ do {
                                       HAL_DRV_STATE_COMPLETE,
                                       HAL_DRV_STATE_READY);
     (adcp)->grpp = NULL;
+    (adcp)->circular = false;
     _adc_wakeup_isr(adcp, HAL_DRV_STATE_COMPLETE);
   }
 } while (false)]]></implementation>
@@ -144,6 +145,7 @@ do {
                                     HAL_DRV_STATE_ERROR,
                                     HAL_DRV_STATE_READY);
   (adcp)->grpp = NULL;
+  (adcp)->circular = false;
   _adc_error_wakeup_isr(adcp);
 } while (false)]]></implementation>
         </macro>
@@ -231,6 +233,9 @@ ADC_CONFIG_EXT_FIELDS]]></verbatim>
           <field name="grpp" ctype="const adc_conversion_group_t *">
             <brief>Current conversion group pointer or @p NULL.</brief>
           </field>
+          <field name="circular" ctype="bool">
+            <brief>Current conversion circular mode.</brief>
+          </field>
           <field name="events" ctype="volatile adceventflags_t">
             <brief>Cached ADC event flags.</brief>
           </field>
@@ -259,6 +264,7 @@ adc_lld_driver_fields;]]></verbatim>
 self->samples = NULL;
 self->depth   = 0U;
 self->grpp    = NULL;
+self->circular = false;
 self->events  = 0U;
 self->errors  = 0U;
 #if ADC_USE_SYNCHRONIZATION == TRUE
@@ -297,6 +303,7 @@ osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
 self->samples = samples;
 self->depth   = depth;
 self->grpp    = NULL;
+self->circular = false;
 self->events  = 0U;
 self->errors  = 0U;
 self->state   = HAL_DRV_STATE_ACTIVE;
@@ -305,10 +312,8 @@ if (msg != HAL_RET_SUCCESS) {
   self->samples = NULL;
   self->depth   = 0U;
   self->grpp    = NULL;
+  self->circular = false;
   self->state   = HAL_DRV_STATE_READY;
-}
-else {
-  osalDbgAssert(self->grpp != NULL, "no conversion group");
 }
 
 return msg;]]></implementation>
@@ -354,6 +359,7 @@ if (self->state != HAL_DRV_STATE_READY) {
   self->samples = NULL;
   self->depth   = 0U;
   self->grpp    = NULL;
+  self->circular = false;
   self->state   = HAL_DRV_STATE_READY;
   _adc_reset_i(self);
 }]]></implementation>
@@ -377,6 +383,7 @@ if (self->state != HAL_DRV_STATE_READY) {
   self->samples = NULL;
   self->depth   = 0U;
   self->grpp    = NULL;
+  self->circular = false;
   self->state   = HAL_DRV_STATE_READY;
   _adc_reset_s(self);
 }
@@ -540,6 +547,7 @@ if (self->config == NULL) {
 self->samples = NULL;
 self->depth   = 0U;
 self->grpp    = NULL;
+self->circular = false;
 self->events  = 0U;
 self->errors  = 0U;
 
@@ -556,6 +564,7 @@ adc_lld_stop(self);
 self->samples = NULL;
 self->depth   = 0U;
 self->grpp    = NULL;
+self->circular = false;
 self->events  = 0U;
 self->errors  = 0U;]]></implementation>
             </method>

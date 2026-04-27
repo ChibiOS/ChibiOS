@@ -185,7 +185,7 @@
  */
 #define _adc_isr_full_code(adcp)                                            \
   do {                                                                      \
-    if ((adcp)->grpp->circular) {                                           \
+    if ((adcp)->circular) {                                                 \
       (adcp)->events |= ADC_EVENT_FULL;                                     \
       __cbdrv_invoke_full_cb(adcp);                                         \
       _adc_wakeup_isr(adcp, HAL_DRV_STATE_FULL);                            \
@@ -197,6 +197,7 @@
                                         HAL_DRV_STATE_COMPLETE,             \
                                         HAL_DRV_STATE_READY);               \
       (adcp)->grpp = NULL;                                                  \
+      (adcp)->circular = false;                                             \
       _adc_wakeup_isr(adcp, HAL_DRV_STATE_COMPLETE);                        \
     }                                                                       \
   } while (false)
@@ -217,6 +218,7 @@
                                       HAL_DRV_STATE_ERROR,                  \
                                       HAL_DRV_STATE_READY);                 \
     (adcp)->grpp = NULL;                                                    \
+    (adcp)->circular = false;                                               \
     _adc_error_wakeup_isr(adcp);                                            \
   } while (false)
 /** @} */
@@ -390,6 +392,10 @@ struct hal_adc_driver {
    * @brief       Current conversion group pointer or @p NULL.
    */
   const adc_conversion_group_t * grpp;
+  /**
+   * @brief       Current conversion circular mode.
+   */
+  bool                      circular;
   /**
    * @brief       Cached ADC event flags.
    */

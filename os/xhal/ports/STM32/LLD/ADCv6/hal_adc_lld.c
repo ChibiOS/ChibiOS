@@ -641,6 +641,7 @@ msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp, unsigned grpnum,
 
   grpp = &cfg->grps->grps[grpnum];
   adcp->grpp = grpp;
+  adcp->circular = grpp->circular;
 #if STM32_ADC_DUAL_MODE
   ccr = grpp->ccr & ~(ADC_CCR_CKMODE_MASK | ADC_CCR_MDMA_MASK);
 #endif

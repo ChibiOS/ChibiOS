@@ -91,6 +91,7 @@ void *__adc_objinit_impl(void *ip, const void *vmt) {
   self->samples = NULL;
   self->depth   = 0U;
   self->grpp    = NULL;
+  self->circular = false;
   self->events  = 0U;
   self->errors  = 0U;
 #if ADC_USE_SYNCHRONIZATION == TRUE
@@ -137,6 +138,7 @@ msg_t __adc_start_impl(void *ip, const void *config) {
   self->samples = NULL;
   self->depth   = 0U;
   self->grpp    = NULL;
+  self->circular = false;
   self->events  = 0U;
   self->errors  = 0U;
 
@@ -159,6 +161,7 @@ void __adc_stop_impl(void *ip) {
   self->samples = NULL;
   self->depth   = 0U;
   self->grpp    = NULL;
+  self->circular = false;
   self->events  = 0U;
   self->errors  = 0U;
 }
@@ -244,6 +247,7 @@ msg_t adcStartConversionI(void *ip, unsigned grpnum,
   self->samples = samples;
   self->depth   = depth;
   self->grpp    = NULL;
+  self->circular = false;
   self->events  = 0U;
   self->errors  = 0U;
   self->state   = HAL_DRV_STATE_ACTIVE;
@@ -252,10 +256,8 @@ msg_t adcStartConversionI(void *ip, unsigned grpnum,
     self->samples = NULL;
     self->depth   = 0U;
     self->grpp    = NULL;
+    self->circular = false;
     self->state   = HAL_DRV_STATE_READY;
-  }
-  else {
-    osalDbgAssert(self->grpp != NULL, "no conversion group");
   }
 
   return msg;
@@ -308,6 +310,7 @@ void adcStopConversionI(void *ip) {
     self->samples = NULL;
     self->depth   = 0U;
     self->grpp    = NULL;
+    self->circular = false;
     self->state   = HAL_DRV_STATE_READY;
     _adc_reset_i(self);
   }
@@ -337,6 +340,7 @@ void adcStopConversion(void *ip) {
     self->samples = NULL;
     self->depth   = 0U;
     self->grpp    = NULL;
+    self->circular = false;
     self->state   = HAL_DRV_STATE_READY;
     _adc_reset_s(self);
   }
