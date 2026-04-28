@@ -24,6 +24,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "sb.h"
 
 #if (VIO_CFG_ENABLE_UART == TRUE) || defined(__DOXYGEN__)

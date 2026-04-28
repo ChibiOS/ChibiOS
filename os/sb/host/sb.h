@@ -28,12 +28,15 @@
 #define SB_H
 
 #include "hal.h"
-#include "vfs.h"
 #include "errcodes.h"
 
 #include "sbhdr.h"
 #include "sbsysc.h"
 #include "sbconf.h"
+
+#if SB_CFG_ENABLE_VFS == TRUE
+#include "vfs.h"
+#endif
 
 /*===========================================================================*/
 /* Module constants.                                                         */

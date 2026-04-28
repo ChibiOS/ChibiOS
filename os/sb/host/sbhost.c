@@ -79,7 +79,7 @@ static inline uint32_t get_next_po2(uint32_t v) {
   return 1U << (32U - __CLZ(v - 1U));
 }
 
-static size_t get_mpu_alignment(memory_area_t *map) {
+static inline size_t get_mpu_alignment(memory_area_t *map) {
   size_t basealign, sizealign, regionsize;
 
   regionsize = get_next_po2(map->size);
@@ -223,7 +223,7 @@ static bool get_mpu_settings(const sb_memory_region_t *mrp,
 }
 
 #elif defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE)
-static size_t get_mpu_alignment(memory_area_t *map) {
+static inline size_t get_mpu_alignment(memory_area_t *map) {
 
   map->size = MEM_ALIGN_NEXT(map->size, 32U);
 
