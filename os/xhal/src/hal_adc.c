@@ -91,7 +91,6 @@ void *__adc_objinit_impl(void *ip, const void *vmt) {
   self->samples = NULL;
   self->depth   = 0U;
   self->grpp    = NULL;
-  self->circular = false;
   self->events  = 0U;
   self->errors  = 0U;
 #if ADC_USE_SYNCHRONIZATION == TRUE
@@ -138,7 +137,6 @@ msg_t __adc_start_impl(void *ip, const void *config) {
   self->samples = NULL;
   self->depth   = 0U;
   self->grpp    = NULL;
-  self->circular = false;
   self->events  = 0U;
   self->errors  = 0U;
 
@@ -161,7 +159,6 @@ void __adc_stop_impl(void *ip) {
   self->samples = NULL;
   self->depth   = 0U;
   self->grpp    = NULL;
-  self->circular = false;
   self->events  = 0U;
   self->errors  = 0U;
 }
@@ -222,7 +219,7 @@ const struct hal_adc_driver_vmt __hal_adc_driver_vmt = {
  * @{
  */
 /**
- * @brief       Starts an ADC conversion.
+ * @brief       Starts a linear ADC conversion.
  *
  * @param[in,out] ip            Pointer to a @p hal_adc_driver_c instance.
  * @param[in]     grpnum        Conversion group number.
@@ -232,8 +229,8 @@ const struct hal_adc_driver_vmt __hal_adc_driver_vmt = {
  *
  * @iclass
  */
-msg_t adcStartConversionI(void *ip, unsigned grpnum,
-                          adcsample_t *samples, size_t depth) {
+msg_t adcStartConversionLinearI(void *ip, unsigned grpnum,
+                                adcsample_t *samples, size_t depth) {
   hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
   msg_t msg;
 
@@ -247,16 +244,14 @@ msg_t adcStartConversionI(void *ip, unsigned grpnum,
   self->samples = samples;
   self->depth   = depth;
   self->grpp    = NULL;
-  self->circular = false;
   self->events  = 0U;
   self->errors  = 0U;
-  self->state   = HAL_DRV_STATE_ACTIVE;
+  self->state   = ADC_ACTIVE_LINEAR;
   msg = adc_lld_start_conversion(self, grpnum, samples, depth);
   if (msg != HAL_RET_SUCCESS) {
     self->samples = NULL;
     self->depth   = 0U;
     self->grpp    = NULL;
-    self->circular = false;
     self->state   = HAL_DRV_STATE_READY;
   }
 
@@ -264,7 +259,7 @@ msg_t adcStartConversionI(void *ip, unsigned grpnum,
 }
 
 /**
- * @brief       Starts an ADC conversion.
+ * @brief       Starts a linear ADC conversion.
  *
  * @param[in,out] ip            Pointer to a @p hal_adc_driver_c instance.
  * @param[in]     grpnum        Conversion group number.
@@ -274,13 +269,76 @@ msg_t adcStartConversionI(void *ip, unsigned grpnum,
  *
  * @api
  */
-msg_t adcStartConversion(void *ip, unsigned grpnum,
-                         adcsample_t *samples, size_t depth) {
+msg_t adcStartConversionLinear(void *ip, unsigned grpnum,
+                               adcsample_t *samples, size_t depth) {
   hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
   msg_t msg;
 
   osalSysLock();
-  msg = adcStartConversionI(self, grpnum, samples, depth);
+  msg = adcStartConversionLinearI(self, grpnum, samples, depth);
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @brief       Starts a circular ADC conversion.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_adc_driver_c instance.
+ * @param[in]     grpnum        Conversion group number.
+ * @param[out]    samples       Samples buffer.
+ * @param[in]     depth         Buffer depth.
+ * @return                      The operation status.
+ *
+ * @iclass
+ */
+msg_t adcStartConversionCircularI(void *ip, unsigned grpnum,
+                                  adcsample_t *samples, size_t depth) {
+  hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
+  msg_t msg;
+
+  osalDbgCheckClassI();
+  osalDbgCheck((self != NULL) && (samples != NULL) &&
+               (depth > 0U) && ((depth == 1U) || ((depth & 1U) == 0U)));
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+                (self->state == HAL_DRV_STATE_ERROR),
+                "not ready");
+
+  self->samples = samples;
+  self->depth   = depth;
+  self->grpp    = NULL;
+  self->events  = 0U;
+  self->errors  = 0U;
+  self->state   = ADC_ACTIVE_CIRCULAR;
+  msg = adc_lld_start_conversion(self, grpnum, samples, depth);
+  if (msg != HAL_RET_SUCCESS) {
+    self->samples = NULL;
+    self->depth   = 0U;
+    self->grpp    = NULL;
+    self->state   = HAL_DRV_STATE_READY;
+  }
+
+  return msg;
+}
+
+/**
+ * @brief       Starts a circular ADC conversion.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_adc_driver_c instance.
+ * @param[in]     grpnum        Conversion group number.
+ * @param[out]    samples       Samples buffer.
+ * @param[in]     depth         Buffer depth.
+ * @return                      The operation status.
+ *
+ * @api
+ */
+msg_t adcStartConversionCircular(void *ip, unsigned grpnum,
+                                 adcsample_t *samples, size_t depth) {
+  hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
+  msg_t msg;
+
+  osalSysLock();
+  msg = adcStartConversionCircularI(self, grpnum, samples, depth);
   osalSysUnlock();
 
   return msg;
@@ -298,7 +356,8 @@ void adcStopConversionI(void *ip) {
   osalDbgCheckClassI();
   osalDbgCheck(self != NULL);
   osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
-                (self->state == HAL_DRV_STATE_ACTIVE) ||
+                (self->state == ADC_ACTIVE_LINEAR) ||
+                (self->state == ADC_ACTIVE_CIRCULAR) ||
                 (self->state == HAL_DRV_STATE_HALF) ||
                 (self->state == HAL_DRV_STATE_FULL) ||
                 (self->state == HAL_DRV_STATE_COMPLETE) ||
@@ -310,7 +369,6 @@ void adcStopConversionI(void *ip) {
     self->samples = NULL;
     self->depth   = 0U;
     self->grpp    = NULL;
-    self->circular = false;
     self->state   = HAL_DRV_STATE_READY;
     _adc_reset_i(self);
   }
@@ -329,7 +387,8 @@ void adcStopConversion(void *ip) {
 
   osalSysLock();
   osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
-                (self->state == HAL_DRV_STATE_ACTIVE) ||
+                (self->state == ADC_ACTIVE_LINEAR) ||
+                (self->state == ADC_ACTIVE_CIRCULAR) ||
                 (self->state == HAL_DRV_STATE_HALF) ||
                 (self->state == HAL_DRV_STATE_FULL) ||
                 (self->state == HAL_DRV_STATE_COMPLETE) ||
@@ -340,7 +399,6 @@ void adcStopConversion(void *ip) {
     self->samples = NULL;
     self->depth   = 0U;
     self->grpp    = NULL;
-    self->circular = false;
     self->state   = HAL_DRV_STATE_READY;
     _adc_reset_s(self);
   }
@@ -368,7 +426,7 @@ msg_t adcConvert(void *ip, unsigned grpnum,
 
   osalSysLock();
   osalDbgAssert(self->thread == NULL, "already waiting");
-  msg = adcStartConversionI(self, grpnum, samples, depth);
+  msg = adcStartConversionLinearI(self, grpnum, samples, depth);
   if (msg == HAL_RET_SUCCESS) {
     msg = adcSynchronizeStateS(self, HAL_DRV_STATE_COMPLETE, TIME_INFINITE);
   }
@@ -404,7 +462,9 @@ msg_t adcSynchronizeStateS(void *ip, driver_state_t state,
   osalDbgCheck((state == HAL_DRV_STATE_HALF) ||
                (state == HAL_DRV_STATE_FULL) ||
                (state == HAL_DRV_STATE_COMPLETE));
-  osalDbgAssert(self->state == HAL_DRV_STATE_ACTIVE, "invalid state");
+  osalDbgAssert((self->state == ADC_ACTIVE_LINEAR) ||
+                (self->state == ADC_ACTIVE_CIRCULAR),
+                "invalid state");
   osalDbgAssert(self->thread == NULL, "already waiting");
 
   self->sync_state = state;

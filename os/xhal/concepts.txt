@@ -183,7 +183,8 @@ Public model:
 
 API direction:
 - Keep the main verbs and semantics aligned with HAL ADC:
-  `adcInit()`, `adcStart()`, `adcStop()`, `adcStartConversion()`,
+  `adcInit()`, `adcStart()`, `adcStop()`,
+  `adcStartConversionLinear()`, `adcStartConversionCircular()`,
   `adcStopConversion()`.
 - Adapt the names and method signatures to XHAL object conventions but avoid
   changing behavior unless there is a clear XHAL benefit.
@@ -197,7 +198,9 @@ Proposed public API:
 - `void adcStop(hal_adc_driver_c *self);`
 - `const hal_adc_config_t *adcSetCfgX(hal_adc_driver_c *self,
   const hal_adc_config_t *config);`
-- `msg_t adcStartConversion(hal_adc_driver_c *self,
+- `msg_t adcStartConversionLinear(hal_adc_driver_c *self,
+  unsigned grpnum, adcsample_t *samples, size_t depth);`
+- `msg_t adcStartConversionCircular(hal_adc_driver_c *self,
   unsigned grpnum, adcsample_t *samples, size_t depth);`
 - `msg_t adcStopConversion(hal_adc_driver_c *self);`
 - `adceventflags_t adcGetEventsX(hal_adc_driver_c *self);`
@@ -209,7 +212,8 @@ Proposed public API:
 State and callback model:
 - Keep the state machine close to HAL ADC in order to preserve familiar
   conversion flow:
-  `STOP`, `READY`, `ACTIVE`, `COMPLETE`, `ERROR`.
+  `STOP`, `READY`, `ADC_ACTIVE_LINEAR`, `ADC_ACTIVE_CIRCULAR`, `COMPLETE`,
+  `ERROR`.
 - Do not encode half-buffer/full-buffer reasons into the state any more than
   necessary.
 - Instead, cache conversion events in the driver object and expose them
@@ -231,8 +235,8 @@ Why the samples pointer must stay outside the group:
   existing HAL ADC call shape.
 
 Conversion-group policy:
-- Keep `circular` and `num_channels` in the mandatory generic fields,
-  mirroring HAL ADC closely.
+- Keep `num_channels` in the mandatory generic fields. Circular/linear mode is
+  selected by the start API, not stored in the group.
 - Keep hardware-specific register fields inside
   `adc_lld_conversion_group_fields`.
 - Preserve the current HAL expectation that the conversion group is an
@@ -246,10 +250,9 @@ Configuration policy:
 - Attach a conversion group table to `hal_adc_config_t`; a @p NULL table means
   that no conversion groups are available for indexed conversion calls.
 - The common ADC layer must not dereference conversion-group fields during ISR
-  completion. It uses driver-cached conversion attributes such as
-  `self->circular`, allowing VIO LLDs to obtain those attributes from the host
-  through fastcalls instead of copying hardware-shaped groups into sandbox
-  memory.
+  completion. It uses the active driver state to distinguish linear and
+  circular conversions, allowing VIO LLDs to avoid copying hardware-shaped
+  groups into sandbox memory.
 - Keep all STM32 register details in `adc_lld_config_fields`.
 
 First-iteration feature scope:
@@ -286,9 +289,9 @@ LLD shape proposal:
 - The LLD receives the configuration-scoped group index and resolves it from
   the active ADC configuration. Native LLDs cache the resolved group in
   `self->grpp`; VIO-style LLDs can also forward the index.
-- VIO-style LLDs should populate cached conversion attributes, for example
-  `self->circular`, by querying the host VIO layer using a fastcall such as
-  "get current circular".
+- VIO-style LLDs select linear or circular host operations from the active
+  driver state; they should not copy or inspect host-owned conversion groups
+  in sandbox memory.
 - The LLD remains responsible for register programming, DMA setup, IRQ service
   and extraction of hardware error bits.
 - The common XHAL layer remains responsible for state assertions, callback

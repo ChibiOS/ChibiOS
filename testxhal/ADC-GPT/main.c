@@ -150,7 +150,8 @@ static void adc_stream_test(void) {
 
   adc_gpt_test_stage = TEST_STAGE_STREAM;
   reset_adc_counters();
-  msg = adcStartConversion(&ADCD1, ADC_GRP2, samples2, ADC_GRP2_BUF_DEPTH);
+  msg = adcStartConversionCircular(&ADCD1, ADC_GRP2, samples2,
+                                   ADC_GRP2_BUF_DEPTH);
   test_assert(msg == HAL_RET_SUCCESS, TEST_STAGE_STREAM | 0x01U);
 
   elapsed = wait_for_stream_events();
@@ -176,7 +177,8 @@ static void adc_hw_trigger_test(void) {
 
   adc_gpt_test_stage = TEST_STAGE_HW_TRIGGER;
   reset_adc_counters();
-  msg = adcStartConversion(&ADCD1, ADC_GRP3, samples3, ADC_GRP3_BUF_DEPTH);
+  msg = adcStartConversionCircular(&ADCD1, ADC_GRP3, samples3,
+                                   ADC_GRP3_BUF_DEPTH);
   test_assert(msg == HAL_RET_SUCCESS, TEST_STAGE_HW_TRIGGER | 0x01U);
 
   gptStartContinuous(&PORTAB_GPT1, PORTAB_GPT1_PERIOD);

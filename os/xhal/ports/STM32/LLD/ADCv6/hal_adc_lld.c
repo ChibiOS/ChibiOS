@@ -630,6 +630,7 @@ msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp, unsigned grpnum,
   const hal_adc_config_t *cfg = (const hal_adc_config_t *)adcp->config;
   const adc_conversion_group_t *grpp;
   uint32_t cfgr, dmaccr, dmallr;
+  bool circular;
 #if STM32_ADC_DUAL_MODE
   uint32_t ccr;
 #endif
@@ -641,7 +642,7 @@ msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp, unsigned grpnum,
 
   grpp = &cfg->grps->grps[grpnum];
   adcp->grpp = grpp;
-  adcp->circular = grpp->circular;
+  circular = (adcp->state == ADC_ACTIVE_CIRCULAR);
 #if STM32_ADC_DUAL_MODE
   ccr = grpp->ccr & ~(ADC_CCR_CKMODE_MASK | ADC_CCR_MDMA_MASK);
 #endif
@@ -658,7 +659,7 @@ msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp, unsigned grpnum,
            STM32_DMA3_CCR_DTEIE                         |
            STM32_DMA3_CCR_TCIE;
   cfgr    = grpp->cfgr | ADC_CFGR_DMAEN;
-  if (grpp->circular) {
+  if (circular) {
 #if STM32_ADC_DUAL_MODE
     ccr  |= ADC_CCR_DMACFG_CIRCULAR;
 #else

@@ -23,6 +23,14 @@
           <brief>Linear conversion completion event flag.</brief>
         </define>
       </group>
+      <group description="ADC driver specific states">
+        <define name="ADC_ACTIVE_LINEAR" value="HAL_DRV_STATE_ACTIVE">
+          <brief>Linear conversion active state.</brief>
+        </define>
+        <define name="ADC_ACTIVE_CIRCULAR" value="(HAL_DRV_STATE_ERROR + 1U)">
+          <brief>Circular conversion active state.</brief>
+        </define>
+      </group>
     </definitions_early>
     <configs>
       <config name="ADC_USE_SYNCHRONIZATION" default="TRUE">
@@ -105,7 +113,9 @@ do {
           <implementation><![CDATA[
 do {
   (adcp)->events |= ADC_EVENT_HALF;
-  __cbdrv_invoke_half_cb(adcp);
+  __cbdrv_invoke_cb_with_transition(adcp,
+                                    HAL_DRV_STATE_HALF,
+                                    ADC_ACTIVE_CIRCULAR);
   _adc_wakeup_isr(adcp, HAL_DRV_STATE_HALF);
 } while (false)]]></implementation>
         </macro>
@@ -115,9 +125,11 @@ do {
           <notapi />
           <implementation><![CDATA[
 do {
-  if ((adcp)->circular) {
+  if ((adcp)->state == ADC_ACTIVE_CIRCULAR) {
     (adcp)->events |= ADC_EVENT_FULL;
-    __cbdrv_invoke_full_cb(adcp);
+    __cbdrv_invoke_cb_with_transition(adcp,
+                                      HAL_DRV_STATE_FULL,
+                                      ADC_ACTIVE_CIRCULAR);
     _adc_wakeup_isr(adcp, HAL_DRV_STATE_FULL);
   }
   else {
@@ -127,7 +139,6 @@ do {
                                       HAL_DRV_STATE_COMPLETE,
                                       HAL_DRV_STATE_READY);
     (adcp)->grpp = NULL;
-    (adcp)->circular = false;
     _adc_wakeup_isr(adcp, HAL_DRV_STATE_COMPLETE);
   }
 } while (false)]]></implementation>
@@ -145,7 +156,6 @@ do {
                                     HAL_DRV_STATE_ERROR,
                                     HAL_DRV_STATE_READY);
   (adcp)->grpp = NULL;
-  (adcp)->circular = false;
   _adc_error_wakeup_isr(adcp);
 } while (false)]]></implementation>
         </macro>
@@ -179,9 +189,6 @@ do {
       <struct name="hal_adc_conversion_group">
         <brief>Conversion group configuration structure.</brief>
         <fields>
-          <field name="circular" ctype="bool">
-            <brief>Enables circular buffer mode for the group.</brief>
-          </field>
           <field name="num_channels" ctype="adc_channels_num_t">
             <brief>Number of analog channels in the conversion group.</brief>
           </field>
@@ -233,9 +240,6 @@ ADC_CONFIG_EXT_FIELDS]]></verbatim>
           <field name="grpp" ctype="const adc_conversion_group_t *">
             <brief>Current conversion group pointer or @p NULL.</brief>
           </field>
-          <field name="circular" ctype="bool">
-            <brief>Current conversion circular mode.</brief>
-          </field>
           <field name="events" ctype="volatile adceventflags_t">
             <brief>Cached ADC event flags.</brief>
           </field>
@@ -264,7 +268,6 @@ adc_lld_driver_fields;]]></verbatim>
 self->samples = NULL;
 self->depth   = 0U;
 self->grpp    = NULL;
-self->circular = false;
 self->events  = 0U;
 self->errors  = 0U;
 #if ADC_USE_SYNCHRONIZATION == TRUE
@@ -277,8 +280,8 @@ self->sync_state = HAL_DRV_STATE_STOP;
 ]]></implementation>
           </dispose>
           <regular>
-            <method name="adcStartConversionI" ctype="msg_t">
-              <brief>Starts an ADC conversion.</brief>
+            <method name="adcStartConversionLinearI" ctype="msg_t">
+              <brief>Starts a linear ADC conversion.</brief>
               <param name="grpnum" ctype="unsigned" dir="in">
                 Conversion group number.
               </param>
@@ -303,23 +306,21 @@ osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
 self->samples = samples;
 self->depth   = depth;
 self->grpp    = NULL;
-self->circular = false;
 self->events  = 0U;
 self->errors  = 0U;
-self->state   = HAL_DRV_STATE_ACTIVE;
+self->state   = ADC_ACTIVE_LINEAR;
 msg = adc_lld_start_conversion(self, grpnum, samples, depth);
 if (msg != HAL_RET_SUCCESS) {
   self->samples = NULL;
   self->depth   = 0U;
   self->grpp    = NULL;
-  self->circular = false;
   self->state   = HAL_DRV_STATE_READY;
 }
 
 return msg;]]></implementation>
             </method>
-            <method name="adcStartConversion" ctype="msg_t">
-              <brief>Starts an ADC conversion.</brief>
+            <method name="adcStartConversionLinear" ctype="msg_t">
+              <brief>Starts a linear ADC conversion.</brief>
               <param name="grpnum" ctype="unsigned" dir="in">
                 Conversion group number.
               </param>
@@ -335,7 +336,68 @@ return msg;]]></implementation>
 msg_t msg;
 
 osalSysLock();
-msg = adcStartConversionI(self, grpnum, samples, depth);
+msg = adcStartConversionLinearI(self, grpnum, samples, depth);
+osalSysUnlock();
+
+return msg;]]></implementation>
+            </method>
+            <method name="adcStartConversionCircularI" ctype="msg_t">
+              <brief>Starts a circular ADC conversion.</brief>
+              <param name="grpnum" ctype="unsigned" dir="in">
+                Conversion group number.
+              </param>
+              <param name="samples" ctype="adcsample_t *" dir="out">
+                Samples buffer.
+              </param>
+              <param name="depth" ctype="size_t" dir="in">
+                Buffer depth.
+              </param>
+              <return>The operation status.</return>
+              <iclass />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalDbgCheckClassI();
+osalDbgCheck((self != NULL) && (samples != NULL) &&
+             (depth > 0U) && ((depth == 1U) || ((depth & 1U) == 0U)));
+osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+              (self->state == HAL_DRV_STATE_ERROR),
+              "not ready");
+
+self->samples = samples;
+self->depth   = depth;
+self->grpp    = NULL;
+self->events  = 0U;
+self->errors  = 0U;
+self->state   = ADC_ACTIVE_CIRCULAR;
+msg = adc_lld_start_conversion(self, grpnum, samples, depth);
+if (msg != HAL_RET_SUCCESS) {
+  self->samples = NULL;
+  self->depth   = 0U;
+  self->grpp    = NULL;
+  self->state   = HAL_DRV_STATE_READY;
+}
+
+return msg;]]></implementation>
+            </method>
+            <method name="adcStartConversionCircular" ctype="msg_t">
+              <brief>Starts a circular ADC conversion.</brief>
+              <param name="grpnum" ctype="unsigned" dir="in">
+                Conversion group number.
+              </param>
+              <param name="samples" ctype="adcsample_t *" dir="out">
+                Samples buffer.
+              </param>
+              <param name="depth" ctype="size_t" dir="in">
+                Buffer depth.
+              </param>
+              <return>The operation status.</return>
+              <api />
+              <implementation><![CDATA[
+msg_t msg;
+
+osalSysLock();
+msg = adcStartConversionCircularI(self, grpnum, samples, depth);
 osalSysUnlock();
 
 return msg;]]></implementation>
@@ -347,7 +409,8 @@ return msg;]]></implementation>
 osalDbgCheckClassI();
 osalDbgCheck(self != NULL);
 osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
-              (self->state == HAL_DRV_STATE_ACTIVE) ||
+              (self->state == ADC_ACTIVE_LINEAR) ||
+              (self->state == ADC_ACTIVE_CIRCULAR) ||
               (self->state == HAL_DRV_STATE_HALF) ||
               (self->state == HAL_DRV_STATE_FULL) ||
               (self->state == HAL_DRV_STATE_COMPLETE) ||
@@ -359,7 +422,6 @@ if (self->state != HAL_DRV_STATE_READY) {
   self->samples = NULL;
   self->depth   = 0U;
   self->grpp    = NULL;
-  self->circular = false;
   self->state   = HAL_DRV_STATE_READY;
   _adc_reset_i(self);
 }]]></implementation>
@@ -372,7 +434,8 @@ osalDbgCheck(self != NULL);
 
 osalSysLock();
 osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
-              (self->state == HAL_DRV_STATE_ACTIVE) ||
+              (self->state == ADC_ACTIVE_LINEAR) ||
+              (self->state == ADC_ACTIVE_CIRCULAR) ||
               (self->state == HAL_DRV_STATE_HALF) ||
               (self->state == HAL_DRV_STATE_FULL) ||
               (self->state == HAL_DRV_STATE_COMPLETE) ||
@@ -383,7 +446,6 @@ if (self->state != HAL_DRV_STATE_READY) {
   self->samples = NULL;
   self->depth   = 0U;
   self->grpp    = NULL;
-  self->circular = false;
   self->state   = HAL_DRV_STATE_READY;
   _adc_reset_s(self);
 }
@@ -410,7 +472,7 @@ osalDbgCheck(self != NULL);
 
 osalSysLock();
 osalDbgAssert(self->thread == NULL, "already waiting");
-msg = adcStartConversionI(self, grpnum, samples, depth);
+msg = adcStartConversionLinearI(self, grpnum, samples, depth);
 if (msg == HAL_RET_SUCCESS) {
   msg = adcSynchronizeStateS(self, HAL_DRV_STATE_COMPLETE, TIME_INFINITE);
 }
@@ -443,7 +505,9 @@ osalDbgCheckClassS();
 osalDbgCheck((state == HAL_DRV_STATE_HALF) ||
              (state == HAL_DRV_STATE_FULL) ||
              (state == HAL_DRV_STATE_COMPLETE));
-osalDbgAssert(self->state == HAL_DRV_STATE_ACTIVE, "invalid state");
+osalDbgAssert((self->state == ADC_ACTIVE_LINEAR) ||
+              (self->state == ADC_ACTIVE_CIRCULAR),
+              "invalid state");
 osalDbgAssert(self->thread == NULL, "already waiting");
 
 self->sync_state = state;
@@ -547,7 +611,6 @@ if (self->config == NULL) {
 self->samples = NULL;
 self->depth   = 0U;
 self->grpp    = NULL;
-self->circular = false;
 self->events  = 0U;
 self->errors  = 0U;
 
@@ -564,7 +627,6 @@ adc_lld_stop(self);
 self->samples = NULL;
 self->depth   = 0U;
 self->grpp    = NULL;
-self->circular = false;
 self->events  = 0U;
 self->errors  = 0U;]]></implementation>
             </method>

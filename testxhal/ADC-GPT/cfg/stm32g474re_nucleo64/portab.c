@@ -36,7 +36,6 @@ static const adc_conversion_groups_t portab_adcgrps1 = {
   .grpsnum                     = 3U,
   .grps                        = {
     [ADC_GRP1] = {
-      .circular                = false,
       .num_channels            = ADC_GRP1_NUM_CHANNELS,
       .cfgr                    = 0U,
       .cfgr2                   = 0U,
@@ -59,7 +58,6 @@ static const adc_conversion_groups_t portab_adcgrps1 = {
       }
     },
     [ADC_GRP2] = {
-      .circular                = true,
       .num_channels            = ADC_GRP2_NUM_CHANNELS,
       .cfgr                    = ADC_CFGR_CONT,
       .cfgr2                   = 0U,
@@ -82,7 +80,6 @@ static const adc_conversion_groups_t portab_adcgrps1 = {
       }
     },
     [ADC_GRP3] = {
-      .circular                = true,
       .num_channels            = ADC_GRP3_NUM_CHANNELS,
       .cfgr                    = ADC_CFGR_EXTEN_RISING |
                                  ADC_CFGR_EXTSEL_SRC(12),

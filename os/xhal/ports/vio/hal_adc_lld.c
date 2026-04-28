@@ -66,10 +66,13 @@ static inline uint32_t __adc_vadc_deinit(uint32_t nvadc) {
 }
 
 CC_FORCE_INLINE
-static inline uint32_t __adc_vadc_start(uint32_t nvadc, unsigned grpnum,
+static inline uint32_t __adc_vadc_start(hal_adc_driver_c *adcp, unsigned grpnum,
                                         adcsample_t *samples, size_t depth) {
+  uint32_t subcode;
 
-  __syscall4r(228, VIO_CALL(SB_VADC_START, nvadc),
+  subcode = (drvGetStateX(adcp) == ADC_ACTIVE_CIRCULAR) ?
+            SB_VADC_START_CIRCULAR : SB_VADC_START_LINEAR;
+  __syscall4r(228, VIO_CALL(subcode, adcp->nvadc),
               grpnum, samples, depth);
   return (uint32_t)r0;
 }
@@ -78,13 +81,6 @@ CC_FORCE_INLINE
 static inline uint32_t __adc_vadc_stop(uint32_t nvadc) {
 
   __syscall1r(228, VIO_CALL(SB_VADC_STOP, nvadc));
-  return (uint32_t)r0;
-}
-
-CC_FORCE_INLINE
-static inline uint32_t __adc_vadc_iscirc(uint32_t nvadc) {
-
-  __syscall1r(100, VIO_CALL(SB_VADC_ISCIRC, nvadc));
   return (uint32_t)r0;
 }
 
@@ -118,7 +114,6 @@ static void adc_lld_serve_interrupt(hal_adc_driver_c *adcp, uint32_t nvrq) {
                                       HAL_DRV_STATE_ERROR,
                                       HAL_DRV_STATE_READY);
     adcp->grpp = NULL;
-    adcp->circular = false;
     _adc_error_wakeup_isr(adcp);
     return;
   }
@@ -128,9 +123,7 @@ static void adc_lld_serve_interrupt(hal_adc_driver_c *adcp, uint32_t nvrq) {
   }
 
   if ((sts & (1U << HAL_DRV_STATE_FULL)) != 0U) {
-    adcp->events |= ADC_EVENT_FULL;
-    __cbdrv_invoke_full_cb(adcp);
-    _adc_wakeup_isr(adcp, HAL_DRV_STATE_FULL);
+    _adc_isr_full_code(adcp);
   }
 
   if ((sts & (1U << HAL_DRV_STATE_COMPLETE)) != 0U) {
@@ -139,7 +132,6 @@ static void adc_lld_serve_interrupt(hal_adc_driver_c *adcp, uint32_t nvrq) {
                                       HAL_DRV_STATE_COMPLETE,
                                       HAL_DRV_STATE_READY);
     adcp->grpp = NULL;
-    adcp->circular = false;
     _adc_wakeup_isr(adcp, HAL_DRV_STATE_COMPLETE);
   }
 }
@@ -304,14 +296,7 @@ void adc_lld_set_callback(hal_adc_driver_c *adcp, drv_cb_t cb) {
 msg_t adc_lld_start_conversion(hal_adc_driver_c *adcp, unsigned grpnum,
                                adcsample_t *samples,
                                size_t depth) {
-  msg_t msg;
-
-  msg = (msg_t)__adc_vadc_start(adcp->nvadc, grpnum, samples, depth);
-  if (msg == HAL_RET_SUCCESS) {
-    adcp->circular = __adc_vadc_iscirc(adcp->nvadc) != 0U;
-  }
-
-  return msg;
+  return (msg_t)__adc_vadc_start(adcp, grpnum, samples, depth);
 }
 
 /**

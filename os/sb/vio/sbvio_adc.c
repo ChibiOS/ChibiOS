@@ -134,7 +134,8 @@ void sb_sysc_vio_adc(sb_class_t *sbp, struct port_extctx *ectxp) {
         ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
         break;
       }
-    case SB_VADC_START:
+    case SB_VADC_START_LINEAR:
+    case SB_VADC_START_CIRCULAR:
       {
         const adc_conversion_group_t *grpp;
         adcsample_t *samples = (adcsample_t *)ectxp->r2;
@@ -164,7 +165,12 @@ void sb_sysc_vio_adc(sb_class_t *sbp, struct port_extctx *ectxp) {
           break;
         }
 
-        msg = adcStartConversion(unitp->adcp, grpnum, samples, depth);
+        if (sub == SB_VADC_START_LINEAR) {
+          msg = adcStartConversionLinear(unitp->adcp, grpnum, samples, depth);
+        }
+        else {
+          msg = adcStartConversionCircular(unitp->adcp, grpnum, samples, depth);
+        }
         ectxp->r0 = (uint32_t)msg;
         break;
       }
@@ -209,11 +215,6 @@ void sb_fastc_vio_adc(sb_class_t *sbp, struct port_extctx *ectxp) {
     const vio_adc_unit_t *unitp = &sbp->vioconf->adcs->units[unit];
 
     switch (sub) {
-    case SB_VADC_ISCIRC:
-      {
-        ectxp->r0 = (uint32_t)adcIsCircularX(unitp->adcp);
-        break;
-      }
     case SB_VADC_GCERR:
       {
         ectxp->r0 = (uint32_t)adcGetAndClearErrorsX(unitp->adcp,

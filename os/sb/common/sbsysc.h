@@ -144,10 +144,10 @@
  */
 #define SB_VADC_INIT            0
 #define SB_VADC_DEINIT          1
-#define SB_VADC_START           2
-#define SB_VADC_STOP            3
-#define SB_VADC_ISCIRC          0
-#define SB_VADC_GCERR           1
+#define SB_VADC_START_LINEAR    2
+#define SB_VADC_START_CIRCULAR  3
+#define SB_VADC_STOP            4
+#define SB_VADC_GCERR           0
 /** @} */
 
 /**

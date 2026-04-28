@@ -55,6 +55,21 @@
 #define ADC_EVENT_COMPLETE                  (1U << 2)
 /** @} */
 
+/**
+ * @name    ADC driver specific states
+ * @{
+ */
+/**
+ * @brief       Linear conversion active state.
+ */
+#define ADC_ACTIVE_LINEAR                   HAL_DRV_STATE_ACTIVE
+
+/**
+ * @brief       Circular conversion active state.
+ */
+#define ADC_ACTIVE_CIRCULAR                 (HAL_DRV_STATE_ERROR + 1U)
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -172,7 +187,9 @@
 #define _adc_isr_half_code(adcp)                                            \
   do {                                                                      \
     (adcp)->events |= ADC_EVENT_HALF;                                       \
-    __cbdrv_invoke_half_cb(adcp);                                           \
+    __cbdrv_invoke_cb_with_transition(adcp,                                 \
+                                      HAL_DRV_STATE_HALF,                   \
+                                      ADC_ACTIVE_CIRCULAR);                 \
     _adc_wakeup_isr(adcp, HAL_DRV_STATE_HALF);                              \
   } while (false)
 
@@ -185,9 +202,11 @@
  */
 #define _adc_isr_full_code(adcp)                                            \
   do {                                                                      \
-    if ((adcp)->circular) {                                                 \
+    if ((adcp)->state == ADC_ACTIVE_CIRCULAR) {                             \
       (adcp)->events |= ADC_EVENT_FULL;                                     \
-      __cbdrv_invoke_full_cb(adcp);                                         \
+      __cbdrv_invoke_cb_with_transition(adcp,                               \
+                                        HAL_DRV_STATE_FULL,                 \
+                                        ADC_ACTIVE_CIRCULAR);               \
       _adc_wakeup_isr(adcp, HAL_DRV_STATE_FULL);                            \
     }                                                                       \
     else {                                                                  \
@@ -197,7 +216,6 @@
                                         HAL_DRV_STATE_COMPLETE,             \
                                         HAL_DRV_STATE_READY);               \
       (adcp)->grpp = NULL;                                                  \
-      (adcp)->circular = false;                                             \
       _adc_wakeup_isr(adcp, HAL_DRV_STATE_COMPLETE);                        \
     }                                                                       \
   } while (false)
@@ -218,7 +236,6 @@
                                       HAL_DRV_STATE_ERROR,                  \
                                       HAL_DRV_STATE_READY);                 \
     (adcp)->grpp = NULL;                                                    \
-    (adcp)->circular = false;                                               \
     _adc_error_wakeup_isr(adcp);                                            \
   } while (false)
 /** @} */
@@ -260,10 +277,6 @@ typedef struct hal_adc_conversion_groups adc_conversion_groups_t;
  * @brief       Conversion group configuration structure.
  */
 struct hal_adc_conversion_group {
-  /**
-   * @brief       Enables circular buffer mode for the group.
-   */
-  bool                      circular;
   /**
    * @brief       Number of analog channels in the conversion group.
    */
@@ -393,10 +406,6 @@ struct hal_adc_driver {
    */
   const adc_conversion_group_t * grpp;
   /**
-   * @brief       Current conversion circular mode.
-   */
-  bool                      circular;
-  /**
    * @brief       Cached ADC event flags.
    */
   volatile adceventflags_t  events;
@@ -437,10 +446,14 @@ extern "C" {
   const void *__adc_setcfg_impl(void *ip, const void *config);
   const void *__adc_selcfg_impl(void *ip, unsigned cfgnum);
   void __adc_setcb_impl(void *ip, drv_cb_t cb);
-  msg_t adcStartConversionI(void *ip, unsigned grpnum,
-                            adcsample_t *samples, size_t depth);
-  msg_t adcStartConversion(void *ip, unsigned grpnum,
-                           adcsample_t *samples, size_t depth);
+  msg_t adcStartConversionLinearI(void *ip, unsigned grpnum,
+                                  adcsample_t *samples, size_t depth);
+  msg_t adcStartConversionLinear(void *ip, unsigned grpnum,
+                                 adcsample_t *samples, size_t depth);
+  msg_t adcStartConversionCircularI(void *ip, unsigned grpnum,
+                                    adcsample_t *samples, size_t depth);
+  msg_t adcStartConversionCircular(void *ip, unsigned grpnum,
+                                   adcsample_t *samples, size_t depth);
   void adcStopConversionI(void *ip);
   void adcStopConversion(void *ip);
 #if (ADC_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
@@ -486,20 +499,6 @@ static inline hal_adc_driver_c *adcObjectInit(hal_adc_driver_c *self) {
  * @name        Inline methods of hal_adc_driver_c
  * @{
  */
-/**
- * @brief       Returns the current conversion circular mode.
- *
- * @param[in,out] ip            Pointer to a @p hal_adc_driver_c instance.
- * @return                      The current circular mode.
- *
- * @xclass
- */
-CC_FORCE_INLINE
-static inline bool adcIsCircularX(void *ip) {
-  hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
-  return self->circular;
-}
-
 /**
  * @brief       Returns the cached ADC event flags.
  *
