@@ -89,7 +89,7 @@ PROJECT = sb
 MCU  = cortex-m4
 
 # Imported source files and paths.
-CHIBIOS  := ../../..
+CHIBIOS  := ../..
 CONFDIR  := ./cfg
 BUILDDIR := ./build/256k-08040000-32k-20018000
 DEPDIR   := ./.dep/256k-08040000-32k-20018000
@@ -118,13 +118,13 @@ include $(CHIBIOS)/os/sb/user/sbuser.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
-include $(CHIBIOS)/os/test/test.mk
-include $(CHIBIOS)/test/rt/rt_test.mk
-include $(CHIBIOS)/test/oslib/oslib_test.mk
+#include $(CHIBIOS)/os/test/test.mk
+#include $(CHIBIOS)/test/rt/rt_test.mk
+#include $(CHIBIOS)/test/oslib/oslib_test.mk
 include $(CHIBIOS)/os/various/xshell/xshell.mk
 
 # Define linker script file here.
-LDSCRIPT= ./ld/128k-08040000-16k-20018000.ld
+LDSCRIPT= ./ld/256k-08040000-32k-20018000.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -160,7 +160,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DOOP_USE_LEGACY
+UDEFS = -DOOP_USE_LEGACY -DXSHELL_CMD_TEST_ENABLED=0
 
 # Define ASM defines here
 UADEFS =
