@@ -115,13 +115,35 @@ void sb_sysc_vio_adc(sb_class_t *sbp, struct port_extctx *ectxp) {
     switch (sub) {
     case SB_VADC_INIT:
       {
+        size_t n = ectxp->r1;
+        void *p = (void *)ectxp->r2;
+        const void *confp;
         msg_t msg;
+
+        if ((sbp->vioconf->adcconfs == NULL) ||
+            (sbp->vioconf->adcconfs->cfgsnum == 0U)) {
+          ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
+          break;
+        }
+
+        if (n > sizeof (hal_adc_config_t)) {
+          ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
+          break;
+        }
+
+        if (!sb_is_valid_write_range(sbp, p, n)) {
+          ectxp->r0 = (uint32_t)CH_RET_EFAULT;
+          break;
+        }
+
+        confp = &sbp->vioconf->adcconfs->cfgs[0];
 
         drvSetArgumentX(unitp->adcp, (void *)unitp);
 
-        msg = drvStart(unitp->adcp, unitp->config);
+        msg = drvStart(unitp->adcp, confp);
         if (msg == HAL_RET_SUCCESS) {
           drvSetCallbackX(unitp->adcp, vadc_cb);
+          memcpy(p, confp, n);
         }
 
         ectxp->r0 = (uint32_t)msg;
@@ -196,6 +218,7 @@ void sb_sysc_vio_adc(sb_class_t *sbp, struct port_extctx *ectxp) {
         size_t n = ectxp->r2;
         void *p = (void *)ectxp->r3;
         const void *confp;
+        msg_t msg;
 
         if (drvGetStateX(unitp->adcp) != HAL_DRV_STATE_READY) {
           ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
@@ -222,11 +245,12 @@ void sb_sysc_vio_adc(sb_class_t *sbp, struct port_extctx *ectxp) {
         }
 
         /* Specified VADC configuration.*/
-        confp = drvSelectCfgX(unitp->adcp, cfgnum);
+        confp = &sbp->vioconf->adcconfs->cfgs[cfgnum];
+        msg = drvSetCfgX(unitp->adcp, confp);
 
         /* Copying the standard part of the configuration into the sandbox
            space in the specified position.*/
-        if (confp != NULL) {
+        if (msg == HAL_RET_SUCCESS) {
           memcpy(p, confp, n);
           ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
         }

@@ -95,13 +95,35 @@ void sb_sysc_vio_i2c(sb_class_t *sbp, struct port_extctx *ectxp) {
     switch (sub) {
     case SB_VI2C_INIT:
       {
+        size_t n = ectxp->r1;
+        void *p = (void *)ectxp->r2;
+        const void *confp;
         msg_t msg;
+
+        if ((sbp->vioconf->i2cconfs == NULL) ||
+            (sbp->vioconf->i2cconfs->cfgsnum == 0U)) {
+          ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
+          break;
+        }
+
+        if (n > sizeof (hal_i2c_config_t)) {
+          ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
+          break;
+        }
+
+        if (!sb_is_valid_write_range(sbp, p, n)) {
+          ectxp->r0 = (uint32_t)CH_RET_EFAULT;
+          break;
+        }
+
+        confp = &sbp->vioconf->i2cconfs->cfgs[0];
 
         drvSetArgumentX(unitp->i2cp, (void *)unitp);
 
-        msg = drvStart(unitp->i2cp, unitp->config);
+        msg = drvStart(unitp->i2cp, confp);
         if (msg == HAL_RET_SUCCESS) {
           drvSetCallbackX(unitp->i2cp, vi2c_cb);
+          memcpy(p, confp, n);
         }
 
         ectxp->r0 = (uint32_t)msg;
@@ -254,6 +276,7 @@ void sb_fastc_vio_i2c(sb_class_t *sbp, struct port_extctx *ectxp) {
       {
         uint32_t cfgnum = ectxp->r1;
         const void *confp;
+        msg_t msg;
 
         if ((sbp->vioconf->i2cconfs == NULL) ||
             (cfgnum >= sbp->vioconf->i2cconfs->cfgsnum)) {
@@ -261,8 +284,9 @@ void sb_fastc_vio_i2c(sb_class_t *sbp, struct port_extctx *ectxp) {
           break;
         }
 
-        confp = drvSelectCfgX(unitp->i2cp, cfgnum);
-        if (confp != NULL) {
+        confp = &sbp->vioconf->i2cconfs->cfgs[cfgnum];
+        msg = drvSetCfgX(unitp->i2cp, confp);
+        if (msg == HAL_RET_SUCCESS) {
           ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
         }
         else {

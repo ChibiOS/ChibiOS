@@ -88,16 +88,38 @@ void sb_sysc_vio_spi(sb_class_t *sbp, struct port_extctx *ectxp) {
     switch (sub) {
     case SB_VSPI_INIT:
       {
+        size_t n = ectxp->r1;
+        void *p = (void *)ectxp->r2;
+        const void *confp;
         msg_t msg;
+
+        if ((sbp->vioconf->spiconfs == NULL) ||
+            (sbp->vioconf->spiconfs->cfgsnum == 0U)) {
+          ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
+          break;
+        }
+
+        if (n > sizeof (hal_spi_config_t)) {
+          ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
+          break;
+        }
+
+        if (!sb_is_valid_write_range(sbp, p, n)) {
+          ectxp->r0 = (uint32_t)CH_RET_EFAULT;
+          break;
+        }
+
+        confp = &sbp->vioconf->spiconfs->cfgs[0];
 
         /* Associating this virtual SPI to the SPI driver.*/
         drvSetArgumentX(unitp->spip, (void *)unitp);
 
-        msg = drvStart(unitp->spip, NULL);
+        msg = drvStart(unitp->spip, confp);
         if (msg == HAL_RET_SUCCESS) {
 
           /* Enabling the callback.*/
           drvSetCallbackX(unitp->spip, vspi_cb);
+          memcpy(p, confp, n);
         }
 
         ectxp->r0 = (uint32_t)msg;
@@ -275,7 +297,7 @@ void sb_fastc_vio_spi(sb_class_t *sbp, struct port_extctx *ectxp) {
     return;
   }
 
-  if ((unit >= sbp->vioconf->spis->n) || (sbp->vioconf->spis == NULL)) {
+  if ((sbp->vioconf->spis == NULL) || (unit >= sbp->vioconf->spis->n)) {
     ectxp->r0 =  (uint32_t)HAL_RET_NO_RESOURCE;
     return;
   }
@@ -298,6 +320,7 @@ void sb_fastc_vio_spi(sb_class_t *sbp, struct port_extctx *ectxp) {
         size_t n = ectxp->r2;
         void *p = (void *)ectxp->r3;
         const void *confp;
+        msg_t msg;
 
         /* Check on configuration index.*/
         if ((sbp->vioconf->spiconfs == NULL) ||
@@ -320,11 +343,12 @@ void sb_fastc_vio_spi(sb_class_t *sbp, struct port_extctx *ectxp) {
         }
 
         /* Specified VSPI configuration.*/
-        confp = drvSelectCfgX(unitp->spip, cfgnum);
+        confp = &sbp->vioconf->spiconfs->cfgs[cfgnum];
+        msg = drvSetCfgX(unitp->spip, confp);
 
         /* Copying the standard part of the configuration into the sandbox
            space in the specified position.*/
-        if (confp != NULL) {
+        if (msg == HAL_RET_SUCCESS) {
           memcpy(p, confp, n);
           ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
         }

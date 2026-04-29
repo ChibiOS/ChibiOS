@@ -52,9 +52,9 @@ static const hal_adc_config_t default_config = {
 /*===========================================================================*/
 
 CC_FORCE_INLINE
-static inline uint32_t __adc_vadc_init(uint32_t nvadc) {
+static inline uint32_t __adc_vadc_init(uint32_t nvadc, size_t n, void *p) {
 
-  __syscall1r(228, VIO_CALL(SB_VADC_INIT, nvadc));
+  __syscall3r(228, VIO_CALL(SB_VADC_INIT, nvadc), n, p);
   return (uint32_t)r0;
 }
 
@@ -194,11 +194,17 @@ msg_t adc_lld_start(hal_adc_driver_c *adcp) {
   }
 #if VIO_ADC_USE_VADC1 == TRUE
   else if (&ADCD1 == adcp) {
-    msg = (msg_t)__adc_vadc_init(adcp->nvadc);
+    msg = (msg_t)__adc_vadc_init(adcp->nvadc,
+                                 sizeof (hal_adc_config_t),
+                                 &adcp->cfgbuf);
   }
 #endif
   else {
     osalDbgAssert(false, "invalid ADC instance");
+  }
+
+  if (msg == HAL_RET_SUCCESS) {
+    adcp->config = &adcp->cfgbuf;
   }
 
   return msg;

@@ -77,13 +77,43 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
     switch (sub) {
     case SB_VETH_INIT:
       {
+        size_t n = (size_t)ectxp->r1;
+        void *p = (void *)ectxp->r2;
+        const hal_eth_config_t *confp;
+        vio_eth_config_t cfg;
         msg_t msg;
+
+        if ((sbp->vioconf->ethconfs == NULL) ||
+            (sbp->vioconf->ethconfs->cfgsnum == 0U)) {
+          ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
+          break;
+        }
+
+        if (n > sizeof (cfg)) {
+          ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
+          break;
+        }
+
+        if (!sb_is_valid_write_range(sbp, p, n)) {
+          ectxp->r0 = (uint32_t)CH_RET_EFAULT;
+          break;
+        }
+
+        confp = &sbp->vioconf->ethconfs->cfgs[0];
 
         drvSetArgumentX(unitp->ethp, (void *)unitp);
 
-        msg = drvStart(unitp->ethp, NULL);
+        msg = drvStart(unitp->ethp, confp);
         if (msg == HAL_RET_SUCCESS) {
           drvSetCallbackX(unitp->ethp, veth_cb);
+
+          memset(&cfg, 0, sizeof (cfg));
+          if (confp->mac_address != NULL) {
+            cfg.flags |= VIO_ETH_CFGF_MAC_ADDRESS;
+            memcpy(cfg.mac_address, confp->mac_address,
+                   sizeof cfg.mac_address);
+          }
+          memcpy(p, &cfg, n);
         }
 
         ectxp->r0 = (uint32_t)msg;
@@ -104,9 +134,16 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
         void *p = (void *)ectxp->r3;
         const hal_eth_config_t *confp;
         vio_eth_config_t cfg;
+        msg_t msg;
 
-        if (drvGetStateX(unitp->ethp) == HAL_DRV_STATE_UNINIT) {
+        if (drvGetStateX(unitp->ethp) != HAL_DRV_STATE_READY) {
           ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
+          break;
+        }
+
+        if ((sbp->vioconf->ethconfs == NULL) ||
+            (cfgnum >= sbp->vioconf->ethconfs->cfgsnum)) {
+          ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
           break;
         }
 
@@ -120,8 +157,9 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
           break;
         }
 
-        confp = (const hal_eth_config_t *)drvSelectCfgX(unitp->ethp, cfgnum);
-        if (confp == NULL) {
+        confp = &sbp->vioconf->ethconfs->cfgs[cfgnum];
+        msg = drvSetCfgX(unitp->ethp, confp);
+        if (msg != HAL_RET_SUCCESS) {
           ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
           break;
         }

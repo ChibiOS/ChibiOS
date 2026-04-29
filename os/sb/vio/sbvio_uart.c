@@ -84,17 +84,39 @@ void sb_sysc_vio_uart(sb_class_t *sbp, struct port_extctx *ectxp) {
     switch (sub) {
     case SB_VUART_INIT:
       {
+        size_t n = ectxp->r1;
+        void *p = (void *)ectxp->r2;
+        const void *confp;
         msg_t msg;
+
+        if ((sbp->vioconf->uartconfs == NULL) ||
+            (sbp->vioconf->uartconfs->cfgsnum == 0U)) {
+          ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
+          break;
+        }
+
+        if (n > sizeof (hal_sio_config_t)) {
+          ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
+          break;
+        }
+
+        if (!sb_is_valid_write_range(sbp, p, n)) {
+          ectxp->r0 = (uint32_t)CH_RET_EFAULT;
+          break;
+        }
+
+        confp = &sbp->vioconf->uartconfs->cfgs[0];
 
         /* Associating this virtual UART to the SIO driver.*/
         drvSetArgumentX(unitp->siop, (void *)unitp);
 
-        msg = drvStart(unitp->siop, NULL);
+        msg = drvStart(unitp->siop, confp);
         if (msg == HAL_RET_SUCCESS) {
 
           /* Starting with disabled events, enabling the callback.*/
           sioWriteEnableFlags(unitp->siop, SIO_EV_NONE);
           drvSetCallbackX(unitp->siop, vuart_cb);
+          memcpy(p, confp, n);
         }
 
         ectxp->r0 = (uint32_t)msg;
@@ -147,6 +169,7 @@ void sb_fastc_vio_uart(sb_class_t *sbp, struct port_extctx *ectxp) {
         size_t n = ectxp->r2;
         void *p = (void *)ectxp->r3;
         const void *confp;
+        msg_t msg;
 
         /* Check on configuration index.*/
         if ((sbp->vioconf->uartconfs == NULL) ||
@@ -169,11 +192,12 @@ void sb_fastc_vio_uart(sb_class_t *sbp, struct port_extctx *ectxp) {
         }
 
         /* Specified VUART configuration.*/
-        confp = drvSelectCfgX(unitp->siop, cfgnum);
+        confp = &sbp->vioconf->uartconfs->cfgs[cfgnum];
+        msg = drvSetCfgX(unitp->siop, confp);
 
         /* Copying the standard part of the configuration into the sandbox
            space in the specified position.*/
-        if (confp != NULL) {
+        if (msg == HAL_RET_SUCCESS) {
           memcpy(p, confp, n);
           ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
         }

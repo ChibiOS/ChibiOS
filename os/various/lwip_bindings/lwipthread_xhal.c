@@ -26,6 +26,7 @@
 
 msg_t lwip_lld_start(const lwipthread_opts_t *opts, struct netif *netif) {
   const hal_eth_config_t *cfgp;
+  const hal_eth_config_t *config = NULL;
   msg_t msg;
   unsigned cfgnum = 0U;
 
@@ -34,24 +35,32 @@ msg_t lwip_lld_start(const lwipthread_opts_t *opts, struct netif *netif) {
   }
 
   if ((opts != NULL) && (opts->eth_config != NULL)) {
-    msg = drvSetCfgX(&ETHD1, opts->eth_config);
-    if (msg != HAL_RET_SUCCESS) {
-      return msg;
-    }
-    cfgp = (const hal_eth_config_t *)ETHD1.config;
+    config = opts->eth_config;
   }
-  else {
-    cfgp = (const hal_eth_config_t *)drvSelectCfgX(&ETHD1, cfgnum);
-    if (cfgp == NULL) {
+  else if (cfgnum != 0U) {
+#if ETH_USE_CONFIGURATIONS == TRUE
+    extern const eth_configurations_t eth_configurations;
+
+    if (cfgnum >= eth_configurations.cfgsnum) {
       return HAL_RET_CONFIG_ERROR;
     }
+    config = &eth_configurations.cfgs[cfgnum];
+#else
+    return HAL_RET_CONFIG_ERROR;
+#endif
   }
 
+  msg = drvStart(&ETHD1, config);
+  if (msg != HAL_RET_SUCCESS) {
+    return msg;
+  }
+
+  cfgp = (const hal_eth_config_t *)ETHD1.config;
   if (cfgp->mac_address != NULL) {
     memcpy(netif->hwaddr, cfgp->mac_address, ETHARP_HWADDR_LEN);
   }
 
-  return drvStart(&ETHD1, NULL);
+  return HAL_RET_SUCCESS;
 }
 
 msg_t lwip_wait_transmit_handle(lwip_transmit_handle_t *txhp) {

@@ -57,9 +57,9 @@ hal_sio_driver_c SIOD2;
 /*===========================================================================*/
 
 CC_FORCE_INLINE
-static inline uint32_t __sio_vuart_init(uint32_t nvuart) {
+static inline uint32_t __sio_vuart_init(uint32_t nvuart, size_t n, void *p) {
 
-  __syscall1r(225, VIO_CALL(SB_VUART_INIT, nvuart));
+  __syscall3r(225, VIO_CALL(SB_VUART_INIT, nvuart), n, p);
   return (uint32_t)r0;
 }
 
@@ -74,7 +74,7 @@ CC_FORCE_INLINE
 static inline uint32_t __sio_vuart_selcfg(uint32_t nvuart, uint32_t ncfg,
                                           size_t n, void *p) {
 
-  __syscall4r(225, VIO_CALL(SB_VUART_SELCFG, nvuart), ncfg, n, p);
+  __syscall4r(97, VIO_CALL(SB_VUART_SELCFG, nvuart), ncfg, n, p);
   return (uint32_t)r0;
 }
 
@@ -157,16 +157,24 @@ msg_t sio_lld_start(hal_sio_driver_c *siop) {
   }
 #if VIO_SIO_USE_VUART1 == TRUE
   else if (&SIOD1 == siop) {
-    msg = (msg_t)__sio_vuart_init(siop->nvuart);
+    msg = (msg_t)__sio_vuart_init(siop->nvuart,
+                                  sizeof (hal_sio_config_t),
+                                  &siop->cfgbuf);
   }
 #endif
 #if VIO_SIO_USE_VUART2 == TRUE
   else if (&SIOD2 == siop) {
-    msg = (msg_t)__sio_vuart_init(siop->nvuart);
+    msg = (msg_t)__sio_vuart_init(siop->nvuart,
+                                  sizeof (hal_sio_config_t),
+                                  &siop->cfgbuf);
   }
 #endif
   else {
     osalDbgAssert(false, "invalid SIO instance");
+  }
+
+  if (msg == HAL_RET_SUCCESS) {
+    siop->config = &siop->cfgbuf;
   }
 
   return msg;

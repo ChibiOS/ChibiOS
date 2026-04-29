@@ -48,9 +48,9 @@ hal_i2c_driver_c I2CD1;
 /*===========================================================================*/
 
 CC_FORCE_INLINE
-static inline uint32_t __i2c_vi2c_init(uint32_t nvi2c) {
+static inline uint32_t __i2c_vi2c_init(uint32_t nvi2c, size_t n, void *p) {
 
-  __syscall1r(230, VIO_CALL(SB_VI2C_INIT, nvi2c));
+  __syscall3r(230, VIO_CALL(SB_VI2C_INIT, nvi2c), n, p);
   return (uint32_t)r0;
 }
 
@@ -165,28 +165,24 @@ void i2c_lld_init(void) {
  * @notapi
  */
 msg_t i2c_lld_start(hal_i2c_driver_c *i2cp) {
-  const hal_i2c_config_t *config = (const hal_i2c_config_t *)i2cp->config;
   msg_t msg = HAL_RET_SUCCESS;
-
-  if (config == NULL) {
-    config = i2c_lld_selcfg(i2cp, 0U);
-  }
-  if (config == NULL) {
-    return HAL_RET_CONFIG_ERROR;
-  }
-
-  i2cp->config = config;
 
   /* Enables the peripheral.*/
   if (false) {
   }
 #if VIO_I2C_USE_VI2C1 == TRUE
   else if (&I2CD1 == i2cp) {
-    msg = (msg_t)__i2c_vi2c_init(i2cp->nvi2c);
+    msg = (msg_t)__i2c_vi2c_init(i2cp->nvi2c,
+                                 sizeof (hal_i2c_config_t),
+                                 &i2cp->cfgbuf);
   }
 #endif
   else {
     osalDbgAssert(false, "invalid I2C instance");
+  }
+
+  if (msg == HAL_RET_SUCCESS) {
+    i2cp->config = &i2cp->cfgbuf;
   }
 
   return msg;
@@ -249,16 +245,10 @@ const hal_i2c_config_t *i2c_lld_setcfg(hal_i2c_driver_c *i2cp,
  */
 const hal_i2c_config_t *i2c_lld_selcfg(hal_i2c_driver_c *i2cp,
                                        unsigned cfgnum) {
+  msg_t msg;
 
-  if (i2cp->state == HAL_DRV_STATE_READY) {
-    msg_t msg;
-
-    msg = (msg_t)__i2c_vi2c_selcfg(i2cp->nvi2c, cfgnum);
-    if (msg != HAL_RET_SUCCESS) {
-      return NULL;
-    }
-  }
-  else if (cfgnum != 0U) {
+  msg = (msg_t)__i2c_vi2c_selcfg(i2cp->nvi2c, cfgnum);
+  if (msg != HAL_RET_SUCCESS) {
     return NULL;
   }
 

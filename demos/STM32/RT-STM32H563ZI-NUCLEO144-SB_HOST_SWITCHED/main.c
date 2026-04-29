@@ -80,6 +80,8 @@ static vio_gpio_units_t gpio_units2 = {
 };
 
 #if VIO_CFG_ENABLE_ETH == TRUE
+static const uint8_t eth_mac_address[] = STM32_ETH_ETH1_DEFAULT_MAC_ADDRESS;
+
 static vio_eth_units_t eth_units2 = {
   .n                = 1U,
   .units = {
@@ -90,11 +92,21 @@ static vio_eth_units_t eth_units2 = {
     }
   }
 };
+
+static eth_configurations_t eth_configs2 = {
+  .cfgsnum          = 1U,
+  .cfgs = {
+    [0] = {
+      .mac_address  = eth_mac_address
+    }
+  }
+};
 #endif
 
 static vio_conf_t vio_config2 = {
 #if VIO_CFG_ENABLE_ETH == TRUE
   .eths             = &eth_units2,
+  .ethconfs         = &eth_configs2,
 #endif
   .gpios            = &gpio_units2
 };

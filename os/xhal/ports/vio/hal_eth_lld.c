@@ -47,9 +47,9 @@ hal_eth_driver_c ETHD2;
 /*===========================================================================*/
 
 CC_FORCE_INLINE
-static inline uint32_t __eth_veth_init(uint32_t nveth) {
+static inline uint32_t __eth_veth_init(uint32_t nveth, size_t n, void *p) {
 
-  __syscall1r(227, VIO_CALL(SB_VETH_INIT, nveth));
+  __syscall3r(227, VIO_CALL(SB_VETH_INIT, nveth), n, p);
   return (uint32_t)r0;
 }
 
@@ -154,22 +154,28 @@ void eth_lld_init(void) {
 }
 
 msg_t eth_lld_start(hal_eth_driver_c *ethp) {
+  vio_eth_config_t vcfg;
   msg_t msg = HAL_RET_SUCCESS;
 
   if (false) {
   }
 #if VIO_ETH_USE_VETH1 == TRUE
   else if (&ETHD1 == ethp) {
-    msg = (msg_t)__eth_veth_init(ethp->nveth);
+    msg = (msg_t)__eth_veth_init(ethp->nveth, sizeof vcfg, &vcfg);
   }
 #endif
 #if VIO_ETH_USE_VETH2 == TRUE
   else if (&ETHD2 == ethp) {
-    msg = (msg_t)__eth_veth_init(ethp->nveth);
+    msg = (msg_t)__eth_veth_init(ethp->nveth, sizeof vcfg, &vcfg);
   }
 #endif
   else {
     osalDbgAssert(false, "invalid ETH instance");
+  }
+
+  if (msg == HAL_RET_SUCCESS) {
+    eth_lld_apply_cfgbuf(ethp, &vcfg);
+    ethp->config = &ethp->cfgbuf;
   }
 
   return msg;

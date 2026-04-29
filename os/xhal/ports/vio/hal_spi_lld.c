@@ -53,9 +53,9 @@ hal_spi_driver_c SPID2;
 /*===========================================================================*/
 
 CC_FORCE_INLINE
-static inline uint32_t __spi_vspi_init(uint32_t nvuart) {
+static inline uint32_t __spi_vspi_init(uint32_t nvuart, size_t n, void *p) {
 
-  __syscall1r(226, VIO_CALL(SB_VSPI_INIT, nvuart));
+  __syscall3r(226, VIO_CALL(SB_VSPI_INIT, nvuart), n, p);
   return (uint32_t)r0;
 }
 
@@ -70,7 +70,7 @@ CC_FORCE_INLINE
 static inline uint32_t __spi_vspi_selcfg(uint32_t nvuart, uint32_t ncfg,
                                          size_t n, void *p) {
 
-  __syscall4r(226, VIO_CALL(SB_VSPI_SELCFG, nvuart), ncfg, n, p);
+  __syscall4r(98, VIO_CALL(SB_VSPI_SELCFG, nvuart), ncfg, n, p);
   return (uint32_t)r0;
 }
 
@@ -179,16 +179,24 @@ msg_t spi_lld_start(hal_spi_driver_c *spip) {
   }
 #if VIO_SPI_USE_VSPI1 == TRUE
   else if (&SPID1 == spip) {
-    msg = (msg_t)__spi_vspi_init(spip->nvspi);
+    msg = (msg_t)__spi_vspi_init(spip->nvspi,
+                                 sizeof (hal_spi_config_t),
+                                 &spip->cfgbuf);
   }
 #endif
 #if VIO_SPI_USE_VSPI2 == TRUE
   else if (&SPID2 == spip) {
-    msg = (msg_t)__spi_vspi_init(spip->nvspi);
+    msg = (msg_t)__spi_vspi_init(spip->nvspi,
+                                 sizeof (hal_spi_config_t),
+                                 &spip->cfgbuf);
   }
 #endif
   else {
     osalDbgAssert(false, "invalid SPI instance");
+  }
+
+  if (msg == HAL_RET_SUCCESS) {
+    spip->config = &spip->cfgbuf;
   }
 
   return msg;
@@ -278,7 +286,7 @@ const hal_spi_config_t *spi_lld_selcfg(hal_spi_driver_c *spip, unsigned cfgnum) 
  */
 void spi_lld_select(hal_spi_driver_c *spip) {
 
-  __syscall1r(226, VIO_CALL(SB_VSPI_SELECT, spip->nvspi));
+  __syscall1r(98, VIO_CALL(SB_VSPI_SELECT, spip->nvspi));
 }
 
 /**
@@ -291,7 +299,7 @@ void spi_lld_select(hal_spi_driver_c *spip) {
  */
 void spi_lld_unselect(hal_spi_driver_c *spip) {
 
-  __syscall1r(226, VIO_CALL(SB_VSPI_UNSELECT, spip->nvspi));
+  __syscall1r(98, VIO_CALL(SB_VSPI_UNSELECT, spip->nvspi));
 }
 
 /**
