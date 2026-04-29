@@ -269,8 +269,8 @@ msg_t adcStartConversionLinearI(void *ip, unsigned grpnum,
  *
  * @api
  */
-msg_t adcStartConversionLinear(void *ip, unsigned grpnum,
-                               adcsample_t *samples, size_t depth) {
+msg_t adcStartConversionLinear(void *ip, unsigned grpnum, adcsample_t *samples,
+                               size_t depth) {
   hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
   msg_t msg;
 
@@ -417,8 +417,7 @@ void adcStopConversion(void *ip) {
  *
  * @api
  */
-msg_t adcConvert(void *ip, unsigned grpnum,
-                 adcsample_t *samples, size_t depth) {
+msg_t adcConvert(void *ip, unsigned grpnum, adcsample_t *samples, size_t depth) {
   hal_adc_driver_c *self = (hal_adc_driver_c *)ip;
   msg_t msg;
 

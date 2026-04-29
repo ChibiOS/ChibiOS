@@ -66,6 +66,14 @@ static inline uint32_t __adc_vadc_deinit(uint32_t nvadc) {
 }
 
 CC_FORCE_INLINE
+static inline uint32_t __adc_vadc_selcfg(uint32_t nvadc, uint32_t ncfg,
+                                         size_t n, void *p) {
+
+  __syscall4r(228, VIO_CALL(SB_VADC_SELCFG, nvadc), ncfg, n, p);
+  return (uint32_t)r0;
+}
+
+CC_FORCE_INLINE
 static inline uint32_t __adc_vadc_start(hal_adc_driver_c *adcp, unsigned grpnum,
                                         adcsample_t *samples, size_t depth) {
   uint32_t subcode;
@@ -222,8 +230,9 @@ void adc_lld_stop(hal_adc_driver_c *adcp) {
 
 /**
  * @brief   Applies an explicit ADC configuration.
- * @note    The VIO port does not accept sandbox-provided conversion group
- *          structures. Only the local default configuration is accepted.
+ * @note    The VIO port does not accept arbitrary sandbox-provided
+ *          configurations. Only host-approved predefined configurations
+ *          selected using @p drvSelectCfgX() are supported.
  *
  * @param[in] adcp      pointer to the @p hal_adc_driver_c object
  * @param[in] config    pointer to the @p hal_adc_config_t structure
@@ -234,17 +243,19 @@ void adc_lld_stop(hal_adc_driver_c *adcp) {
 const hal_adc_config_t *adc_lld_setcfg(hal_adc_driver_c *adcp,
                                        const hal_adc_config_t *config) {
 
+  (void)adcp;
+
   if (config == NULL) {
-    return adc_lld_selcfg(adcp, 0U);
+    return &default_config;
   }
 
   return NULL;
 }
 
 /**
- * @brief   Selects a predefined ADC configuration.
- * @note    In the VIO port configuration zero is a local placeholder. The
- *          conversion groups remain host-owned and are referenced by index.
+ * @brief   Selects one of the host-defined ADC configurations.
+ * @note    The selected configuration is mirrored locally in
+ *          @p adcp->cfgbuf after host-side validation and selection.
  *
  * @param[in] adcp      pointer to the @p hal_adc_driver_c object
  * @param[in] cfgnum    driver configuration number
@@ -254,14 +265,16 @@ const hal_adc_config_t *adc_lld_setcfg(hal_adc_driver_c *adcp,
  */
 const hal_adc_config_t *adc_lld_selcfg(hal_adc_driver_c *adcp,
                                        unsigned cfgnum) {
+  msg_t msg;
 
-  (void)adcp;
+  msg = __adc_vadc_selcfg(adcp->nvadc, cfgnum,
+                          sizeof (hal_adc_config_t), &adcp->cfgbuf);
+  if (msg == HAL_RET_SUCCESS) {
 
-  if (cfgnum != 0U) {
-    return NULL;
+    return &adcp->cfgbuf;
   }
 
-  return &default_config;
+  return NULL;
 }
 
 /**

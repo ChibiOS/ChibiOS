@@ -92,6 +92,10 @@ typedef struct vio_conf {
    * @brief   Virtual ADC units.
    */
   const vio_adc_units_t         *adcs;
+  /**
+   * @brief   Virtual ADC configurations.
+   */
+  const adc_configurations_t    *adcconfs;
 #endif
 #if (VIO_CFG_ENABLE_ETH == TRUE) || defined(__DOXYGEN__)
   /**

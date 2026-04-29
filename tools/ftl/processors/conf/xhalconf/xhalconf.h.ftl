@@ -80,6 +80,7 @@
 /*===========================================================================*/
 
 #define ADC_USE_SYNCHRONIZATION             ${doc.ADC_USE_SYNCHRONIZATION!"TRUE"}
+#define ADC_USE_CONFIGURATIONS              ${doc.ADC_USE_CONFIGURATIONS!"FALSE"}
 
 /*===========================================================================*/
 /* DAC driver settings.                                                      */

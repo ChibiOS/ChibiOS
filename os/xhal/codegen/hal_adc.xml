@@ -37,6 +37,12 @@
         <brief>Support for thread synchronization API.</brief>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
+      <config name="ADC_USE_CONFIGURATIONS" default="FALSE">
+        <brief>Support for ADC user configurations.</brief>
+        <note>When enabled the user must provide a variable named
+          @p adc_configurations of type @p adc_configurations_t.</note>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
     </configs>
     <macros>
       <group description="Macro functions">
@@ -182,6 +188,10 @@ do {
         <brief>Type of structure representing ADC conversion groups.</brief>
         <basetype ctype="struct hal_adc_conversion_groups" />
       </typedef>
+      <typedef name="adc_configurations_t">
+        <brief>Type of user-provided ADC configurations.</brief>
+        <basetype ctype="struct adc_configurations" />
+      </typedef>
       <verbatim><![CDATA[
 /* Including the low level driver header, it exports information required
    for completing types.*/
@@ -225,6 +235,17 @@ adc_lld_config_fields;]]></verbatim>
             <verbatim><![CDATA[
 ADC_CONFIG_EXT_FIELDS]]></verbatim>
           </condition>
+        </fields>
+      </struct>
+      <struct name="adc_configurations">
+        <brief>Structure representing user-provided ADC configurations.</brief>
+        <fields>
+          <field name="cfgsnum" ctype="unsigned">
+            <brief>Number of configurations in the open array.</brief>
+          </field>
+          <field name="cfgs" ctype="hal_adc_config_t$I$N[]">
+            <brief>User ADC configurations.</brief>
+          </field>
         </fields>
       </struct>
       <class type="regular" name="hal_adc_driver" namespace="adc"

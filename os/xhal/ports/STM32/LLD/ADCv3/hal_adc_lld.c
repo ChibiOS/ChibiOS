@@ -112,10 +112,12 @@ hal_adc_driver_c ADCD5;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+#if ADC_USE_CONFIGURATIONS != TRUE
 static const hal_adc_config_t default_config = {
   .grps   = NULL,
   .difsel = 0
 };
+#endif
 
 static uint32_t clkmask;
 
@@ -809,13 +811,24 @@ const hal_adc_config_t *adc_lld_setcfg(hal_adc_driver_c *adcp,
 
 const hal_adc_config_t *adc_lld_selcfg(hal_adc_driver_c *adcp,
                                        unsigned cfgnum) {
+#if ADC_USE_CONFIGURATIONS == TRUE
+  extern const adc_configurations_t adc_configurations;
+
+  if (cfgnum >= adc_configurations.cfgsnum) {
+    return NULL;
+  }
+
+  return adc_lld_setcfg(adcp, &adc_configurations.cfgs[cfgnum]);
+#else
+
   (void)adcp;
 
-  if (cfgnum != 0U) {
+  if (cfgnum > 0U) {
     return NULL;
   }
 
   return &default_config;
+#endif
 }
 
 void adc_lld_set_callback(hal_adc_driver_c *adcp, drv_cb_t cb) {

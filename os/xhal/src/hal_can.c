@@ -386,7 +386,6 @@ msg_t canReceiveTimeout(void *ip, canmbx_t mailbox, CANRxFrame *crfp,
  */
 void canSleep(void *ip) {
   hal_can_driver_c *self = (hal_can_driver_c *)ip;
-
   osalDbgCheck(self != NULL);
 
   osalSysLock();
@@ -410,7 +409,6 @@ void canSleep(void *ip) {
  */
 void canWakeup(void *ip) {
   hal_can_driver_c *self = (hal_can_driver_c *)ip;
-
   osalDbgCheck(self != NULL);
 
   osalSysLock();

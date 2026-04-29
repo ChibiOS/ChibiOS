@@ -26,6 +26,8 @@
 
 #include "sb.h"
 
+#include <string.h>
+
 #if (VIO_CFG_ENABLE_ADC == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
@@ -186,6 +188,52 @@ void sb_sysc_vio_adc(sb_class_t *sbp, struct port_extctx *ectxp) {
         }
 
         ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+        break;
+      }
+    case SB_VADC_SELCFG:
+      {
+        uint32_t cfgnum = ectxp->r1;
+        size_t n = ectxp->r2;
+        void *p = (void *)ectxp->r3;
+        const void *confp;
+
+        if (drvGetStateX(unitp->adcp) != HAL_DRV_STATE_READY) {
+          ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
+          break;
+        }
+
+        /* Check on configuration index.*/
+        if ((sbp->vioconf->adcconfs == NULL) ||
+            (cfgnum >= sbp->vioconf->adcconfs->cfgsnum)) {
+          ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
+          break;
+        }
+
+        /* Check on configuration buffer size.*/
+        if (n > sizeof (hal_adc_config_t)) {
+          ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
+          break;
+        }
+
+        /* Check on configuration buffer area.*/
+        if (!sb_is_valid_write_range(sbp, p, n)) {
+          ectxp->r0 = (uint32_t)CH_RET_EFAULT;
+          break;
+        }
+
+        /* Specified VADC configuration.*/
+        confp = drvSelectCfgX(unitp->adcp, cfgnum);
+
+        /* Copying the standard part of the configuration into the sandbox
+           space in the specified position.*/
+        if (confp != NULL) {
+          memcpy(p, confp, n);
+          ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+        }
+        else {
+          ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
+        }
+
         break;
       }
     default:

@@ -276,25 +276,6 @@ static inline hal_gpt_driver_c *gptObjectInit(hal_gpt_driver_c *self) {
  * @{
  */
 /**
- * @brief       Returns the GPT frequency.
- *
- * @param[in,out] ip            Pointer to a @p hal_gpt_driver_c instance.
- * @return                      The configured frequency.
- *
- * @xclass
- */
-CC_FORCE_INLINE
-static inline gptfreq_t gptGetFrequencyX(void *ip) {
-  hal_gpt_driver_c *self = (hal_gpt_driver_c *)ip;
-
-  if (self->config != NULL) {
-    return ((const hal_gpt_config_t *)self->config)->frequency;
-  }
-
-  return (gptfreq_t)GPT_DEFAULT_FREQUENCY;
-}
-
-/**
  * @brief       Returns the interval of GPT peripheral.
  *
  * @param[in,out] ip            Pointer to a @p hal_gpt_driver_c instance.

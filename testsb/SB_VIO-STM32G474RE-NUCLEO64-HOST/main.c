@@ -60,8 +60,92 @@ static sio_configurations_t uart_configs1 = {
   }
 };
 
+static const adc_conversion_groups_t adc_groups1 = {
+  .grpsnum                     = 1U,
+  .grps                        = {
+    [0] = {
+      .num_channels            = 2U,
+      .cfgr                    = 0U,
+      .cfgr2                   = 0U,
+      .tr1                     = ADC_TR_DISABLED,
+      .tr2                     = ADC_TR_DISABLED,
+      .tr3                     = ADC_TR_DISABLED,
+      .awd2cr                  = 0U,
+      .awd3cr                  = 0U,
+      .smpr                    = {
+        ADC_SMPR1_SMP_AN1(ADC_SMPR_SMP_247P5) |
+        ADC_SMPR1_SMP_AN2(ADC_SMPR_SMP_247P5),
+        0U
+      },
+      .sqr                     = {
+        ADC_SQR1_SQ1_N(ADC_CHANNEL_IN1) |
+        ADC_SQR1_SQ2_N(ADC_CHANNEL_IN2),
+        0U,
+        0U,
+        0U
+      }
+    }
+  }
+};
+
+static const adc_conversion_groups_t adc_groups2 = {
+  .grpsnum                     = 1U,
+  .grps                        = {
+    [0] = {
+      .num_channels            = 2U,
+      .cfgr                    = ADC_CFGR_CONT,
+      .cfgr2                   = 0U,
+      .tr1                     = ADC_TR_DISABLED,
+      .tr2                     = ADC_TR_DISABLED,
+      .tr3                     = ADC_TR_DISABLED,
+      .awd2cr                  = 0U,
+      .awd3cr                  = 0U,
+      .smpr                    = {
+        ADC_SMPR1_SMP_AN1(ADC_SMPR_SMP_247P5) |
+        ADC_SMPR1_SMP_AN2(ADC_SMPR_SMP_247P5),
+        0U
+      },
+      .sqr                     = {
+        ADC_SQR1_SQ1_N(ADC_CHANNEL_IN1) |
+        ADC_SQR1_SQ2_N(ADC_CHANNEL_IN2),
+        0U,
+        0U,
+        0U
+      }
+    }
+  }
+};
+
+const adc_configurations_t adc_configurations = {
+  .cfgsnum                     = 2U,
+  .cfgs = {
+    [0] = {
+      .grps                    = &adc_groups1,
+      .difsel                  = 0U
+    },
+    [1] = {
+      .grps                    = &adc_groups2,
+      .difsel                  = 0U
+    }
+  }
+};
+
+static vio_adc_units_t adc_units1 = {
+  .n                           = 1U,
+  .units = {
+    [0] = {
+      .adcp                    = &ADCD1,
+      .config                  = &adc_configurations.cfgs[0],
+      .vrqsb                   = &sbx1,
+      .vrqn                    = 12
+    }
+  }
+};
+
 static vio_conf_t vio_config1 = {
   .gpios        = &gpio_units1,
+  .adcs         = &adc_units1,
+  .adcconfs     = &adc_configurations,
   .uarts        = &uart_units1,
   .uartconfs    = &uart_configs1
 };

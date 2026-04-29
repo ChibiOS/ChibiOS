@@ -34,7 +34,7 @@
  * @brief   Enables the Virtual ADC support.
  */
 #if !defined(VIO_CFG_ENABLE_ADC) || defined(__DOXYGEN__)
-#define VIO_CFG_ENABLE_ADC                  FALSE
+#define VIO_CFG_ENABLE_ADC                  TRUE
 #endif
 
 /**

@@ -84,6 +84,15 @@
 #if !defined(ADC_USE_SYNCHRONIZATION) || defined(__DOXYGEN__)
 #define ADC_USE_SYNCHRONIZATION             TRUE
 #endif
+
+/**
+ * @brief       Support for ADC user configurations.
+ * @note        When enabled the user must provide a variable named @p
+ *              adc_configurations of type @p adc_configurations_t.
+ */
+#if !defined(ADC_USE_CONFIGURATIONS) || defined(__DOXYGEN__)
+#define ADC_USE_CONFIGURATIONS              FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -93,6 +102,11 @@
 /* Checks on ADC_USE_SYNCHRONIZATION configuration.*/
 #if (ADC_USE_SYNCHRONIZATION != FALSE) && (ADC_USE_SYNCHRONIZATION != TRUE)
 #error "invalid ADC_USE_SYNCHRONIZATION value"
+#endif
+
+/* Checks on ADC_USE_CONFIGURATIONS configuration.*/
+#if (ADC_USE_CONFIGURATIONS != FALSE) && (ADC_USE_CONFIGURATIONS != TRUE)
+#error "invalid ADC_USE_CONFIGURATIONS value"
 #endif
 
 /*===========================================================================*/
@@ -269,6 +283,11 @@ typedef struct hal_adc_conversion_group adc_conversion_group_t;
  */
 typedef struct hal_adc_conversion_groups adc_conversion_groups_t;
 
+/**
+ * @brief       Type of user-provided ADC configurations.
+ */
+typedef struct adc_configurations adc_configurations_t;
+
 /* Including the low level driver header, it exports information required
    for completing types.*/
 #include "hal_adc_lld.h"
@@ -315,6 +334,20 @@ struct hal_adc_config {
 #if (defined(ADC_CONFIG_EXT_FIELDS)) || defined (__DOXYGEN__)
   ADC_CONFIG_EXT_FIELDS
 #endif /* defined(ADC_CONFIG_EXT_FIELDS) */
+};
+
+/**
+ * @brief       Structure representing user-provided ADC configurations.
+ */
+struct adc_configurations {
+  /**
+   * @brief       Number of configurations in the open array.
+   */
+  unsigned                  cfgsnum;
+  /**
+   * @brief       User ADC configurations.
+   */
+  hal_adc_config_t          cfgs[];
 };
 
 /**
@@ -457,8 +490,8 @@ extern "C" {
   void adcStopConversionI(void *ip);
   void adcStopConversion(void *ip);
 #if (ADC_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
-  msg_t adcConvert(void *ip, unsigned grpnum,
-                   adcsample_t *samples, size_t depth);
+  msg_t adcConvert(void *ip, unsigned grpnum, adcsample_t *samples,
+                   size_t depth);
   msg_t adcSynchronizeStateS(void *ip, driver_state_t state,
                              sysinterval_t timeout);
   msg_t adcSynchronizeState(void *ip, driver_state_t state,

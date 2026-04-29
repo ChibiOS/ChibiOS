@@ -88,12 +88,15 @@ typedef uint32_t adcerror_t;
  */
 #define adc_lld_driver_fields                                               \
   /* Number of the associated VADC.*/                                       \
-  uint32_t                  nvadc
+  uint32_t                  nvadc;                                          \
+  /* Buffer for the local copy of the driver configuration.*/               \
+  hal_adc_config_t          cfgbuf
 
 /**
  * @brief   Low level fields of the ADC configuration structure.
- * @note    In the VIO port the actual conversion groups are host-owned and
- *          are selected by index through the VADC API.
+ * @note    In the VIO port configuration changes are limited to selecting
+ *          one of the host-defined configurations, explicit @p setcfg
+ *          requests are intentionally unsupported.
  */
 #define adc_lld_config_fields
 
