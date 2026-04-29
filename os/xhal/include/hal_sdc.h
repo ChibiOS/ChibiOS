@@ -437,7 +437,7 @@ struct hal_sdc_driver_vmt {
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
   /* From hal_cb_driver_c.*/
-  void (*setcb)(void *ip, drv_cb_t cb);
+  void (*oncbset)(void *ip, drv_cb_t cb);
   /* From hal_sdc_driver_c.*/
 };
 
@@ -551,7 +551,7 @@ extern "C" {
   void __sdc_stop_impl(void *ip);
   const void *__sdc_setcfg_impl(void *ip, const void *config);
   const void *__sdc_selcfg_impl(void *ip, unsigned cfgnum);
-  void __sdc_setcb_impl(void *ip, drv_cb_t cb);
+  void __sdc_oncbset_impl(void *ip, drv_cb_t cb);
   bool sdcConnect(void *ip);
   bool sdcDisconnect(void *ip);
   msg_t sdcStartRead(void *ip, uint32_t startblk, uint8_t *buf, uint32_t n);

@@ -100,17 +100,39 @@ void __cbdrv_dispose_impl(void *ip) {
 }
 
 /**
- * @brief       Implementation of method @p drvSetCallbackX().
+ * @brief       Implementation of method @p __cbdrv_on_cb_set().
  * @note        This function is meant to be used by derived classes.
  *
  * @param[in,out] ip            Pointer to a @p hal_cb_driver_c instance.
  * @param         cb            Callback function to be associated. Passing @p
  *                              NULL disables the existing callback, if any.
  */
+void __cbdrv_oncbset_impl(void *ip, drv_cb_t cb) {
+  hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
+
+  (void)self;
+  (void)cb;
+}
+/** @} */
+
+/**
+ * @name        Regular methods of hal_cb_driver_c
+ * @{
+ */
+/**
+ * @brief       Associates a callback to the driver instance.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_cb_driver_c instance.
+ * @param         cb            Callback function to be associated. Passing @p
+ *                              NULL disables the existing callback, if any.
+ *
+ * @notapi
+ */
 void __cbdrv_setcb_impl(void *ip, drv_cb_t cb) {
   hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
 
   self->cb = cb;
+  self->vmt->oncbset(self, cb);
 }
 /** @} */
 

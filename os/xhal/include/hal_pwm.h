@@ -342,7 +342,7 @@ struct hal_pwm_driver_vmt {
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
   /* From hal_cb_driver_c.*/
-  void (*setcb)(void *ip, drv_cb_t cb);
+  void (*oncbset)(void *ip, drv_cb_t cb);
   /* From hal_pwm_driver_c.*/
 };
 
@@ -433,7 +433,7 @@ extern "C" {
   void __pwm_stop_impl(void *ip);
   const void *__pwm_setcfg_impl(void *ip, const void *config);
   const void *__pwm_selcfg_impl(void *ip, unsigned cfgnum);
-  void __pwm_setcb_impl(void *ip, drv_cb_t cb);
+  void __pwm_oncbset_impl(void *ip, drv_cb_t cb);
   void pwmChangePeriodI(void *ip, pwmcnt_t period);
   void pwmChangePeriod(void *ip, pwmcnt_t period);
   void pwmEnableChannelI(void *ip, pwmchannel_t channel, pwmcnt_t width);

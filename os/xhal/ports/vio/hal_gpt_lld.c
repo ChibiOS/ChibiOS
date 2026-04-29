@@ -94,6 +94,13 @@ static inline uint32_t __gpt_vgpt_chgi(uint32_t nvgpt, gptcnt_t interval) {
 }
 
 CC_FORCE_INLINE
+static inline uint32_t __gpt_vgpt_setcb(uint32_t nvgpt, uint32_t enable) {
+
+  __syscall2r(229, VIO_CALL(SB_VGPT_SETCB, nvgpt), enable);
+  return (uint32_t)r0;
+}
+
+CC_FORCE_INLINE
 static inline uint32_t __gpt_vgpt_getc(uint32_t nvgpt) {
 
   __syscall1r(101, VIO_CALL(SB_VGPT_GETC, nvgpt));
@@ -191,6 +198,9 @@ msg_t gpt_lld_start(hal_gpt_driver_c *gptp) {
   if (msg == HAL_RET_SUCCESS) {
     gptp->cfgbuf.frequency = (gptfreq_t)__gpt_vgpt_getfreq(gptp->nvgpt);
     gptp->config = &gptp->cfgbuf;
+    if (drvGetCallbackX(gptp) != NULL) {
+      msg = (msg_t)__gpt_vgpt_setcb(gptp->nvgpt, 1U);
+    }
   }
 
   return msg;
@@ -273,8 +283,12 @@ const hal_gpt_config_t *gpt_lld_selcfg(hal_gpt_driver_c *gptp,
  */
 void gpt_lld_set_callback(hal_gpt_driver_c *gptp, drv_cb_t cb) {
 
-  (void)gptp;
-  (void)cb;
+  if (drvGetStateX(gptp) != HAL_DRV_STATE_STOP) {
+    msg_t msg;
+
+    msg = (msg_t)__gpt_vgpt_setcb(gptp->nvgpt, cb != NULL ? 1U : 0U);
+    osalDbgAssert(msg == HAL_RET_SUCCESS, "unexpected failure");
+  }
 }
 
 /**

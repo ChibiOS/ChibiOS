@@ -117,7 +117,40 @@ self->cb = NULL;]]></implementation>
             <implementation><![CDATA[ ]]></implementation>
           </dispose>
           <virtual>
-            <method name="drvSetCallbackX" ctype="void" shortname="setcb">
+            <method name="__cbdrv_on_cb_set" ctype="void" shortname="oncbset">
+              <brief>Callback-set hook.</brief>
+              <details><![CDATA[This hook is invoked after the callback field
+                has been updated by @p drvSetCallbackX(). The default
+                implementation does nothing; derived drivers can override it
+                for low-level side effects such as enabling or disabling
+                callback-related IRQs.]]></details>
+              <param name="cb" ctype="drv_cb_t">
+                Callback function to be associated. Passing @p NULL
+                disables the existing callback, if any.
+              </param>
+              <xclass />
+              <implementation><![CDATA[
+
+(void)self;
+(void)cb;]]></implementation>
+            </method>
+          </virtual>
+          <regular>
+            <method name="__cbdrv_setcb_impl" ctype="void">
+              <brief>Associates a callback to the driver instance.</brief>
+              <param name="cb" ctype="drv_cb_t">
+                Callback function to be associated. Passing @p NULL
+                disables the existing callback, if any.
+              </param>
+              <notapi />
+              <implementation><![CDATA[
+
+self->cb = cb;
+self->vmt->oncbset(self, cb);]]></implementation>
+            </method>
+          </regular>
+          <inline>
+            <method name="drvSetCallbackX" ctype="void">
               <brief>Associates a callback to the driver instance.</brief>
               <param name="cb" ctype="drv_cb_t">
                 Callback function to be associated. Passing @p NULL
@@ -126,10 +159,8 @@ self->cb = NULL;]]></implementation>
               <xclass />
               <implementation><![CDATA[
 
-self->cb = cb;]]></implementation>
+__cbdrv_setcb_impl(self, cb);]]></implementation>
             </method>
-          </virtual>
-          <inline>
             <method name="drvGetCallbackX" ctype="drv_cb_t">
               <brief>Returns the callback associated to the driver instance.</brief>
               <xclass />

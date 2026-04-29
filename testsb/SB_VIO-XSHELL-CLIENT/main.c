@@ -33,6 +33,7 @@ static uint8_t txbuf[32];
 #define ADC_LINEAR_DEPTH                    1U
 #define ADC_STREAM_DEPTH                    8U
 #define ADC_STREAM_TIMEOUT                  TIME_MS2I(2000)
+#define ADC_GPT_TRIGGER_PERIOD              100000U
 
 static adcsample_t adc_linear_samples[ADC_CHANNELS * ADC_LINEAR_DEPTH];
 static adcsample_t adc_stream_samples[ADC_CHANNELS * ADC_STREAM_DEPTH];
@@ -100,6 +101,7 @@ static void adc_stream(xshell_t *xshp) {
   }
 
   chprintf(xshp->stream, "Streaming, press any key to stop" XSHELL_NEWLINE_STR);
+  gptStartContinuous(&GPTD1, ADC_GPT_TRIGGER_PERIOD);
 
   state = HAL_DRV_STATE_HALF;
   while (!adc_stop_requested(xshp)) {
@@ -121,6 +123,7 @@ static void adc_stream(xshell_t *xshp) {
     adc_print_samples(xshp, samples, ADC_STREAM_DEPTH / 2U);
   }
 
+  gptStopTimer(&GPTD1);
   adcStopConversion(&ADCD1);
   (void)drvSelectCfgX(&ADCD1, ADC_LINEAR_CFG);
   chprintf(xshp->stream, "ADC stream stopped" XSHELL_NEWLINE_STR);
@@ -251,6 +254,9 @@ int main(void) {
 
   if (drvStart(&ADCD1, NULL) != HAL_RET_SUCCESS) {
     chSysHalt("ADCD1 failed");
+  }
+  if (drvStart(&GPTD1, NULL) != HAL_RET_SUCCESS) {
+    chSysHalt("GPTD1 failed");
   }
 
   /*

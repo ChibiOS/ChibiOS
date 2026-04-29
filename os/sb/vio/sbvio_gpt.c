@@ -80,9 +80,6 @@ void sb_sysc_vio_gpt(sb_class_t *sbp, struct port_extctx *ectxp) {
         drvSetArgumentX(unitp->gptp, (void *)unitp);
 
         msg = drvStart(unitp->gptp, unitp->config);
-        if (msg == HAL_RET_SUCCESS) {
-          drvSetCallbackX(unitp->gptp, vgpt_cb);
-        }
 
         ectxp->r0 = (uint32_t)msg;
         break;
@@ -92,6 +89,20 @@ void sb_sysc_vio_gpt(sb_class_t *sbp, struct port_extctx *ectxp) {
         drvSetCallbackX(unitp->gptp, NULL);
         drvStop(unitp->gptp);
         drvSetArgumentX(unitp->gptp, NULL);
+
+        ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+        break;
+      }
+    case SB_VGPT_SETCB:
+      {
+        uint32_t enable = ectxp->r1;
+
+        if (drvGetStateX(unitp->gptp) == HAL_DRV_STATE_STOP) {
+          ectxp->r0 = (uint32_t)HAL_RET_INV_STATE;
+          break;
+        }
+
+        drvSetCallbackX(unitp->gptp, enable != 0U ? vgpt_cb : NULL);
 
         ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
         break;
@@ -218,7 +229,10 @@ void sb_fastc_vio_gpt(sb_class_t *sbp, struct port_extctx *ectxp) {
       }
     case SB_VGPT_GETFREQ:
       {
-        ectxp->r0 = (uint32_t)gptGetFrequencyX(unitp->gptp);
+        const hal_gpt_config_t *config;
+
+        config = (const hal_gpt_config_t *)unitp->gptp->config;
+        ectxp->r0 = config != NULL ? (uint32_t)config->frequency : 0U;
         break;
       }
     default:

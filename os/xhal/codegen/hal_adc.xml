@@ -659,9 +659,8 @@ return (const void *)adc_lld_setcfg(self, (const hal_adc_config_t *)config);]]><
               <implementation><![CDATA[
 return (const void *)adc_lld_selcfg(self, cfgnum);]]></implementation>
             </method>
-            <method shortname="setcb">
+            <method shortname="oncbset">
               <implementation><![CDATA[
-__cbdrv_setcb_impl(self, cb);
 adc_lld_set_callback(self, cb);]]></implementation>
             </method>
           </override>

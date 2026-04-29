@@ -244,7 +244,7 @@ struct hal_rtc_driver_vmt {
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
   /* From hal_cb_driver_c.*/
-  void (*setcb)(void *ip, drv_cb_t cb);
+  void (*oncbset)(void *ip, drv_cb_t cb);
   /* From hal_rtc_driver_c.*/
 };
 
@@ -323,7 +323,7 @@ extern "C" {
   void __rtc_stop_impl(void *ip);
   const void *__rtc_setcfg_impl(void *ip, const void *config);
   const void *__rtc_selcfg_impl(void *ip, unsigned cfgnum);
-  void __rtc_setcb_impl(void *ip, drv_cb_t cb);
+  void __rtc_oncbset_impl(void *ip, drv_cb_t cb);
   msg_t rtcSetDateTime(void *ip, const rtc_datetime_t *timespec);
   msg_t rtcGetDateTimeX(void *ip, rtc_datetime_t *timespec);
   msg_t rtcGetDateTime(void *ip, rtc_datetime_t *timespec);

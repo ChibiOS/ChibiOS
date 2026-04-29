@@ -191,15 +191,14 @@ const void *__dac_selcfg_impl(void *ip, unsigned cfgnum) {
 }
 
 /**
- * @brief       Override of method @p drvSetCallbackX().
+ * @brief       Override of method @p __cbdrv_on_cb_set().
  *
  * @param[in,out] ip            Pointer to a @p hal_dac_driver_c instance.
  * @param         cb            Callback function to be associated. Passing @p
  *                              NULL disables the existing callback, if any.
  */
-void __dac_setcb_impl(void *ip, drv_cb_t cb) {
+void __dac_oncbset_impl(void *ip, drv_cb_t cb) {
   hal_dac_driver_c *self = (hal_dac_driver_c *)ip;
-  __cbdrv_setcb_impl(self, cb);
   dac_lld_set_callback(self, cb);
 }
 /** @} */
@@ -214,7 +213,7 @@ const struct hal_dac_driver_vmt __hal_dac_driver_vmt = {
   .stop                     = __dac_stop_impl,
   .setcfg                   = __dac_setcfg_impl,
   .selcfg                   = __dac_selcfg_impl,
-  .setcb                    = __dac_setcb_impl
+  .oncbset                  = __dac_oncbset_impl
 };
 
 /**

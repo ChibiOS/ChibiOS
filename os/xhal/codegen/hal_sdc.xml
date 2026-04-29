@@ -930,9 +930,8 @@ return (const void *)sdc_lld_setcfg(self, (const hal_sdc_config_t *)config);]]><
               <implementation><![CDATA[
 return (const void *)sdc_lld_selcfg(self, cfgnum);]]></implementation>
             </method>
-            <method shortname="setcb">
+            <method shortname="oncbset">
               <implementation><![CDATA[
-__cbdrv_setcb_impl(self, cb);
 sdc_lld_set_callback(self, cb);]]></implementation>
             </method>
           </override>

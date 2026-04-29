@@ -289,7 +289,7 @@ struct hal_dac_driver_vmt {
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
   /* From hal_cb_driver_c.*/
-  void (*setcb)(void *ip, drv_cb_t cb);
+  void (*oncbset)(void *ip, drv_cb_t cb);
   /* From hal_dac_driver_c.*/
 };
 
@@ -390,7 +390,7 @@ extern "C" {
   void __dac_stop_impl(void *ip);
   const void *__dac_setcfg_impl(void *ip, const void *config);
   const void *__dac_selcfg_impl(void *ip, unsigned cfgnum);
-  void __dac_setcb_impl(void *ip, drv_cb_t cb);
+  void __dac_oncbset_impl(void *ip, drv_cb_t cb);
   msg_t dacPutChannelX(void *ip, dacchannel_t channel, dacsample_t sample);
   msg_t dacStartConversionI(void *ip, const dac_conversion_group_t *grpp,
                             dacsample_t *samples, size_t depth);

@@ -267,9 +267,8 @@ return (const void *)gpt_lld_setcfg(self,
               <implementation><![CDATA[
 return (const void *)gpt_lld_selcfg(self, cfgnum);]]></implementation>
             </method>
-            <method shortname="setcb">
+            <method shortname="oncbset">
               <implementation><![CDATA[
-__cbdrv_setcb_impl(self, cb);
 gpt_lld_set_callback(self, cb);]]></implementation>
             </method>
           </override>

@@ -424,7 +424,7 @@ struct hal_can_driver_vmt {
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
   /* From hal_cb_driver_c.*/
-  void (*setcb)(void *ip, drv_cb_t cb);
+  void (*oncbset)(void *ip, drv_cb_t cb);
   /* From hal_can_driver_c.*/
 };
 
@@ -525,7 +525,7 @@ extern "C" {
   void __can_stop_impl(void *ip);
   const void *__can_setcfg_impl(void *ip, const void *config);
   const void *__can_selcfg_impl(void *ip, unsigned cfgnum);
-  void __can_setcb_impl(void *ip, drv_cb_t cb);
+  void __can_oncbset_impl(void *ip, drv_cb_t cb);
   bool canTryTransmitI(void *ip, canmbx_t mailbox, const CANTxFrame *ctfp);
   bool canTryReceiveI(void *ip, canmbx_t mailbox, CANRxFrame *crfp);
   void canTryAbortX(void *ip, canmbx_t mailbox);

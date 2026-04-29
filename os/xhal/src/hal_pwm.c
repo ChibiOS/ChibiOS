@@ -188,15 +188,14 @@ const void *__pwm_selcfg_impl(void *ip, unsigned cfgnum) {
 }
 
 /**
- * @brief       Override of method @p drvSetCallbackX().
+ * @brief       Override of method @p __cbdrv_on_cb_set().
  *
  * @param[in,out] ip            Pointer to a @p hal_pwm_driver_c instance.
  * @param         cb            Callback function to be associated. Passing @p
  *                              NULL disables the existing callback, if any.
  */
-void __pwm_setcb_impl(void *ip, drv_cb_t cb) {
+void __pwm_oncbset_impl(void *ip, drv_cb_t cb) {
   hal_pwm_driver_c *self = (hal_pwm_driver_c *)ip;
-  __cbdrv_setcb_impl(self, cb);
   pwm_lld_set_callback(self, cb);
 }
 /** @} */
@@ -211,7 +210,7 @@ const struct hal_pwm_driver_vmt __hal_pwm_driver_vmt = {
   .stop                     = __pwm_stop_impl,
   .setcfg                   = __pwm_setcfg_impl,
   .selcfg                   = __pwm_selcfg_impl,
-  .setcb                    = __pwm_setcb_impl
+  .oncbset                  = __pwm_oncbset_impl
 };
 
 /**

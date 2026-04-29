@@ -754,8 +754,15 @@ const hal_gpt_config_t *gpt_lld_selcfg(hal_gpt_driver_c *gptp,
 }
 
 void gpt_lld_set_callback(hal_gpt_driver_c *gptp, drv_cb_t cb) {
-  (void)gptp;
-  (void)cb;
+
+  if (gptp->state == GPT_CONTINUOUS) {
+    if (cb != NULL) {
+      gptp->tim->DIER |= STM32_TIM_DIER_UIE;
+    }
+    else {
+      gptp->tim->DIER &= ~STM32_TIM_DIER_UIE;
+    }
+  }
 }
 
 /**

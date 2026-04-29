@@ -48,7 +48,7 @@
  * @brief   Enables the Virtual GPT support.
  */
 #if !defined(VIO_CFG_ENABLE_GPT) || defined(__DOXYGEN__)
-#define VIO_CFG_ENABLE_GPT                  FALSE
+#define VIO_CFG_ENABLE_GPT                  TRUE
 #endif
 
 /**

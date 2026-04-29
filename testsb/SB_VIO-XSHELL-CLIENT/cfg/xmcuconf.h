@@ -51,7 +51,7 @@
 /*
  * GPT driver system settings.
  */
-#define VIO_GPT_USE_VGPT1                   FALSE
+#define VIO_GPT_USE_VGPT1                   TRUE
 
 /*
  * I2C driver system settings.

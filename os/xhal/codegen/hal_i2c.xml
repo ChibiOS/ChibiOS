@@ -455,9 +455,8 @@ return (const void *)i2c_lld_setcfg(self,
               <implementation><![CDATA[
 return (const void *)i2c_lld_selcfg(self, cfgnum);]]></implementation>
             </method>
-            <method shortname="setcb">
+            <method shortname="oncbset">
               <implementation><![CDATA[
-__cbdrv_setcb_impl(self, cb);
 i2c_lld_set_callback(self, cb);]]></implementation>
             </method>
           </override>

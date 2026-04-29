@@ -377,7 +377,7 @@ struct hal_adc_driver_vmt {
   const void * (*setcfg)(void *ip, const void *config);
   const void * (*selcfg)(void *ip, unsigned cfgnum);
   /* From hal_cb_driver_c.*/
-  void (*setcb)(void *ip, drv_cb_t cb);
+  void (*oncbset)(void *ip, drv_cb_t cb);
   /* From hal_adc_driver_c.*/
 };
 
@@ -478,7 +478,7 @@ extern "C" {
   void __adc_stop_impl(void *ip);
   const void *__adc_setcfg_impl(void *ip, const void *config);
   const void *__adc_selcfg_impl(void *ip, unsigned cfgnum);
-  void __adc_setcb_impl(void *ip, drv_cb_t cb);
+  void __adc_oncbset_impl(void *ip, drv_cb_t cb);
   msg_t adcStartConversionLinearI(void *ip, unsigned grpnum,
                                   adcsample_t *samples, size_t depth);
   msg_t adcStartConversionLinear(void *ip, unsigned grpnum,

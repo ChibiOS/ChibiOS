@@ -192,7 +192,7 @@ const struct hal_spi_driver_vmt __hal_spi_driver_vmt = {
   .stop                     = __spi_stop_impl,
   .setcfg                   = __spi_setcfg_impl,
   .selcfg                   = __spi_selcfg_impl,
-  .setcb                    = __cbdrv_setcb_impl
+  .oncbset                  = __cbdrv_oncbset_impl
 };
 
 /**
