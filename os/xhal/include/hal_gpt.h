@@ -49,11 +49,25 @@
 #if !defined(GPT_DEFAULT_FREQUENCY) || defined(__DOXYGEN__)
 #define GPT_DEFAULT_FREQUENCY               1000000U
 #endif
+
+/**
+ * @brief       Support for GPT user configurations.
+ * @note        When enabled the user must provide a variable named @p
+ *              gpt_configurations of type @p gpt_configurations_t.
+ */
+#if !defined(GPT_USE_CONFIGURATIONS) || defined(__DOXYGEN__)
+#define GPT_USE_CONFIGURATIONS              FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/* Checks on GPT_USE_CONFIGURATIONS configuration.*/
+#if (GPT_USE_CONFIGURATIONS != FALSE) && (GPT_USE_CONFIGURATIONS != TRUE)
+#error "invalid GPT_USE_CONFIGURATIONS value"
+#endif
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -107,6 +121,11 @@ typedef struct hal_gpt_driver hal_gpt_driver_c;
 typedef struct hal_gpt_config hal_gpt_config_t;
 
 /**
+ * @brief       Type of user-provided GPT configurations.
+ */
+typedef struct gpt_configurations gpt_configurations_t;
+
+/**
  * @brief       GPT driver specific states.
  */
 typedef enum {
@@ -130,6 +149,20 @@ struct hal_gpt_config {
 #if (defined(GPT_CONFIG_EXT_FIELDS)) || defined (__DOXYGEN__)
   GPT_CONFIG_EXT_FIELDS
 #endif /* defined(GPT_CONFIG_EXT_FIELDS) */
+};
+
+/**
+ * @brief       Structure representing user-provided GPT configurations.
+ */
+struct gpt_configurations {
+  /**
+   * @brief       Number of configurations in the open array.
+   */
+  unsigned                  cfgsnum;
+  /**
+   * @brief       User GPT configurations.
+   */
+  hal_gpt_config_t          cfgs[];
 };
 
 /**

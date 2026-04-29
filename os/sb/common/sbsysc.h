@@ -119,6 +119,7 @@
 #define SB_VGPT_STOP            4
 #define SB_VGPT_CHGI            5
 #define SB_VGPT_SETCB           6
+#define SB_VGPT_SELCFG          7
 #define SB_VGPT_GETI            0
 #define SB_VGPT_GETC            1
 #define SB_VGPT_GETFREQ         2

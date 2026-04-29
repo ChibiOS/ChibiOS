@@ -15,6 +15,12 @@
       <config name="GPT_DEFAULT_FREQUENCY" default="1000000U">
         <brief>Default GPT timer frequency.</brief>
       </config>
+      <config name="GPT_USE_CONFIGURATIONS" default="FALSE">
+        <brief>Support for GPT user configurations.</brief>
+        <note>When enabled the user must provide a variable named
+          @p gpt_configurations of type @p gpt_configurations_t.</note>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
     </configs>
     <macros>
       <group description="Low level driver helper macros">
@@ -52,6 +58,10 @@ do {
         <brief>Type of structure representing a GPT configuration.</brief>
         <basetype ctype="struct hal_gpt_config" />
       </typedef>
+      <typedef name="gpt_configurations_t">
+        <brief>Type of user-provided GPT configurations.</brief>
+        <basetype ctype="struct gpt_configurations" />
+      </typedef>
       <verbatim><![CDATA[
 /**
  * @brief       GPT driver specific states.
@@ -76,6 +86,17 @@ gpt_lld_config_fields;]]></verbatim>
             <verbatim><![CDATA[
 GPT_CONFIG_EXT_FIELDS]]></verbatim>
           </condition>
+        </fields>
+      </struct>
+      <struct name="gpt_configurations">
+        <brief>Structure representing user-provided GPT configurations.</brief>
+        <fields>
+          <field name="cfgsnum" ctype="unsigned">
+            <brief>Number of configurations in the open array.</brief>
+          </field>
+          <field name="cfgs" ctype="hal_gpt_config_t$I$N[]">
+            <brief>User GPT configurations.</brief>
+          </field>
         </fields>
       </struct>
       <class type="regular" name="hal_gpt_driver" namespace="gpt"

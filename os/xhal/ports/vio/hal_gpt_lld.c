@@ -51,9 +51,9 @@ hal_gpt_driver_c GPTD1;
 /*===========================================================================*/
 
 CC_FORCE_INLINE
-static inline uint32_t __gpt_vgpt_init(uint32_t nvgpt) {
+static inline uint32_t __gpt_vgpt_init(uint32_t nvgpt, size_t n, void *p) {
 
-  __syscall1r(229, VIO_CALL(SB_VGPT_INIT, nvgpt));
+  __syscall3r(229, VIO_CALL(SB_VGPT_INIT, nvgpt), n, p);
   return (uint32_t)r0;
 }
 
@@ -97,6 +97,14 @@ CC_FORCE_INLINE
 static inline uint32_t __gpt_vgpt_setcb(uint32_t nvgpt, uint32_t enable) {
 
   __syscall2r(229, VIO_CALL(SB_VGPT_SETCB, nvgpt), enable);
+  return (uint32_t)r0;
+}
+
+CC_FORCE_INLINE
+static inline uint32_t __gpt_vgpt_selcfg(uint32_t nvgpt, uint32_t ncfg,
+                                         size_t n, void *p) {
+
+  __syscall4r(229, VIO_CALL(SB_VGPT_SELCFG, nvgpt), ncfg, n, p);
   return (uint32_t)r0;
 }
 
@@ -188,7 +196,9 @@ msg_t gpt_lld_start(hal_gpt_driver_c *gptp) {
   }
 #if VIO_GPT_USE_VGPT1 == TRUE
   else if (&GPTD1 == gptp) {
-    msg = (msg_t)__gpt_vgpt_init(gptp->nvgpt);
+    msg = (msg_t)__gpt_vgpt_init(gptp->nvgpt,
+                                 sizeof (hal_gpt_config_t),
+                                 &gptp->cfgbuf);
   }
 #endif
   else {
@@ -196,7 +206,6 @@ msg_t gpt_lld_start(hal_gpt_driver_c *gptp) {
   }
 
   if (msg == HAL_RET_SUCCESS) {
-    gptp->cfgbuf.frequency = (gptfreq_t)__gpt_vgpt_getfreq(gptp->nvgpt);
     gptp->config = &gptp->cfgbuf;
     if (drvGetCallbackX(gptp) != NULL) {
       msg = (msg_t)__gpt_vgpt_setcb(gptp->nvgpt, 1U);
@@ -265,8 +274,11 @@ const hal_gpt_config_t *gpt_lld_setcfg(hal_gpt_driver_c *gptp,
  */
 const hal_gpt_config_t *gpt_lld_selcfg(hal_gpt_driver_c *gptp,
                                        unsigned cfgnum) {
+  msg_t msg;
 
-  if (cfgnum != 0U) {
+  msg = __gpt_vgpt_selcfg(gptp->nvgpt, cfgnum,
+                          sizeof (hal_gpt_config_t), &gptp->cfgbuf);
+  if (msg != HAL_RET_SUCCESS) {
     return NULL;
   }
 

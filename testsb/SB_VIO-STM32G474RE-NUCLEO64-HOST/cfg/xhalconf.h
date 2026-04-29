@@ -70,7 +70,7 @@
 /*===========================================================================*/
 
 #define ADC_USE_SYNCHRONIZATION             TRUE
-#define ADC_USE_CONFIGURATIONS              TRUE
+#define ADC_USE_CONFIGURATIONS              FALSE
 
 /*===========================================================================*/
 /* DAC driver settings.                                                      */
@@ -91,6 +91,7 @@
 /*===========================================================================*/
 
 #define GPT_DEFAULT_FREQUENCY               1000000U
+#define GPT_USE_CONFIGURATIONS              FALSE
 
 /*===========================================================================*/
 /* I2C driver settings.                                                      */

@@ -112,6 +112,10 @@ typedef struct vio_conf {
    * @brief   Virtual GPT units.
    */
   const vio_gpt_units_t         *gpts;
+  /**
+   * @brief   Virtual GPT configurations.
+   */
+  const gpt_configurations_t    *gptconfs;
 #endif
 #if (VIO_CFG_ENABLE_GPIO == TRUE) || defined(__DOXYGEN__)
   /**

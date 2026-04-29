@@ -101,6 +101,7 @@
 /*===========================================================================*/
 
 #define GPT_DEFAULT_FREQUENCY               ${doc.GPT_DEFAULT_FREQUENCY!"1000000U"}
+#define GPT_USE_CONFIGURATIONS              ${doc.GPT_USE_CONFIGURATIONS!"FALSE"}
 
 /*===========================================================================*/
 /* I2C driver settings.                                                      */

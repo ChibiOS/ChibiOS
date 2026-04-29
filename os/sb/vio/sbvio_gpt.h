@@ -56,7 +56,6 @@
  */
 typedef struct vio_gpt_unit {
   hal_gpt_driver_c          *gptp;
-  const hal_gpt_config_t    *config;
   sb_class_t                *vrqsb;
   sb_vrqnum_t               vrqn;
 } vio_gpt_unit_t;
