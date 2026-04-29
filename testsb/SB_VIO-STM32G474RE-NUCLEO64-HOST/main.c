@@ -23,6 +23,8 @@
 
 #include "startup_defs.h"
 
+#define ADC_GPT_TRIGGER_PERIOD              100000U
+
 /* Sandbox objects.*/
 sb_class_t sbx1, sbx2;
 
@@ -60,7 +62,13 @@ static sio_configurations_t uart_configs1 = {
   }
 };
 
-static const adc_conversion_groups_t adc_groups1 = {
+static const hal_gpt_config_t gpt_config1 = {
+  .frequency                   = 1000000U,
+  .cr2                         = TIM_CR2_MMS_1,
+  .dier                        = 0U
+};
+
+static const adc_conversion_groups_t adc_groups_linear = {
   .grpsnum                     = 1U,
   .grps                        = {
     [0] = {
@@ -88,12 +96,13 @@ static const adc_conversion_groups_t adc_groups1 = {
   }
 };
 
-static const adc_conversion_groups_t adc_groups2 = {
+static const adc_conversion_groups_t adc_groups_gpt = {
   .grpsnum                     = 1U,
   .grps                        = {
     [0] = {
       .num_channels            = 2U,
-      .cfgr                    = ADC_CFGR_CONT,
+      .cfgr                    = ADC_CFGR_EXTEN_RISING |
+                                 ADC_CFGR_EXTSEL_SRC(12),
       .cfgr2                   = 0U,
       .tr1                     = ADC_TR_DISABLED,
       .tr2                     = ADC_TR_DISABLED,
@@ -120,11 +129,11 @@ const adc_configurations_t adc_configurations = {
   .cfgsnum                     = 2U,
   .cfgs = {
     [0] = {
-      .grps                    = &adc_groups1,
+      .grps                    = &adc_groups_linear,
       .difsel                  = 0U
     },
     [1] = {
-      .grps                    = &adc_groups2,
+      .grps                    = &adc_groups_gpt,
       .difsel                  = 0U
     }
   }
@@ -206,7 +215,13 @@ int main(void) {
   if (drvStart(&SIOD1, NULL) != MSG_OK) {
     chSysHalt("SIOD1 failed");
   }
+  if (drvStart(&GPTD4, &gpt_config1) != MSG_OK) {
+    chSysHalt("GPTD4 failed");
+  }
 
+  palSetPadMode(GPIOA, 0U, PAL_MODE_INPUT_ANALOG);
+  palSetPadMode(GPIOA, 1U, PAL_MODE_INPUT_ANALOG);
+  gptStartContinuous(&GPTD4, ADC_GPT_TRIGGER_PERIOD);
 
   /*
    * Sandbox objects initialization, regions are assigned explicitly.

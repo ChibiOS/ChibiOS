@@ -46,7 +46,7 @@
 /*
  * ADC driver system settings.
  */
-#define VIO_ADC_USE_VADC1                   FALSE
+#define VIO_ADC_USE_VADC1                   TRUE
 
 /*
  * GPT driver system settings.

@@ -50,7 +50,7 @@
 #define HAL_USE_CAN                         FALSE
 #define HAL_USE_EFL                         FALSE
 #define HAL_USE_ETH                         FALSE
-#define HAL_USE_GPT                         FALSE
+#define HAL_USE_GPT                         TRUE
 #define HAL_USE_I2C                         FALSE
 #define HAL_USE_I2S                         FALSE
 #define HAL_USE_ICU                         FALSE

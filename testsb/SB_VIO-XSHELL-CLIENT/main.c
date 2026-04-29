@@ -17,6 +17,8 @@
 #include "ch.h"
 #include "hal.h"
 
+#include <string.h>
+
 #include "oop_chprintf.h"
 #include "xshell.h"
 
@@ -24,11 +26,127 @@ static hal_buffered_sio_c bsio1;
 static uint8_t rxbuf[32];
 static uint8_t txbuf[32];
 
+#define ADC_CHANNELS                        2U
+#define ADC_LINEAR_CFG                      0U
+#define ADC_STREAM_CFG                      1U
+#define ADC_GROUP                           0U
+#define ADC_LINEAR_DEPTH                    1U
+#define ADC_STREAM_DEPTH                    8U
+#define ADC_STREAM_TIMEOUT                  TIME_MS2I(2000)
+
+static adcsample_t adc_linear_samples[ADC_CHANNELS * ADC_LINEAR_DEPTH];
+static adcsample_t adc_stream_samples[ADC_CHANNELS * ADC_STREAM_DEPTH];
+
 /*===========================================================================*/
 /* Command line related.                                                     */
 /*===========================================================================*/
 
 #define SHELL_WA_SIZE       THD_STACK_SIZE(2048)
+
+static void adc_print_samples(xshell_t *xshp, const adcsample_t *samples,
+                              size_t depth) {
+  size_t i;
+
+  for (i = 0U; i < depth; i++) {
+    chprintf(xshp->stream, "%u: ch1=%u ch2=%u" XSHELL_NEWLINE_STR,
+             (unsigned)i,
+             (unsigned)samples[(i * ADC_CHANNELS) + 0U],
+             (unsigned)samples[(i * ADC_CHANNELS) + 1U]);
+  }
+}
+
+static bool adc_stop_requested(xshell_t *xshp) {
+  msg_t msg;
+
+  msg = chnGetTimeout((asynchronous_channel_i *)xshp->stream, TIME_IMMEDIATE);
+
+  return msg != Q_TIMEOUT;
+}
+
+static void adc_linear(xshell_t *xshp) {
+  msg_t msg;
+
+  if (drvSelectCfgX(&ADCD1, ADC_LINEAR_CFG) == NULL) {
+    chprintf(xshp->stream, "ADC linear configuration failed" XSHELL_NEWLINE_STR);
+    return;
+  }
+
+  msg = adcConvert(&ADCD1, ADC_GROUP, adc_linear_samples, ADC_LINEAR_DEPTH);
+  if (msg != HAL_RET_SUCCESS) {
+    chprintf(xshp->stream, "ADC linear conversion failed (%d)" XSHELL_NEWLINE_STR,
+             msg);
+    return;
+  }
+
+  adc_print_samples(xshp, adc_linear_samples, ADC_LINEAR_DEPTH);
+}
+
+static void adc_stream(xshell_t *xshp) {
+  const adcsample_t *samples;
+  driver_state_t state;
+  msg_t msg;
+
+  if (drvSelectCfgX(&ADCD1, ADC_STREAM_CFG) == NULL) {
+    chprintf(xshp->stream, "ADC stream configuration failed" XSHELL_NEWLINE_STR);
+    return;
+  }
+
+  msg = adcStartConversionCircular(&ADCD1, ADC_GROUP, adc_stream_samples,
+                                   ADC_STREAM_DEPTH);
+  if (msg != HAL_RET_SUCCESS) {
+    chprintf(xshp->stream, "ADC stream start failed (%d)" XSHELL_NEWLINE_STR,
+             msg);
+    return;
+  }
+
+  chprintf(xshp->stream, "Streaming, press any key to stop" XSHELL_NEWLINE_STR);
+
+  state = HAL_DRV_STATE_HALF;
+  while (!adc_stop_requested(xshp)) {
+    msg = adcSynchronizeState(&ADCD1, state, ADC_STREAM_TIMEOUT);
+    if (msg != MSG_OK) {
+      chprintf(xshp->stream, "ADC stream stopped (%d)" XSHELL_NEWLINE_STR, msg);
+      break;
+    }
+
+    if (state == HAL_DRV_STATE_HALF) {
+      samples = &adc_stream_samples[0];
+      state = HAL_DRV_STATE_FULL;
+    }
+    else {
+      samples = &adc_stream_samples[(ADC_STREAM_DEPTH / 2U) * ADC_CHANNELS];
+      state = HAL_DRV_STATE_HALF;
+    }
+
+    adc_print_samples(xshp, samples, ADC_STREAM_DEPTH / 2U);
+  }
+
+  adcStopConversion(&ADCD1);
+  (void)drvSelectCfgX(&ADCD1, ADC_LINEAR_CFG);
+  chprintf(xshp->stream, "ADC stream stopped" XSHELL_NEWLINE_STR);
+}
+
+static void cmd_adc(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
+
+  (void)envp;
+
+  if (argc != 2) {
+    xshellUsage(xshp, "adc linear|stream");
+    return;
+  }
+
+  if (strcmp(argv[1], "linear") == 0) {
+    adc_linear(xshp);
+    return;
+  }
+
+  if (strcmp(argv[1], "stream") == 0) {
+    adc_stream(xshp);
+    return;
+  }
+
+  xshellUsage(xshp, "adc linear|stream");
+}
 
 static void cmd_halt(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
 
@@ -81,6 +199,7 @@ static void cmd_sbexit(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
 }
 
 static const xshell_command_t commands[] = {
+  {"adc", cmd_adc},
   {"halt", cmd_halt},
   {"sbcrash", cmd_sbcrash},
   {"sbexit", cmd_sbexit},
@@ -129,6 +248,10 @@ int main(void) {
    */
   halInit();
   chSysInit();
+
+  if (drvStart(&ADCD1, NULL) != HAL_RET_SUCCESS) {
+    chSysHalt("ADCD1 failed");
+  }
 
   /*
    * Spawning a blinker thread.
