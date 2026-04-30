@@ -29,7 +29,7 @@
 #define PORTAB_LINE_BUTTON                  LINE_BUTTON
 #define PORTAB_BUTTON_PRESSED               PAL_HIGH
 
-#define PORTAB_SIO1                         SIOD2
+#define PORTAB_SIO1                         LPSIOD1
 
 #ifdef __cplusplus
 extern "C" {

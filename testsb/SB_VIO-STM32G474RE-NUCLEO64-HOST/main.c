@@ -228,8 +228,8 @@ int main(void) {
   /*
    * Starting a serial port for I/O, initializing other streams too.
    */
-  if (drvStart(&SIOD1, NULL) != MSG_OK) {
-    chSysHalt("SIOD1 failed");
+  if (drvStart(&LPSIOD1, NULL) != MSG_OK) {
+    chSysHalt("LPSIOD1 failed");
   }
 
   /* Pins used by the ADC test code in the sandbox.*/
@@ -262,7 +262,7 @@ int main(void) {
 
       if (!sbIsThreadRunningX(&sbx1)) {
         msg_t msg = sbWait(&sbx1);
-        chprintf(oopGetIf(&SIOD1, chn), "SB1 terminated: 0x%08x\r\n", msg);
+        chprintf(oopGetIf(&LPSIOD1, chn), "SB1 terminated: 0x%08x\r\n", msg);
         chThdSleepMilliseconds(100);
         start_sb1();
       }
