@@ -916,6 +916,11 @@ void __sb_abort(msg_t msg) {
   __sb_io_cleanup(sbp);
   chSysLock();
 #endif
+#if SB_CFG_ENABLE_VIO == TRUE
+  chSysUnlock();
+  __sb_vio_cleanup(sbp);
+  chSysLock();
+#endif
 
 #if CH_CFG_USE_EVENTS == TRUE
   chEvtBroadcastI(&sb.termination_es);

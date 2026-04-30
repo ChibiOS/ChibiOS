@@ -129,7 +129,9 @@ void sb_sysc_vio_spi(sb_class_t *sbp, struct port_extctx *ectxp) {
       }
     case SB_VSPI_DEINIT:
       {
+        drvSetCallbackX(unitp->spip, NULL);
         drvStop(unitp->spip);
+        drvSetArgumentX(unitp->spip, NULL);
 
         ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
         break;

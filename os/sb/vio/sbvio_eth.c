@@ -125,6 +125,7 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
       {
         drvSetCallbackX(unitp->ethp, NULL);
         drvStop(unitp->ethp);
+        drvSetArgumentX(unitp->ethp, NULL);
 
         ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
         break;

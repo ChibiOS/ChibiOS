@@ -182,6 +182,7 @@ typedef struct vio_conf {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void __sb_vio_cleanup(sb_class_t *sbp);
 #ifdef __cplusplus
 }
 #endif

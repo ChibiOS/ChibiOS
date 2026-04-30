@@ -261,7 +261,7 @@ int main(void) {
           chSysHalt("LPSIOD1 failed");
         }
         chprintf(oopGetIf(&LPSIOD1, chn), "SB1 terminated: 0x%08x\r\n", msg);
-        chThdSleepMilliseconds(100);
+        chThdSleepMilliseconds(10);
         drvStop(&LPSIOD1);
 
         start_sb1();

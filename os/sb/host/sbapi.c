@@ -99,6 +99,9 @@ void sb_sysc_exit(sb_class_t *sbp, struct port_extctx *ectxp) {
 #if SB_CFG_ENABLE_VFS == TRUE
   __sb_io_cleanup(sbp);
 #endif
+#if SB_CFG_ENABLE_VIO == TRUE
+  __sb_vio_cleanup(sbp);
+#endif
 
   chSysLock();
 #if SB_CFG_ENABLE_VRQ == TRUE

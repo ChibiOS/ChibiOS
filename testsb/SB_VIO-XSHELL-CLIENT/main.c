@@ -177,7 +177,7 @@ static void cmd_sbcrash(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   }
 
   chprintf(xshp->stream, "\r\n\nCrashing...\r\n");
-  chThdSleepMilliseconds(10);
+  chThdSleepMilliseconds(20);
 
   /* Test for exception on interrupt.*/
   asm volatile ("mov r0, #64");
@@ -197,7 +197,7 @@ static void cmd_sbexit(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   }
 
   chprintf(xshp->stream, "\r\n\nExiting SandBox\r\n");
-  chThdSleepMilliseconds(10);
+  chThdSleepMilliseconds(20);
   sbExit(MSG_OK);
 }
 

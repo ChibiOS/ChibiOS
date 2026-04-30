@@ -126,7 +126,9 @@ void sb_sysc_vio_uart(sb_class_t *sbp, struct port_extctx *ectxp) {
       }
     case SB_VUART_DEINIT:
       {
+        drvSetCallbackX(unitp->siop, NULL);
         drvStop(unitp->siop);
+        drvSetArgumentX(unitp->siop, NULL);
 
         ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
         break;
