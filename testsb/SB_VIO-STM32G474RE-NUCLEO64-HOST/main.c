@@ -225,13 +225,6 @@ int main(void) {
   chSysInit();
   sbHostInit();
 
-  /*
-   * Starting a serial port for I/O, initializing other streams too.
-   */
-  if (drvStart(&LPSIOD1, NULL) != MSG_OK) {
-    chSysHalt("LPSIOD1 failed");
-  }
-
   /* Pins used by the ADC test code in the sandbox.*/
   palSetPadMode(GPIOA, 0U, PAL_MODE_INPUT_ANALOG);
   palSetPadMode(GPIOA, 1U, PAL_MODE_INPUT_ANALOG);
@@ -262,8 +255,15 @@ int main(void) {
 
       if (!sbIsThreadRunningX(&sbx1)) {
         msg_t msg = sbWait(&sbx1);
+
+        /* Re-starting the driver because the sandbox stops it on exit.*/
+        if (drvStart(&LPSIOD1, NULL) != MSG_OK) {
+          chSysHalt("LPSIOD1 failed");
+        }
         chprintf(oopGetIf(&LPSIOD1, chn), "SB1 terminated: 0x%08x\r\n", msg);
         chThdSleepMilliseconds(100);
+        drvStop(&LPSIOD1);
+
         start_sb1();
       }
     }
