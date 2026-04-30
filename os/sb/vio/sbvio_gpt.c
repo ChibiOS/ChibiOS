@@ -93,7 +93,7 @@ void sb_sysc_vio_gpt(sb_class_t *sbp, struct port_extctx *ectxp) {
           break;
         }
 
-        if (!sb_is_valid_write_range(sbp, p, n)) {
+        if ((n > 0U) && !sb_is_valid_write_range(sbp, p, n)) {
           ectxp->r0 = (uint32_t)CH_RET_EFAULT;
           break;
         }
@@ -104,7 +104,9 @@ void sb_sysc_vio_gpt(sb_class_t *sbp, struct port_extctx *ectxp) {
 
         msg = drvStart(unitp->gptp, confp);
         if (msg == HAL_RET_SUCCESS) {
-          memcpy(p, confp, n);
+          if (n > 0U) {
+            memcpy(p, confp, n);
+          }
         }
 
         ectxp->r0 = (uint32_t)msg;
@@ -157,7 +159,7 @@ void sb_sysc_vio_gpt(sb_class_t *sbp, struct port_extctx *ectxp) {
           break;
         }
 
-        if (!sb_is_valid_write_range(sbp, p, n)) {
+        if ((n > 0U) && !sb_is_valid_write_range(sbp, p, n)) {
           ectxp->r0 = (uint32_t)CH_RET_EFAULT;
           break;
         }
@@ -165,7 +167,9 @@ void sb_sysc_vio_gpt(sb_class_t *sbp, struct port_extctx *ectxp) {
         confp = &sbp->vioconf->gptconfs->cfgs[cfgnum];
         msg = drvSetCfgX(unitp->gptp, confp);
         if (msg == HAL_RET_SUCCESS) {
-          memcpy(p, confp, n);
+          if (n > 0U) {
+            memcpy(p, confp, n);
+          }
           ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
         }
         else {

@@ -94,7 +94,7 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
           break;
         }
 
-        if (!sb_is_valid_write_range(sbp, p, n)) {
+        if ((n > 0U) && !sb_is_valid_write_range(sbp, p, n)) {
           ectxp->r0 = (uint32_t)CH_RET_EFAULT;
           break;
         }
@@ -113,7 +113,9 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
             memcpy(cfg.mac_address, confp->mac_address,
                    sizeof cfg.mac_address);
           }
-          memcpy(p, &cfg, n);
+          if (n > 0U) {
+            memcpy(p, &cfg, n);
+          }
         }
 
         ectxp->r0 = (uint32_t)msg;
@@ -152,7 +154,7 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
           break;
         }
 
-        if (!sb_is_valid_write_range(sbp, p, n)) {
+        if ((n > 0U) && !sb_is_valid_write_range(sbp, p, n)) {
           ectxp->r0 = (uint32_t)CH_RET_EFAULT;
           break;
         }
@@ -170,7 +172,9 @@ void sb_sysc_vio_eth(sb_class_t *sbp, struct port_extctx *ectxp) {
           memcpy(cfg.mac_address, confp->mac_address, sizeof cfg.mac_address);
         }
 
-        memcpy(p, &cfg, n);
+        if (n > 0U) {
+          memcpy(p, &cfg, n);
+        }
         ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
         break;
       }

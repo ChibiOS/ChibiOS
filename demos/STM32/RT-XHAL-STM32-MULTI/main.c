@@ -26,6 +26,10 @@
 
 #include "portab.h"
 
+static hal_buffered_sio_c bsio1;
+static uint8_t rxbuf[32];
+static uint8_t txbuf[32];
+
 /* Testing in progress.*/
 static bool testing = false;
 
@@ -70,10 +74,13 @@ int main(void) {
   /*
    * Activates the SIO driver using the default configuration.
    */
-  msg = drvStart(&PORTAB_SIO1, NULL);
-  osalDbgAssert(msg == HAL_RET_SUCCESS, "SIO start failed");
+  bsioObjectInit(&bsio1, &PORTAB_SIO1,
+                 rxbuf, sizeof rxbuf,
+                 txbuf, sizeof txbuf);
+  msg = drvStart(&bsio1, NULL);
+  osalDbgAssert(msg == HAL_RET_SUCCESS, "buffered SIO start failed");
 #if defined (__TEST_RT) || defined (__TEST_OSLIB)
-  stream = (BaseSequentialStream *)&PORTAB_SIO1.chn;
+  stream = (BaseSequentialStream *)&bsio1.chn;
 #endif
 
   /*

@@ -33,6 +33,24 @@ static uint8_t txbuf[512];
 
 #define SHELL_WA_SIZE       THD_STACK_SIZE(1024)
 
+static bool write_all(asynchronous_channel_i *chp, const uint8_t *bp,
+                      size_t n) {
+
+  while (n > 0U) {
+    size_t written;
+
+    written = chnWrite(chp, bp, n);
+    if (written == 0U) {
+      return false;
+    }
+
+    bp += written;
+    n  -= written;
+  }
+
+  return true;
+}
+
 static void cmd_halt(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
 
   (void)argv;
@@ -78,7 +96,10 @@ static void cmd_write(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
 
   while (chnGetTimeout((asynchronous_channel_i *)xshp->stream,
                        TIME_IMMEDIATE) == Q_TIMEOUT) {
-    chnWrite(xshp->stream, buf, sizeof buf - 1);
+    if (!write_all((asynchronous_channel_i *)xshp->stream,
+                   buf, sizeof buf - 1U)) {
+      break;
+    }
   }
   chprintf(xshp->stream, XSHELL_NEWLINE_STR "stopped" XSHELL_NEWLINE_STR);
 }

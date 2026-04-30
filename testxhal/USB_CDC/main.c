@@ -49,6 +49,24 @@ static void test_assert(bool condition) {
   }
 }
 
+static bool write_all(asynchronous_channel_i *chp, const uint8_t *bp,
+                      size_t n) {
+
+  while (n > 0U) {
+    size_t written;
+
+    written = chnWrite(chp, bp, n);
+    if (written == 0U) {
+      return false;
+    }
+
+    bp += written;
+    n  -= written;
+  }
+
+  return true;
+}
+
 static void cmd_write(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   static const uint8_t buf[] =
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
@@ -77,7 +95,10 @@ static void cmd_write(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
 
   while (chnGetTimeout((asynchronous_channel_i *)xshp->stream,
                        TIME_IMMEDIATE) == Q_TIMEOUT) {
-    chnWrite(xshp->stream, buf, sizeof buf - 1U);
+    if (!write_all((asynchronous_channel_i *)xshp->stream,
+                   buf, sizeof buf - 1U)) {
+      break;
+    }
   }
   chprintf(xshp->stream, XSHELL_NEWLINE_STR "stopped" XSHELL_NEWLINE_STR);
 }

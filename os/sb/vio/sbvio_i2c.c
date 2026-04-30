@@ -111,7 +111,7 @@ void sb_sysc_vio_i2c(sb_class_t *sbp, struct port_extctx *ectxp) {
           break;
         }
 
-        if (!sb_is_valid_write_range(sbp, p, n)) {
+        if ((n > 0U) && !sb_is_valid_write_range(sbp, p, n)) {
           ectxp->r0 = (uint32_t)CH_RET_EFAULT;
           break;
         }
@@ -123,7 +123,9 @@ void sb_sysc_vio_i2c(sb_class_t *sbp, struct port_extctx *ectxp) {
         msg = drvStart(unitp->i2cp, confp);
         if (msg == HAL_RET_SUCCESS) {
           drvSetCallbackX(unitp->i2cp, vi2c_cb);
-          memcpy(p, confp, n);
+          if (n > 0U) {
+            memcpy(p, confp, n);
+          }
         }
 
         ectxp->r0 = (uint32_t)msg;
