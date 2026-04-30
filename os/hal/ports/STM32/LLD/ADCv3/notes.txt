@@ -22,3 +22,22 @@ If there is no DMAMUX then the file registry must export also:
 
 STM32_ADCx_DMA_MSK              - Mask of the compatible DMA channels (1..4).
 STM32_ADCx_DMA_CHN              - Mask of the channels mapping (1..4).
+
+STM32G4 errata notes:
+
+- ES0430, section 2.7.10 "ADC channel 0 converted instead of the required ADC
+  channel", affects the first regular or injected conversion following DMA
+  end-of-transfer after a regular sequence read by DMA in one-shot mode. The
+  affected conversion may sample the internal channel 0 and return zero instead
+  of the requested channel.
+- This can be observed with repeated non-circular adcConvert() operations: the
+  first sequence is valid, subsequent sequences can have the first rank equal
+  to zero even though the ADC and DMA setup registers are programmed
+  identically before ADSTART.
+- Do not hide this in the driver with an implicit dummy conversion. A dummy
+  conversion changes timing and ADC bandwidth, and starting then immediately
+  stopping a dummy conversion does not consume the erratum path. Applications
+  and demos using repeated DMA one-shot conversions on affected devices must
+  explicitly account for the limitation, for example by performing and
+  discarding a completed dummy conversion, using a continuous/circular
+  conversion pattern, or selecting another timing strategy.
