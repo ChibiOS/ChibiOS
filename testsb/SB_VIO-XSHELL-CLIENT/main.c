@@ -27,9 +27,9 @@ static uint8_t rxbuf[32];
 static uint8_t txbuf[32];
 
 #define ADC_CHANNELS                        2U
-#define ADC_LINEAR_CFG                      0U
-#define ADC_STREAM_CFG                      1U
-#define ADC_GROUP                           0U
+#define ADC_CFG                             0U
+#define ADC_LINEAR_GROUP                    0U
+#define ADC_STREAM_GROUP                    1U
 #define ADC_LINEAR_DEPTH                    1U
 #define ADC_STREAM_DEPTH                    8U
 #define ADC_STREAM_TIMEOUT                  TIME_MS2I(2000)
@@ -67,12 +67,13 @@ static bool adc_stop_requested(xshell_t *xshp) {
 static void adc_linear(xshell_t *xshp) {
   msg_t msg;
 
-  if (drvSelectCfgX(&ADCD1, ADC_LINEAR_CFG) == NULL) {
+  if (drvSelectCfgX(&ADCD1, ADC_CFG) == NULL) {
     chprintf(xshp->stream, "ADC linear configuration failed" XSHELL_NEWLINE_STR);
     return;
   }
 
-  msg = adcConvert(&ADCD1, ADC_GROUP, adc_linear_samples, ADC_LINEAR_DEPTH);
+  msg = adcConvert(&ADCD1, ADC_LINEAR_GROUP, adc_linear_samples,
+                   ADC_LINEAR_DEPTH);
   if (msg != HAL_RET_SUCCESS) {
     chprintf(xshp->stream, "ADC linear conversion failed (%d)" XSHELL_NEWLINE_STR,
              msg);
@@ -87,13 +88,13 @@ static void adc_stream(xshell_t *xshp) {
   driver_state_t state;
   msg_t msg;
 
-  if (drvSelectCfgX(&ADCD1, ADC_STREAM_CFG) == NULL) {
+  if (drvSelectCfgX(&ADCD1, ADC_CFG) == NULL) {
     chprintf(xshp->stream, "ADC stream configuration failed" XSHELL_NEWLINE_STR);
     return;
   }
 
-  msg = adcStartConversionCircular(&ADCD1, ADC_GROUP, adc_stream_samples,
-                                   ADC_STREAM_DEPTH);
+  msg = adcStartConversionCircular(&ADCD1, ADC_STREAM_GROUP,
+                                   adc_stream_samples, ADC_STREAM_DEPTH);
   if (msg != HAL_RET_SUCCESS) {
     chprintf(xshp->stream, "ADC stream start failed (%d)" XSHELL_NEWLINE_STR,
              msg);
@@ -125,7 +126,6 @@ static void adc_stream(xshell_t *xshp) {
 
   gptStopTimer(&GPTD1);
   adcStopConversion(&ADCD1);
-  (void)drvSelectCfgX(&ADCD1, ADC_LINEAR_CFG);
   chprintf(xshp->stream, "ADC stream stopped" XSHELL_NEWLINE_STR);
 }
 

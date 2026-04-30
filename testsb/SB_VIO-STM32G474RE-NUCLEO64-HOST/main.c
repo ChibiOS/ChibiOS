@@ -82,12 +82,13 @@ static vio_gpt_units_t sb1_gpt_units = {
   }
 };
 
-static const adc_conversion_groups_t sb1_adc_groups_linear = {
-  .grpsnum                     = 1U,
+static const adc_conversion_groups_t sb1_adc_groups = {
+  .grpsnum                     = 2U,
   .grps                        = {
     [0] = {
       .num_channels            = 2U,
-      .cfgr                    = 0U,
+      .cfgr                    = ADC_CFGR_EXTEN_RISING |
+                                 ADC_CFGR_EXTSEL_SRC(12),
       .cfgr2                   = 0U,
       .tr1                     = ADC_TR_DISABLED,
       .tr2                     = ADC_TR_DISABLED,
@@ -106,14 +107,8 @@ static const adc_conversion_groups_t sb1_adc_groups_linear = {
         0U,
         0U
       }
-    }
-  }
-};
-
-static const adc_conversion_groups_t sb1_adc_groups_gpt = {
-  .grpsnum                     = 1U,
-  .grps                        = {
-    [0] = {
+    },
+    [1] = {
       .num_channels            = 2U,
       .cfgr                    = ADC_CFGR_EXTEN_RISING |
                                  ADC_CFGR_EXTSEL_SRC(12),
@@ -140,14 +135,10 @@ static const adc_conversion_groups_t sb1_adc_groups_gpt = {
 };
 
 const adc_configurations_t sb1_adc_configurations = {
-  .cfgsnum                     = 2U,
+  .cfgsnum                     = 1U,
   .cfgs = {
     [0] = {
-      .grps                    = &sb1_adc_groups_linear,
-      .difsel                  = 0U
-    },
-    [1] = {
-      .grps                    = &sb1_adc_groups_gpt,
+      .grps                    = &sb1_adc_groups,
       .difsel                  = 0U
     }
   }
