@@ -1,0 +1,721 @@
+<clocktree schema="clockgen-v1" namespace="stm32" family="stm32h5">
+  <description>
+    Experimental STM32H5 clock tree draft extracted from RM0481 Rev 2 and
+    cross-checked against the current ChibiOS STM32H5xx HAL tree.
+  </description>
+
+  <!--
+    Scope of this experiment:
+    - core root sources
+    - PLL1/PLL2/PLL3 using the generic PLL-core model
+    - SYSCLK, HCLK, PCLK1/2/3
+    - representative kernel selectors
+    - VOS-dependent limits
+
+    Intentionally omitted in this draft:
+    - full backup-domain detail
+    - MCO1/MCO2 and RTCPRE legacy _VALUE semantics
+    - every kernel selector bit in RCC_CCIPR1..5
+    - runtime configuration object layout
+    - explicit VCO range selector modeling inside the PLL core
+  -->
+
+  <settings>
+    <boolean-setting name="CLOCK_DYNAMIC" macro="STM32_CLOCK_DYNAMIC"/>
+
+    <register-setting name="PWR_VOSCR" macro="STM32_PWR_VOSCR"
+                      register="PWR_VOSCR">
+      <allowed macro="PWR_VOSCR_VOS_RANGE0"/>
+      <allowed macro="PWR_VOSCR_VOS_RANGE1"/>
+      <allowed macro="PWR_VOSCR_VOS_RANGE2"/>
+      <allowed macro="PWR_VOSCR_VOS_RANGE3"/>
+    </register-setting>
+
+    <boolean-setting name="HSI_ENABLED" macro="STM32_HSI_ENABLED"/>
+    <boolean-setting name="HSI48_ENABLED" macro="STM32_HSI48_ENABLED"/>
+    <boolean-setting name="CSI_ENABLED" macro="STM32_CSI_ENABLED"/>
+    <boolean-setting name="HSE_ENABLED" macro="STM32_HSE_ENABLED"/>
+    <boolean-setting name="LSI_ENABLED" macro="STM32_LSI_ENABLED"/>
+    <boolean-setting name="LSE_ENABLED" macro="STM32_LSE_ENABLED"/>
+
+    <value-setting name="HSIDIV" macro="STM32_HSIDIV_VALUE"
+                   register="RCC_CR" field="HSIDIV" encode="enum">
+      <allowed value="1"/>
+      <allowed value="2"/>
+      <allowed value="4"/>
+      <allowed value="8"/>
+    </value-setting>
+
+    <register-setting name="SW" macro="STM32_SW"
+                      register="RCC_CFGR1" field="SW">
+      <allowed macro="RCC_CFGR1_SW_HSI"/>
+      <allowed macro="RCC_CFGR1_SW_CSI"/>
+      <allowed macro="RCC_CFGR1_SW_HSE"/>
+      <allowed macro="RCC_CFGR1_SW_PLL1P"/>
+    </register-setting>
+
+    <register-setting name="STOPWUCK" macro="STM32_STOPWUCK"
+                      register="RCC_CFGR1" field="STOPWUCK">
+      <allowed macro="RCC_CFGR1_STOPWUCK_HSI"/>
+      <allowed macro="RCC_CFGR1_STOPWUCK_CSI"/>
+    </register-setting>
+
+    <register-setting name="STOPKERWUCK" macro="STM32_STOPKERWUCK"
+                      register="RCC_CFGR1" field="STOPKERWUCK">
+      <allowed macro="RCC_CFGR1_STOPKERWUCK_HSI"/>
+      <allowed macro="RCC_CFGR1_STOPKERWUCK_CSI"/>
+    </register-setting>
+
+    <register-setting name="TIMPRE" macro="STM32_TIMPRE"
+                      register="RCC_CFGR1" field="TIMPRE">
+      <allowed macro="RCC_CFGR1_TIMPRE_LOW"/>
+      <allowed macro="RCC_CFGR1_TIMPRE_HIGH"/>
+    </register-setting>
+
+    <register-setting name="PLL1SRC" macro="STM32_PLL1SRC"
+                      register="RCC_PLL1CFGR" field="PLL1SRC">
+      <allowed macro="RCC_PLL1CFGR_PLL1SRC_NOCLOCK"/>
+      <allowed macro="RCC_PLL1CFGR_PLL1SRC_HSI"/>
+      <allowed macro="RCC_PLL1CFGR_PLL1SRC_CSI"/>
+      <allowed macro="RCC_PLL1CFGR_PLL1SRC_HSE"/>
+    </register-setting>
+    <register-setting name="PLL2SRC" macro="STM32_PLL2SRC"
+                      register="RCC_PLL2CFGR" field="PLL2SRC">
+      <allowed macro="RCC_PLL2CFGR_PLL2SRC_NOCLOCK"/>
+      <allowed macro="RCC_PLL2CFGR_PLL2SRC_HSI"/>
+      <allowed macro="RCC_PLL2CFGR_PLL2SRC_CSI"/>
+      <allowed macro="RCC_PLL2CFGR_PLL2SRC_HSE"/>
+    </register-setting>
+    <register-setting name="PLL3SRC" macro="STM32_PLL3SRC"
+                      register="RCC_PLL3CFGR" field="PLL3SRC">
+      <allowed macro="RCC_PLL3CFGR_PLL3SRC_NOCLOCK"/>
+      <allowed macro="RCC_PLL3CFGR_PLL3SRC_HSI"/>
+      <allowed macro="RCC_PLL3CFGR_PLL3SRC_CSI"/>
+      <allowed macro="RCC_PLL3CFGR_PLL3SRC_HSE"/>
+    </register-setting>
+
+    <value-setting name="PLL1M" macro="STM32_PLL1M_VALUE"
+                   register="RCC_PLL1CFGR" field="PLL1M" encode="identity">
+      <range min="1" max="63"/>
+    </value-setting>
+    <value-setting name="PLL1N" macro="STM32_PLL1N_VALUE"
+                   register="RCC_PLL1DIVR" field="PLL1N" encode="identity">
+      <range min="4" max="512"/>
+    </value-setting>
+    <value-setting name="PLL1P" macro="STM32_PLL1P_VALUE"
+                   register="RCC_PLL1DIVR" field="PLL1P" encode="identity">
+      <range min="2" max="128"/>
+      <constraint kind="even"/>
+    </value-setting>
+    <value-setting name="PLL1Q" macro="STM32_PLL1Q_VALUE"
+                   register="RCC_PLL1DIVR" field="PLL1Q" encode="identity">
+      <range min="1" max="128"/>
+    </value-setting>
+    <value-setting name="PLL1R" macro="STM32_PLL1R_VALUE"
+                   register="RCC_PLL1DIVR" field="PLL1R" encode="identity">
+      <range min="1" max="128"/>
+    </value-setting>
+
+    <value-setting name="PLL2M" macro="STM32_PLL2M_VALUE"
+                   register="RCC_PLL2CFGR" field="PLL2M" encode="identity">
+      <range min="1" max="63"/>
+    </value-setting>
+    <value-setting name="PLL2N" macro="STM32_PLL2N_VALUE"
+                   register="RCC_PLL2DIVR" field="PLL2N" encode="identity">
+      <range min="4" max="512"/>
+    </value-setting>
+    <value-setting name="PLL2P" macro="STM32_PLL2P_VALUE"
+                   register="RCC_PLL2DIVR" field="PLL2P" encode="identity">
+      <range min="1" max="128"/>
+    </value-setting>
+    <value-setting name="PLL2Q" macro="STM32_PLL2Q_VALUE"
+                   register="RCC_PLL2DIVR" field="PLL2Q" encode="identity">
+      <range min="1" max="128"/>
+    </value-setting>
+    <value-setting name="PLL2R" macro="STM32_PLL2R_VALUE"
+                   register="RCC_PLL2DIVR" field="PLL2R" encode="identity">
+      <range min="1" max="128"/>
+    </value-setting>
+
+    <value-setting name="PLL3M" macro="STM32_PLL3M_VALUE"
+                   register="RCC_PLL3CFGR" field="PLL3M" encode="identity">
+      <range min="1" max="63"/>
+    </value-setting>
+    <value-setting name="PLL3N" macro="STM32_PLL3N_VALUE"
+                   register="RCC_PLL3DIVR" field="PLL3N" encode="identity">
+      <range min="4" max="512"/>
+    </value-setting>
+    <value-setting name="PLL3P" macro="STM32_PLL3P_VALUE"
+                   register="RCC_PLL3DIVR" field="PLL3P" encode="identity">
+      <range min="1" max="128"/>
+    </value-setting>
+    <value-setting name="PLL3Q" macro="STM32_PLL3Q_VALUE"
+                   register="RCC_PLL3DIVR" field="PLL3Q" encode="identity">
+      <range min="1" max="128"/>
+    </value-setting>
+    <value-setting name="PLL3R" macro="STM32_PLL3R_VALUE"
+                   register="RCC_PLL3DIVR" field="PLL3R" encode="identity">
+      <range min="1" max="128"/>
+    </value-setting>
+
+    <register-setting name="HPRE" macro="STM32_HPRE"
+                      register="RCC_CFGR2" field="HPRE"/>
+    <register-setting name="PPRE1" macro="STM32_PPRE1"
+                      register="RCC_CFGR2" field="PPRE1"/>
+    <register-setting name="PPRE2" macro="STM32_PPRE2"
+                      register="RCC_CFGR2" field="PPRE2"/>
+    <register-setting name="PPRE3" macro="STM32_PPRE3"
+                      register="RCC_CFGR2" field="PPRE3"/>
+
+    <register-setting name="RTCSEL" macro="STM32_RTCSEL"
+                      register="RCC_BDCR" field="RTCSEL"/>
+    <register-setting name="LSCOSEL" macro="STM32_LSCOSEL"
+                      register="RCC_BDCR" field="LSCOSEL"/>
+
+    <register-setting name="USART1SEL" macro="STM32_USART1SEL"
+                      register="RCC_CCIPR1" field="USART1SEL"/>
+    <register-setting name="SPI1SEL" macro="STM32_SPI1SEL"
+                      register="RCC_CCIPR3" field="SPI1SEL"/>
+    <register-setting name="LPTIM1SEL" macro="STM32_LPTIM1SEL"
+                      register="RCC_CCIPR2" field="LPTIM1SEL"/>
+    <register-setting name="I2C1SEL" macro="STM32_I2C1SEL"
+                      register="RCC_CCIPR4" field="I2C1SEL"/>
+    <register-setting name="USBSEL" macro="STM32_USBSEL"
+                      register="RCC_CCIPR4" field="USBSEL"/>
+    <register-setting name="SDMMC1SEL" macro="STM32_SDMMC1SEL"
+                      register="RCC_CCIPR4" field="SDMMC1SEL"/>
+    <register-setting name="ADCDACSEL" macro="STM32_ADCDACSEL"
+                      register="RCC_CCIPR5" field="ADCDACSEL"/>
+    <register-setting name="FDCANSEL" macro="STM32_FDCANSEL"
+                      register="RCC_CCIPR5" field="FDCANSEL"/>
+    <register-setting name="SAI1SEL" macro="STM32_SAI1SEL"
+                      register="RCC_CCIPR5" field="SAI1SEL"/>
+    <register-setting name="CKPERSEL" macro="STM32_CKPERSEL"
+                      register="RCC_CCIPR5" field="CKPERSEL"/>
+  </settings>
+
+  <board-inputs>
+    <board-input name="HSECLK" macro="STM32_HSECLK" kind="frequency">
+      <range min="4000000" max="50000000"/>
+    </board-input>
+    <board-input name="LSECLK" macro="STM32_LSECLK" kind="frequency">
+      <range min="32768" max="1000000"/>
+    </board-input>
+    <board-input name="HSE_BYPASS" macro="STM32_HSE_BYPASS"
+                 kind="boolean" required="false"/>
+    <board-input name="LSE_BYPASS" macro="STM32_LSE_BYPASS"
+                 kind="boolean" required="false"/>
+    <board-input name="LSEDRV" macro="STM32_LSEDRV"
+                 kind="value" required="false"/>
+    <board-input name="VDD" macro="VDD" kind="voltage" required="false"/>
+  </board-inputs>
+
+  <power-profiles>
+    <power-profile name="VOS0">
+      <when setting="PWR_VOSCR" equals="PWR_VOSCR_VOS_RANGE0"/>
+    </power-profile>
+    <power-profile name="VOS1">
+      <when setting="PWR_VOSCR" equals="PWR_VOSCR_VOS_RANGE1"/>
+    </power-profile>
+    <power-profile name="VOS2">
+      <when setting="PWR_VOSCR" equals="PWR_VOSCR_VOS_RANGE2"/>
+    </power-profile>
+    <power-profile name="VOS3">
+      <when setting="PWR_VOSCR" equals="PWR_VOSCR_VOS_RANGE3"/>
+    </power-profile>
+  </power-profiles>
+
+  <limits>
+    <profile-limits profile="VOS0">
+      <limit name="SYSCLK_MAX" value="250000000"/>
+      <limit name="HSECLK_MAX" value="50000000"/>
+      <limit name="HSECLK_BYP_MAX" value="50000000"/>
+      <limit name="HSECLK_MIN" value="4000000"/>
+      <limit name="HSECLK_BYP_MIN" value="4000000"/>
+      <limit name="LSECLK_MAX" value="32768"/>
+      <limit name="LSECLK_BYP_MAX" value="1000000"/>
+      <limit name="LSECLK_MIN" value="32768"/>
+      <limit name="LSECLK_BYP_MIN" value="32768"/>
+      <limit name="PLLP_MAX" value="250000000"/>
+      <limit name="PLLP_MIN" value="1000000"/>
+      <limit name="PLLQ_MAX" value="250000000"/>
+      <limit name="PLLQ_MIN" value="1000000"/>
+      <limit name="PLLR_MAX" value="250000000"/>
+      <limit name="PLLR_MIN" value="1000000"/>
+      <limit name="PCLK1_MAX" value="250000000"/>
+      <limit name="PCLK2_MAX" value="250000000"/>
+      <limit name="PCLK3_MAX" value="250000000"/>
+      <limit name="ADCCLK_MAX" value="125000000"/>
+      <limit name="FLASH_0WS_THRESHOLD" value="42000000"/>
+      <limit name="FLASH_1WS_THRESHOLD" value="84000000"/>
+      <limit name="FLASH_2WS_THRESHOLD" value="126000000"/>
+      <limit name="FLASH_3WS_THRESHOLD" value="168000000"/>
+      <limit name="FLASH_4WS_THRESHOLD" value="210000000"/>
+      <limit name="FLASH_5WS_THRESHOLD" value="250000000"/>
+    </profile-limits>
+
+    <profile-limits profile="VOS1">
+      <limit name="SYSCLK_MAX" value="200000000"/>
+      <limit name="HSECLK_MAX" value="50000000"/>
+      <limit name="HSECLK_BYP_MAX" value="50000000"/>
+      <limit name="HSECLK_MIN" value="4000000"/>
+      <limit name="HSECLK_BYP_MIN" value="4000000"/>
+      <limit name="LSECLK_MAX" value="32768"/>
+      <limit name="LSECLK_BYP_MAX" value="1000000"/>
+      <limit name="LSECLK_MIN" value="32768"/>
+      <limit name="LSECLK_BYP_MIN" value="32768"/>
+      <limit name="PLLP_MAX" value="200000000"/>
+      <limit name="PLLP_MIN" value="1000000"/>
+      <limit name="PLLQ_MAX" value="200000000"/>
+      <limit name="PLLQ_MIN" value="1000000"/>
+      <limit name="PLLR_MAX" value="200000000"/>
+      <limit name="PLLR_MIN" value="1000000"/>
+      <limit name="PCLK1_MAX" value="200000000"/>
+      <limit name="PCLK2_MAX" value="200000000"/>
+      <limit name="PCLK3_MAX" value="200000000"/>
+      <limit name="ADCCLK_MAX" value="100000000"/>
+      <limit name="FLASH_0WS_THRESHOLD" value="34000000"/>
+      <limit name="FLASH_1WS_THRESHOLD" value="68000000"/>
+      <limit name="FLASH_2WS_THRESHOLD" value="102000000"/>
+      <limit name="FLASH_3WS_THRESHOLD" value="136000000"/>
+      <limit name="FLASH_4WS_THRESHOLD" value="170000000"/>
+      <limit name="FLASH_5WS_THRESHOLD" value="200000000"/>
+    </profile-limits>
+
+    <profile-limits profile="VOS2">
+      <limit name="SYSCLK_MAX" value="150000000"/>
+      <limit name="HSECLK_MAX" value="50000000"/>
+      <limit name="HSECLK_BYP_MAX" value="50000000"/>
+      <limit name="HSECLK_MIN" value="4000000"/>
+      <limit name="HSECLK_BYP_MIN" value="4000000"/>
+      <limit name="LSECLK_MAX" value="32768"/>
+      <limit name="LSECLK_BYP_MAX" value="1000000"/>
+      <limit name="LSECLK_MIN" value="32768"/>
+      <limit name="LSECLK_BYP_MIN" value="32768"/>
+      <limit name="PLLP_MAX" value="150000000"/>
+      <limit name="PLLP_MIN" value="1000000"/>
+      <limit name="PLLQ_MAX" value="150000000"/>
+      <limit name="PLLQ_MIN" value="1000000"/>
+      <limit name="PLLR_MAX" value="150000000"/>
+      <limit name="PLLR_MIN" value="1000000"/>
+      <limit name="PCLK1_MAX" value="150000000"/>
+      <limit name="PCLK2_MAX" value="150000000"/>
+      <limit name="PCLK3_MAX" value="150000000"/>
+      <limit name="ADCCLK_MAX" value="75000000"/>
+      <limit name="FLASH_0WS_THRESHOLD" value="30000000"/>
+      <limit name="FLASH_1WS_THRESHOLD" value="60000000"/>
+      <limit name="FLASH_2WS_THRESHOLD" value="90000000"/>
+      <limit name="FLASH_3WS_THRESHOLD" value="120000000"/>
+      <limit name="FLASH_4WS_THRESHOLD" value="150000000"/>
+      <limit name="FLASH_5WS_THRESHOLD" value="150000000"/>
+    </profile-limits>
+
+    <profile-limits profile="VOS3">
+      <limit name="SYSCLK_MAX" value="100000000"/>
+      <limit name="HSECLK_MAX" value="50000000"/>
+      <limit name="HSECLK_BYP_MAX" value="50000000"/>
+      <limit name="HSECLK_MIN" value="4000000"/>
+      <limit name="HSECLK_BYP_MIN" value="4000000"/>
+      <limit name="LSECLK_MAX" value="32768"/>
+      <limit name="LSECLK_BYP_MAX" value="1000000"/>
+      <limit name="LSECLK_MIN" value="32768"/>
+      <limit name="LSECLK_BYP_MIN" value="32768"/>
+      <limit name="PLLP_MAX" value="100000000"/>
+      <limit name="PLLP_MIN" value="1000000"/>
+      <limit name="PLLQ_MAX" value="100000000"/>
+      <limit name="PLLQ_MIN" value="1000000"/>
+      <limit name="PLLR_MAX" value="100000000"/>
+      <limit name="PLLR_MIN" value="1000000"/>
+      <limit name="PCLK1_MAX" value="100000000"/>
+      <limit name="PCLK2_MAX" value="100000000"/>
+      <limit name="PCLK3_MAX" value="100000000"/>
+      <limit name="ADCCLK_MAX" value="50000000"/>
+      <limit name="FLASH_0WS_THRESHOLD" value="20000000"/>
+      <limit name="FLASH_1WS_THRESHOLD" value="40000000"/>
+      <limit name="FLASH_2WS_THRESHOLD" value="60000000"/>
+      <limit name="FLASH_3WS_THRESHOLD" value="80000000"/>
+      <limit name="FLASH_4WS_THRESHOLD" value="100000000"/>
+      <limit name="FLASH_5WS_THRESHOLD" value="100000000"/>
+    </profile-limits>
+  </limits>
+
+  <sources>
+    <internal-source name="NONE">
+      <frequency>
+        <const value="0"/>
+      </frequency>
+    </internal-source>
+
+    <internal-source name="HSI64">
+      <enabled>
+        <setting-ref name="HSI_ENABLED"/>
+      </enabled>
+      <frequency>
+        <const value="64000000"/>
+      </frequency>
+    </internal-source>
+
+    <internal-source name="CSI_OSC">
+      <enabled>
+        <setting-ref name="CSI_ENABLED"/>
+      </enabled>
+      <frequency>
+        <const value="4000000"/>
+      </frequency>
+    </internal-source>
+
+    <internal-source name="HSI48_OSC">
+      <enabled>
+        <setting-ref name="HSI48_ENABLED"/>
+      </enabled>
+      <frequency>
+        <const value="48000000"/>
+      </frequency>
+    </internal-source>
+
+    <internal-source name="LSI_OSC">
+      <enabled>
+        <setting-ref name="LSI_ENABLED"/>
+      </enabled>
+      <frequency>
+        <const value="32000"/>
+      </frequency>
+    </internal-source>
+
+    <external-source name="HSE_OSC">
+      <enabled>
+        <setting-ref name="HSE_ENABLED"/>
+      </enabled>
+      <frequency>
+        <board-ref name="HSECLK"/>
+      </frequency>
+    </external-source>
+
+    <external-source name="LSE_OSC">
+      <enabled>
+        <setting-ref name="LSE_ENABLED"/>
+      </enabled>
+      <frequency>
+        <board-ref name="LSECLK"/>
+      </frequency>
+    </external-source>
+  </sources>
+
+  <clock-blocks>
+    <pll-core name="PLL1">
+      <description>
+        STM32H5 PLL1 core. Source selection and M pre-division are modeled
+        outside as ordinary clock points.
+      </description>
+      <vcoin ref="PLL1VCOIN"/>
+      <attribute name="N" value-setting="PLL1N">
+        <range min="4" max="512"/>
+      </attribute>
+      <input-range min="1000000" max="16000000"/>
+      <output-range min="150000000" max="836000000"/>
+      <vcoout-formula>
+        <mul>
+          <stage-ref stage="VCOIN"/>
+          <attribute-ref name="N"/>
+        </mul>
+      </vcoout-formula>
+    </pll-core>
+
+    <pll-core name="PLL2">
+      <description>
+        STM32H5 PLL2 core. Source selection and M pre-division are modeled
+        outside as ordinary clock points.
+      </description>
+      <vcoin ref="PLL2VCOIN"/>
+      <attribute name="N" value-setting="PLL2N">
+        <range min="4" max="512"/>
+      </attribute>
+      <input-range min="1000000" max="16000000"/>
+      <output-range min="150000000" max="836000000"/>
+      <vcoout-formula>
+        <mul>
+          <stage-ref stage="VCOIN"/>
+          <attribute-ref name="N"/>
+        </mul>
+      </vcoout-formula>
+    </pll-core>
+
+    <pll-core name="PLL3">
+      <description>
+        STM32H5 PLL3 core. Source selection and M pre-division are modeled
+        outside as ordinary clock points.
+      </description>
+      <vcoin ref="PLL3VCOIN"/>
+      <attribute name="N" value-setting="PLL3N">
+        <range min="4" max="512"/>
+      </attribute>
+      <input-range min="1000000" max="16000000"/>
+      <output-range min="150000000" max="836000000"/>
+      <vcoout-formula>
+        <mul>
+          <stage-ref stage="VCOIN"/>
+          <attribute-ref name="N"/>
+        </mul>
+      </vcoout-formula>
+    </pll-core>
+  </clock-blocks>
+
+  <clock-points>
+    <clock-point name="NONE">
+      <from-source ref="NONE"/>
+    </clock-point>
+
+    <clock-point name="HSI">
+      <divider input="HSI64" kind="enum" value-setting="HSIDIV">
+        <div value="1" divisor="1"/>
+        <div value="2" divisor="2"/>
+        <div value="4" divisor="4"/>
+        <div value="8" divisor="8"/>
+      </divider>
+    </clock-point>
+
+    <clock-point name="CSI">
+      <from-source ref="CSI_OSC"/>
+    </clock-point>
+
+    <clock-point name="HSI48">
+      <from-source ref="HSI48_OSC"/>
+    </clock-point>
+
+    <clock-point name="LSI">
+      <from-source ref="LSI_OSC"/>
+    </clock-point>
+
+    <clock-point name="HSE">
+      <from-source ref="HSE_OSC"/>
+    </clock-point>
+
+    <clock-point name="LSE">
+      <from-source ref="LSE_OSC"/>
+    </clock-point>
+
+    <clock-point name="PLL1SRCCLK">
+      <mux setting="PLL1SRC">
+        <input value="RCC_PLL1CFGR_PLL1SRC_NOCLOCK" ref="NONE"/>
+        <input value="RCC_PLL1CFGR_PLL1SRC_HSI" ref="HSI"/>
+        <input value="RCC_PLL1CFGR_PLL1SRC_CSI" ref="CSI"/>
+        <input value="RCC_PLL1CFGR_PLL1SRC_HSE" ref="HSE"/>
+      </mux>
+    </clock-point>
+
+    <clock-point name="PLL2SRCCLK">
+      <mux setting="PLL2SRC">
+        <input value="RCC_PLL2CFGR_PLL2SRC_NOCLOCK" ref="NONE"/>
+        <input value="RCC_PLL2CFGR_PLL2SRC_HSI" ref="HSI"/>
+        <input value="RCC_PLL2CFGR_PLL2SRC_CSI" ref="CSI"/>
+        <input value="RCC_PLL2CFGR_PLL2SRC_HSE" ref="HSE"/>
+      </mux>
+    </clock-point>
+
+    <clock-point name="PLL3SRCCLK">
+      <mux setting="PLL3SRC">
+        <input value="RCC_PLL3CFGR_PLL3SRC_NOCLOCK" ref="NONE"/>
+        <input value="RCC_PLL3CFGR_PLL3SRC_HSI" ref="HSI"/>
+        <input value="RCC_PLL3CFGR_PLL3SRC_CSI" ref="CSI"/>
+        <input value="RCC_PLL3CFGR_PLL3SRC_HSE" ref="HSE"/>
+      </mux>
+    </clock-point>
+
+    <clock-point name="PLL1VCOIN">
+      <divider input="PLL1SRCCLK" kind="1-n" value-setting="PLL1M"/>
+    </clock-point>
+
+    <clock-point name="PLL2VCOIN">
+      <divider input="PLL2SRCCLK" kind="1-n" value-setting="PLL2M"/>
+    </clock-point>
+
+    <clock-point name="PLL3VCOIN">
+      <divider input="PLL3SRCCLK" kind="1-n" value-setting="PLL3M"/>
+    </clock-point>
+
+    <clock-point name="PLL1VCOOUT">
+      <from-block-stage block="PLL1" stage="VCOOUT"/>
+    </clock-point>
+
+    <clock-point name="PLL2VCOOUT">
+      <from-block-stage block="PLL2" stage="VCOOUT"/>
+    </clock-point>
+
+    <clock-point name="PLL3VCOOUT">
+      <from-block-stage block="PLL3" stage="VCOOUT"/>
+    </clock-point>
+
+    <clock-point name="PLL1P">
+      <divider input="PLL1VCOOUT" kind="1-n" value-setting="PLL1P"/>
+    </clock-point>
+    <clock-point name="PLL1Q">
+      <divider input="PLL1VCOOUT" kind="1-n" value-setting="PLL1Q"/>
+    </clock-point>
+    <clock-point name="PLL1R">
+      <divider input="PLL1VCOOUT" kind="1-n" value-setting="PLL1R"/>
+    </clock-point>
+    <clock-point name="PLL2P">
+      <divider input="PLL2VCOOUT" kind="1-n" value-setting="PLL2P"/>
+    </clock-point>
+    <clock-point name="PLL2Q">
+      <divider input="PLL2VCOOUT" kind="1-n" value-setting="PLL2Q"/>
+    </clock-point>
+    <clock-point name="PLL2R">
+      <divider input="PLL2VCOOUT" kind="1-n" value-setting="PLL2R"/>
+    </clock-point>
+    <clock-point name="PLL3P">
+      <divider input="PLL3VCOOUT" kind="1-n" value-setting="PLL3P"/>
+    </clock-point>
+    <clock-point name="PLL3Q">
+      <divider input="PLL3VCOOUT" kind="1-n" value-setting="PLL3Q"/>
+    </clock-point>
+    <clock-point name="PLL3R">
+      <divider input="PLL3VCOOUT" kind="1-n" value-setting="PLL3R"/>
+    </clock-point>
+
+    <clock-point name="SYSCLK">
+      <mux setting="SW">
+        <input value="RCC_CFGR1_SW_HSI" ref="HSI"/>
+        <input value="RCC_CFGR1_SW_CSI" ref="CSI"/>
+        <input value="RCC_CFGR1_SW_HSE" ref="HSE"/>
+        <input value="RCC_CFGR1_SW_PLL1P" ref="PLL1P"/>
+      </mux>
+    </clock-point>
+
+    <clock-point name="HCLK">
+      <divider input="SYSCLK" kind="enum" setting="HPRE">
+        <div value="RCC_CFGR2_HPRE_DIV1" divisor="1"/>
+        <div value="RCC_CFGR2_HPRE_DIV2" divisor="2"/>
+        <div value="RCC_CFGR2_HPRE_DIV4" divisor="4"/>
+        <div value="RCC_CFGR2_HPRE_DIV8" divisor="8"/>
+        <div value="RCC_CFGR2_HPRE_DIV16" divisor="16"/>
+        <div value="RCC_CFGR2_HPRE_DIV64" divisor="64"/>
+        <div value="RCC_CFGR2_HPRE_DIV128" divisor="128"/>
+        <div value="RCC_CFGR2_HPRE_DIV256" divisor="256"/>
+        <div value="RCC_CFGR2_HPRE_DIV512" divisor="512"/>
+      </divider>
+    </clock-point>
+
+    <clock-point name="PCLK1">
+      <divider input="HCLK" kind="enum" setting="PPRE1">
+        <div value="RCC_CFGR2_PPRE1_DIV1" divisor="1"/>
+        <div value="RCC_CFGR2_PPRE1_DIV2" divisor="2"/>
+        <div value="RCC_CFGR2_PPRE1_DIV4" divisor="4"/>
+        <div value="RCC_CFGR2_PPRE1_DIV8" divisor="8"/>
+        <div value="RCC_CFGR2_PPRE1_DIV16" divisor="16"/>
+      </divider>
+    </clock-point>
+
+    <clock-point name="PCLK2">
+      <divider input="HCLK" kind="enum" setting="PPRE2">
+        <div value="RCC_CFGR2_PPRE2_DIV1" divisor="1"/>
+        <div value="RCC_CFGR2_PPRE2_DIV2" divisor="2"/>
+        <div value="RCC_CFGR2_PPRE2_DIV4" divisor="4"/>
+        <div value="RCC_CFGR2_PPRE2_DIV8" divisor="8"/>
+        <div value="RCC_CFGR2_PPRE2_DIV16" divisor="16"/>
+      </divider>
+    </clock-point>
+
+    <clock-point name="PCLK3">
+      <divider input="HCLK" kind="enum" setting="PPRE3">
+        <div value="RCC_CFGR2_PPRE3_DIV1" divisor="1"/>
+        <div value="RCC_CFGR2_PPRE3_DIV2" divisor="2"/>
+        <div value="RCC_CFGR2_PPRE3_DIV4" divisor="4"/>
+        <div value="RCC_CFGR2_PPRE3_DIV8" divisor="8"/>
+        <div value="RCC_CFGR2_PPRE3_DIV16" divisor="16"/>
+      </divider>
+    </clock-point>
+
+    <clock-point name="PERCLK">
+      <mux setting="CKPERSEL">
+        <input value="RCC_CCIPR5_CKPERSEL_HSI" ref="HSI"/>
+        <input value="RCC_CCIPR5_CKPERSEL_CSI" ref="CSI"/>
+        <input value="RCC_CCIPR5_CKPERSEL_HSE" ref="HSE"/>
+      </mux>
+    </clock-point>
+
+    <clock-point name="USART1CLK">
+      <mux setting="USART1SEL">
+        <input value="RCC_CCIPR1_USART1SEL_PCLK2" ref="PCLK2"/>
+        <input value="RCC_CCIPR1_USART1SEL_PLL2Q" ref="PLL2Q"/>
+        <input value="RCC_CCIPR1_USART1SEL_PLL3Q" ref="PLL3Q"/>
+        <input value="RCC_CCIPR1_USART1SEL_HSI" ref="HSI"/>
+        <input value="RCC_CCIPR1_USART1SEL_CSI" ref="CSI"/>
+        <input value="RCC_CCIPR1_USART1SEL_LSE" ref="LSE"/>
+      </mux>
+    </clock-point>
+
+    <clock-point name="SPI1CLK">
+      <mux setting="SPI1SEL">
+        <input value="RCC_CCIPR3_SPI1SEL_PLL1Q" ref="PLL1Q"/>
+        <input value="RCC_CCIPR3_SPI1SEL_PLL2P" ref="PLL2P"/>
+        <input value="RCC_CCIPR3_SPI1SEL_PLL3P" ref="PLL3P"/>
+        <input value="RCC_CCIPR3_SPI1SEL_PER" ref="PERCLK"/>
+      </mux>
+    </clock-point>
+
+    <clock-point name="LPTIM1CLK">
+      <mux setting="LPTIM1SEL">
+        <input value="RCC_CCIPR2_LPTIM1SEL_PCLK3" ref="PCLK3"/>
+        <input value="RCC_CCIPR2_LPTIM1SEL_PLL2P" ref="PLL2P"/>
+        <input value="RCC_CCIPR2_LPTIM1SEL_PLL3R" ref="PLL3R"/>
+        <input value="RCC_CCIPR2_LPTIM1SEL_LSE" ref="LSE"/>
+        <input value="RCC_CCIPR2_LPTIM1SEL_LSI" ref="LSI"/>
+        <input value="RCC_CCIPR2_LPTIM1SEL_PER" ref="PERCLK"/>
+      </mux>
+    </clock-point>
+
+    <clock-point name="I2C1CLK">
+      <mux setting="I2C1SEL">
+        <input value="RCC_CCIPR4_I2C1SEL_PCLK1" ref="PCLK1"/>
+        <input value="RCC_CCIPR4_I2C1SEL_PLL3R" ref="PLL3R"/>
+        <input value="RCC_CCIPR4_I2C1SEL_HSI" ref="HSI"/>
+        <input value="RCC_CCIPR4_I2C1SEL_CSI" ref="CSI"/>
+      </mux>
+    </clock-point>
+
+    <clock-point name="USBCLK">
+      <mux setting="USBSEL">
+        <input value="RCC_CCIPR4_USBSEL_NOCLOCK" ref="NONE"/>
+        <input value="RCC_CCIPR4_USBSEL_PLL1Q" ref="PLL1Q"/>
+        <input value="RCC_CCIPR4_USBSEL_PLL3Q" ref="PLL3Q"/>
+        <input value="RCC_CCIPR4_USBSEL_HSI48" ref="HSI48"/>
+      </mux>
+    </clock-point>
+
+    <clock-point name="SDMMC1CLK">
+      <mux setting="SDMMC1SEL">
+        <input value="RCC_CCIPR4_SDMMC1SEL_PLL1Q" ref="PLL1Q"/>
+        <input value="RCC_CCIPR4_SDMMC1SEL_PLL2R" ref="PLL2R"/>
+      </mux>
+    </clock-point>
+
+    <clock-point name="ADCDACCLK">
+      <mux setting="ADCDACSEL">
+        <input value="RCC_CCIPR5_ADCDACSEL_HCLK" ref="HCLK"/>
+        <input value="RCC_CCIPR5_ADCDACSEL_SYSCLK" ref="SYSCLK"/>
+        <input value="RCC_CCIPR5_ADCDACSEL_PLL2R" ref="PLL2R"/>
+        <input value="RCC_CCIPR5_ADCDACSEL_HSE" ref="HSE"/>
+        <input value="RCC_CCIPR5_ADCDACSEL_HSI" ref="HSI"/>
+        <input value="RCC_CCIPR5_ADCDACSEL_CSI" ref="CSI"/>
+      </mux>
+    </clock-point>
+
+    <clock-point name="FDCANCLK">
+      <mux setting="FDCANSEL">
+        <input value="RCC_CCIPR5_FDCANSEL_HSE" ref="HSE"/>
+        <input value="RCC_CCIPR5_FDCANSEL_PLL1Q" ref="PLL1Q"/>
+        <input value="RCC_CCIPR5_FDCANSEL_PLL2Q" ref="PLL2Q"/>
+      </mux>
+    </clock-point>
+
+    <clock-point name="SAI1CLK">
+      <mux setting="SAI1SEL">
+        <input value="RCC_CCIPR5_SAI1SEL_PLL1Q" ref="PLL1Q"/>
+        <input value="RCC_CCIPR5_SAI1SEL_PLL2P" ref="PLL2P"/>
+        <input value="RCC_CCIPR5_SAI1SEL_PLL3P" ref="PLL3P"/>
+        <input value="RCC_CCIPR5_SAI1SEL_PER" ref="PERCLK"/>
+      </mux>
+    </clock-point>
+  </clock-points>
+</clocktree>

@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="unqualified"
+           attributeFormDefault="unqualified">
+
+  <xs:simpleType name="dividerKindType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="0-n"/>
+      <xs:enumeration value="1-n"/>
+      <xs:enumeration value="pow2"/>
+      <xs:enumeration value="enum"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="boardInputKindType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="frequency"/>
+      <xs:enumeration value="voltage"/>
+      <xs:enumeration value="boolean"/>
+      <xs:enumeration value="value"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:group name="exprGroup">
+    <xs:choice>
+      <xs:element ref="const"/>
+      <xs:element ref="setting-ref"/>
+      <xs:element ref="board-ref"/>
+      <xs:element ref="clock-ref"/>
+      <xs:element ref="stage-ref"/>
+      <xs:element ref="attribute-ref"/>
+      <xs:element ref="mul"/>
+      <xs:element ref="div"/>
+      <xs:element ref="add"/>
+      <xs:element ref="sub"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:complexType name="binaryExprType">
+    <xs:sequence>
+      <xs:group ref="exprGroup" minOccurs="2" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="const">
+    <xs:complexType>
+      <xs:attribute name="value" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="setting-ref">
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="board-ref">
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="clock-ref">
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="stage-ref">
+    <xs:complexType>
+      <xs:attribute name="stage" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="attribute-ref">
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="mul" type="binaryExprType"/>
+  <xs:element name="div" type="binaryExprType"/>
+  <xs:element name="add" type="binaryExprType"/>
+  <xs:element name="sub" type="binaryExprType"/>
+
+  <xs:complexType name="exprContainerType">
+    <xs:sequence>
+      <xs:group ref="exprGroup"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="rangeType">
+    <xs:attribute name="min" type="xs:string" use="required"/>
+    <xs:attribute name="max" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="allowedType">
+    <xs:attribute name="macro" type="xs:string" use="optional"/>
+    <xs:attribute name="value" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="constraintType">
+    <xs:attribute name="kind" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="settingChildrenType">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="allowed" type="allowedType"/>
+      <xs:element name="range" type="rangeType"/>
+      <xs:element name="constraint" type="constraintType"/>
+      <xs:element name="description" type="xs:string"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="registerSettingType">
+    <xs:complexContent>
+      <xs:extension base="settingChildrenType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="macro" type="xs:string" use="required"/>
+        <xs:attribute name="register" type="xs:string"/>
+        <xs:attribute name="field" type="xs:string"/>
+        <xs:attribute name="required" type="xs:boolean" default="true"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="booleanSettingType">
+    <xs:sequence>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="macro" type="xs:string" use="required"/>
+    <xs:attribute name="required" type="xs:boolean" default="true"/>
+  </xs:complexType>
+
+  <xs:complexType name="valueSettingType">
+    <xs:complexContent>
+      <xs:extension base="settingChildrenType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="macro" type="xs:string" use="required"/>
+        <xs:attribute name="register" type="xs:string"/>
+        <xs:attribute name="field" type="xs:string"/>
+        <xs:attribute name="required" type="xs:boolean" default="true"/>
+        <xs:attribute name="encode" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="boardInputType">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="allowed" type="allowedType"/>
+      <xs:element name="range" type="rangeType"/>
+      <xs:element name="description" type="xs:string"/>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="macro" type="xs:string" use="required"/>
+    <xs:attribute name="kind" type="boardInputKindType" use="required"/>
+    <xs:attribute name="required" type="xs:boolean" default="true"/>
+  </xs:complexType>
+
+  <xs:complexType name="whenType">
+    <xs:attribute name="setting" type="xs:string"/>
+    <xs:attribute name="board-input" type="xs:string"/>
+    <xs:attribute name="equals" type="xs:string"/>
+    <xs:attribute name="min" type="xs:string"/>
+    <xs:attribute name="max" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="powerProfileType">
+    <xs:sequence>
+      <xs:element name="when" type="whenType" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="limitType">
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="value" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="profileLimitsType">
+    <xs:sequence>
+      <xs:element name="limit" type="limitType" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="profile" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="sourceType">
+    <xs:sequence>
+      <xs:element name="enabled" type="exprContainerType" minOccurs="0"/>
+      <xs:element name="frequency" type="exprContainerType" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="pllAttributeType">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="range" type="rangeType"/>
+      <xs:element name="allowed" type="allowedType"/>
+      <xs:element name="constraint" type="constraintType"/>
+      <xs:element name="description" type="xs:string"/>
+    </xs:choice>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="setting" type="xs:string"/>
+    <xs:attribute name="value-setting" type="xs:string"/>
+    <xs:attribute name="const" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="vcoinType">
+    <xs:attribute name="ref" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="pllCoreType">
+    <xs:sequence>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="vcoin" type="vcoinType"/>
+      <xs:element name="attribute" type="pllAttributeType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="input-range" type="rangeType" minOccurs="0"/>
+      <xs:element name="output-range" type="rangeType" minOccurs="0"/>
+      <xs:element name="constraint" type="constraintType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="vcoout-formula" type="exprContainerType"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="muxInputType">
+    <xs:attribute name="value" type="xs:string" use="required"/>
+    <xs:attribute name="ref" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="muxType">
+    <xs:sequence>
+      <xs:element name="input" type="muxInputType" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="setting" type="xs:string" use="required"/>
+    <xs:attribute name="default" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="dividerEntryType">
+    <xs:attribute name="value" type="xs:string" use="required"/>
+    <xs:attribute name="divisor" type="xs:string"/>
+    <xs:attribute name="disabled" type="xs:boolean"/>
+  </xs:complexType>
+
+  <xs:complexType name="dividerType">
+    <xs:sequence>
+      <xs:element name="div" type="dividerEntryType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="input" type="xs:string" use="required"/>
+    <xs:attribute name="kind" type="dividerKindType" use="required"/>
+    <xs:attribute name="setting" type="xs:string"/>
+    <xs:attribute name="value-setting" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="multiplierType">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="range" type="rangeType"/>
+      <xs:element name="allowed" type="allowedType"/>
+      <xs:element name="constraint" type="constraintType"/>
+    </xs:choice>
+    <xs:attribute name="input" type="xs:string" use="required"/>
+    <xs:attribute name="setting" type="xs:string"/>
+    <xs:attribute name="value-setting" type="xs:string"/>
+    <xs:attribute name="factor" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="fromSourceType">
+    <xs:attribute name="ref" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="fromClockType">
+    <xs:attribute name="ref" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="fromBlockStageType">
+    <xs:attribute name="block" type="xs:string" use="required"/>
+    <xs:attribute name="stage" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="clockPointType">
+    <xs:sequence>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="enabled" type="exprContainerType" minOccurs="0"/>
+      <xs:choice>
+        <xs:element name="from-source" type="fromSourceType"/>
+        <xs:element name="from-clock" type="fromClockType"/>
+        <xs:element name="mux" type="muxType"/>
+        <xs:element name="divider" type="dividerType"/>
+        <xs:element name="multiplier" type="multiplierType"/>
+        <xs:element name="from-block-stage" type="fromBlockStageType"/>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:element name="clocktree">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="settings" minOccurs="0">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="register-setting" type="registerSettingType"/>
+              <xs:element name="boolean-setting" type="booleanSettingType"/>
+              <xs:element name="value-setting" type="valueSettingType"/>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="board-inputs" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="board-input" type="boardInputType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="power-profiles" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="power-profile" type="powerProfileType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="limits" minOccurs="0">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="limit" type="limitType"/>
+              <xs:element name="profile-limits" type="profileLimitsType"/>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="sources" minOccurs="0">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="internal-source" type="sourceType"/>
+              <xs:element name="external-source" type="sourceType"/>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="clock-blocks" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="pll-core" type="pllCoreType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="clock-points" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="clock-point" type="clockPointType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="schema" use="required" fixed="clockgen-v1"/>
+      <xs:attribute name="namespace" type="xs:string" use="required"/>
+      <xs:attribute name="family" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
