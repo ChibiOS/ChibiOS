@@ -182,10 +182,10 @@ void mdmaInit(void) {
     mdma.channels[i].channel->CCR   = STM32_MDMA_CCR_RESET_VALUE;
     mdma.channels[i].channel->CTCR  = STM32_MDMA_CTCR_RESET_VALUE;
     mdma.channels[i].channel->CIFCR = STM32_MDMA_CIFCR_CTEIF  |
-                                      STM32_MDMA_CIFCR_CBRTIF |
-                                      STM32_MDMA_CIFCR_CBRTIF |
                                       STM32_MDMA_CIFCR_CCTCIF |
-                                      STM32_MDMA_CIFCR_CTEIF;
+                                      STM32_MDMA_CIFCR_CBRTIF |
+                                      STM32_MDMA_CIFCR_CBTIF  |
+                                      STM32_MDMA_CIFCR_CTCIF;
   }
 }
 
