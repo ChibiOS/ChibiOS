@@ -411,7 +411,7 @@ msg_t adxl317Start(ADXL317Driver *devp, const ADXL317Config *config) {
 #endif
 #if ADXL317_USE_I2C
     ret = adxl317I2CWriteRegister(devp, ADXL317_AD_X_FILT, &reg_val, 1);
-#endif /* ADXL317_USE_ADVANCED*/
+#endif /* ADXL317_USE_I2C */
   }
 
   if(ret == MSG_OK) {
@@ -422,7 +422,7 @@ msg_t adxl317Start(ADXL317Driver *devp, const ADXL317Config *config) {
 #endif
 #if ADXL317_USE_I2C
     ret = adxl317I2CWriteRegister(devp, ADXL317_AD_Y_FILT, &reg_val, 1);
-#endif /* ADXL317_USE_ADVANCED*/
+#endif /* ADXL317_USE_I2C */
   }
 
   if(ret == MSG_OK) {
@@ -433,7 +433,7 @@ msg_t adxl317Start(ADXL317Driver *devp, const ADXL317Config *config) {
 #endif
 #if ADXL317_USE_I2C
     ret = adxl317I2CWriteRegister(devp, ADXL317_AD_Z_FILT, &reg_val, 1);
-#endif /* ADXL317_USE_ADVANCED*/
+#endif /* ADXL317_USE_I2C */
   }
 
   if(ret == MSG_OK) {
