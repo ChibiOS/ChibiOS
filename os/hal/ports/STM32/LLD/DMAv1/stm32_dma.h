@@ -393,6 +393,8 @@ typedef struct {
  * @special
  */
 #define dmaStreamSetTransactionSize(dmastp, size) {                         \
+  osalDbgAssert((uint32_t)(size) <= STM32_DMA_MAX_TRANSFER,                 \
+                "DMA transfer size exceeds CNDTR limit (65535)");            \
   (dmastp)->channel->CNDTR = (uint32_t)(size);                              \
 }
 
