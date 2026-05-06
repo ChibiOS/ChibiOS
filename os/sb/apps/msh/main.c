@@ -134,7 +134,7 @@ static bool shell_getline(char *line, size_t size) {
   int seq;
 
   state.history_current = state.history_head;
-  seq = 0;;
+  seq = 0;
   while (true) {
     char c;
 
