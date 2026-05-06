@@ -72,7 +72,7 @@ void rp_clock_init(void) {
   TICKS->TICK[TICKS_TIMER0].CYCLES = RP_ROSC_ASSUMED_HZ / 1000000U;;
   TICKS->TICK[TICKS_TIMER0].CTRL = TICKS_CTRL_ENABLE;
 
-  /* Clear clock resus that may be in an unkown state */
+  /* Clear clock resus that may be in an unknown state */
   CLOCKS->RESUS.CTRL = 0U;
 
   rp_xosc_init();
