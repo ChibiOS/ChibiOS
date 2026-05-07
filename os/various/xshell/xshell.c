@@ -91,14 +91,12 @@ static char *fetch_argument(char **pp) {
        quote.*/
     ap++;
     p = strpbrk(ap, "\"");
-#if XSHELL_MULTI_COMMAND_LINE == TRUE
     if (p != NULL) {
 
       /* If the string is quoted terminate the string and point at the
-         next delimiter.*/
+         next character.*/
       *p++ = '\0';
     }
-#endif
   }
   else {
 #if XSHELL_MULTI_COMMAND_LINE == TRUE
