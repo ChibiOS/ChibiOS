@@ -360,7 +360,7 @@ size_t path_normalize(char *dst, const char *src, size_t size) {
     }
 
     /* Handling special cases of "." and "..".*/
-    if (strncmp(dst, "..", 2U) == 0) {
+    if ((ret == 2U) && (strncmp(dst, "..", 2U) == 0)) {
       /* Double dot elements require to remove the last element from
          the output path.*/
       if (n > 1U) {
@@ -376,7 +376,7 @@ size_t path_normalize(char *dst, const char *src, size_t size) {
       }
       continue;
     }
-    else if (strncmp(dst, ".", 1U) == 0) {
+    else if ((ret == 1U) && (*dst == '.')) {
       /* Single dot elements are discarded.*/
       /* Consecutive input separators are consumed.*/
       continue;
