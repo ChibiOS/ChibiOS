@@ -44,17 +44,10 @@
 /*===========================================================================*/
 
 /**
- * @name    Clock source enable configurations
+ * @name    Clock point configurations
  * @{
  */
-[@clocktree.EmitManualEnableConfigurations /]
-/** @} */
-
-/**
- * @name    Mux configurations
- * @{
- */
-[@clocktree.EmitMuxConfigurations /]
+[@clocktree.EmitConfigurations /]
 /** @} */
 
 /*===========================================================================*/

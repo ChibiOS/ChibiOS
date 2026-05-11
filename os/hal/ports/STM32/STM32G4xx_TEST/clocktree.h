@@ -33,76 +33,141 @@
 /*===========================================================================*/
 
 /**
- * @name    Clock source enable configurations
+ * @name    Clock point configurations
  * @{
  */
 /**
  * @brief   Enables the HSI16 clock source.
  */
-#if !defined(STM32_HSI16_ENABLE) || defined(__DOXYGEN__)
-#define STM32_HSI16_ENABLE                  FALSE
+#if !defined(STM32_CFG_HSI16_ENABLE) || defined(__DOXYGEN__)
+#define STM32_CFG_HSI16_ENABLE              FALSE
 #endif
 
 /**
  * @brief   Enables the HSI48 clock source.
  */
-#if !defined(STM32_HSI48_ENABLE) || defined(__DOXYGEN__)
-#define STM32_HSI48_ENABLE                  FALSE
+#if !defined(STM32_CFG_HSI48_ENABLE) || defined(__DOXYGEN__)
+#define STM32_CFG_HSI48_ENABLE              FALSE
 #endif
 
 /**
  * @brief   Enables the HSE clock source.
  */
-#if !defined(STM32_HSE_ENABLE) || defined(__DOXYGEN__)
-#define STM32_HSE_ENABLE                    FALSE
+#if !defined(STM32_CFG_HSE_ENABLE) || defined(__DOXYGEN__)
+#define STM32_CFG_HSE_ENABLE                FALSE
 #endif
 
 /**
  * @brief   Enables the LSE clock source.
  */
-#if !defined(STM32_LSE_ENABLE) || defined(__DOXYGEN__)
-#define STM32_LSE_ENABLE                    FALSE
+#if !defined(STM32_CFG_LSE_ENABLE) || defined(__DOXYGEN__)
+#define STM32_CFG_LSE_ENABLE                FALSE
 #endif
 
 /**
  * @brief   Enables the LSI clock source.
  */
-#if !defined(STM32_LSI_ENABLE) || defined(__DOXYGEN__)
-#define STM32_LSI_ENABLE                    FALSE
+#if !defined(STM32_CFG_LSI_ENABLE) || defined(__DOXYGEN__)
+#define STM32_CFG_LSI_ENABLE                FALSE
 #endif
 
 /**
- * @brief   Enables the PLLP clock source.
- */
-#if !defined(STM32_PLLP_ENABLE) || defined(__DOXYGEN__)
-#define STM32_PLLP_ENABLE                   FALSE
-#endif
-
-/**
- * @brief   Enables the PLLQ clock source.
- */
-#if !defined(STM32_PLLQ_ENABLE) || defined(__DOXYGEN__)
-#define STM32_PLLQ_ENABLE                   FALSE
-#endif
-
-/**
- * @brief   Enables the PLLR clock source.
- */
-#if !defined(STM32_PLLR_ENABLE) || defined(__DOXYGEN__)
-#define STM32_PLLR_ENABLE                   FALSE
-#endif
-/** @} */
-
-/**
- * @name    Mux configurations
- * @{
+ * @brief   Selects the PLLIN clock source.
+ * @note    Allowed sources:
+ *          - NONE.
+ *          - HSI16.
+ *          - HSE.
  */
 #if !defined(STM32_CFG_PLLIN_SEL) || defined(__DOXYGEN__)
 #define STM32_CFG_PLLIN_SEL                 RCC_PLLSRC_NONE
 #endif
 
+/**
+ * @brief   Configures the PLLREF clock divider value.
+ */
+#if !defined(STM32_CFG_PLLREF_VALUE) || defined(__DOXYGEN__)
+#define STM32_CFG_PLLREF_VALUE              1
+#endif
+
+/**
+ * @brief   Configures the PLLVCO clock multiplier value.
+ */
+#if !defined(STM32_CFG_PLLVCO_VALUE) || defined(__DOXYGEN__)
+#define STM32_CFG_PLLVCO_VALUE              8
+#endif
+
+/**
+ * @brief   Enables the PLLP clock source.
+ */
+#if !defined(STM32_CFG_PLLP_ENABLE) || defined(__DOXYGEN__)
+#define STM32_CFG_PLLP_ENABLE               FALSE
+#endif
+
+/**
+ * @brief   Configures the PLLP clock divider value.
+ */
+#if !defined(STM32_CFG_PLLP_VALUE) || defined(__DOXYGEN__)
+#define STM32_CFG_PLLP_VALUE                2
+#endif
+
+/**
+ * @brief   Enables the PLLQ clock source.
+ */
+#if !defined(STM32_CFG_PLLQ_ENABLE) || defined(__DOXYGEN__)
+#define STM32_CFG_PLLQ_ENABLE               FALSE
+#endif
+
+/**
+ * @brief   Configures the PLLQ clock divider value.
+ */
+#if !defined(STM32_CFG_PLLQ_VALUE) || defined(__DOXYGEN__)
+#define STM32_CFG_PLLQ_VALUE                2
+#endif
+
+/**
+ * @brief   Enables the PLLR clock source.
+ */
+#if !defined(STM32_CFG_PLLR_ENABLE) || defined(__DOXYGEN__)
+#define STM32_CFG_PLLR_ENABLE               FALSE
+#endif
+
+/**
+ * @brief   Configures the PLLR clock divider value.
+ */
+#if !defined(STM32_CFG_PLLR_VALUE) || defined(__DOXYGEN__)
+#define STM32_CFG_PLLR_VALUE                2
+#endif
+
+/**
+ * @brief   Selects the SYSCLK clock source.
+ * @note    Allowed sources:
+ *          - HSI16.
+ *          - HSE.
+ *          - PLLR.
+ */
 #if !defined(STM32_CFG_SYSCLK_SEL) || defined(__DOXYGEN__)
 #define STM32_CFG_SYSCLK_SEL                (1U << 0)
+#endif
+
+/**
+ * @brief   Configures the HCLK clock divider value.
+ */
+#if !defined(STM32_CFG_HCLK_VALUE) || defined(__DOXYGEN__)
+#define STM32_CFG_HCLK_VALUE                1
+#endif
+
+/**
+ * @brief   Configures the PCLK1 clock divider value.
+ */
+#if !defined(STM32_CFG_PCLK1_VALUE) || defined(__DOXYGEN__)
+#define STM32_CFG_PCLK1_VALUE               1
+#endif
+
+/**
+ * @brief   Configures the PCLK2 clock divider value.
+ */
+#if !defined(STM32_CFG_PCLK2_VALUE) || defined(__DOXYGEN__)
+#define STM32_CFG_PCLK2_VALUE               1
 #endif
 /** @} */
 

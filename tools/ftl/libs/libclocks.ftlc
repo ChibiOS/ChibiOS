@@ -49,9 +49,30 @@ function ParseScaler(scaler)
   return {"kind":kind, "data":data}
 endfunction
 
+/* Returns the default configuration value for a scaler.*/
+function GetScalerDefault(point)
+  local data = point["data"]
+  if point["kind"] == "value"
+    local default = data["min"]
+  elseif point["kind"] == "set"
+    local default = data["values"]?replace(",", " ")?word_list[0]!""
+  elseif point["kind"] == "choices"
+    local default = data["choices"][0]["value"]!""
+  else
+    local default = ""
+  endif
+
+  if default == ""
+    stop ">>>> Missing default value for clock point '" + point["name"] + "'"
+  endif
+
+  return default
+endfunction
+
 /* Initializes the parsed clock tree data model.*/
 function Initialize()
   local clocknames = []
+  local clocks = []
   local points = []
   local muxes = []
   local dividers = []
@@ -79,7 +100,9 @@ function Initialize()
       else
         local clockcomplex = ""
       endif
-      local points = points + [{"description":clockdescr, "name":clockname, "enable":clockenable, "frequency":clockfreq, "complex":clockcomplex}]
+      local clockpoint = {"type":"source", "description":clockdescr, "name":clockname, "enable":clockenable, "frequency":clockfreq, "complex":clockcomplex}
+      local points = points + [clockpoint]
+      local clocks = clocks + [clockpoint]
 
     elseif clock.mux[0]??
       /* It is a muxed clock.*/
@@ -95,21 +118,27 @@ function Initialize()
         endif
         local muxinputs = muxinputs + [{"point":inputpoint, "bits":inputbits, "default":inputdefault}]
       endlist
-      local muxes = muxes + [{"name":clockname, "muxname":muxname, "inputs":muxinputs, "default":muxdefault, "description":clockdescr, "enable":clockenable}]
+      local clockpoint = {"type":"mux", "name":clockname, "muxname":muxname, "inputs":muxinputs, "default":muxdefault, "description":clockdescr, "enable":clockenable}
+      local muxes = muxes + [clockpoint]
+      local clocks = clocks + [clockpoint]
 
     elseif clock.divider[0]??
       /* It is a divided clock.*/
       local divname = clock.divider[0].@name[0]
       local divinput = clock.divider[0].@input[0]?string
       local divparsed = ParseScaler(clock.divider[0])
-      local dividers = dividers + [{"description":clockdescr, "name":clockname, "enable":clockenable, "divname":divname, "input":divinput, "kind":divparsed["kind"], "data":divparsed["data"]}]
+      local clockpoint = {"type":"divider", "description":clockdescr, "name":clockname, "enable":clockenable, "divname":divname, "input":divinput, "kind":divparsed["kind"], "data":divparsed["data"]}
+      local dividers = dividers + [clockpoint]
+      local clocks = clocks + [clockpoint]
 
     elseif clock.multiplier[0]??
       /* It is a multiplied clock.*/
       local mulname = clock.multiplier[0].@name[0]
       local mulinput = clock.multiplier[0].@input[0]?string
       local mulparsed = ParseScaler(clock.multiplier[0])
-      local multipliers = multipliers + [{"description":clockdescr, "name":clockname, "enable":clockenable, "mulname":mulname, "input":mulinput, "kind":mulparsed["kind"], "data":mulparsed["data"]}]
+      local clockpoint = {"type":"multiplier", "description":clockdescr, "name":clockname, "enable":clockenable, "mulname":mulname, "input":mulinput, "kind":mulparsed["kind"], "data":mulparsed["data"]}
+      local multipliers = multipliers + [clockpoint]
+      local clocks = clocks + [clockpoint]
     endif
   endlist
 
@@ -135,34 +164,70 @@ function Initialize()
     endif
   endlist
 
-  return {"clocknames":clocknames, "points":points, "muxes":muxes, "dividers":dividers, "multipliers":multipliers}
+  return {"clocknames":clocknames, "clocks":clocks, "points":points, "muxes":muxes, "dividers":dividers, "multipliers":multipliers}
 endfunction
 
 /* Static data parsed at startup.*/
 model = Initialize()
 
-/* Emits definitions of manual clock point enable switches.*/
-macro EmitManualEnableConfigurations()
-  manualpoints = []
-  list model["points"] + model["muxes"] + model["dividers"] + model["multipliers"] as point
+/* Emits clock point configuration settings in XML order.*/
+macro EmitConfigurations()
+  local configs = []
+  list model["clocks"] as point
     if point["enable"] == "manual"
-      manualpoints = manualpoints + [point]
+      local configs = configs + [{"type":"enable", "point":point}]
+    endif
+    if point["type"] == "mux"
+      local configs = configs + [{"type":"mux", "point":point}]
+    elseif point["type"] == "divider" || point["type"] == "multiplier"
+      local configs = configs + [{"type":"value", "point":point}]
     endif
   endlist
 
-  list manualpoints as point
-      enmacro = premacro + point["name"] + postenable
-      emit """
+  list configs as config
+    local point = config["point"]
+    if config["type"] == "enable"
+      local name = precfg + point["name"] + postenable
+      local brief = "Enables the " + point["name"] + " clock source."
+      local notes = ""
+      local default = "FALSE"
+    elseif config["type"] == "mux"
+      local name = precfg + point["name"] + postchoices
+      local brief = "Selects the " + point["name"] + " clock source."
+      local notes = " * @note    Allowed sources:\n"
+      list point["inputs"] as input
+        local notes = notes + " *          - " + input["point"] + ".\n"
+      endlist
+      local default = point["default"]
+      if default == ""
+        stop ">>>> Missing default input for clock mux '" + point["name"] + "'"
+      endif
+    else
+      local name = precfg + point["name"] + postvalues
+      local notes = ""
+      if point["type"] == "divider"
+        local brief = "Configures the " + point["name"] + " clock divider value."
+      else
+        local brief = "Configures the " + point["name"] + " clock multiplier value."
+      endif
+      local default = GetScalerDefault(point)
+    endif
+    emit """
 /**
- * @brief   Enables the ${point["name"]} clock source.
+ * @brief   ${brief}
+"""
+    if notes != ""
+      emit notes
+    endif
+    emit """
  */
-#if !defined(${enmacro}) || defined(__DOXYGEN__)
-${("#define " + enmacro)?tab_to(44) + "FALSE"}
+#if !defined(${name}) || defined(__DOXYGEN__)
+${("#define " + name)?tab_to(44) + default}
 #endif
 """
-      sep
-        emit "\e"
-      endsep
+    sep
+      emit "\e"
+    endsep
   endlist
 endmacro
 
