@@ -21,30 +21,27 @@
 [#import "/@lib/liblicense.ftl" as license /]
 [@pp.changeOutputFile name="clocktree.h" /]
 [#-- Getting various constants.--]
-[#assign prename = doc1.clocktree.settings.prefixes.@name[0]?string /]
-[#assign postvalues = doc1.clocktree.settings.postfixes.@values[0]?string /]
-[#assign postclocks = doc1.clocktree.settings.postfixes.@clocks[0]?string /]
-[#assign postchoices = doc1.clocktree.settings.postfixes.@choices[0]?string /]
-[#assign postbits = doc1.clocktree.settings.postfixes.@bits[0]?string /]
-[#assign postswitches = doc1.clocktree.settings.postfixes.@switches[0]?string /]
-[#assign constfalse = doc1.clocktree.settings.constants.@false[0]?string /]
-[#assign consttrue = doc1.clocktree.settings.constants.@true[0]?string /]
+[#assign prename = doc1.clocktree.settings.prefixes.@clock_points[0]?string /]
+[#-- The current schema only exposes generic suffixes, keep legacy macro names
+    for this WIP header until the generator grows the missing sections.--]
+[#assign postclocks = "_FREQ" /]
+[#assign postchoices = "_SEL" /]
 [#-- Sequence of the calculated clock points.--]
 [#assign clocks_expr = [] /]
 [#-- Sequence of the muxed clock points.--]
 [#assign clocks_mux = [] /]
 [#-- Scanning clock points, gathering data.--]
 [#list doc1.clocktree.clocks.clock as clock]
-  [#assign clockname = clock.@name[0] /]
+  [#assign clockname = clock.@point[0] /]
   [#if clock.description[0]??]
     [#assign clockdescr = clock.description[0]?string?word_list?join(" ") /]
   [#else /]
     [#assign clockdescr = "no description" /]
   [/#if]
   [#-- Determining the type of the clock point by looking at the child element.--]
-  [#if clock.expr[0]??]
-    [#-- It is a calculated clock.--]
-    [#assign clockfreq = clock.expr[0].@frequency[0]?string /]
+  [#if clock.source[0]??]
+    [#-- It is a fixed clock.--]
+    [#assign clockfreq = clock.source[0].@frequency[0]?string /]
     [#assign clocks_expr = clocks_expr + [{"description":clockdescr,
                                            "name":clockname,
                                            "frequency":clockfreq}] /]
@@ -53,7 +50,7 @@
     [#assign muxname = clock.mux[0].@name[0] /]
     [#assign inputs = [] /]
     [#list clock.mux.input as input]
-      [#assign inputref = input.@ref[0] /]
+      [#assign inputref = input.@point[0] /]
       [#assign inputbits = input.@bits[0]!"" /]
       [#assign inputs = inputs + [{"name":inputref, "bits":inputbits}] /]
     [/#list]
@@ -90,8 +87,8 @@
  */
 [#list clocks_mux as mux]
   [#assign name = prename + mux["name"] + postchoices/]
-#if !defined(name) || defined(__DOXYGEN__)
-${("#define " + name)?right_pad(44) + prename + mux["name"] + "_" + mux["inputs"][0]["name"]}
+${"#if !defined(" + name + ") || defined(__DOXYGEN__)"}
+${("#define " + name)?right_pad(44) + "0U"}
 #endif
 [#sep]
 

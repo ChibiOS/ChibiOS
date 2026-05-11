@@ -36,12 +36,12 @@
  * @name    Mux configurations
  * @{
  */
-#if !defined(name) || defined(__DOXYGEN__)
-#define CLK_PLLIN_SEL                       CLK_PLLIN_NONE
+#if !defined(CLK_PLLIN_SEL) || defined(__DOXYGEN__)
+#define CLK_PLLIN_SEL                       0U
 #endif
 
-#if !defined(name) || defined(__DOXYGEN__)
-#define CLK_SYSCLK_SEL                      CLK_SYSCLK_HSI16
+#if !defined(CLK_SYSCLK_SEL) || defined(__DOXYGEN__)
+#define CLK_SYSCLK_SEL                      0U
 #endif
 /** @} */
 
@@ -61,11 +61,6 @@
  * @name    Calculated or fixed clocks
  * @{
  */
-/**
- * @brief   No clock clock point.
- */
-#define CLK_NONE_FREQ                       0U
-
 /**
  * @brief   16MHz high speed internal oscillator clock point.
  */
