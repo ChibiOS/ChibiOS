@@ -21,29 +21,6 @@
 [#import "/@lib/liblicense.ftlc" as license /]
 [#import "/@lib/libclocks.ftlc" as clocktree /]
 [@pp.changeOutputFile name="clocktree.h" /]
-[#-- Local constants still used by the mux section until it moves to libclocks.ftlc.--]
-[#assign prename = doc1.clocktree.settings.prefixes.@clock_points[0]?string /]
-[#assign postchoices = "_SEL" /]
-[#-- Sequence of the muxed clock points.--]
-[#assign clocks_mux = [] /]
-[#-- Scanning clock points, gathering data.--]
-[#list doc1.clocktree.clocks.clock as clock]
-  [#assign clockname = clock.@point[0] /]
-  [#-- Determining the type of the clock point by looking at the child element.--]
-  [#if clock.mux[0]??]
-    [#-- It is a muxed clock.--]
-    [#assign muxname = clock.mux[0].@name[0] /]
-    [#assign inputs = [] /]
-    [#list clock.mux.input as input]
-      [#assign inputref = input.@point[0] /]
-      [#assign inputbits = input.@bits[0]!"" /]
-      [#assign inputs = inputs + [{"name":inputref, "bits":inputbits}] /]
-    [/#list]
-    [#assign clocks_mux = clocks_mux + [{"name":clockname,
-                                         "muxname":muxname,
-                                         "inputs":inputs}] /]
-  [/#if]
-[/#list]
 /*
 [@license.EmitLicenseAsText /]
 */
@@ -70,15 +47,7 @@
  * @name    Mux configurations
  * @{
  */
-[#list clocks_mux as mux]
-  [#assign name = prename + mux["name"] + postchoices/]
-${"#if !defined(" + name + ") || defined(__DOXYGEN__)"}
-${("#define " + name)?right_pad(44) + "0U"}
-#endif
-[#sep]
-
-[/#sep]
-[/#list]
+[@clocktree.EmitMuxConfigurations /]
 /** @} */
 
 /*===========================================================================*/

@@ -6,6 +6,10 @@
     <suffixes values="_VALUE" bits="_BITS" selector="_SEL" />
   </settings>
   <clocks>
+    <clock point="NONE" optional="no">
+      <description>pseudo-clock for disabled sources</description>
+      <source frequency="0U" />
+    </clock>
     <clock point="HSI16" optional="yes">
       <description>16MHz high speed internal oscillator</description>
       <source frequency="16000000U" />
@@ -29,10 +33,9 @@
     <clock point="PLLIN">
       <description>PLL input</description>
       <mux name="PLLSRC">
-        <input point="NONE" bits="(0U &lt;&lt; 4)" />
-        <input point="NONE" bits="(1U &lt;&lt; 4)" />
-        <input point="HSI16" bits="(2U &lt;&lt; 4)" />
-        <input point="HSE" bits="(3U &lt;&lt; 4)" />
+        <input point="NONE" bits="RCC_PLLSRC_NONE" default="yes" />
+        <input point="HSI16" bits="RCC_PLLSRC_HSI16" />
+        <input point="HSE" bits="RCC_PLLSRC_HSE" />
       </mux>
     </clock>
     <clock point="PLLREF">
@@ -66,9 +69,9 @@
       </divider>
     </clock>
     <clock point="SYSCLK">
-     <description>system clock</description>
+      <description>system clock</description>
       <mux name="SW">
-        <input point="HSI16" bits="(1U &lt;&lt; 0)" />
+        <input point="HSI16" bits="(1U &lt;&lt; 0)" default="yes" />
         <input point="HSE" bits="(2U &lt;&lt; 0)" />
         <input point="PLLR" bits="(3U &lt;&lt; 0)" />
       </mux>

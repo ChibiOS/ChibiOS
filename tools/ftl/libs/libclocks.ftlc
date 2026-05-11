@@ -49,14 +49,20 @@ list doc1.clocktree.clocks.clock as clock
     /* It is a muxed clock.*/
     muxname = clock.mux[0].@name[0]
     muxinputs = []
+    muxdefault = ""
     list clock.mux.input as input
       inputpoint = input.@point[0]
       inputbits = input.@bits[0]!"0"
-      muxinputs = muxinputs + [{"point":inputpoint, "bits":inputbits}]
+      inputdefault = (input.@default[0]!"no")?string
+      if inputdefault == "yes"
+        muxdefault = inputbits
+      endif
+      muxinputs = muxinputs + [{"point":inputpoint, "bits":inputbits, "default":inputdefault}]
     endlist
-    muxes = (muxes + [{"name":muxname,
+    muxes = (muxes + [{"name":clockname,
                        "muxname":muxname,
-                       "inputs":muxinputs}])
+                       "inputs":muxinputs,
+                       "default":muxdefault}])
   endif
 endlist
 
@@ -68,6 +74,25 @@ macro EmitSourcePoints()
  * @brief   ${point["description"]?cap_first} clock point.
  */
 ${("#define " + prename + point["name"] + postclocks)?tab_to(44) + point["frequency"]}
+"""
+    sep
+      emit "\e"
+    endsep
+  endlist
+endmacro
+
+/* Emits definitions of all clock mux selectors.*/
+macro EmitMuxConfigurations()
+  list muxes as mux
+    muxsel = precfg + mux["name"] + postchoices
+    muxdefault = mux["default"]
+    if muxdefault == ""
+      stop ">>>> Missing default input for clock mux '" + mux["name"] + "'"
+    endif
+    emit """
+#if !defined(${muxsel}) || defined(__DOXYGEN__)
+${("#define " + muxsel)?tab_to(44) + muxdefault}
+#endif
 """
     sep
       emit "\e"

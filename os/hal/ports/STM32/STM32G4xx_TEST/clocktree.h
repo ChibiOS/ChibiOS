@@ -36,12 +36,12 @@
  * @name    Mux configurations
  * @{
  */
-#if !defined(CLK_PLLIN_SEL) || defined(__DOXYGEN__)
-#define CLK_PLLIN_SEL                       0U
+#if !defined(STM32_CFG_PLLIN_SEL) || defined(__DOXYGEN__)
+#define STM32_CFG_PLLIN_SEL                 RCC_PLLSRC_NONE
 #endif
 
-#if !defined(CLK_SYSCLK_SEL) || defined(__DOXYGEN__)
-#define CLK_SYSCLK_SEL                      0U
+#if !defined(STM32_CFG_SYSCLK_SEL) || defined(__DOXYGEN__)
+#define STM32_CFG_SYSCLK_SEL                (1U << 0)
 #endif
 /** @} */
 
@@ -61,6 +61,11 @@
  * @name    Calculated or fixed clocks
  * @{
  */
+/**
+ * @brief   Pseudo-clock for disabled sources clock point.
+ */
+#define CLK_NONE_FREQ                       0U
+
 /**
  * @brief   16MHz high speed internal oscillator clock point.
  */
