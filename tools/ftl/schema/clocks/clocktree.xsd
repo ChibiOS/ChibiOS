@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="clocktree" type="clocktreeType"></xs:element>
+    
+    <xs:complexType name="clocktreeType">
+      <xs:sequence>
+        <xs:element name="clocks" type="clocksType" maxOccurs="1" minOccurs="1"></xs:element>
+      </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="clocksType">
+      <xs:sequence>
+        <xs:element name="clock" type="clockType" maxOccurs="unbounded" minOccurs="1"></xs:element>
+      </xs:sequence>
+    </xs:complexType>
+    
+
+    <xs:complexType name="clockType">
+      <xs:sequence>
+        <xs:element name="description" type="xs:string" maxOccurs="1"
+          minOccurs="1">
+        </xs:element>
+        <xs:choice maxOccurs="1" minOccurs="1">
+          <xs:element name="source" type="sourceType" maxOccurs="1"
+            minOccurs="1">
+          </xs:element>
+          <xs:element name="mux" type="muxType" maxOccurs="1" minOccurs="1"></xs:element>
+          <xs:element name="divider" type="dividerType" maxOccurs="1"
+            minOccurs="1">
+          </xs:element>
+          <xs:element name="multiplier" type="multiplierType" maxOccurs="1"
+            minOccurs="1">
+          </xs:element>
+        </xs:choice>
+      </xs:sequence>
+      <xs:attribute name="point" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+        <xs:attribute name="optional">
+        <xs:annotation>
+          <xs:documentation>
+            An optional source expects a setting to enable/disable it.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="yes"></xs:enumeration>
+            <xs:enumeration value="no"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="sourceType">
+      <xs:sequence>
+        <xs:element name="complex" type="xs:string" maxOccurs="1"
+          minOccurs="0">
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="frequency" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="muxType">
+      <xs:sequence>
+        <xs:element name="input" type="inputType" maxOccurs="unbounded"
+          minOccurs="1">
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="dividerType">
+        <xs:attribute name="name" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:minLength value="1"></xs:minLength>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="min">
+        <xs:simpleType>
+          <xs:restriction base="xs:int">
+            <xs:minInclusive value="0"></xs:minInclusive>
+          </xs:restriction>
+        </xs:simpleType>
+        </xs:attribute>
+      <xs:attribute name="max">
+        <xs:simpleType>
+          <xs:restriction base="xs:int">
+            <xs:minInclusive value="1"></xs:minInclusive>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="bits" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="multiplierType">
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="min">
+        <xs:simpleType>
+          <xs:restriction base="xs:int">
+            <xs:minInclusive value="0"></xs:minInclusive>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="max">
+        <xs:simpleType>
+          <xs:restriction base="xs:int">
+            <xs:minInclusive value="1"></xs:minInclusive>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="bits" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="inputType">
+      <xs:attribute name="point" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="bits" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="namesType"></xs:complexType>
+
+    <xs:complexType name="NewType">
+      <xs:attribute name="true" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="false" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+</xs:schema>
