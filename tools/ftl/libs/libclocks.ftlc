@@ -24,123 +24,125 @@ postvalues = doc1.clocktree.settings.suffixes.@values[0]?string
 postbits = doc1.clocktree.settings.suffixes.@bits[0]?string
 postchoices = doc1.clocktree.settings.suffixes.@selector[0]?string
 
-/* Static data parsed at startup.*/
-assign clocknames = []
-assign points = []
-assign muxes = []
-assign dividers = []
-assign multipliers = []
-
 /* Parses divider/multiplier value selection subtrees.*/
 function ParseScaler(scaler)
-  kind = ""
-  data = {}
+  local kind = ""
+  local data = {}
   if scaler.value[0]??
-    kind = "value"
-    value = scaler.value[0]
-    data = {"min":(value.@min[0]!"")?string, "max":(value.@max[0]!"")?string, "bits":value.@bits[0]?string}
+    local kind = "value"
+    local value = scaler.value[0]
+    local data = {"min":(value.@min[0]!"")?string, "max":(value.@max[0]!"")?string, "bits":value.@bits[0]?string}
   elseif scaler.set[0]??
-    kind = "set"
-    set = scaler.set[0]
-    data = {"values":(set.@values[0]!"")?string, "bits":(set.@bits[0]!"")?string}
+    local kind = "set"
+    local set = scaler.set[0]
+    local data = {"values":(set.@values[0]!"")?string, "bits":(set.@bits[0]!"")?string}
   elseif scaler.choices[0]??
-    kind = "choices"
-    choices = []
+    local kind = "choices"
+    local choices = []
     list scaler.choices.choice as choice
-      choices = choices + [{"item":choice.@item[0]?string, "value":choice.@value[0]?string, "bits":choice.@bits[0]?string}]
+      local choices = choices + [{"item":choice.@item[0]?string, "value":choice.@value[0]?string, "bits":choice.@bits[0]?string}]
     endlist
-    data = {"choices":choices}
+    local data = {"choices":choices}
   endif
 
   return {"kind":kind, "data":data}
 endfunction
 
-/* Scanning clock points, gathering data.*/
-list doc1.clocktree.clocks.clock as clock
+/* Initializes the parsed clock tree data model.*/
+function Initialize()
+  local clocknames = []
+  local points = []
+  local muxes = []
+  local dividers = []
+  local multipliers = []
 
-  /* Clock information.*/
-  clockname = clock.@point[0]
-  clocknames = clocknames + [clockname]
-  clockswitchable = (clock.@switchable[0]!"no")?string
-  if clock.description[0]??
-    clockdescr = clock.description[0]?string?word_list?join(" ")
-  else
-    clockdescr = "no description"
-  endif
+  /* Scanning clock points, gathering data.*/
+  list doc1.clocktree.clocks.clock as clock
 
-  /* Determining the type of the clock point by looking at the child element.*/
-  if clock.source[0]??
-    /* It is a fixed clock.*/
-    clockfreq = clock.source[0].@frequency[0]?string
-    if clock.source[0].complex[0]??
-      clockcomplex = clock.source[0].complex[0]?string?trim
+    /* Clock information.*/
+    local clockname = clock.@point[0]
+    local clocknames = clocknames + [clockname]
+    local clockswitchable = (clock.@switchable[0]!"no")?string
+    if clock.description[0]??
+      local clockdescr = clock.description[0]?string?word_list?join(" ")
     else
-      clockcomplex = ""
+      local clockdescr = "no description"
     endif
-    points = (points + [{"description":clockdescr, "name":clockname, "switchable":clockswitchable, "frequency":clockfreq, "complex":clockcomplex}])
 
-  elseif clock.mux[0]??
-    /* It is a muxed clock.*/
-    muxname = clock.mux[0].@name[0]
-    muxinputs = []
-    muxdefault = ""
-    list clock.mux.input as input
-      inputpoint = input.@point[0]
-      inputbits = input.@bits[0]!"0"
-      inputdefault = (input.@default[0]!"no")?string
-      if inputdefault == "yes"
-        muxdefault = inputbits
+    /* Determining the type of the clock point by looking at the child element.*/
+    if clock.source[0]??
+      /* It is a fixed clock.*/
+      local clockfreq = clock.source[0].@frequency[0]?string
+      if clock.source[0].complex[0]??
+        local clockcomplex = clock.source[0].complex[0]?string?trim
+      else
+        local clockcomplex = ""
       endif
-      muxinputs = muxinputs + [{"point":inputpoint, "bits":inputbits, "default":inputdefault}]
-    endlist
-    muxes = (muxes + [{"name":clockname,
-                       "muxname":muxname,
-                       "inputs":muxinputs,
-                       "default":muxdefault,
-                       "description":clockdescr,
-                       "switchable":clockswitchable}])
+      local points = points + [{"description":clockdescr, "name":clockname, "switchable":clockswitchable, "frequency":clockfreq, "complex":clockcomplex}]
 
-  elseif clock.divider[0]??
-    /* It is a divided clock.*/
-    divname = clock.divider[0].@name[0]
-    divinput = clock.divider[0].@input[0]?string
-    divparsed = ParseScaler(clock.divider[0])
-    dividers = dividers + [{"description":clockdescr, "name":clockname, "switchable":clockswitchable, "divname":divname, "input":divinput, "kind":divparsed["kind"], "data":divparsed["data"]}]
+    elseif clock.mux[0]??
+      /* It is a muxed clock.*/
+      local muxname = clock.mux[0].@name[0]
+      local muxinputs = []
+      local muxdefault = ""
+      list clock.mux.input as input
+        local inputpoint = input.@point[0]
+        local inputbits = input.@bits[0]!"0"
+        local inputdefault = (input.@default[0]!"no")?string
+        if inputdefault == "yes"
+          local muxdefault = inputbits
+        endif
+        local muxinputs = muxinputs + [{"point":inputpoint, "bits":inputbits, "default":inputdefault}]
+      endlist
+      local muxes = muxes + [{"name":clockname, "muxname":muxname, "inputs":muxinputs, "default":muxdefault, "description":clockdescr, "switchable":clockswitchable}]
 
-  elseif clock.multiplier[0]??
-    /* It is a multiplied clock.*/
-    mulname = clock.multiplier[0].@name[0]
-    mulinput = clock.multiplier[0].@input[0]?string
-    mulparsed = ParseScaler(clock.multiplier[0])
-    multipliers = multipliers + [{"description":clockdescr, "name":clockname, "switchable":clockswitchable, "mulname":mulname, "input":mulinput, "kind":mulparsed["kind"], "data":mulparsed["data"]}]
-  endif
-endlist
+    elseif clock.divider[0]??
+      /* It is a divided clock.*/
+      local divname = clock.divider[0].@name[0]
+      local divinput = clock.divider[0].@input[0]?string
+      local divparsed = ParseScaler(clock.divider[0])
+      local dividers = dividers + [{"description":clockdescr, "name":clockname, "switchable":clockswitchable, "divname":divname, "input":divinput, "kind":divparsed["kind"], "data":divparsed["data"]}]
 
-/* Validating references.*/
-list muxes as mux
-  list mux["inputs"] as input
-    inputpoint = input["point"]
-    if clocknames?seq_contains(inputpoint) == false
-      stop ">>>> Unknown clock point '" + inputpoint + "' referenced by mux '" + mux["name"] + "'"
+    elseif clock.multiplier[0]??
+      /* It is a multiplied clock.*/
+      local mulname = clock.multiplier[0].@name[0]
+      local mulinput = clock.multiplier[0].@input[0]?string
+      local mulparsed = ParseScaler(clock.multiplier[0])
+      local multipliers = multipliers + [{"description":clockdescr, "name":clockname, "switchable":clockswitchable, "mulname":mulname, "input":mulinput, "kind":mulparsed["kind"], "data":mulparsed["data"]}]
     endif
   endlist
-endlist
-list dividers as div
-  inputpoint = div["input"]
-  if clocknames?seq_contains(inputpoint) == false
-    stop ">>>> Unknown clock point '" + inputpoint + "' referenced by divider '" + div["name"] + "'"
-  endif
-endlist
-list multipliers as mul
-  inputpoint = mul["input"]
-  if clocknames?seq_contains(inputpoint) == false
-    stop ">>>> Unknown clock point '" + inputpoint + "' referenced by multiplier '" + mul["name"] + "'"
-  endif
-endlist
+
+  /* Validating references.*/
+  list muxes as mux
+    list mux["inputs"] as input
+      local inputpoint = input["point"]
+      if clocknames?seq_contains(inputpoint) == false
+        stop ">>>> Unknown clock point '" + inputpoint + "' referenced by mux '" + mux["name"] + "'"
+      endif
+    endlist
+  endlist
+  list dividers as div
+    local inputpoint = div["input"]
+    if clocknames?seq_contains(inputpoint) == false
+      stop ">>>> Unknown clock point '" + inputpoint + "' referenced by divider '" + div["name"] + "'"
+    endif
+  endlist
+  list multipliers as mul
+    local inputpoint = mul["input"]
+    if clocknames?seq_contains(inputpoint) == false
+      stop ">>>> Unknown clock point '" + inputpoint + "' referenced by multiplier '" + mul["name"] + "'"
+    endif
+  endlist
+
+  return {"clocknames":clocknames, "points":points, "muxes":muxes, "dividers":dividers, "multipliers":multipliers}
+endfunction
+
+/* Static data parsed at startup.*/
+model = Initialize()
 
 /* Emits definitions of all clock sources.*/
 macro EmitSourcePoints()
-  list points as point
+  list model["points"] as point
     emit """
 /**
  * @brief   ${point["description"]?cap_first} clock point.
@@ -155,7 +157,7 @@ endmacro
 
 /* Emits definitions of all clock mux selectors.*/
 macro EmitMuxConfigurations()
-  list muxes as mux
+  list model["muxes"] as mux
     muxsel = precfg + mux["name"] + postchoices
     muxdefault = mux["default"]
     if muxdefault == ""
