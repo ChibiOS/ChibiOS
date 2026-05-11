@@ -20,17 +20,48 @@ prename = doc1.clocktree.settings.prefixes.@clock_points[0]?string
 premacro = doc1.clocktree.settings.prefixes.@macros[0]?string
 precfg = doc1.clocktree.settings.prefixes.@cfgs[0]?string
 postclocks = "_FREQ"
-postchoices = "_SEL"
+postvalues = doc1.clocktree.settings.suffixes.@values[0]?string
+postbits = doc1.clocktree.settings.suffixes.@bits[0]?string
+postchoices = doc1.clocktree.settings.suffixes.@selector[0]?string
 
 /* Static data parsed at startup.*/
+assign clocknames = []
 assign points = []
 assign muxes = []
+assign dividers = []
+assign multipliers = []
+
+/* Parses divider/multiplier value selection subtrees.*/
+function ParseScaler(scaler)
+  kind = ""
+  data = {}
+  if scaler.value[0]??
+    kind = "value"
+    value = scaler.value[0]
+    data = {"min":(value.@min[0]!"")?string, "max":(value.@max[0]!"")?string, "bits":value.@bits[0]?string}
+  elseif scaler.set[0]??
+    kind = "set"
+    set = scaler.set[0]
+    data = {"values":(set.@values[0]!"")?string, "bits":(set.@bits[0]!"")?string}
+  elseif scaler.choices[0]??
+    kind = "choices"
+    choices = []
+    list scaler.choices.choice as choice
+      choices = choices + [{"item":choice.@item[0]?string, "value":choice.@value[0]?string, "bits":choice.@bits[0]?string}]
+    endlist
+    data = {"choices":choices}
+  endif
+
+  return {"kind":kind, "data":data}
+endfunction
 
 /* Scanning clock points, gathering data.*/
 list doc1.clocktree.clocks.clock as clock
 
   /* Clock information.*/
   clockname = clock.@point[0]
+  clocknames = clocknames + [clockname]
+  clockswitchable = (clock.@switchable[0]!"no")?string
   if clock.description[0]??
     clockdescr = clock.description[0]?string?word_list?join(" ")
   else
@@ -41,9 +72,12 @@ list doc1.clocktree.clocks.clock as clock
   if clock.source[0]??
     /* It is a fixed clock.*/
     clockfreq = clock.source[0].@frequency[0]?string
-    points = (points + [{"description":clockdescr,
-                         "name":clockname,
-                         "frequency":clockfreq}])
+    if clock.source[0].complex[0]??
+      clockcomplex = clock.source[0].complex[0]?string?trim
+    else
+      clockcomplex = ""
+    endif
+    points = (points + [{"description":clockdescr, "name":clockname, "switchable":clockswitchable, "frequency":clockfreq, "complex":clockcomplex}])
 
   elseif clock.mux[0]??
     /* It is a muxed clock.*/
@@ -62,7 +96,45 @@ list doc1.clocktree.clocks.clock as clock
     muxes = (muxes + [{"name":clockname,
                        "muxname":muxname,
                        "inputs":muxinputs,
-                       "default":muxdefault}])
+                       "default":muxdefault,
+                       "description":clockdescr,
+                       "switchable":clockswitchable}])
+
+  elseif clock.divider[0]??
+    /* It is a divided clock.*/
+    divname = clock.divider[0].@name[0]
+    divinput = clock.divider[0].@input[0]?string
+    divparsed = ParseScaler(clock.divider[0])
+    dividers = dividers + [{"description":clockdescr, "name":clockname, "switchable":clockswitchable, "divname":divname, "input":divinput, "kind":divparsed["kind"], "data":divparsed["data"]}]
+
+  elseif clock.multiplier[0]??
+    /* It is a multiplied clock.*/
+    mulname = clock.multiplier[0].@name[0]
+    mulinput = clock.multiplier[0].@input[0]?string
+    mulparsed = ParseScaler(clock.multiplier[0])
+    multipliers = multipliers + [{"description":clockdescr, "name":clockname, "switchable":clockswitchable, "mulname":mulname, "input":mulinput, "kind":mulparsed["kind"], "data":mulparsed["data"]}]
+  endif
+endlist
+
+/* Validating references.*/
+list muxes as mux
+  list mux["inputs"] as input
+    inputpoint = input["point"]
+    if clocknames?seq_contains(inputpoint) == false
+      stop ">>>> Unknown clock point '" + inputpoint + "' referenced by mux '" + mux["name"] + "'"
+    endif
+  endlist
+endlist
+list dividers as div
+  inputpoint = div["input"]
+  if clocknames?seq_contains(inputpoint) == false
+    stop ">>>> Unknown clock point '" + inputpoint + "' referenced by divider '" + div["name"] + "'"
+  endif
+endlist
+list multipliers as mul
+  inputpoint = mul["input"]
+  if clocknames?seq_contains(inputpoint) == false
+    stop ">>>> Unknown clock point '" + inputpoint + "' referenced by multiplier '" + mul["name"] + "'"
   endif
 endlist
 

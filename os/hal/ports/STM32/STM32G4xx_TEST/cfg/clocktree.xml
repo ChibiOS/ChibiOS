@@ -6,27 +6,27 @@
     <suffixes values="_VALUE" bits="_BITS" selector="_SEL" />
   </settings>
   <clocks>
-    <clock point="NONE" optional="no">
+    <clock point="NONE" switchable="no">
       <description>pseudo-clock for disabled sources</description>
       <source frequency="0U" />
     </clock>
-    <clock point="HSI16" optional="yes">
+    <clock point="HSI16" switchable="yes">
       <description>16MHz high speed internal oscillator</description>
       <source frequency="16000000U" />
     </clock>
-    <clock point="HSI48" optional="yes">
+    <clock point="HSI48" switchable="yes">
       <description>48MHz high speed internal oscillator</description>
       <source frequency="48000000U" />
     </clock>
-    <clock point="HSE" optional="yes">
+    <clock point="HSE" switchable="yes">
       <description>high frequency external oscillator</description>
       <source frequency="STM32_HSECLK" />
     </clock>
-    <clock point="LSE" optional="yes">
+    <clock point="LSE" switchable="yes">
       <description>low frequency external oscillator</description>
       <source frequency="STM32_LSECLK" />
     </clock>
-    <clock point="LSI" optional="yes">
+    <clock point="LSI" switchable="yes">
       <description>low frequency internal oscillator</description>
       <source frequency="32768U" />
     </clock>
@@ -40,31 +40,31 @@
     </clock>
     <clock point="PLLREF">
       <description>PLL reference</description>
-      <divider name="PLLM">
+      <divider name="PLLM" input="PLLIN">
         <value min="1" max="16" bits="((%N% - 1U) &lt;&lt; 4)" />
       </divider>
     </clock>
      <clock point="PLLVCO">
       <description>PLL VCO</description>
-      <multiplier name="PLLN">
+      <multiplier name="PLLN" input="PLLREF">
         <value min="8" max="127" bits="(%N% &lt;&lt; 8)" />
       </multiplier>
     </clock>
-     <clock point="PLLP" optional="yes">
+     <clock point="PLLP" switchable="yes">
      <description>PLL P output</description>
-      <divider name="PLLP">
+      <divider name="PLLP" input="PLLVCO">
         <value min="2" max="31" bits="(%N% &lt;&lt; 27)" />
       </divider>
     </clock>
-    <clock point="PLLQ" optional="yes">
+    <clock point="PLLQ" switchable="yes">
      <description>PLL Q output</description>
-      <divider name="PLLQ">
+      <divider name="PLLQ" input="PLLVCO">
         <set values="2 4 6 8" bits="(((%N% / 2U) - 1U) &lt;&lt; 21)" />
       </divider>
     </clock>
-    <clock point="PLLR" optional="yes">
+    <clock point="PLLR" switchable="yes">
      <description>PLL R output</description>
-      <divider name="PLLR">
+      <divider name="PLLR" input="PLLVCO">
         <set values="2 4 6 8" bits="(((%N% / 2U) - 1U) &lt;&lt; 25)" />
       </divider>
     </clock>
@@ -78,7 +78,7 @@
     </clock>
     <clock point="HCLK">
      <description>AHB</description>
-      <divider name="HPRE">
+      <divider name="HPRE" input="SYSCLK">
         <choices>
           <choice item="DIV1" value="1" bits="(1U &lt;&lt; 4)" />
           <choice item="DIV2" value="2" bits="(8U &lt;&lt; 4)" />
@@ -94,7 +94,7 @@
     </clock>
     <clock point="PCLK1">
      <description>APB1</description>
-      <divider name="PPRE1">
+      <divider name="PPRE1" input="HCLK">
         <choices>
           <choice item="DIV1" value="1" bits="(1U &lt;&lt; 8)" />
           <choice item="DIV2" value="2" bits="(4U &lt;&lt; 8)" />
@@ -106,7 +106,7 @@
     </clock>
     <clock point="PCLK2">
      <description>APB2</description>
-      <divider name="PPRE2">
+      <divider name="PPRE2" input="HCLK">
         <choices>
           <choice item="DIV1" value="1" bits="(1U &lt;&lt; 11)" />
           <choice item="DIV2" value="2" bits="(4U &lt;&lt; 11)" />

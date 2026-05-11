@@ -45,10 +45,10 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-        <xs:attribute name="optional">
+      <xs:attribute name="switchable">
         <xs:annotation>
           <xs:documentation>
-            An optional source expects a setting to enable/disable it.
+            A switchable source expects a setting to enable/disable it.
           </xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -103,6 +103,13 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
+      <xs:attribute name="input" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="multiplierType">
@@ -112,6 +119,13 @@
         <xs:element name="choices" type="choicesType" maxOccurs="1" minOccurs="1"></xs:element>
       </xs:choice>
       <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="input" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="1"></xs:minLength>
