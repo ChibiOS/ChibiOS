@@ -1,0 +1,117 @@
+<clocktree
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/clocks/clocktree.xsd">
+  <settings>
+    <prefixes clock_points="CLK_" macros="STM32_" />
+    <suffixes values="_VALUE" bits="_BITS" />
+  </settings>
+  <clocks>
+    <clock point="HSI16" optional="yes">
+      <description>16MHz high speed internal oscillator</description>
+      <source frequency="16000000U" />
+    </clock>
+    <clock point="HSI48" optional="yes">
+      <description>48MHz high speed internal oscillator</description>
+      <source frequency="48000000U" />
+    </clock>
+    <clock point="HSE" optional="yes">
+      <description>high frequency external oscillator</description>
+      <source frequency="STM32_HSECLK" />
+    </clock>
+    <clock point="LSE" optional="yes">
+      <description>low frequency external oscillator</description>
+      <source frequency="STM32_LSECLK" />
+    </clock>
+    <clock point="LSI" optional="yes">
+      <description>low frequency internal oscillator</description>
+      <source frequency="32768U" />
+    </clock>
+    <clock point="PLLIN">
+      <description>PLL input</description>
+      <mux name="PLLSRC">
+        <input point="NONE" bits="(0U &lt;&lt; 4)" />
+        <input point="NONE" bits="(1U &lt;&lt; 4)" />
+        <input point="HSI16" bits="(2U &lt;&lt; 4)" />
+        <input point="HSE" bits="(3U &lt;&lt; 4)" />
+      </mux>
+    </clock>
+    <clock point="PLLREF">
+      <description>PLL reference</description>
+      <divider name="PLLM">
+        <value min="1" max="16" bits="((%N% - 1U) &lt;&lt; 4)" />
+      </divider>
+    </clock>
+     <clock point="PLLVCO">
+      <description>PLL VCO</description>
+      <multiplier name="PLLN">
+        <value min="8" max="127" bits="(%N% &lt;&lt; 8)" />
+      </multiplier>
+    </clock>
+     <clock point="PLLP" optional="yes">
+     <description>PLL P output</description>
+      <divider name="PLLP">
+        <value min="2" max="31" bits="(%N% &lt;&lt; 27)" />
+      </divider>
+    </clock>
+    <clock point="PLLQ" optional="yes">
+     <description>PLL Q output</description>
+      <divider name="PLLQ">
+        <set values="2 4 6 8" bits="(((%N% / 2U) - 1U) &lt;&lt; 21)" />
+      </divider>
+    </clock>
+    <clock point="PLLR" optional="yes">
+     <description>PLL R output</description>
+      <divider name="PLLR">
+        <set values="2 4 6 8" bits="(((%N% / 2U) - 1U) &lt;&lt; 25)" />
+      </divider>
+    </clock>
+    <clock point="SYSCLK">
+     <description>system clock</description>
+      <mux name="SW">
+        <input point="HSI16" bits="(1U &lt;&lt; 0)" />
+        <input point="HSE" bits="(2U &lt;&lt; 0)" />
+        <input point="PLLR" bits="(3U &lt;&lt; 0)" />
+      </mux>
+    </clock>
+    <clock point="HCLK">
+     <description>AHB</description>
+      <divider name="HPRE">
+        <choices>
+          <choice item="DIV1" value="1" bits="(1U &lt;&lt; 4)" />
+          <choice item="DIV2" value="2" bits="(8U &lt;&lt; 4)" />
+          <choice item="DIV4" value="4" bits="(9U &lt;&lt; 4)" />
+          <choice item="DIV8" value="8" bits="(10U &lt;&lt; 4)" />
+          <choice item="DIV16" value="16" bits="(11U &lt;&lt; 4)" />
+          <choice item="DIV64" value="64" bits="(12U &lt;&lt; 4)" />
+          <choice item="DIV128" value="128" bits="(13U &lt;&lt; 4)" />
+          <choice item="DIV256" value="256" bits="(14U &lt;&lt; 4)" />
+          <choice item="DIV512" value="512" bits="(15U &lt;&lt; 4)" />
+        </choices>
+      </divider>
+    </clock>
+    <clock point="PCLK1">
+     <description>APB1</description>
+      <divider name="PPRE1">
+        <choices>
+          <choice item="DIV1" value="1" bits="(1U &lt;&lt; 8)" />
+          <choice item="DIV2" value="2" bits="(4U &lt;&lt; 8)" />
+          <choice item="DIV4" value="4" bits="(5U &lt;&lt; 8)" />
+          <choice item="DIV8" value="8" bits="(6U &lt;&lt; 8)" />
+          <choice item="DIV16" value="16" bits="(7U &lt;&lt; 8)" />
+        </choices>
+      </divider>
+    </clock>
+    <clock point="PCLK2">
+     <description>APB2</description>
+      <divider name="PPRE2">
+        <choices>
+          <choice item="DIV1" value="1" bits="(1U &lt;&lt; 11)" />
+          <choice item="DIV2" value="2" bits="(4U &lt;&lt; 11)" />
+          <choice item="DIV4" value="4" bits="(5U &lt;&lt; 11)" />
+          <choice item="DIV8" value="8" bits="(6U &lt;&lt; 11)" />
+          <choice item="DIV16" value="16" bits="(7U &lt;&lt; 11)" />
+        </choices>
+      </divider>
+    </clock>
+  </clocks>
+</clocktree>
