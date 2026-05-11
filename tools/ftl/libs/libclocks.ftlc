@@ -234,12 +234,27 @@ endmacro
 /* Emits definitions of all clock sources.*/
 macro EmitSourcePoints()
   list model["points"] as point
-    emit """
+    local freqmacro = premacro + point["name"] + postclocks
+    if point["enable"] == "manual"
+      local enmacro = precfg + point["name"] + postenable
+      emit """
 /**
  * @brief   ${point["description"]?cap_first} clock point.
  */
-${("#define " + prename + point["name"] + postclocks)?tab_to(44) + point["frequency"]}
+#if (${enmacro} == TRUE) || defined(__DOXYGEN__)
+${("#define " + freqmacro)?tab_to(44) + point["frequency"]}
+#else
+${("#define " + freqmacro)?tab_to(44) + "0U"}
+#endif
 """
+    else
+      emit """
+/**
+ * @brief   ${point["description"]?cap_first} clock point.
+ */
+${("#define " + freqmacro)?tab_to(44) + point["frequency"]}
+"""
+    endif
     sep
       emit "\e"
     endsep

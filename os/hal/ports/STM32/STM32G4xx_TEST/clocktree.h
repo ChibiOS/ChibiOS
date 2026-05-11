@@ -175,14 +175,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/*===========================================================================*/
-/* Driver data structures and types.                                         */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Driver macros.                                                            */
-/*===========================================================================*/
-
 /**
  * @name    Calculated or fixed clocks
  * @{
@@ -190,33 +182,61 @@
 /**
  * @brief   Pseudo-clock for disabled sources clock point.
  */
-#define CLK_NONE_FREQ                       0U
+#define STM32_NONE_FREQ                     0U
 
 /**
  * @brief   16MHz high speed internal oscillator clock point.
  */
-#define CLK_HSI16_FREQ                      16000000U
+#if (STM32_CFG_HSI16_ENABLE == TRUE) || defined(__DOXYGEN__)
+#define STM32_HSI16_FREQ                    16000000U
+#else
+#define STM32_HSI16_FREQ                    0U
+#endif
 
 /**
  * @brief   48MHz high speed internal oscillator clock point.
  */
-#define CLK_HSI48_FREQ                      48000000U
+#if (STM32_CFG_HSI48_ENABLE == TRUE) || defined(__DOXYGEN__)
+#define STM32_HSI48_FREQ                    48000000U
+#else
+#define STM32_HSI48_FREQ                    0U
+#endif
 
 /**
  * @brief   High frequency external oscillator clock point.
  */
-#define CLK_HSE_FREQ                        STM32_HSECLK
+#if (STM32_CFG_HSE_ENABLE == TRUE) || defined(__DOXYGEN__)
+#define STM32_HSE_FREQ                      STM32_HSECLK
+#else
+#define STM32_HSE_FREQ                      0U
+#endif
 
 /**
  * @brief   Low frequency external oscillator clock point.
  */
-#define CLK_LSE_FREQ                        STM32_LSECLK
+#if (STM32_CFG_LSE_ENABLE == TRUE) || defined(__DOXYGEN__)
+#define STM32_LSE_FREQ                      STM32_LSECLK
+#else
+#define STM32_LSE_FREQ                      0U
+#endif
 
 /**
  * @brief   Low frequency internal oscillator clock point.
  */
-#define CLK_LSI_FREQ                        32768U
+#if (STM32_CFG_LSI_ENABLE == TRUE) || defined(__DOXYGEN__)
+#define STM32_LSI_FREQ                      32768U
+#else
+#define STM32_LSI_FREQ                      0U
+#endif
 /** @} */
+
+/*===========================================================================*/
+/* Driver data structures and types.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
 
 /*===========================================================================*/
 /* External declarations.                                                    */
