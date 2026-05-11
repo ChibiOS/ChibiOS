@@ -44,6 +44,13 @@
 /*===========================================================================*/
 
 /**
+ * @name    Clock source enable configurations
+ * @{
+ */
+[@clocktree.EmitManualEnableConfigurations /]
+/** @} */
+
+/**
  * @name    Mux configurations
  * @{
  */

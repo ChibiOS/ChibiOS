@@ -33,6 +33,67 @@
 /*===========================================================================*/
 
 /**
+ * @name    Clock source enable configurations
+ * @{
+ */
+/**
+ * @brief   Enables the HSI16 clock source.
+ */
+#if !defined(STM32_HSI16_ENABLE) || defined(__DOXYGEN__)
+#define STM32_HSI16_ENABLE                  FALSE
+#endif
+
+/**
+ * @brief   Enables the HSI48 clock source.
+ */
+#if !defined(STM32_HSI48_ENABLE) || defined(__DOXYGEN__)
+#define STM32_HSI48_ENABLE                  FALSE
+#endif
+
+/**
+ * @brief   Enables the HSE clock source.
+ */
+#if !defined(STM32_HSE_ENABLE) || defined(__DOXYGEN__)
+#define STM32_HSE_ENABLE                    FALSE
+#endif
+
+/**
+ * @brief   Enables the LSE clock source.
+ */
+#if !defined(STM32_LSE_ENABLE) || defined(__DOXYGEN__)
+#define STM32_LSE_ENABLE                    FALSE
+#endif
+
+/**
+ * @brief   Enables the LSI clock source.
+ */
+#if !defined(STM32_LSI_ENABLE) || defined(__DOXYGEN__)
+#define STM32_LSI_ENABLE                    FALSE
+#endif
+
+/**
+ * @brief   Enables the PLLP clock source.
+ */
+#if !defined(STM32_PLLP_ENABLE) || defined(__DOXYGEN__)
+#define STM32_PLLP_ENABLE                   FALSE
+#endif
+
+/**
+ * @brief   Enables the PLLQ clock source.
+ */
+#if !defined(STM32_PLLQ_ENABLE) || defined(__DOXYGEN__)
+#define STM32_PLLQ_ENABLE                   FALSE
+#endif
+
+/**
+ * @brief   Enables the PLLR clock source.
+ */
+#if !defined(STM32_PLLR_ENABLE) || defined(__DOXYGEN__)
+#define STM32_PLLR_ENABLE                   FALSE
+#endif
+/** @} */
+
+/**
  * @name    Mux configurations
  * @{
  */

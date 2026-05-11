@@ -3,34 +3,34 @@
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/clocks/clocktree.xsd">
   <settings>
     <prefixes clock_points="CLK_" macros="STM32_" cfgs="STM32_CFG_" />
-    <suffixes values="_VALUE" bits="_BITS" selector="_SEL" />
+    <suffixes values="_VALUE" bits="_BITS" selector="_SEL" enable="_ENABLE" />
   </settings>
   <clocks>
-    <clock point="NONE" switchable="no">
+    <clock point="NONE" enable="none">
       <description>pseudo-clock for disabled sources</description>
       <source frequency="0U" />
     </clock>
-    <clock point="HSI16" switchable="yes">
+    <clock point="HSI16" enable="manual">
       <description>16MHz high speed internal oscillator</description>
       <source frequency="16000000U" />
     </clock>
-    <clock point="HSI48" switchable="yes">
+    <clock point="HSI48" enable="manual">
       <description>48MHz high speed internal oscillator</description>
       <source frequency="48000000U" />
     </clock>
-    <clock point="HSE" switchable="yes">
+    <clock point="HSE" enable="manual">
       <description>high frequency external oscillator</description>
       <source frequency="STM32_HSECLK" />
     </clock>
-    <clock point="LSE" switchable="yes">
+    <clock point="LSE" enable="manual">
       <description>low frequency external oscillator</description>
       <source frequency="STM32_LSECLK" />
     </clock>
-    <clock point="LSI" switchable="yes">
+    <clock point="LSI" enable="manual">
       <description>low frequency internal oscillator</description>
       <source frequency="32768U" />
     </clock>
-    <clock point="PLLIN">
+    <clock point="PLLIN" enable="auto">
       <description>PLL input</description>
       <mux name="PLLSRC">
         <input point="NONE" bits="RCC_PLLSRC_NONE" default="yes" />
@@ -38,37 +38,37 @@
         <input point="HSE" bits="RCC_PLLSRC_HSE" />
       </mux>
     </clock>
-    <clock point="PLLREF">
+    <clock point="PLLREF" enable="auto">
       <description>PLL reference</description>
       <divider name="PLLM" input="PLLIN">
         <value min="1" max="16" bits="((%N% - 1U) &lt;&lt; 4)" />
       </divider>
     </clock>
-     <clock point="PLLVCO">
+     <clock point="PLLVCO" enable="auto">
       <description>PLL VCO</description>
       <multiplier name="PLLN" input="PLLREF">
         <value min="8" max="127" bits="(%N% &lt;&lt; 8)" />
       </multiplier>
     </clock>
-     <clock point="PLLP" switchable="yes">
+     <clock point="PLLP" enable="manual">
      <description>PLL P output</description>
       <divider name="PLLP" input="PLLVCO">
         <value min="2" max="31" bits="(%N% &lt;&lt; 27)" />
       </divider>
     </clock>
-    <clock point="PLLQ" switchable="yes">
+    <clock point="PLLQ" enable="manual">
      <description>PLL Q output</description>
       <divider name="PLLQ" input="PLLVCO">
         <set values="2 4 6 8" bits="(((%N% / 2U) - 1U) &lt;&lt; 21)" />
       </divider>
     </clock>
-    <clock point="PLLR" switchable="yes">
+    <clock point="PLLR" enable="manual">
      <description>PLL R output</description>
       <divider name="PLLR" input="PLLVCO">
         <set values="2 4 6 8" bits="(((%N% / 2U) - 1U) &lt;&lt; 25)" />
       </divider>
     </clock>
-    <clock point="SYSCLK">
+    <clock point="SYSCLK" enable="auto">
       <description>system clock</description>
       <mux name="SW">
         <input point="HSI16" bits="(1U &lt;&lt; 0)" default="yes" />
@@ -76,7 +76,7 @@
         <input point="PLLR" bits="(3U &lt;&lt; 0)" />
       </mux>
     </clock>
-    <clock point="HCLK">
+    <clock point="HCLK" enable="auto">
      <description>AHB</description>
       <divider name="HPRE" input="SYSCLK">
         <choices>
@@ -92,7 +92,7 @@
         </choices>
       </divider>
     </clock>
-    <clock point="PCLK1">
+    <clock point="PCLK1" enable="auto">
      <description>APB1</description>
       <divider name="PPRE1" input="HCLK">
         <choices>
@@ -104,7 +104,7 @@
         </choices>
       </divider>
     </clock>
-    <clock point="PCLK2">
+    <clock point="PCLK2" enable="auto">
      <description>APB2</description>
       <divider name="PPRE2" input="HCLK">
         <choices>

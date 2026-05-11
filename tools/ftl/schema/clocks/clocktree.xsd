@@ -45,16 +45,17 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-      <xs:attribute name="switchable">
+      <xs:attribute name="enable" use="required">
         <xs:annotation>
           <xs:documentation>
-            A switchable source expects a setting to enable/disable it.
+            Clock point enable policy.
           </xs:documentation>
         </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:enumeration value="yes"></xs:enumeration>
-            <xs:enumeration value="no"></xs:enumeration>
+            <xs:enumeration value="none"></xs:enumeration>
+            <xs:enumeration value="manual"></xs:enumeration>
+            <xs:enumeration value="auto"></xs:enumeration>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
@@ -326,6 +327,16 @@
         </xs:simpleType>
       </xs:attribute>
       <xs:attribute name="selector" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:maxLength value="8"></xs:maxLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="enable" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="1"></xs:minLength>

@@ -23,6 +23,7 @@ postclocks = "_FREQ"
 postvalues = doc1.clocktree.settings.suffixes.@values[0]?string
 postbits = doc1.clocktree.settings.suffixes.@bits[0]?string
 postchoices = doc1.clocktree.settings.suffixes.@selector[0]?string
+postenable = doc1.clocktree.settings.suffixes.@enable[0]?string
 
 /* Parses divider/multiplier value selection subtrees.*/
 function ParseScaler(scaler)
@@ -62,7 +63,7 @@ function Initialize()
     /* Clock information.*/
     local clockname = clock.@point[0]
     local clocknames = clocknames + [clockname]
-    local clockswitchable = (clock.@switchable[0]!"no")?string
+    local clockenable = clock.@enable[0]?string
     if clock.description[0]??
       local clockdescr = clock.description[0]?string?word_list?join(" ")
     else
@@ -78,7 +79,7 @@ function Initialize()
       else
         local clockcomplex = ""
       endif
-      local points = points + [{"description":clockdescr, "name":clockname, "switchable":clockswitchable, "frequency":clockfreq, "complex":clockcomplex}]
+      local points = points + [{"description":clockdescr, "name":clockname, "enable":clockenable, "frequency":clockfreq, "complex":clockcomplex}]
 
     elseif clock.mux[0]??
       /* It is a muxed clock.*/
@@ -94,21 +95,21 @@ function Initialize()
         endif
         local muxinputs = muxinputs + [{"point":inputpoint, "bits":inputbits, "default":inputdefault}]
       endlist
-      local muxes = muxes + [{"name":clockname, "muxname":muxname, "inputs":muxinputs, "default":muxdefault, "description":clockdescr, "switchable":clockswitchable}]
+      local muxes = muxes + [{"name":clockname, "muxname":muxname, "inputs":muxinputs, "default":muxdefault, "description":clockdescr, "enable":clockenable}]
 
     elseif clock.divider[0]??
       /* It is a divided clock.*/
       local divname = clock.divider[0].@name[0]
       local divinput = clock.divider[0].@input[0]?string
       local divparsed = ParseScaler(clock.divider[0])
-      local dividers = dividers + [{"description":clockdescr, "name":clockname, "switchable":clockswitchable, "divname":divname, "input":divinput, "kind":divparsed["kind"], "data":divparsed["data"]}]
+      local dividers = dividers + [{"description":clockdescr, "name":clockname, "enable":clockenable, "divname":divname, "input":divinput, "kind":divparsed["kind"], "data":divparsed["data"]}]
 
     elseif clock.multiplier[0]??
       /* It is a multiplied clock.*/
       local mulname = clock.multiplier[0].@name[0]
       local mulinput = clock.multiplier[0].@input[0]?string
       local mulparsed = ParseScaler(clock.multiplier[0])
-      local multipliers = multipliers + [{"description":clockdescr, "name":clockname, "switchable":clockswitchable, "mulname":mulname, "input":mulinput, "kind":mulparsed["kind"], "data":mulparsed["data"]}]
+      local multipliers = multipliers + [{"description":clockdescr, "name":clockname, "enable":clockenable, "mulname":mulname, "input":mulinput, "kind":mulparsed["kind"], "data":mulparsed["data"]}]
     endif
   endlist
 
@@ -139,6 +140,31 @@ endfunction
 
 /* Static data parsed at startup.*/
 model = Initialize()
+
+/* Emits definitions of manual clock point enable switches.*/
+macro EmitManualEnableConfigurations()
+  manualpoints = []
+  list model["points"] + model["muxes"] + model["dividers"] + model["multipliers"] as point
+    if point["enable"] == "manual"
+      manualpoints = manualpoints + [point]
+    endif
+  endlist
+
+  list manualpoints as point
+      enmacro = premacro + point["name"] + postenable
+      emit """
+/**
+ * @brief   Enables the ${point["name"]} clock source.
+ */
+#if !defined(${enmacro}) || defined(__DOXYGEN__)
+${("#define " + enmacro)?tab_to(44) + "FALSE"}
+#endif
+"""
+      sep
+        emit "\e"
+      endsep
+  endlist
+endmacro
 
 /* Emits definitions of all clock sources.*/
 macro EmitSourcePoints()
