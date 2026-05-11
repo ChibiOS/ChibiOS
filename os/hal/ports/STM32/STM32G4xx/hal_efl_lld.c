@@ -115,6 +115,8 @@ static inline bool stm32_flash_dual_bank(EFlashDriver *eflp) {
 
 #if STM32_FLASH_NUMBER_OF_BANKS > 1
   return ((eflp->flash->OPTR & (FLASH_OPTR_DBANK)) != 0U);
+#else
+  (void) eflp;
 #endif
   return false;
 }
