@@ -256,7 +256,7 @@
             <xs:minLength value="1"></xs:minLength>
             <xs:whiteSpace value="collapse"></xs:whiteSpace>
             <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
-            <xs:maxLength value="8"></xs:maxLength>
+            <xs:maxLength value="12"></xs:maxLength>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
@@ -266,7 +266,17 @@
             <xs:minLength value="1"></xs:minLength>
             <xs:whiteSpace value="collapse"></xs:whiteSpace>
             <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
-            <xs:maxLength value="8"></xs:maxLength>
+            <xs:maxLength value="12"></xs:maxLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="cfgs" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:maxLength value="12"></xs:maxLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
@@ -284,6 +294,16 @@
         </xs:simpleType>
       </xs:attribute>
       <xs:attribute name="bits" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:maxLength value="8"></xs:maxLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="selector" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="1"></xs:minLength>

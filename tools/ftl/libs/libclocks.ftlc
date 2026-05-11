@@ -1,0 +1,76 @@
+/*
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
+
+    This file is part of ChibiOS.
+
+    ChibiOS is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation version 3 of the License.
+
+    ChibiOS is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+prename = doc1.clocktree.settings.prefixes.@clock_points[0]?string
+premacro = doc1.clocktree.settings.prefixes.@macros[0]?string
+precfg = doc1.clocktree.settings.prefixes.@cfgs[0]?string
+postclocks = "_FREQ"
+postchoices = "_SEL"
+
+/* Static data parsed at startup.*/
+assign points = []
+assign muxes = []
+
+/* Scanning clock points, gathering data.*/
+list doc1.clocktree.clocks.clock as clock
+
+  /* Clock information.*/
+  clockname = clock.@point[0]
+  if clock.description[0]??
+    clockdescr = clock.description[0]?string?word_list?join(" ")
+  else
+    clockdescr = "no description"
+  endif
+
+  /* Determining the type of the clock point by looking at the child element.*/
+  if clock.source[0]??
+    /* It is a fixed clock.*/
+    clockfreq = clock.source[0].@frequency[0]?string
+    points = (points + [{"description":clockdescr,
+                         "name":clockname,
+                         "frequency":clockfreq}])
+
+  elseif clock.mux[0]??
+    /* It is a muxed clock.*/
+    muxname = clock.mux[0].@name[0]
+    muxinputs = []
+    list clock.mux.input as input
+      inputpoint = input.@point[0]
+      inputbits = input.@bits[0]!"0"
+      muxinputs = muxinputs + [{"point":inputpoint, "bits":inputbits}]
+    endlist
+    muxes = (muxes + [{"name":muxname,
+                       "muxname":muxname,
+                       "inputs":muxinputs}])
+  endif
+endlist
+
+/* Emits definitions of all clock sources.*/
+macro EmitSourcePoints()
+  list points as point
+    emit """
+/**
+ * @brief   ${point["description"]?cap_first} clock point.
+ */
+${("#define " + prename + point["name"] + postclocks)?tab_to(44) + point["frequency"]}
+"""
+    sep
+      emit "\e"
+    endsep
+  endlist
+endmacro

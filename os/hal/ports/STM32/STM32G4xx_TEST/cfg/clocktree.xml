@@ -2,8 +2,8 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/clocks/clocktree.xsd">
   <settings>
-    <prefixes clock_points="CLK_" macros="STM32_" />
-    <suffixes values="_VALUE" bits="_BITS" />
+    <prefixes clock_points="CLK_" macros="STM32_" cfgs="STM32_CFG_" />
+    <suffixes values="_VALUE" bits="_BITS" selector="_SEL" />
   </settings>
   <clocks>
     <clock point="HSI16" optional="yes">

@@ -17,35 +17,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   --]
 [@pp.dropOutputFile /]
-[#import "/@lib/libutils.ftl" as utils /]
-[#import "/@lib/liblicense.ftl" as license /]
+[#import "/@lib/libutils.ftlc" as utils /]
+[#import "/@lib/liblicense.ftlc" as license /]
+[#import "/@lib/libclocks.ftlc" as clocktree /]
 [@pp.changeOutputFile name="clocktree.h" /]
-[#-- Getting various constants.--]
+[#-- Local constants still used by the mux section until it moves to libclocks.ftlc.--]
 [#assign prename = doc1.clocktree.settings.prefixes.@clock_points[0]?string /]
-[#-- The current schema only exposes generic suffixes, keep legacy macro names
-    for this WIP header until the generator grows the missing sections.--]
-[#assign postclocks = "_FREQ" /]
 [#assign postchoices = "_SEL" /]
-[#-- Sequence of the calculated clock points.--]
-[#assign clocks_expr = [] /]
 [#-- Sequence of the muxed clock points.--]
 [#assign clocks_mux = [] /]
 [#-- Scanning clock points, gathering data.--]
 [#list doc1.clocktree.clocks.clock as clock]
   [#assign clockname = clock.@point[0] /]
-  [#if clock.description[0]??]
-    [#assign clockdescr = clock.description[0]?string?word_list?join(" ") /]
-  [#else /]
-    [#assign clockdescr = "no description" /]
-  [/#if]
   [#-- Determining the type of the clock point by looking at the child element.--]
-  [#if clock.source[0]??]
-    [#-- It is a fixed clock.--]
-    [#assign clockfreq = clock.source[0].@frequency[0]?string /]
-    [#assign clocks_expr = clocks_expr + [{"description":clockdescr,
-                                           "name":clockname,
-                                           "frequency":clockfreq}] /]
-  [#elseif clock.mux[0]??]
+  [#if clock.mux[0]??]
     [#-- It is a muxed clock.--]
     [#assign muxname = clock.mux[0].@name[0] /]
     [#assign inputs = [] /]
@@ -112,15 +97,7 @@ ${("#define " + name)?right_pad(44) + "0U"}
  * @name    Calculated or fixed clocks
  * @{
  */
-[#list clocks_expr as clock]
-/**
- * @brief   ${clock["description"]?cap_first} clock point.
- */
-${("#define " + prename + clock["name"] + postclocks)?right_pad(44) + clock["frequency"]}
-[#sep]
-
-[/#sep]
-[/#list]
+[@clocktree.EmitSourcePoints /]
 /** @} */
 
 /*===========================================================================*/
