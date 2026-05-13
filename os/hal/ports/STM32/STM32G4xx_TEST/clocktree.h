@@ -376,9 +376,6 @@
 #define STM32_LSI_FREQ                      0U
 #endif
 
-#if !defined(__DOXYGEN__) && ((STM32_CFG_PLLIN_SEL != STM32_PLLSRC_NOCLOCK) && (STM32_CFG_PLLIN_SEL != STM32_PLLSRC_HSI16) && (STM32_CFG_PLLIN_SEL != STM32_PLLSRC_HSE))
-#error "invalid STM32_CFG_PLLIN_SEL value specified"
-#endif
 
 /**
  * @brief   PLLIN clock register bits.
@@ -389,6 +386,8 @@
 #define STM32_PLLIN_BITS                    STM32_PLLSRC_HSI16
 #elif (STM32_CFG_PLLIN_SEL == STM32_PLLSRC_HSE)
 #define STM32_PLLIN_BITS                    STM32_PLLSRC_HSE
+#else
+#error "invalid STM32_CFG_PLLIN_SEL value specified"
 #endif
 
 /**
@@ -512,9 +511,6 @@
 #define STM32_PLLR_FREQ                     0U
 #endif
 
-#if !defined(__DOXYGEN__) && ((STM32_CFG_SYSCLK_SEL != STM32_SW_HSI16) && (STM32_CFG_SYSCLK_SEL != STM32_SW_HSE) && (STM32_CFG_SYSCLK_SEL != STM32_SW_PLLRCLK))
-#error "invalid STM32_CFG_SYSCLK_SEL value specified"
-#endif
 
 /**
  * @brief   SYSCLK clock register bits.
@@ -525,6 +521,8 @@
 #define STM32_SYSCLK_BITS                   STM32_SW_HSE
 #elif (STM32_CFG_SYSCLK_SEL == STM32_SW_PLLRCLK)
 #define STM32_SYSCLK_BITS                   STM32_SW_PLLRCLK
+#else
+#error "invalid STM32_CFG_SYSCLK_SEL value specified"
 #endif
 
 /**
@@ -540,9 +538,6 @@
 #define STM32_SYSCLK_FREQ                   0U
 #endif
 
-#if !defined(__DOXYGEN__) && ((STM32_CFG_HCLK_VALUE != 1) && (STM32_CFG_HCLK_VALUE != 2) && (STM32_CFG_HCLK_VALUE != 4) && (STM32_CFG_HCLK_VALUE != 8) && (STM32_CFG_HCLK_VALUE != 16) && (STM32_CFG_HCLK_VALUE != 64) && (STM32_CFG_HCLK_VALUE != 128) && (STM32_CFG_HCLK_VALUE != 256) && (STM32_CFG_HCLK_VALUE != 512))
-#error "invalid STM32_CFG_HCLK_VALUE value specified"
-#endif
 
 /**
  * @brief   HCLK clock register bits.
@@ -565,6 +560,8 @@
 #define STM32_HCLK_BITS                     STM32_HPRE_DIV256
 #elif (STM32_CFG_HCLK_VALUE == 512)
 #define STM32_HCLK_BITS                     STM32_HPRE_DIV512
+#else
+#error "invalid STM32_CFG_HCLK_VALUE value specified"
 #endif
 
 /**
@@ -576,9 +573,6 @@
 #define STM32_HCLK_FREQ                     0U
 #endif
 
-#if !defined(__DOXYGEN__) && ((STM32_CFG_PCLK1_VALUE != 1) && (STM32_CFG_PCLK1_VALUE != 2) && (STM32_CFG_PCLK1_VALUE != 4) && (STM32_CFG_PCLK1_VALUE != 8) && (STM32_CFG_PCLK1_VALUE != 16))
-#error "invalid STM32_CFG_PCLK1_VALUE value specified"
-#endif
 
 /**
  * @brief   PCLK1 clock register bits.
@@ -593,6 +587,8 @@
 #define STM32_PCLK1_BITS                    STM32_PPRE1_DIV8
 #elif (STM32_CFG_PCLK1_VALUE == 16)
 #define STM32_PCLK1_BITS                    STM32_PPRE1_DIV16
+#else
+#error "invalid STM32_CFG_PCLK1_VALUE value specified"
 #endif
 
 /**
@@ -604,9 +600,6 @@
 #define STM32_PCLK1_FREQ                    0U
 #endif
 
-#if !defined(__DOXYGEN__) && ((STM32_CFG_PCLK2_VALUE != 1) && (STM32_CFG_PCLK2_VALUE != 2) && (STM32_CFG_PCLK2_VALUE != 4) && (STM32_CFG_PCLK2_VALUE != 8) && (STM32_CFG_PCLK2_VALUE != 16))
-#error "invalid STM32_CFG_PCLK2_VALUE value specified"
-#endif
 
 /**
  * @brief   PCLK2 clock register bits.
@@ -621,6 +614,8 @@
 #define STM32_PCLK2_BITS                    STM32_PPRE2_DIV8
 #elif (STM32_CFG_PCLK2_VALUE == 16)
 #define STM32_PCLK2_BITS                    STM32_PPRE2_DIV16
+#else
+#error "invalid STM32_CFG_PCLK2_VALUE value specified"
 #endif
 
 /**

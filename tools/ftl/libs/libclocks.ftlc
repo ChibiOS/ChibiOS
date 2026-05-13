@@ -379,18 +379,7 @@ macro EmitClockChecks(point)
 """
   endif
 
-  if point["type"] == "mux"
-    local selmacro = precfg + point["name"] + postchoices
-    local checks = []
-    list point["inputs"] as input
-      local checks = checks + ["(" + selmacro + " != " + input["bits"] + ")"]
-    endlist
-    emit """
-#if !defined(__DOXYGEN__) && (${checks?join(" && ")})
-#error "invalid ${selmacro} value specified"
-#endif
-"""
-  elseif point["type"] == "divider" || point["type"] == "multiplier"
+  if point["type"] == "divider" || point["type"] == "multiplier"
     local valmacro = precfg + point["name"] + postvalues
     local checks = []
     if point["kind"] == "value"
@@ -409,10 +398,7 @@ macro EmitClockChecks(point)
       endlist
       local operator = " && "
     else
-      list point["data"]["choices"] as choice
-        local checks = checks + ["(" + valmacro + " != " + choice["value"] + ")"]
-      endlist
-      local operator = " && "
+      local operator = ""
     endif
     if checks?size > 0
       emit """
@@ -465,6 +451,8 @@ ${("#define " + bitsmacro)?tab_to(44) + input["bits"]}
       endif
     endlist
     emit """
+#else
+#error "invalid ${selmacro} value specified"
 #endif
 """
   elseif point["type"] == "divider" || point["type"] == "multiplier"
@@ -488,6 +476,8 @@ ${("#define " + bitsmacro)?tab_to(44) + input["bits"]}
         EmitBitsDefinition(point=point, bits=choice["bits"])
       endlist
       emit """
+#else
+#error "invalid ${valmacro} value specified"
 #endif
 """
     else
