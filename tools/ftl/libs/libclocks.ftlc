@@ -25,6 +25,8 @@ postbits = doc1.clocktree.settings.suffixes.@bits[0]?string
 postchoices = doc1.clocktree.settings.suffixes.@selector[0]?string
 postenable = doc1.clocktree.settings.suffixes.@enable[0]?string
 postenabled = "_ENABLED"
+modemacro = doc1.clocktree.settings.mode.@macro[0]?string
+modedefault = doc1.clocktree.settings.mode.@default[0]?string
 contindent = "                                             "
 
 /* Returns the string value of a bits element.*/
@@ -108,6 +110,7 @@ function Initialize()
     local clockname = clock.@point[0]
     local clocknames = clocknames + [clockname]
     local clockenable = clock.@enable[0]?string
+    local clockdynamic = clock.@dynamic[0]?string
     if clock.description[0]??
       local clockdescr = clock.description[0]?string?word_list?join(" ")
     else
@@ -131,7 +134,7 @@ function Initialize()
       else
         local clockcomplex = ""
       endif
-      local clockpoint = {"type":"source", "description":clockdescr, "name":clockname, "enable":clockenable, "bits":clockbits, "frequency":clockfreq, "complex":clockcomplex}
+      local clockpoint = {"type":"source", "description":clockdescr, "name":clockname, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits, "frequency":clockfreq, "complex":clockcomplex}
       local points = points + [clockpoint]
       local clocks = clocks + [clockpoint]
 
@@ -149,7 +152,7 @@ function Initialize()
         endif
         local muxinputs = muxinputs + [{"point":inputpoint, "bits":inputbits, "default":inputdefault}]
       endlist
-      local clockpoint = {"type":"mux", "name":clockname, "muxname":muxname, "inputs":muxinputs, "default":muxdefault, "description":clockdescr, "enable":clockenable, "bits":clockbits}
+      local clockpoint = {"type":"mux", "name":clockname, "muxname":muxname, "inputs":muxinputs, "default":muxdefault, "description":clockdescr, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits}
       local muxes = muxes + [clockpoint]
       local clocks = clocks + [clockpoint]
 
@@ -158,7 +161,7 @@ function Initialize()
       local divname = clock.divider[0].@name[0]
       local divinput = clock.divider[0].@input[0]?string
       local divparsed = ParseScaler(clock.divider[0])
-      local clockpoint = {"type":"divider", "description":clockdescr, "name":clockname, "enable":clockenable, "bits":clockbits, "divname":divname, "input":divinput, "kind":divparsed["kind"], "data":divparsed["data"]}
+      local clockpoint = {"type":"divider", "description":clockdescr, "name":clockname, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits, "divname":divname, "input":divinput, "kind":divparsed["kind"], "data":divparsed["data"]}
       local dividers = dividers + [clockpoint]
       local clocks = clocks + [clockpoint]
 
@@ -167,7 +170,7 @@ function Initialize()
       local mulname = clock.multiplier[0].@name[0]
       local mulinput = clock.multiplier[0].@input[0]?string
       local mulparsed = ParseScaler(clock.multiplier[0])
-      local clockpoint = {"type":"multiplier", "description":clockdescr, "name":clockname, "enable":clockenable, "bits":clockbits, "mulname":mulname, "input":mulinput, "kind":mulparsed["kind"], "data":mulparsed["data"]}
+      local clockpoint = {"type":"multiplier", "description":clockdescr, "name":clockname, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits, "mulname":mulname, "input":mulinput, "kind":mulparsed["kind"], "data":mulparsed["data"]}
       local multipliers = multipliers + [clockpoint]
       local clocks = clocks + [clockpoint]
     endif
@@ -201,6 +204,87 @@ endfunction
 /* Static data parsed at startup.*/
 model = Initialize()
 
+/* Returns the clock points belonging to the dynamic set.*/
+function GetDynamicPoints()
+  local points = []
+  list model["clocks"] as point
+    if point["dynamic"] == "yes"
+      local points = points + [point]
+    endif
+  endlist
+
+  return points
+endfunction
+
+/* Emits dynamic clock point indexes and names.*/
+macro EmitClockPointConstants()
+  local points = GetDynamicPoints()
+
+  if points?size > 0
+    list points as point
+      emit """
+${("#define " + prename + point["name"])?tab_to(32) + point?index + "U"}
+"""
+    endlist
+    emit """
+${("#define " + prename + "ARRAY_SIZE")?tab_to(32) + points?size + "U"}
+
+#define ${prename}POINT_NAMES                                                     \
+  {                                                                         \
+"""
+    list points as point
+      local name = "\"" + point["name"] + "\""
+      if !point?is_last
+        local name = name + ","
+      endif
+      emit """
+${("    " + name)?right_pad(76)}\
+"""
+    endlist
+    emit """
+  }
+"""
+  endif
+endmacro
+
+/* Emits the static clock point getter for non-dynamic mode.*/
+macro EmitStaticClockPointGetter()
+  local points = GetDynamicPoints()
+
+  if points?size > 0
+    emit """
+/**
+ * @brief   Returns the frequency of a clock point in Hz.
+ * @note    Static implementation.
+ *
+ * @param[in] clkpt     clock point to be returned
+ * @return              The clock point frequency in Hz or zero if the
+ *                      frequency is unknown.
+ *
+ * @notapi
+ */
+#if (${modemacro} == FALSE) || defined(__DOXYGEN__)
+#define hal_lld_get_clock_point(clkpt)                                      \
+"""
+    list points as point
+      local clkmacro = prename + point["name"]
+      local freqmacro = premacro + point["name"] + postclocks
+      if point?is_first
+        local prefix = "  ("
+      else
+        local prefix = "   "
+      endif
+      emit """
+${(prefix + "(clkpt) == " + clkmacro)?right_pad(30) + " ? " + freqmacro?right_pad(24) + " :                       \\"}
+"""
+    endlist
+    emit """
+   0U)
+#endif
+"""
+  endif
+endmacro
+
 /* Returns the downstream use conditions for a clock point.*/
 function GetConsumerConditions(point)
   local conditions = []
@@ -225,6 +309,17 @@ function GetConsumerConditions(point)
 endfunction
 
 /* Emits clock point configuration settings in XML order.*/
+macro EmitModeConfiguration()
+  emit """
+/**
+ * @brief   Enables dynamic clock handling.
+ */
+#if !defined(${modemacro}) || defined(__DOXYGEN__)
+${("#define " + modemacro)?tab_to(44) + modedefault}
+#endif
+"""
+endmacro
+
 macro EmitConfigurations()
   local configs = []
   list model["clocks"] as point
@@ -237,6 +332,11 @@ macro EmitConfigurations()
       local configs = configs + [{"type":"value", "point":point}]
     endif
   endlist
+
+  EmitModeConfiguration()
+  if configs?size > 0
+    emit "\e"
+  endif
 
   list configs as config
     local point = config["point"]

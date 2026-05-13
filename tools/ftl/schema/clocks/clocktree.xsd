@@ -63,6 +63,19 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
+      <xs:attribute name="dynamic" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Clock point is part of the runtime-switchable dynamic set.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="yes"></xs:enumeration>
+            <xs:enumeration value="no"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="sourceType">
@@ -300,7 +313,28 @@
           minOccurs="1">
         </xs:element>
         <xs:element name="suffixes" type="suffixesType" maxOccurs="1" minOccurs="1"></xs:element>
+        <xs:element name="mode" type="modeType" maxOccurs="1" minOccurs="1"></xs:element>
       </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="modeType">
+      <xs:attribute name="macro" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="default" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="TRUE"></xs:enumeration>
+            <xs:enumeration value="FALSE"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="prefixesType">

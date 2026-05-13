@@ -28,6 +28,43 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Dynamic clock point indexes and names
+ * @{
+ */
+#define CLK_HSI16               0U
+#define CLK_HSI48               1U
+#define CLK_HSE                 2U
+#define CLK_PLLP                3U
+#define CLK_PLLQ                4U
+#define CLK_PLLR                5U
+#define CLK_SYSCLK              6U
+#define CLK_HCLK                7U
+#define CLK_PCLK1               8U
+#define CLK_PCLK2               9U
+#define CLK_PCLK1TIM            10U
+#define CLK_PCLK2TIM            11U
+#define CLK_MCO                 12U
+#define CLK_ARRAY_SIZE          13U
+
+#define CLK_POINT_NAMES                                                     \
+  {                                                                         \
+    "HSI16",                                                                \
+    "HSI48",                                                                \
+    "HSE",                                                                  \
+    "PLLP",                                                                 \
+    "PLLQ",                                                                 \
+    "PLLR",                                                                 \
+    "SYSCLK",                                                               \
+    "HCLK",                                                                 \
+    "PCLK1",                                                                \
+    "PCLK2",                                                                \
+    "PCLK1TIM",                                                             \
+    "PCLK2TIM",                                                             \
+    "MCO"                                                                   \
+  }
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -36,6 +73,13 @@
  * @name    Clock point configurations
  * @{
  */
+/**
+ * @brief   Enables dynamic clock handling.
+ */
+#if !defined(STM32_CFG_CLOCK_DYNAMIC) || defined(__DOXYGEN__)
+#define STM32_CFG_CLOCK_DYNAMIC             FALSE
+#endif
+
 /**
  * @brief   Enables the HSI16 clock source.
  */
@@ -1731,6 +1775,34 @@
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Returns the frequency of a clock point in Hz.
+ * @note    Static implementation.
+ *
+ * @param[in] clkpt     clock point to be returned
+ * @return              The clock point frequency in Hz or zero if the
+ *                      frequency is unknown.
+ *
+ * @notapi
+ */
+#if (STM32_CFG_CLOCK_DYNAMIC == FALSE) || defined(__DOXYGEN__)
+#define hal_lld_get_clock_point(clkpt)                                      \
+  ((clkpt) == CLK_HSI16        ? STM32_HSI16_FREQ         :                       \
+   (clkpt) == CLK_HSI48        ? STM32_HSI48_FREQ         :                       \
+   (clkpt) == CLK_HSE          ? STM32_HSE_FREQ           :                       \
+   (clkpt) == CLK_PLLP         ? STM32_PLLP_FREQ          :                       \
+   (clkpt) == CLK_PLLQ         ? STM32_PLLQ_FREQ          :                       \
+   (clkpt) == CLK_PLLR         ? STM32_PLLR_FREQ          :                       \
+   (clkpt) == CLK_SYSCLK       ? STM32_SYSCLK_FREQ        :                       \
+   (clkpt) == CLK_HCLK         ? STM32_HCLK_FREQ          :                       \
+   (clkpt) == CLK_PCLK1        ? STM32_PCLK1_FREQ         :                       \
+   (clkpt) == CLK_PCLK2        ? STM32_PCLK2_FREQ         :                       \
+   (clkpt) == CLK_PCLK1TIM     ? STM32_PCLK1TIM_FREQ      :                       \
+   (clkpt) == CLK_PCLK2TIM     ? STM32_PCLK2TIM_FREQ      :                       \
+   (clkpt) == CLK_MCO          ? STM32_MCO_FREQ           :                       \
+   0U)
+#endif
 
 /*===========================================================================*/
 /* External declarations.                                                    */

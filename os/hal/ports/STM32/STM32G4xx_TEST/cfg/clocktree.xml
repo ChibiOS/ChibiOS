@@ -4,38 +4,39 @@
   <settings>
     <prefixes clock_points="CLK_" macros="STM32_" cfgs="STM32_CFG_" />
     <suffixes values="_VALUE" bits="_BITS" selector="_SEL" enable="_ENABLE" />
+    <mode macro="STM32_CFG_CLOCK_DYNAMIC" default="FALSE" />
   </settings>
   <clocks>
-    <clock point="NONE" enable="never">
+    <clock point="NONE" enable="never" dynamic="no">
       <description>pseudo-clock for disabled sources</description>
       <source frequency="0U" />
     </clock>
-    <clock point="HSI16" enable="manual">
+    <clock point="HSI16" enable="manual" dynamic="yes">
       <description>16MHz high speed internal oscillator</description>
       <bits enabled="(RCC_CR_HSIKERON | RCC_CR_HSION)" disabled="0U" />
       <source frequency="16000000U" />
     </clock>
-    <clock point="HSI48" enable="manual">
+    <clock point="HSI48" enable="manual" dynamic="yes">
       <description>48MHz high speed internal oscillator</description>
       <bits enabled="RCC_CRRCR_HSI48ON" disabled="0U" />
       <source frequency="48000000U" />
     </clock>
-    <clock point="HSE" enable="manual">
+    <clock point="HSE" enable="manual" dynamic="yes">
       <description>high frequency external oscillator</description>
       <bits enabled="RCC_CR_HSEON" disabled="0U" />
       <source frequency="STM32_HSECLK" />
     </clock>
-    <clock point="LSE" enable="manual">
+    <clock point="LSE" enable="manual" dynamic="no">
       <description>low frequency external oscillator</description>
       <bits enabled="RCC_BDCR_LSEON" disabled="0U" />
       <source frequency="STM32_LSECLK" />
     </clock>
-    <clock point="LSI" enable="manual">
+    <clock point="LSI" enable="manual" dynamic="no">
       <description>low frequency internal oscillator</description>
       <bits enabled="RCC_CSR_LSION" disabled="0U" />
       <source frequency="32768U" />
     </clock>
-    <clock point="PLLIN" enable="auto">
+    <clock point="PLLIN" enable="auto" dynamic="no">
       <description>PLL input</description>
       <mux name="PLLSRC">
         <input point="NONE">
@@ -49,7 +50,7 @@
         </input>
       </mux>
     </clock>
-    <clock point="PLLREF" enable="auto">
+    <clock point="PLLREF" enable="auto" dynamic="no">
       <description>PLL reference</description>
       <divider name="PLLM" input="PLLIN">
         <value min="1" max="16" default="4">
@@ -57,7 +58,7 @@
         </value>
       </divider>
     </clock>
-     <clock point="PLLVCO" enable="auto">
+     <clock point="PLLVCO" enable="auto" dynamic="no">
       <description>PLL VCO</description>
       <multiplier name="PLLN" input="PLLREF">
         <value min="8" max="127" default="84">
@@ -65,7 +66,7 @@
         </value>
       </multiplier>
     </clock>
-     <clock point="PLLP" enable="auto">
+     <clock point="PLLP" enable="auto" dynamic="yes">
       <description>PLL P output</description>
       <bits enabled="RCC_PLLCFGR_PLLPEN" disabled="0U" />
       <divider name="PLLP" input="PLLVCO">
@@ -74,7 +75,7 @@
         </value>
       </divider>
     </clock>
-    <clock point="PLLQ" enable="auto">
+    <clock point="PLLQ" enable="auto" dynamic="yes">
       <description>PLL Q output</description>
       <bits enabled="RCC_PLLCFGR_PLLQEN" disabled="0U" />
       <divider name="PLLQ" input="PLLVCO">
@@ -83,7 +84,7 @@
         </set>
       </divider>
     </clock>
-    <clock point="PLLR" enable="auto">
+    <clock point="PLLR" enable="auto" dynamic="yes">
      <description>PLL R output</description>
       <bits enabled="RCC_PLLCFGR_PLLREN" disabled="0U" />
       <divider name="PLLR" input="PLLVCO">
@@ -92,7 +93,7 @@
         </set>
       </divider>
     </clock>
-    <clock point="SYSCLK" enable="always">
+    <clock point="SYSCLK" enable="always" dynamic="yes">
       <description>system clock</description>
       <mux name="SW">
         <input point="HSI16">
@@ -106,7 +107,7 @@
         </input>
       </mux>
     </clock>
-    <clock point="HCLK" enable="always">
+    <clock point="HCLK" enable="always" dynamic="yes">
      <description>AHB</description>
       <divider name="HPRE" input="SYSCLK">
         <choices>
@@ -122,7 +123,7 @@
         </choices>
       </divider>
     </clock>
-    <clock point="PCLK1" enable="always">
+    <clock point="PCLK1" enable="always" dynamic="yes">
      <description>APB1</description>
       <divider name="PPRE1" input="HCLK">
         <choices default="2">
@@ -134,7 +135,7 @@
         </choices>
       </divider>
     </clock>
-    <clock point="PCLK2" enable="always">
+    <clock point="PCLK2" enable="always" dynamic="yes">
      <description>APB2</description>
       <divider name="PPRE2" input="HCLK">
         <choices>
@@ -146,23 +147,23 @@
         </choices>
       </divider>
     </clock>
-    <clock point="PCLK1TIM" enable="always">
+    <clock point="PCLK1TIM" enable="always" dynamic="yes">
       <description>APB1 timer clock</description>
       <source frequency="((STM32_CFG_PCLK1_VALUE == 1) ? STM32_PCLK1_FREQ : (STM32_PCLK1_FREQ * 2U))" />
     </clock>
-    <clock point="PCLK2TIM" enable="always">
+    <clock point="PCLK2TIM" enable="always" dynamic="yes">
       <description>APB2 timer clock</description>
       <source frequency="((STM32_CFG_PCLK2_VALUE == 1) ? STM32_PCLK2_FREQ : (STM32_PCLK2_FREQ * 2U))" />
     </clock>
-    <clock point="CKIN" enable="always">
+    <clock point="CKIN" enable="always" dynamic="no">
       <description>external audio clock input</description>
       <source frequency="0U" />
     </clock>
-    <clock point="HSEDIV" enable="always">
+    <clock point="HSEDIV" enable="always" dynamic="no">
       <description>HSE divided clock</description>
       <source frequency="(STM32_HSE_FREQ / 32U)" />
     </clock>
-    <clock point="MCODIV" enable="always">
+    <clock point="MCODIV" enable="always" dynamic="no">
       <description>MCO source before prescaler</description>
       <mux name="MCOSEL">
         <input point="NONE" default="yes"><bits value="STM32_MCOSEL_NOCLOCK" /></input>
@@ -175,7 +176,7 @@
         <input point="HSI48"><bits value="STM32_MCOSEL_HSI48" /></input>
       </mux>
     </clock>
-    <clock point="MCO" enable="always">
+    <clock point="MCO" enable="always" dynamic="yes">
       <description>MCO output pin</description>
       <divider name="MCOPRE" input="MCODIV">
         <choices>
@@ -187,7 +188,7 @@
         </choices>
       </divider>
     </clock>
-    <clock point="LSCO" enable="always">
+    <clock point="LSCO" enable="always" dynamic="no">
       <description>LSCO output pin</description>
       <mux name="LSCOSEL">
         <input point="NONE" default="yes"><bits value="STM32_LSCOSEL_NOCLOCK" /></input>
@@ -195,7 +196,7 @@
         <input point="LSE"><bits value="STM32_LSCOSEL_LSE" /></input>
       </mux>
     </clock>
-    <clock point="RTC" enable="always">
+    <clock point="RTC" enable="always" dynamic="no">
       <description>RTC</description>
       <mux name="RTCSEL">
         <input point="NONE" default="yes"><bits value="STM32_RTCSEL_NOCLOCK" /></input>
@@ -204,7 +205,7 @@
         <input point="HSEDIV"><bits value="STM32_RTCSEL_HSEDIV" /></input>
       </mux>
     </clock>
-    <clock point="USART1" enable="always">
+    <clock point="USART1" enable="always" dynamic="no">
       <description>USART1</description>
       <mux name="USART1SEL">
         <input point="PCLK2"><bits value="STM32_USART1SEL_PCLK2" /></input>
@@ -213,7 +214,7 @@
         <input point="LSE"><bits value="STM32_USART1SEL_LSE" /></input>
       </mux>
     </clock>
-    <clock point="USART2" enable="always">
+    <clock point="USART2" enable="always" dynamic="no">
       <description>USART2</description>
       <mux name="USART2SEL">
         <input point="PCLK1"><bits value="STM32_USART2SEL_PCLK1" /></input>
@@ -222,7 +223,7 @@
         <input point="LSE"><bits value="STM32_USART2SEL_LSE" /></input>
       </mux>
     </clock>
-    <clock point="USART3" enable="always">
+    <clock point="USART3" enable="always" dynamic="no">
       <description>USART3</description>
       <mux name="USART3SEL">
         <input point="PCLK1"><bits value="STM32_USART3SEL_PCLK1" /></input>
@@ -231,7 +232,7 @@
         <input point="LSE"><bits value="STM32_USART3SEL_LSE" /></input>
       </mux>
     </clock>
-    <clock point="UART4" enable="always">
+    <clock point="UART4" enable="always" dynamic="no">
       <description>UART4</description>
       <mux name="UART4SEL">
         <input point="PCLK1"><bits value="STM32_UART4SEL_PCLK1" /></input>
@@ -240,7 +241,7 @@
         <input point="LSE"><bits value="STM32_UART4SEL_LSE" /></input>
       </mux>
     </clock>
-    <clock point="UART5" enable="always">
+    <clock point="UART5" enable="always" dynamic="no">
       <description>UART5</description>
       <mux name="UART5SEL">
         <input point="PCLK1"><bits value="STM32_UART5SEL_PCLK1" /></input>
@@ -249,7 +250,7 @@
         <input point="LSE"><bits value="STM32_UART5SEL_LSE" /></input>
       </mux>
     </clock>
-    <clock point="LPUART1" enable="always">
+    <clock point="LPUART1" enable="always" dynamic="no">
       <description>LPUART1</description>
       <mux name="LPUART1SEL">
         <input point="PCLK1"><bits value="STM32_LPUART1SEL_PCLK1" /></input>
@@ -258,7 +259,7 @@
         <input point="LSE"><bits value="STM32_LPUART1SEL_LSE" /></input>
       </mux>
     </clock>
-    <clock point="I2C1" enable="always">
+    <clock point="I2C1" enable="always" dynamic="no">
       <description>I2C1</description>
       <mux name="I2C1SEL">
         <input point="PCLK1" default="yes"><bits value="STM32_I2C1SEL_PCLK1" /></input>
@@ -266,7 +267,7 @@
         <input point="HSI16"><bits value="STM32_I2C1SEL_HSI16" /></input>
       </mux>
     </clock>
-    <clock point="I2C2" enable="always">
+    <clock point="I2C2" enable="always" dynamic="no">
       <description>I2C2</description>
       <mux name="I2C2SEL">
         <input point="PCLK1" default="yes"><bits value="STM32_I2C2SEL_PCLK1" /></input>
@@ -274,7 +275,7 @@
         <input point="HSI16"><bits value="STM32_I2C2SEL_HSI16" /></input>
       </mux>
     </clock>
-    <clock point="I2C3" enable="always">
+    <clock point="I2C3" enable="always" dynamic="no">
       <description>I2C3</description>
       <mux name="I2C3SEL">
         <input point="PCLK1" default="yes"><bits value="STM32_I2C3SEL_PCLK1" /></input>
@@ -282,7 +283,7 @@
         <input point="HSI16"><bits value="STM32_I2C3SEL_HSI16" /></input>
       </mux>
     </clock>
-    <clock point="I2C4" enable="always">
+    <clock point="I2C4" enable="always" dynamic="no">
       <description>I2C4</description>
       <mux name="I2C4SEL">
         <input point="PCLK1" default="yes"><bits value="STM32_I2C4SEL_PCLK1" /></input>
@@ -290,7 +291,7 @@
         <input point="HSI16"><bits value="STM32_I2C4SEL_HSI16" /></input>
       </mux>
     </clock>
-    <clock point="LPTIM1" enable="always">
+    <clock point="LPTIM1" enable="always" dynamic="no">
       <description>LPTIM1</description>
       <mux name="LPTIM1SEL">
         <input point="PCLK1" default="yes"><bits value="STM32_LPTIM1SEL_PCLK1" /></input>
@@ -299,7 +300,7 @@
         <input point="LSE"><bits value="STM32_LPTIM1SEL_LSE" /></input>
       </mux>
     </clock>
-    <clock point="SAI1" enable="always">
+    <clock point="SAI1" enable="always" dynamic="no">
       <description>SAI1</description>
       <mux name="SAI1SEL">
         <input point="SYSCLK" default="yes"><bits value="STM32_SAI1SEL_SYSCLK" /></input>
@@ -308,7 +309,7 @@
         <input point="HSI16"><bits value="STM32_SAI1SEL_HSI16" /></input>
       </mux>
     </clock>
-    <clock point="I2S23" enable="always">
+    <clock point="I2S23" enable="always" dynamic="no">
       <description>I2S23</description>
       <mux name="I2S23SEL">
         <input point="SYSCLK" default="yes"><bits value="STM32_I2S23SEL_SYSCLK" /></input>
@@ -317,7 +318,7 @@
         <input point="HSI16"><bits value="STM32_I2S23SEL_HSI16" /></input>
       </mux>
     </clock>
-    <clock point="FDCAN" enable="always">
+    <clock point="FDCAN" enable="always" dynamic="no">
       <description>FDCAN</description>
       <mux name="FDCANSEL">
         <input point="HSE" default="yes"><bits value="STM32_FDCANSEL_HSE" /></input>
@@ -325,14 +326,14 @@
         <input point="PCLK1"><bits value="STM32_FDCANSEL_PCLK1" /></input>
       </mux>
     </clock>
-    <clock point="CLK48" enable="always">
+    <clock point="CLK48" enable="always" dynamic="no">
       <description>48MHz clock</description>
       <mux name="CLK48SEL">
         <input point="HSI48" default="yes"><bits value="STM32_CLK48SEL_HSI48" /></input>
         <input point="PLLQ"><bits value="STM32_CLK48SEL_PLLQCLK" /></input>
       </mux>
     </clock>
-    <clock point="ADC12" enable="always">
+    <clock point="ADC12" enable="always" dynamic="no">
       <description>ADC12</description>
       <mux name="ADC12SEL">
         <input point="NONE"><bits value="STM32_ADC12SEL_NOCLK" /></input>
@@ -340,7 +341,7 @@
         <input point="SYSCLK"><bits value="STM32_ADC12SEL_SYSCLK" /></input>
       </mux>
     </clock>
-    <clock point="ADC345" enable="always">
+    <clock point="ADC345" enable="always" dynamic="no">
       <description>ADC345</description>
       <mux name="ADC345SEL">
         <input point="NONE"><bits value="STM32_ADC345SEL_NOCLK" /></input>
@@ -348,7 +349,7 @@
         <input point="SYSCLK"><bits value="STM32_ADC345SEL_SYSCLK" /></input>
       </mux>
     </clock>
-    <clock point="QSPI" enable="always">
+    <clock point="QSPI" enable="always" dynamic="no">
       <description>QSPI</description>
       <mux name="QSPISEL">
         <input point="SYSCLK" default="yes"><bits value="STM32_QSPISEL_SYSCLK" /></input>
@@ -356,11 +357,11 @@
         <input point="PLLQ"><bits value="STM32_QSPISEL_PLLQCLK" /></input>
       </mux>
     </clock>
-    <clock point="RNG" enable="always">
+    <clock point="RNG" enable="always" dynamic="no">
       <description>RNG</description>
       <source frequency="STM32_CLK48_FREQ" />
     </clock>
-    <clock point="USB" enable="always">
+    <clock point="USB" enable="always" dynamic="no">
       <description>USB</description>
       <source frequency="STM32_CLK48_FREQ" />
     </clock>
