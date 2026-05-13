@@ -33,18 +33,19 @@ function ParseScaler(scaler)
   if scaler.value[0]??
     local kind = "value"
     local value = scaler.value[0]
-    local data = {"min":(value.@min[0]!"")?string, "max":(value.@max[0]!"")?string, "bits":value.@bits[0]?string}
+    local data = {"min":(value.@min[0]!"")?string, "max":(value.@max[0]!"")?string, "default":(value.@default[0]!"")?string, "bits":value.@bits[0]?string}
   elseif scaler.set[0]??
     local kind = "set"
     local set = scaler.set[0]
-    local data = {"values":(set.@values[0]!"")?string, "bits":(set.@bits[0]!"")?string}
+    local data = {"values":(set.@values[0]!"")?string, "default":(set.@default[0]!"")?string, "bits":(set.@bits[0]!"")?string}
   elseif scaler.choices[0]??
     local kind = "choices"
+    local default = (scaler.choices[0].@default[0]!"")?string
     local choices = []
     list scaler.choices.choice as choice
       local choices = choices + [{"item":choice.@item[0]?string, "value":choice.@value[0]?string, "bits":choice.@bits[0]?string}]
     endlist
-    local data = {"choices":choices}
+    local data = {"choices":choices, "default":default}
   endif
 
   return {"kind":kind, "data":data}
@@ -53,7 +54,9 @@ endfunction
 /* Returns the default configuration value for a scaler.*/
 function GetScalerDefault(point)
   local data = point["data"]
-  if point["kind"] == "value"
+  if (data["default"]!"") != ""
+    local default = data["default"]
+  elseif point["kind"] == "value"
     local default = data["min"]
   elseif point["kind"] == "set"
     local default = data["values"]?replace(",", " ")?word_list[0]!""
@@ -72,7 +75,7 @@ endfunction
 
 /* Returns the enable condition macro for a clock point.*/
 function GetEnableMacro(point)
-  if point["enable"] == "manual" || point["enable"] == "auto" || point["enable"] == "never"
+  if point["enable"] == "manual" || point["enable"] == "auto" || point["enable"] == "never" || point["enable"] == "always"
     return premacro + point["name"] + postenabled
   endif
 
@@ -276,7 +279,7 @@ endmacro
 macro EmitEnableDefinitions()
   local enabledpoints = []
   list model["clocks"] as point
-    if point["enable"] == "manual" || point["enable"] == "auto" || point["enable"] == "never"
+    if point["enable"] == "manual" || point["enable"] == "auto" || point["enable"] == "never" || point["enable"] == "always"
       local enabledpoints = enabledpoints + [point]
     endif
   endlist
@@ -292,6 +295,8 @@ macro EmitEnableDefinitions()
       else
         local expression = "FALSE"
       endif
+    elseif point["enable"] == "always"
+      local expression = "TRUE"
     else
       local expression = "FALSE"
     endif
@@ -339,7 +344,7 @@ macro EmitFrequencyDefinition(point, frequency)
   local freqmacro = premacro + point["name"] + postclocks
   local enmacro = GetEnableMacro(point)
 
-  if point["enable"] == "manual" || point["enable"] == "auto" || point["enable"] == "never"
+  if point["enable"] == "manual" || point["enable"] == "auto" || point["enable"] == "never" || point["enable"] == "always"
     emit """
 #if (${enmacro} == TRUE) || defined(__DOXYGEN__)
 ${("#define " + freqmacro)?tab_to(44) + frequency}
@@ -540,9 +545,7 @@ macro EmitDerivedConstants()
       emit "\e"
     endif
     EmitClockBits(point=point)
-    if point["type"] != "source" || point["bits"]?size > 0
-      emit "\e"
-    endif
+    emit "\e"
     EmitClockFrequency(point=point)
     sep
       emit "\e"

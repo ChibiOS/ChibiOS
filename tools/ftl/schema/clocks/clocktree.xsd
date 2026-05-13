@@ -59,6 +59,7 @@
             <xs:enumeration value="never"></xs:enumeration>
             <xs:enumeration value="manual"></xs:enumeration>
             <xs:enumeration value="auto"></xs:enumeration>
+            <xs:enumeration value="always"></xs:enumeration>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
@@ -201,6 +202,15 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
+      <xs:attribute name="default">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="(0|[1-9][0-9]*|[A-Za-z_][A-Za-z0-9_]*)"></xs:pattern>
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
         <xs:attribute name="bits" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
@@ -221,6 +231,15 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
+      <xs:attribute name="default">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="(0|[1-9][0-9]*)"></xs:pattern>
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="bits">
         <xs:simpleType>
           <xs:restriction base="xs:string">
@@ -235,6 +254,15 @@
       <xs:sequence>
         <xs:element name="choice" type="choiceType" maxOccurs="unbounded" minOccurs="1"></xs:element>
       </xs:sequence>
+      <xs:attribute name="default">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="(0|[1-9][0-9]*|[A-Za-z_][A-Za-z0-9_]*)"></xs:pattern>
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="choiceType">
