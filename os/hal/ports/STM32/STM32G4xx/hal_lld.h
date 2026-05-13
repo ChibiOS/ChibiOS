@@ -1543,7 +1543,7 @@ typedef uint32_t halcnt_t;
    (clkpt) == CLK_PCLK1TIM  ? STM32_TIMP1CLK        :                       \
    (clkpt) == CLK_PCLK2     ? STM32_PCLK2           :                       \
    (clkpt) == CLK_PCLK2TIM  ? STM32_TIMP2CLK        :                       \
-   (clkpt) == CLK_MCO       ? STM32_MCOCLK          :                        \
+   (clkpt) == CLK_MCO       ? STM32_MCOCLK          :                       \
    0U)
 #endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
