@@ -6,28 +6,33 @@
     <suffixes values="_VALUE" bits="_BITS" selector="_SEL" enable="_ENABLE" />
   </settings>
   <clocks>
-    <clock point="NONE" enable="none">
+    <clock point="NONE" enable="never">
       <description>pseudo-clock for disabled sources</description>
       <source frequency="0U" />
     </clock>
     <clock point="HSI16" enable="manual">
       <description>16MHz high speed internal oscillator</description>
+      <bits enabled="RCC_CR_HSION" disabled="0U" />
       <source frequency="16000000U" />
     </clock>
     <clock point="HSI48" enable="manual">
       <description>48MHz high speed internal oscillator</description>
+      <bits enabled="RCC_CRRCR_HSI48ON" disabled="0U" />
       <source frequency="48000000U" />
     </clock>
     <clock point="HSE" enable="manual">
       <description>high frequency external oscillator</description>
+      <bits enabled="RCC_CR_HSEON" disabled="0U" />
       <source frequency="STM32_HSECLK" />
     </clock>
     <clock point="LSE" enable="manual">
       <description>low frequency external oscillator</description>
+      <bits enabled="RCC_BDCR_LSEON" disabled="0U" />
       <source frequency="STM32_LSECLK" />
     </clock>
     <clock point="LSI" enable="manual">
       <description>low frequency internal oscillator</description>
+      <bits enabled="RCC_CSR_LSION" disabled="0U" />
       <source frequency="32768U" />
     </clock>
     <clock point="PLLIN" enable="auto">
@@ -52,18 +57,21 @@
     </clock>
      <clock point="PLLP" enable="manual">
      <description>PLL P output</description>
+      <bits enabled="RCC_PLLCFGR_PLLPEN" disabled="0U" />
       <divider name="PLLP" input="PLLVCO">
         <value min="2" max="31" bits="(%N% &lt;&lt; 27)" />
       </divider>
     </clock>
     <clock point="PLLQ" enable="manual">
      <description>PLL Q output</description>
+      <bits enabled="RCC_PLLCFGR_PLLQEN" disabled="0U" />
       <divider name="PLLQ" input="PLLVCO">
         <set values="2 4 6 8" bits="(((%N% / 2U) - 1U) &lt;&lt; 21)" />
       </divider>
     </clock>
     <clock point="PLLR" enable="manual">
      <description>PLL R output</description>
+      <bits enabled="RCC_PLLCFGR_PLLREN" disabled="0U" />
       <divider name="PLLR" input="PLLVCO">
         <set values="2 4 6 8" bits="(((%N% / 2U) - 1U) &lt;&lt; 25)" />
       </divider>

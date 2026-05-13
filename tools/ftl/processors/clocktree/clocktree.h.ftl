@@ -55,10 +55,10 @@
 /*===========================================================================*/
 
 /**
- * @name    Calculated or fixed clocks
+ * @name    Clock point derived constants and checks
  * @{
  */
-[@clocktree.EmitSourcePoints /]
+[@clocktree.EmitDerivedConstants /]
 /** @} */
 
 /*===========================================================================*/

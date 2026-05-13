@@ -24,6 +24,7 @@ postvalues = doc1.clocktree.settings.suffixes.@values[0]?string
 postbits = doc1.clocktree.settings.suffixes.@bits[0]?string
 postchoices = doc1.clocktree.settings.suffixes.@selector[0]?string
 postenable = doc1.clocktree.settings.suffixes.@enable[0]?string
+postenabled = "_ENABLED"
 
 /* Parses divider/multiplier value selection subtrees.*/
 function ParseScaler(scaler)
@@ -69,6 +70,15 @@ function GetScalerDefault(point)
   return default
 endfunction
 
+/* Returns the enable condition macro for a clock point.*/
+function GetEnableMacro(point)
+  if point["enable"] == "manual" || point["enable"] == "auto" || point["enable"] == "never"
+    return premacro + point["name"] + postenabled
+  endif
+
+  stop ">>>> Unknown enable mode '" + point["enable"] + "' for clock point '" + point["name"] + "'"
+endfunction
+
 /* Initializes the parsed clock tree data model.*/
 function Initialize()
   local clocknames = []
@@ -90,6 +100,14 @@ function Initialize()
     else
       local clockdescr = "no description"
     endif
+    if clock.bits[0]??
+      local clockbits = {"enabled":clock.bits[0].@enabled[0]?string, "disabled":clock.bits[0].@disabled[0]?string}
+    else
+      local clockbits = {}
+    endif
+    if clockenable == "manual" && clockbits?size == 0
+      stop ">>>> Missing enable bits for manually enabled clock point '" + clockname + "'"
+    endif
 
     /* Determining the type of the clock point by looking at the child element.*/
     if clock.source[0]??
@@ -100,7 +118,7 @@ function Initialize()
       else
         local clockcomplex = ""
       endif
-      local clockpoint = {"type":"source", "description":clockdescr, "name":clockname, "enable":clockenable, "frequency":clockfreq, "complex":clockcomplex}
+      local clockpoint = {"type":"source", "description":clockdescr, "name":clockname, "enable":clockenable, "bits":clockbits, "frequency":clockfreq, "complex":clockcomplex}
       local points = points + [clockpoint]
       local clocks = clocks + [clockpoint]
 
@@ -118,7 +136,7 @@ function Initialize()
         endif
         local muxinputs = muxinputs + [{"point":inputpoint, "bits":inputbits, "default":inputdefault}]
       endlist
-      local clockpoint = {"type":"mux", "name":clockname, "muxname":muxname, "inputs":muxinputs, "default":muxdefault, "description":clockdescr, "enable":clockenable}
+      local clockpoint = {"type":"mux", "name":clockname, "muxname":muxname, "inputs":muxinputs, "default":muxdefault, "description":clockdescr, "enable":clockenable, "bits":clockbits}
       local muxes = muxes + [clockpoint]
       local clocks = clocks + [clockpoint]
 
@@ -127,7 +145,7 @@ function Initialize()
       local divname = clock.divider[0].@name[0]
       local divinput = clock.divider[0].@input[0]?string
       local divparsed = ParseScaler(clock.divider[0])
-      local clockpoint = {"type":"divider", "description":clockdescr, "name":clockname, "enable":clockenable, "divname":divname, "input":divinput, "kind":divparsed["kind"], "data":divparsed["data"]}
+      local clockpoint = {"type":"divider", "description":clockdescr, "name":clockname, "enable":clockenable, "bits":clockbits, "divname":divname, "input":divinput, "kind":divparsed["kind"], "data":divparsed["data"]}
       local dividers = dividers + [clockpoint]
       local clocks = clocks + [clockpoint]
 
@@ -136,7 +154,7 @@ function Initialize()
       local mulname = clock.multiplier[0].@name[0]
       local mulinput = clock.multiplier[0].@input[0]?string
       local mulparsed = ParseScaler(clock.multiplier[0])
-      local clockpoint = {"type":"multiplier", "description":clockdescr, "name":clockname, "enable":clockenable, "mulname":mulname, "input":mulinput, "kind":mulparsed["kind"], "data":mulparsed["data"]}
+      local clockpoint = {"type":"multiplier", "description":clockdescr, "name":clockname, "enable":clockenable, "bits":clockbits, "mulname":mulname, "input":mulinput, "kind":mulparsed["kind"], "data":mulparsed["data"]}
       local multipliers = multipliers + [clockpoint]
       local clocks = clocks + [clockpoint]
     endif
@@ -169,6 +187,29 @@ endfunction
 
 /* Static data parsed at startup.*/
 model = Initialize()
+
+/* Returns the downstream use conditions for a clock point.*/
+function GetConsumerConditions(point)
+  local conditions = []
+  list model["clocks"] as consumer
+    if consumer["type"] == "mux"
+      local enmacro = GetEnableMacro(consumer)
+      local selmacro = precfg + consumer["name"] + postchoices
+      list consumer["inputs"] as input
+        if input["point"] == point["name"]
+          local conditions = conditions + ["((" + enmacro + " == TRUE) && (" + selmacro + " == " + input["bits"] + "))"]
+        endif
+      endlist
+    elseif consumer["type"] == "divider" || consumer["type"] == "multiplier"
+      if consumer["input"] == point["name"]
+        local enmacro = GetEnableMacro(consumer)
+        local conditions = conditions + ["(" + enmacro + " == TRUE)"]
+      endif
+    endif
+  endlist
+
+  return conditions
+endfunction
 
 /* Emits clock point configuration settings in XML order.*/
 macro EmitConfigurations()
@@ -231,49 +272,278 @@ ${("#define " + name)?tab_to(44) + default}
   endlist
 endmacro
 
-/* Emits definitions of all clock sources.*/
-macro EmitSourcePoints()
-  list model["points"] as point
-    local freqmacro = premacro + point["name"] + postclocks
-    if point["enable"] == "manual"
-      local enmacro = precfg + point["name"] + postenable
-      emit """
-/**
- * @brief   ${point["description"]?cap_first} clock point.
- */
-#if (${enmacro} == TRUE) || defined(__DOXYGEN__)
-${("#define " + freqmacro)?tab_to(44) + point["frequency"]}
-#else
-${("#define " + freqmacro)?tab_to(44) + "0U"}
-#endif
-"""
-    else
-      emit """
-/**
- * @brief   ${point["description"]?cap_first} clock point.
- */
-${("#define " + freqmacro)?tab_to(44) + point["frequency"]}
-"""
+/* Emits enable-state definitions for all clock points.*/
+macro EmitEnableDefinitions()
+  local enabledpoints = []
+  list model["clocks"] as point
+    if point["enable"] == "manual" || point["enable"] == "auto" || point["enable"] == "never"
+      local enabledpoints = enabledpoints + [point]
     endif
+  endlist
+
+  list enabledpoints as point
+    local enmacro = GetEnableMacro(point)
+    if point["enable"] == "manual"
+      local expression = precfg + point["name"] + postenable
+    elseif point["enable"] == "auto"
+      local conditions = GetConsumerConditions(point)
+      if conditions?size > 0
+        local expression = "(" + conditions?join(" || ") + ")"
+      else
+        local expression = "FALSE"
+      endif
+    else
+      local expression = "FALSE"
+    endif
+    emit """
+/**
+ * @brief   ${point["name"]} clock derived enable state.
+ */
+${("#define " + enmacro)?tab_to(44) + expression}
+"""
     sep
       emit "\e"
     endsep
   endlist
 endmacro
 
-/* Emits definitions of all clock mux selectors.*/
-macro EmitMuxConfigurations()
-  list model["muxes"] as mux
-    muxsel = precfg + mux["name"] + postchoices
-    muxdefault = mux["default"]
-    if muxdefault == ""
-      stop ">>>> Missing default input for clock mux '" + mux["name"] + "'"
+/* Emits one bits definition, optionally combined with enable-state bits.*/
+macro EmitBitsDefinition(point, bits)
+  local bitsmacro = premacro + point["name"] + postbits
+  local enmacro = GetEnableMacro(point)
+
+  if point["bits"]?size > 0
+    if bits == ""
+      local enabledbits = point["bits"]["enabled"]
+      local disabledbits = point["bits"]["disabled"]
+    else
+      local enabledbits = "(" + point["bits"]["enabled"] + " | " + bits + ")"
+      local disabledbits = "(" + point["bits"]["disabled"] + " | " + bits + ")"
     endif
     emit """
-#if !defined(${muxsel}) || defined(__DOXYGEN__)
-${("#define " + muxsel)?tab_to(44) + muxdefault}
+#if (${enmacro} == TRUE) || defined(__DOXYGEN__)
+${("#define " + bitsmacro)?tab_to(44) + enabledbits}
+#else
+${("#define " + bitsmacro)?tab_to(44) + disabledbits}
 #endif
 """
+  else
+    emit """
+${("#define " + bitsmacro)?tab_to(44) + bits}
+"""
+  endif
+endmacro
+
+/* Emits one frequency definition, optionally conditional on enable state.*/
+macro EmitFrequencyDefinition(point, frequency)
+  local freqmacro = premacro + point["name"] + postclocks
+  local enmacro = GetEnableMacro(point)
+
+  if point["enable"] == "manual" || point["enable"] == "auto" || point["enable"] == "never"
+    emit """
+#if (${enmacro} == TRUE) || defined(__DOXYGEN__)
+${("#define " + freqmacro)?tab_to(44) + frequency}
+#else
+${("#define " + freqmacro)?tab_to(44) + "0U"}
+#endif
+"""
+  else
+    emit """
+${("#define " + freqmacro)?tab_to(44) + frequency}
+"""
+  endif
+endmacro
+
+/* Emits configuration value checks for one clock point.*/
+macro EmitClockChecks(point)
+  if point["enable"] == "manual"
+    local enmacro = precfg + point["name"] + postenable
+    emit """
+#if !defined(__DOXYGEN__) && (${enmacro} != TRUE) && (${enmacro} != FALSE)
+#error "invalid ${enmacro} value specified"
+#endif
+"""
+  endif
+
+  if point["type"] == "mux"
+    local selmacro = precfg + point["name"] + postchoices
+    local checks = []
+    list point["inputs"] as input
+      local checks = checks + ["(" + selmacro + " != " + input["bits"] + ")"]
+    endlist
+    emit """
+#if !defined(__DOXYGEN__) && (${checks?join(" && ")})
+#error "invalid ${selmacro} value specified"
+#endif
+"""
+  elseif point["type"] == "divider" || point["type"] == "multiplier"
+    local valmacro = precfg + point["name"] + postvalues
+    local checks = []
+    if point["kind"] == "value"
+      local minval = point["data"]["min"]
+      local maxval = point["data"]["max"]
+      if minval != ""
+        local checks = checks + ["(" + valmacro + " < " + minval + ")"]
+      endif
+      if maxval != ""
+        local checks = checks + ["(" + valmacro + " > " + maxval + ")"]
+      endif
+      local operator = " || "
+    elseif point["kind"] == "set"
+      list point["data"]["values"]?replace(",", " ")?word_list as value
+        local checks = checks + ["(" + valmacro + " != " + value + ")"]
+      endlist
+      local operator = " && "
+    else
+      list point["data"]["choices"] as choice
+        local checks = checks + ["(" + valmacro + " != " + choice["value"] + ")"]
+      endlist
+      local operator = " && "
+    endif
+    if checks?size > 0
+      emit """
+#if !defined(__DOXYGEN__) && (${checks?join(operator)})
+#error "invalid ${valmacro} value specified"
+#endif
+"""
+    endif
+  endif
+endmacro
+
+/* Emits derived register bits for one clock point.*/
+macro EmitClockBits(point)
+  local bitsmacro = premacro + point["name"] + postbits
+
+  if point["type"] == "source"
+    emit """
+/**
+ * @brief   ${point["name"]} clock register bits.
+ */
+"""
+    if point["bits"]?size > 0
+      EmitBitsDefinition(point=point, bits="")
+    else
+      EmitBitsDefinition(point=point, bits="0U")
+    endif
+  elseif point["type"] == "mux"
+    local selmacro = precfg + point["name"] + postchoices
+    emit """
+/**
+ * @brief   ${point["name"]} clock register bits.
+ */
+"""
+    list point["inputs"] as input
+      if input?is_first
+        emit """
+#if (${selmacro} == ${input["bits"]}) || defined(__DOXYGEN__)
+"""
+      else
+        emit """
+#elif (${selmacro} == ${input["bits"]})
+"""
+      endif
+      if point["bits"]?size > 0
+        EmitBitsDefinition(point=point, bits=input["bits"])
+      else
+        emit """
+${("#define " + bitsmacro)?tab_to(44) + input["bits"]}
+"""
+      endif
+    endlist
+    emit """
+#endif
+"""
+  elseif point["type"] == "divider" || point["type"] == "multiplier"
+    local valmacro = precfg + point["name"] + postvalues
+    emit """
+/**
+ * @brief   ${point["name"]} clock register bits.
+ */
+"""
+    if point["kind"] == "choices"
+      list point["data"]["choices"] as choice
+        if choice?is_first
+          emit """
+#if (${valmacro} == ${choice["value"]}) || defined(__DOXYGEN__)
+"""
+        else
+          emit """
+#elif (${valmacro} == ${choice["value"]})
+"""
+        endif
+        EmitBitsDefinition(point=point, bits=choice["bits"])
+      endlist
+      emit """
+#endif
+"""
+    else
+      local bits = point["data"]["bits"]?replace("%N%", valmacro)
+      EmitBitsDefinition(point=point, bits=bits)
+    endif
+  endif
+endmacro
+
+/* Emits the calculated frequency for one clock point.*/
+macro EmitClockFrequency(point)
+  emit """
+/**
+ * @brief   ${point["description"]?cap_first} clock point.
+ */
+"""
+  if point["type"] == "source"
+    EmitFrequencyDefinition(point=point, frequency=point["frequency"])
+  elseif point["type"] == "mux"
+    local selmacro = precfg + point["name"] + postchoices
+    local freqmacro = premacro + point["name"] + postclocks
+    local enmacro = GetEnableMacro(point)
+    list point["inputs"] as input
+      local condition = "((" + enmacro + " == TRUE) && (" + selmacro + " == " + input["bits"] + "))"
+      if input?is_first
+        emit """
+#if ${condition} || defined(__DOXYGEN__)
+"""
+      else
+        emit """
+#elif ${condition}
+"""
+      endif
+      local inputfreq = premacro + input["point"] + postclocks
+      emit """
+${("#define " + freqmacro)?tab_to(44) + inputfreq}
+"""
+    endlist
+    emit """
+#else
+${("#define " + freqmacro)?tab_to(44) + "0U"}
+#endif
+"""
+  elseif point["type"] == "divider"
+    local valmacro = precfg + point["name"] + postvalues
+    local inputfreq = premacro + point["input"] + postclocks
+    local frequency = "(" + inputfreq + " / " + valmacro + ")"
+    EmitFrequencyDefinition(point=point, frequency=frequency)
+  elseif point["type"] == "multiplier"
+    local valmacro = precfg + point["name"] + postvalues
+    local inputfreq = premacro + point["input"] + postclocks
+    local frequency = "(" + inputfreq + " * " + valmacro + ")"
+    EmitFrequencyDefinition(point=point, frequency=frequency)
+  endif
+endmacro
+
+/* Emits checks, register bits and calculated frequencies in XML order.*/
+macro EmitDerivedConstants()
+  EmitEnableDefinitions()
+  emit "\e"
+  list model["clocks"] as point
+    EmitClockChecks(point=point)
+    if point["enable"] == "manual" || point["type"] == "mux" || point["type"] == "divider" || point["type"] == "multiplier"
+      emit "\e"
+    endif
+    EmitClockBits(point=point)
+    if point["type"] != "source" || point["bits"]?size > 0
+      emit "\e"
+    endif
+    EmitClockFrequency(point=point)
     sep
       emit "\e"
     endsep
