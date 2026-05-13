@@ -25,6 +25,7 @@ postbits = doc1.clocktree.settings.suffixes.@bits[0]?string
 postchoices = doc1.clocktree.settings.suffixes.@selector[0]?string
 postenable = doc1.clocktree.settings.suffixes.@enable[0]?string
 postenabled = "_ENABLED"
+contindent = "                                             "
 
 /* Returns the string value of a bits element.*/
 function GetBitsValue(node)
@@ -209,13 +210,13 @@ function GetConsumerConditions(point)
       local selmacro = precfg + consumer["name"] + postchoices
       list consumer["inputs"] as input
         if input["point"] == point["name"]
-          local conditions = conditions + ["((" + enmacro + " == TRUE) && (" + selmacro + " == " + input["bits"] + "))"]
+          local conditions = conditions + [{"terms":[enmacro + " == TRUE", selmacro + " == " + input["bits"]]}]
         endif
       endlist
     elseif consumer["type"] == "divider" || consumer["type"] == "multiplier"
       if consumer["input"] == point["name"]
         local enmacro = GetEnableMacro(consumer)
-        local conditions = conditions + ["(" + enmacro + " == TRUE)"]
+        local conditions = conditions + [{"terms":[enmacro + " == TRUE"]}]
       endif
     endif
   endlist
@@ -285,6 +286,48 @@ ${("#define " + name)?tab_to(44) + default}
 endmacro
 
 /* Emits enable-state definitions for all clock points.*/
+macro EmitEnableExpression(name, expression, conditions)
+  if conditions?size > 1 || (conditions?size == 1 && conditions[0]["terms"]?size > 1)
+    list conditions as condition
+      local terms = condition["terms"]
+      list terms as term
+        if term?is_first
+          if condition?is_first
+            local line = ("#define " + name)?tab_to(44) + "("
+          else
+            local line = contindent
+          endif
+          if terms?size > 1
+            local line = line + "("
+          endif
+        else
+          local line = contindent
+        endif
+        local line = line + "(" + term + ")"
+        if term?is_last
+          if terms?size > 1
+            local line = line + ")"
+          endif
+          if condition?is_last
+            local line = line + ")"
+          else
+            local line = line + " || \\"
+          endif
+        else
+          local line = line + " && \\"
+        endif
+        emit """
+${line}
+"""
+      endlist
+    endlist
+  else
+    emit """
+${("#define " + name)?tab_to(44) + expression}
+"""
+  endif
+endmacro
+
 macro EmitEnableDefinitions()
   local enabledpoints = []
   list model["clocks"] as point
@@ -295,12 +338,17 @@ macro EmitEnableDefinitions()
 
   list enabledpoints as point
     local enmacro = GetEnableMacro(point)
+    local conditions = []
     if point["enable"] == "manual"
       local expression = precfg + point["name"] + postenable
     elseif point["enable"] == "auto"
       local conditions = GetConsumerConditions(point)
       if conditions?size > 0
-        local expression = "(" + conditions?join(" || ") + ")"
+        if conditions?size == 1 && conditions[0]["terms"]?size == 1
+          local expression = "((" + conditions[0]["terms"][0] + "))"
+        else
+          local expression = ""
+        endif
       else
         local expression = "FALSE"
       endif
@@ -313,8 +361,8 @@ macro EmitEnableDefinitions()
 /**
  * @brief   ${point["name"]} clock derived enable state.
  */
-${("#define " + enmacro)?tab_to(44) + expression}
 """
+    EmitEnableExpression(name=enmacro, expression=expression, conditions=conditions)
     sep
       emit "\e"
     endsep
@@ -369,6 +417,20 @@ ${("#define " + freqmacro)?tab_to(44) + frequency}
 endmacro
 
 /* Emits configuration value checks for one clock point.*/
+function HasClockChecks(point)
+  if point["enable"] == "manual"
+    return true
+  endif
+
+  if point["type"] == "divider" || point["type"] == "multiplier"
+    if point["kind"] == "value" || point["kind"] == "set"
+      return true
+    endif
+  endif
+
+  return false
+endfunction
+
 macro EmitClockChecks(point)
   if point["enable"] == "manual"
     local enmacro = precfg + point["name"] + postenable
@@ -539,15 +601,15 @@ macro EmitDerivedConstants()
   EmitEnableDefinitions()
   emit "\e"
   list model["clocks"] as point
+    if !point?is_first
+      emit "\e"
+    endif
     EmitClockChecks(point=point)
-    if point["enable"] == "manual" || point["type"] == "mux" || point["type"] == "divider" || point["type"] == "multiplier"
+    if HasClockChecks(point)
       emit "\e"
     endif
     EmitClockBits(point=point)
     emit "\e"
     EmitClockFrequency(point=point)
-    sep
-      emit "\e"
-    endsep
   endlist
 endmacro
