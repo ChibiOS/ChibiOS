@@ -26,6 +26,15 @@ postchoices = doc1.clocktree.settings.suffixes.@selector[0]?string
 postenable = doc1.clocktree.settings.suffixes.@enable[0]?string
 postenabled = "_ENABLED"
 
+/* Returns the string value of a bits element.*/
+function GetBitsValue(node)
+  if node.bits[0]??
+    return node.bits[0].@value[0]?string
+  endif
+
+  stop ">>>> Missing bits element"
+endfunction
+
 /* Parses divider/multiplier value selection subtrees.*/
 function ParseScaler(scaler)
   local kind = ""
@@ -33,17 +42,17 @@ function ParseScaler(scaler)
   if scaler.value[0]??
     local kind = "value"
     local value = scaler.value[0]
-    local data = {"min":(value.@min[0]!"")?string, "max":(value.@max[0]!"")?string, "default":(value.@default[0]!"")?string, "bits":value.@bits[0]?string}
+    local data = {"min":(value.@min[0]!"")?string, "max":(value.@max[0]!"")?string, "default":(value.@default[0]!"")?string, "bits":GetBitsValue(value)}
   elseif scaler.set[0]??
     local kind = "set"
     local set = scaler.set[0]
-    local data = {"values":(set.@values[0]!"")?string, "default":(set.@default[0]!"")?string, "bits":(set.@bits[0]!"")?string}
+    local data = {"values":(set.@values[0]!"")?string, "default":(set.@default[0]!"")?string, "bits":GetBitsValue(set)}
   elseif scaler.choices[0]??
     local kind = "choices"
     local default = (scaler.choices[0].@default[0]!"")?string
     local choices = []
     list scaler.choices.choice as choice
-      local choices = choices + [{"item":choice.@item[0]?string, "value":choice.@value[0]?string, "bits":choice.@bits[0]?string}]
+      local choices = choices + [{"item":choice.@item[0]?string, "value":choice.@value[0]?string, "bits":GetBitsValue(choice)}]
     endlist
     local data = {"choices":choices, "default":default}
   endif
@@ -132,7 +141,7 @@ function Initialize()
       local muxdefault = ""
       list clock.mux.input as input
         local inputpoint = input.@point[0]
-        local inputbits = input.@bits[0]!"0"
+        local inputbits = GetBitsValue(input)
         local inputdefault = (input.@default[0]!"no")?string
         if inputdefault == "yes"
           local muxdefault = inputbits
