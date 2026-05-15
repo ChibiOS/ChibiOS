@@ -3,6 +3,10 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
     <xs:element name="clocktree" type="clocktreeType">
+      <xs:key name="clockPointKey">
+        <xs:selector xpath="clocks/clock"></xs:selector>
+        <xs:field xpath="@point"></xs:field>
+      </xs:key>
       <xs:key name="stateNameKey">
         <xs:selector xpath="settings/states/state"></xs:selector>
         <xs:field xpath="@name"></xs:field>
@@ -27,6 +31,10 @@
         <xs:selector xpath="settings/limit-values/state-values/limit"></xs:selector>
         <xs:field xpath="@name"></xs:field>
       </xs:keyref>
+      <xs:keyref name="consumerInputRef" refer="clockPointKey">
+        <xs:selector xpath="consumers/consumer"></xs:selector>
+        <xs:field xpath="@input"></xs:field>
+      </xs:keyref>
     </xs:element>
     
     <xs:complexType name="clocktreeType">
@@ -35,6 +43,9 @@
             <xs:element name="clocks" type="clocksType" maxOccurs="1"
           minOccurs="1">
         </xs:element>
+        <xs:element name="consumers" type="consumersType" maxOccurs="1"
+          minOccurs="0">
+        </xs:element>
       </xs:sequence>
     </xs:complexType>
 
@@ -42,6 +53,48 @@
       <xs:sequence>
         <xs:element name="clock" type="clockType" maxOccurs="unbounded" minOccurs="1"></xs:element>
       </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="consumersType">
+      <xs:sequence>
+        <xs:element name="consumer" type="consumerType" maxOccurs="unbounded"
+          minOccurs="1">
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="consumerType">
+      <xs:sequence>
+        <xs:element name="description" type="xs:string" maxOccurs="1"
+          minOccurs="0">
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="input" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="condition" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
     
 

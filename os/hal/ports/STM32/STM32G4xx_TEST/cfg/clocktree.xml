@@ -299,7 +299,7 @@
         <input point="LSE"><bits value="STM32_LSCOSEL_LSE" /></input>
       </mux>
     </clock>
-    <clock point="RTC" enable="always" dynamic="no">
+    <clock point="RTC" enable="auto" dynamic="no">
       <description>RTC</description>
       <mux name="RTCSEL">
         <input point="NONE" default="yes"><bits value="STM32_RTCSEL_NOCLOCK" /></input>
@@ -471,4 +471,9 @@
       <source input="CLK48" frequency="%I%" />
     </clock>
   </clocks>
+  <consumers>
+    <consumer name="RTC" input="RTC" condition="HAL_USE_RTC == TRUE">
+      <description>RTC peripheral clock consumer</description>
+    </consumer>
+  </consumers>
 </clocktree>

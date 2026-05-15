@@ -799,7 +799,7 @@
 /**
  * @brief   RTC clock derived enable state.
  */
-#define STM32_RTC_ENABLED                   TRUE
+#define STM32_RTC_ENABLED                   ((HAL_USE_RTC == TRUE))
 
 /**
  * @brief   USART1 clock derived enable state.
@@ -1341,7 +1341,9 @@
 /**
  * @brief   PLLIN clock register bits.
  */
-#if (STM32_CFG_PLLIN_SEL == STM32_PLLSRC_NOCLOCK) || defined(__DOXYGEN__)
+#if (STM32_PLLIN_ENABLED == FALSE)
+#define STM32_PLLIN_BITS                    STM32_PLLSRC_NOCLOCK
+#elif (STM32_CFG_PLLIN_SEL == STM32_PLLSRC_NOCLOCK) || defined(__DOXYGEN__)
 #define STM32_PLLIN_BITS                    STM32_PLLSRC_NOCLOCK
 #elif (STM32_CFG_PLLIN_SEL == STM32_PLLSRC_HSI16)
 #define STM32_PLLIN_BITS                    STM32_PLLSRC_HSI16
@@ -1765,7 +1767,9 @@
 /**
  * @brief   MCODIV clock register bits.
  */
-#if (STM32_CFG_MCODIV_SEL == STM32_MCOSEL_NOCLOCK) || defined(__DOXYGEN__)
+#if (STM32_MCODIV_ENABLED == FALSE)
+#define STM32_MCODIV_BITS                   STM32_MCOSEL_NOCLOCK
+#elif (STM32_CFG_MCODIV_SEL == STM32_MCOSEL_NOCLOCK) || defined(__DOXYGEN__)
 #define STM32_MCODIV_BITS                   STM32_MCOSEL_NOCLOCK
 #elif (STM32_CFG_MCODIV_SEL == STM32_MCOSEL_SYSCLK)
 #define STM32_MCODIV_BITS                   STM32_MCOSEL_SYSCLK
@@ -1850,7 +1854,9 @@
 /**
  * @brief   LSCO clock register bits.
  */
-#if (STM32_CFG_LSCO_SEL == STM32_LSCOSEL_NOCLOCK) || defined(__DOXYGEN__)
+#if (STM32_LSCO_ENABLED == FALSE)
+#define STM32_LSCO_BITS                     STM32_LSCOSEL_NOCLOCK
+#elif (STM32_CFG_LSCO_SEL == STM32_LSCOSEL_NOCLOCK) || defined(__DOXYGEN__)
 #define STM32_LSCO_BITS                     STM32_LSCOSEL_NOCLOCK
 #elif (STM32_CFG_LSCO_SEL == STM32_LSCOSEL_LSI)
 #define STM32_LSCO_BITS                     STM32_LSCOSEL_LSI
@@ -1882,7 +1888,9 @@
 /**
  * @brief   RTC clock register bits.
  */
-#if (STM32_CFG_RTC_SEL == STM32_RTCSEL_NOCLOCK) || defined(__DOXYGEN__)
+#if (STM32_RTC_ENABLED == FALSE)
+#define STM32_RTC_BITS                      STM32_RTCSEL_NOCLOCK
+#elif (STM32_CFG_RTC_SEL == STM32_RTCSEL_NOCLOCK) || defined(__DOXYGEN__)
 #define STM32_RTC_BITS                      STM32_RTCSEL_NOCLOCK
 #elif (STM32_CFG_RTC_SEL == STM32_RTCSEL_LSE)
 #define STM32_RTC_BITS                      STM32_RTCSEL_LSE
@@ -2439,7 +2447,9 @@
 /**
  * @brief   ADC12 clock register bits.
  */
-#if (STM32_CFG_ADC12_SEL == STM32_ADC12SEL_NOCLK) || defined(__DOXYGEN__)
+#if (STM32_ADC12_ENABLED == FALSE)
+#define STM32_ADC12_BITS                    STM32_ADC12SEL_NOCLK
+#elif (STM32_CFG_ADC12_SEL == STM32_ADC12SEL_NOCLK) || defined(__DOXYGEN__)
 #define STM32_ADC12_BITS                    STM32_ADC12SEL_NOCLK
 #elif (STM32_CFG_ADC12_SEL == STM32_ADC12SEL_PLLPCLK)
 #define STM32_ADC12_BITS                    STM32_ADC12SEL_PLLPCLK
@@ -2477,7 +2487,9 @@
 /**
  * @brief   ADC345 clock register bits.
  */
-#if (STM32_CFG_ADC345_SEL == STM32_ADC345SEL_NOCLK) || defined(__DOXYGEN__)
+#if (STM32_ADC345_ENABLED == FALSE)
+#define STM32_ADC345_BITS                   STM32_ADC345SEL_NOCLK
+#elif (STM32_CFG_ADC345_SEL == STM32_ADC345SEL_NOCLK) || defined(__DOXYGEN__)
 #define STM32_ADC345_BITS                   STM32_ADC345SEL_NOCLK
 #elif (STM32_CFG_ADC345_SEL == STM32_ADC345SEL_PLLPCLK)
 #define STM32_ADC345_BITS                   STM32_ADC345SEL_PLLPCLK
