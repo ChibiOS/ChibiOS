@@ -742,7 +742,8 @@
 /**
  * @brief   HSEDIV clock derived enable state.
  */
-#define STM32_HSEDIV_ENABLED                TRUE
+#define STM32_HSEDIV_ENABLED                (((STM32_RTC_ENABLED == TRUE) && \
+                                             (STM32_CFG_RTC_SEL == STM32_RTCSEL_HSEDIV)))
 
 /**
  * @brief   MCODIV clock derived enable state.
@@ -888,6 +889,125 @@
 #error "invalid STM32_CFG_HSI16_ENABLE value specified"
 #endif
 
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_PLLIN_ENABLED == TRUE) && \
+    (STM32_CFG_PLLIN_SEL == STM32_PLLSRC_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by PLLIN"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_SYSCLK_ENABLED == TRUE) && \
+    (STM32_CFG_SYSCLK_SEL == STM32_SW_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by SYSCLK"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_MCODIV_ENABLED == TRUE) && \
+    (STM32_CFG_MCODIV_SEL == STM32_MCOSEL_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by MCODIV"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_USART1_ENABLED == TRUE) && \
+    (STM32_CFG_USART1_SEL == STM32_USART1SEL_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by USART1"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_USART2_ENABLED == TRUE) && \
+    (STM32_CFG_USART2_SEL == STM32_USART2SEL_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by USART2"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_USART3_ENABLED == TRUE) && \
+    (STM32_CFG_USART3_SEL == STM32_USART3SEL_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by USART3"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_UART4_ENABLED == TRUE) && \
+    (STM32_CFG_UART4_SEL == STM32_UART4SEL_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by UART4"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_UART5_ENABLED == TRUE) && \
+    (STM32_CFG_UART5_SEL == STM32_UART5SEL_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by UART5"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_LPUART1_ENABLED == TRUE) && \
+    (STM32_CFG_LPUART1_SEL == STM32_LPUART1SEL_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by LPUART1"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_I2C1_ENABLED == TRUE) && \
+    (STM32_CFG_I2C1_SEL == STM32_I2C1SEL_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by I2C1"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_I2C2_ENABLED == TRUE) && \
+    (STM32_CFG_I2C2_SEL == STM32_I2C2SEL_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by I2C2"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_I2C3_ENABLED == TRUE) && \
+    (STM32_CFG_I2C3_SEL == STM32_I2C3SEL_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by I2C3"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_I2C4_ENABLED == TRUE) && \
+    (STM32_CFG_I2C4_SEL == STM32_I2C4SEL_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by I2C4"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_LPTIM1_ENABLED == TRUE) && \
+    (STM32_CFG_LPTIM1_SEL == STM32_LPTIM1SEL_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by LPTIM1"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_SAI1_ENABLED == TRUE) && \
+    (STM32_CFG_SAI1_SEL == STM32_SAI1SEL_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by SAI1"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_I2S23_ENABLED == TRUE) && \
+    (STM32_CFG_I2S23_SEL == STM32_I2S23SEL_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by I2S23"
+#endif
+
+#if (STM32_HSI16_ENABLED == FALSE) && \
+    (STM32_QSPI_ENABLED == TRUE) && \
+    (STM32_CFG_QSPI_SEL == STM32_QSPISEL_HSI16) && \
+    !defined(__DOXYGEN__)
+#error "HSI16 not enabled, required by QSPI"
+#endif
+
 /**
  * @brief   HSI16 clock register bits.
  */
@@ -914,6 +1034,20 @@
 #error "invalid STM32_CFG_HSI48_ENABLE value specified"
 #endif
 
+#if (STM32_HSI48_ENABLED == FALSE) && \
+    (STM32_MCODIV_ENABLED == TRUE) && \
+    (STM32_CFG_MCODIV_SEL == STM32_MCOSEL_HSI48) && \
+    !defined(__DOXYGEN__)
+#error "HSI48 not enabled, required by MCODIV"
+#endif
+
+#if (STM32_HSI48_ENABLED == FALSE) && \
+    (STM32_CLK48_ENABLED == TRUE) && \
+    (STM32_CFG_CLK48_SEL == STM32_CLK48SEL_HSI48) && \
+    !defined(__DOXYGEN__)
+#error "HSI48 not enabled, required by CLK48"
+#endif
+
 /**
  * @brief   HSI48 clock register bits.
  */
@@ -938,6 +1072,40 @@
     (STM32_CFG_HSE_ENABLE != FALSE) && \
     !defined(__DOXYGEN__)
 #error "invalid STM32_CFG_HSE_ENABLE value specified"
+#endif
+
+#if (STM32_HSE_ENABLED == FALSE) && \
+    (STM32_PLLIN_ENABLED == TRUE) && \
+    (STM32_CFG_PLLIN_SEL == STM32_PLLSRC_HSE) && \
+    !defined(__DOXYGEN__)
+#error "HSE not enabled, required by PLLIN"
+#endif
+
+#if (STM32_HSE_ENABLED == FALSE) && \
+    (STM32_SYSCLK_ENABLED == TRUE) && \
+    (STM32_CFG_SYSCLK_SEL == STM32_SW_HSE) && \
+    !defined(__DOXYGEN__)
+#error "HSE not enabled, required by SYSCLK"
+#endif
+
+#if (STM32_HSE_ENABLED == FALSE) && \
+    (STM32_HSEDIV_ENABLED == TRUE) && \
+    !defined(__DOXYGEN__)
+#error "HSE not enabled, required by HSEDIV"
+#endif
+
+#if (STM32_HSE_ENABLED == FALSE) && \
+    (STM32_MCODIV_ENABLED == TRUE) && \
+    (STM32_CFG_MCODIV_SEL == STM32_MCOSEL_HSE) && \
+    !defined(__DOXYGEN__)
+#error "HSE not enabled, required by MCODIV"
+#endif
+
+#if (STM32_HSE_ENABLED == FALSE) && \
+    (STM32_FDCAN_ENABLED == TRUE) && \
+    (STM32_CFG_FDCAN_SEL == STM32_FDCANSEL_HSE) && \
+    !defined(__DOXYGEN__)
+#error "HSE not enabled, required by FDCAN"
 #endif
 
 /**
@@ -978,6 +1146,76 @@
 #error "invalid STM32_CFG_LSE_ENABLE value specified"
 #endif
 
+#if (STM32_LSE_ENABLED == FALSE) && \
+    (STM32_MCODIV_ENABLED == TRUE) && \
+    (STM32_CFG_MCODIV_SEL == STM32_MCOSEL_LSE) && \
+    !defined(__DOXYGEN__)
+#error "LSE not enabled, required by MCODIV"
+#endif
+
+#if (STM32_LSE_ENABLED == FALSE) && \
+    (STM32_LSCO_ENABLED == TRUE) && \
+    (STM32_CFG_LSCO_SEL == STM32_LSCOSEL_LSE) && \
+    !defined(__DOXYGEN__)
+#error "LSE not enabled, required by LSCO"
+#endif
+
+#if (STM32_LSE_ENABLED == FALSE) && \
+    (STM32_RTC_ENABLED == TRUE) && \
+    (STM32_CFG_RTC_SEL == STM32_RTCSEL_LSE) && \
+    !defined(__DOXYGEN__)
+#error "LSE not enabled, required by RTC"
+#endif
+
+#if (STM32_LSE_ENABLED == FALSE) && \
+    (STM32_USART1_ENABLED == TRUE) && \
+    (STM32_CFG_USART1_SEL == STM32_USART1SEL_LSE) && \
+    !defined(__DOXYGEN__)
+#error "LSE not enabled, required by USART1"
+#endif
+
+#if (STM32_LSE_ENABLED == FALSE) && \
+    (STM32_USART2_ENABLED == TRUE) && \
+    (STM32_CFG_USART2_SEL == STM32_USART2SEL_LSE) && \
+    !defined(__DOXYGEN__)
+#error "LSE not enabled, required by USART2"
+#endif
+
+#if (STM32_LSE_ENABLED == FALSE) && \
+    (STM32_USART3_ENABLED == TRUE) && \
+    (STM32_CFG_USART3_SEL == STM32_USART3SEL_LSE) && \
+    !defined(__DOXYGEN__)
+#error "LSE not enabled, required by USART3"
+#endif
+
+#if (STM32_LSE_ENABLED == FALSE) && \
+    (STM32_UART4_ENABLED == TRUE) && \
+    (STM32_CFG_UART4_SEL == STM32_UART4SEL_LSE) && \
+    !defined(__DOXYGEN__)
+#error "LSE not enabled, required by UART4"
+#endif
+
+#if (STM32_LSE_ENABLED == FALSE) && \
+    (STM32_UART5_ENABLED == TRUE) && \
+    (STM32_CFG_UART5_SEL == STM32_UART5SEL_LSE) && \
+    !defined(__DOXYGEN__)
+#error "LSE not enabled, required by UART5"
+#endif
+
+#if (STM32_LSE_ENABLED == FALSE) && \
+    (STM32_LPUART1_ENABLED == TRUE) && \
+    (STM32_CFG_LPUART1_SEL == STM32_LPUART1SEL_LSE) && \
+    !defined(__DOXYGEN__)
+#error "LSE not enabled, required by LPUART1"
+#endif
+
+#if (STM32_LSE_ENABLED == FALSE) && \
+    (STM32_LPTIM1_ENABLED == TRUE) && \
+    (STM32_CFG_LPTIM1_SEL == STM32_LPTIM1SEL_LSE) && \
+    !defined(__DOXYGEN__)
+#error "LSE not enabled, required by LPTIM1"
+#endif
+
 /**
  * @brief   LSE clock register bits.
  */
@@ -1014,6 +1252,34 @@
     (STM32_CFG_LSI_ENABLE != FALSE) && \
     !defined(__DOXYGEN__)
 #error "invalid STM32_CFG_LSI_ENABLE value specified"
+#endif
+
+#if (STM32_LSI_ENABLED == FALSE) && \
+    (STM32_MCODIV_ENABLED == TRUE) && \
+    (STM32_CFG_MCODIV_SEL == STM32_MCOSEL_LSI) && \
+    !defined(__DOXYGEN__)
+#error "LSI not enabled, required by MCODIV"
+#endif
+
+#if (STM32_LSI_ENABLED == FALSE) && \
+    (STM32_LSCO_ENABLED == TRUE) && \
+    (STM32_CFG_LSCO_SEL == STM32_LSCOSEL_LSI) && \
+    !defined(__DOXYGEN__)
+#error "LSI not enabled, required by LSCO"
+#endif
+
+#if (STM32_LSI_ENABLED == FALSE) && \
+    (STM32_RTC_ENABLED == TRUE) && \
+    (STM32_CFG_RTC_SEL == STM32_RTCSEL_LSI) && \
+    !defined(__DOXYGEN__)
+#error "LSI not enabled, required by RTC"
+#endif
+
+#if (STM32_LSI_ENABLED == FALSE) && \
+    (STM32_LPTIM1_ENABLED == TRUE) && \
+    (STM32_CFG_LPTIM1_SEL == STM32_LPTIM1SEL_LSI) && \
+    !defined(__DOXYGEN__)
+#error "LSI not enabled, required by LPTIM1"
 #endif
 
 /**

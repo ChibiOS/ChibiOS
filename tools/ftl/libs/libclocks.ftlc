@@ -332,12 +332,13 @@ function Initialize()
     if clock.source[0]??
       /* It is a fixed clock.*/
       local clockfreq = clock.source[0].@frequency[0]?string
+      local clockinput = (clock.source[0].@input[0]!"")?string
       if clock.source[0].complex[0]??
         local clockcomplex = clock.source[0].complex[0]?string?trim
       else
         local clockcomplex = ""
       endif
-      local clockpoint = {"type":"source", "description":clockdescr, "name":clockname, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits, "limits":clocklimits, "frequency":clockfreq, "complex":clockcomplex}
+      local clockpoint = {"type":"source", "description":clockdescr, "name":clockname, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits, "limits":clocklimits, "frequency":clockfreq, "input":clockinput, "complex":clockcomplex}
       local points = points + [clockpoint]
       local clocks = clocks + [clockpoint]
 
@@ -387,6 +388,14 @@ function Initialize()
         stop ">>>> Unknown clock point '" + inputpoint + "' referenced by mux '" + mux["name"] + "'"
       endif
     endlist
+  endlist
+  list clocks as clock
+    if clock["type"] == "source"
+      local inputpoint = clock["input"]
+      if inputpoint != "" && clocknames?seq_contains(inputpoint) == false
+        stop ">>>> Unknown clock point '" + inputpoint + "' referenced by source '" + clock["name"] + "'"
+      endif
+    endif
   endlist
   list dividers as div
     local inputpoint = div["input"]
@@ -515,18 +524,23 @@ endmacro
 function GetConsumerConditions(point)
   local conditions = []
   list model["clocks"] as consumer
-    if consumer["type"] == "mux"
+    if consumer["type"] == "source"
+      if consumer["input"] == point["name"]
+        local enmacro = GetEnableMacro(consumer)
+        local conditions = conditions + [{"consumer":consumer["name"], "terms":[enmacro + " == TRUE"]}]
+      endif
+    elseif consumer["type"] == "mux"
       local enmacro = GetEnableMacro(consumer)
       local selmacro = precfg + consumer["name"] + postchoices
       list consumer["inputs"] as input
         if input["point"] == point["name"]
-          local conditions = conditions + [{"terms":[enmacro + " == TRUE", selmacro + " == " + input["bits"]]}]
+          local conditions = conditions + [{"consumer":consumer["name"], "terms":[enmacro + " == TRUE", selmacro + " == " + input["bits"]]}]
         endif
       endlist
     elseif consumer["type"] == "divider" || consumer["type"] == "multiplier"
       if consumer["input"] == point["name"]
         local enmacro = GetEnableMacro(consumer)
-        local conditions = conditions + [{"terms":[enmacro + " == TRUE"]}]
+        local conditions = conditions + [{"consumer":consumer["name"], "terms":[enmacro + " == TRUE"]}]
       endif
     endif
   endlist
@@ -1163,6 +1177,33 @@ macro EmitClockFrequencyChecks(point)
   endif
 endmacro
 
+/* Returns true if source dependency checks are emitted for one clock point.*/
+function HasSourceDependencyChecks(point)
+  if point["enable"] == "manual" && GetConsumerConditions(point)?size > 0
+    return true
+  endif
+
+  return false
+endfunction
+
+/* Emits checks requiring manually-enabled sources when selected downstream.*/
+macro EmitSourceDependencyChecks(point)
+  if point["enable"] == "manual"
+    local enmacro = GetEnableMacro(point)
+    local conditions = GetConsumerConditions(point)
+    list conditions as condition
+      EmitAndCondition(keyword="#if", terms=[enmacro + " == FALSE"] + condition["terms"] + ["!defined(__DOXYGEN__)"])
+      emit """
+#error "${point["name"]} not enabled, required by ${condition["consumer"]}"
+#endif
+"""
+      if !condition?is_last
+        emit "\e"
+      endif
+    endlist
+  endif
+endmacro
+
 /* Emits derived register bits for one clock point.*/
 macro EmitClockBits(point)
   local bitsmacro = premacro + point["name"] + postbits
@@ -1248,7 +1289,12 @@ macro EmitClockFrequency(point)
  */
 """
   if point["type"] == "source"
-    EmitFrequencyDefinition(point=point, frequency=point["frequency"])
+    local frequency = point["frequency"]
+    if point["input"] != ""
+      local inputfreq = premacro + point["input"] + postclocks
+      local frequency = frequency?replace("%I%", inputfreq)
+    endif
+    EmitFrequencyDefinition(point=point, frequency=frequency)
   elseif point["type"] == "mux"
     local selmacro = precfg + point["name"] + postchoices
     local freqmacro = premacro + point["name"] + postclocks
@@ -1309,6 +1355,10 @@ macro EmitDerivedConstants()
     emit "\e"
     EmitClockChecks(point=point)
     if HasClockChecks(point)
+      emit "\e"
+    endif
+    EmitSourceDependencyChecks(point=point)
+    if HasSourceDependencyChecks(point)
       emit "\e"
     endif
     EmitClockBits(point=point)

@@ -234,19 +234,19 @@
     </clock>
     <clock point="PCLK1TIM" enable="always" dynamic="yes">
       <description>APB1 timer clock</description>
-      <source frequency="((STM32_CFG_PCLK1_VALUE == 1) ? STM32_PCLK1_FREQ : (STM32_PCLK1_FREQ * 2U))" />
+      <source input="PCLK1" frequency="((STM32_CFG_PCLK1_VALUE == 1) ? %I% : (%I% * 2U))" />
     </clock>
     <clock point="PCLK2TIM" enable="always" dynamic="yes">
       <description>APB2 timer clock</description>
-      <source frequency="((STM32_CFG_PCLK2_VALUE == 1) ? STM32_PCLK2_FREQ : (STM32_PCLK2_FREQ * 2U))" />
+      <source input="PCLK2" frequency="((STM32_CFG_PCLK2_VALUE == 1) ? %I% : (%I% * 2U))" />
     </clock>
     <clock point="CKIN" enable="always" dynamic="no">
       <description>external audio clock input</description>
       <source frequency="0U" />
     </clock>
-    <clock point="HSEDIV" enable="always" dynamic="no">
+    <clock point="HSEDIV" enable="auto" dynamic="no">
       <description>HSE divided clock</description>
-      <source frequency="(STM32_HSE_FREQ / 32U)" />
+      <source input="HSE" frequency="(%I% / 32U)" />
     </clock>
     <clock point="MCODIV" enable="always" dynamic="no">
       <description>MCO source before prescaler</description>
@@ -446,11 +446,11 @@
     </clock>
     <clock point="RNG" enable="always" dynamic="no">
       <description>RNG</description>
-      <source frequency="STM32_CLK48_FREQ" />
+      <source input="CLK48" frequency="%I%" />
     </clock>
     <clock point="USB" enable="always" dynamic="no">
       <description>USB</description>
-      <source frequency="STM32_CLK48_FREQ" />
+      <source input="CLK48" frequency="%I%" />
     </clock>
   </clocks>
 </clocktree>
