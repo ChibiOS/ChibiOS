@@ -19,14 +19,12 @@
 prename = doc1.clocktree.settings.prefixes.@clock_points[0]?string
 premacro = doc1.clocktree.settings.prefixes.@macros[0]?string
 precfg = doc1.clocktree.settings.prefixes.@cfgs[0]?string
-postclocks = "_FREQ"
+postclocks = doc1.clocktree.settings.suffixes.@frequency[0]?string
 postvalues = doc1.clocktree.settings.suffixes.@values[0]?string
 postbits = doc1.clocktree.settings.suffixes.@bits[0]?string
 postchoices = doc1.clocktree.settings.suffixes.@selector[0]?string
 postenable = doc1.clocktree.settings.suffixes.@enable[0]?string
-postenabled = "_ENABLED"
-modemacro = doc1.clocktree.settings.mode.@macro[0]?string
-modedefault = doc1.clocktree.settings.mode.@default[0]?string
+postenabled = doc1.clocktree.settings.suffixes.@enabled[0]?string
 contindent = "                                             "
 
 /* Returns the string value of a bits element.*/
@@ -94,8 +92,69 @@ function GetEnableMacro(point)
   stop ">>>> Unknown enable mode '" + point["enable"] + "' for clock point '" + point["name"] + "'"
 endfunction
 
+/* Parses the generic configuration settings.*/
+function ParseConfigurations()
+  local names = []
+  local roles = []
+  local configs = []
+
+  list doc1.clocktree.settings.configs.config as config
+    local name = config.@macro[0]?string
+    local type = config.@type[0]?string
+    local default = config.@default[0]?string
+    local role = (config.@role[0]!"")?string
+    local minval = (config.@min[0]!"")?string
+    local maxval = (config.@max[0]!"")?string
+    local values = (config.@values[0]!"")?string
+    local description = config.description[0]?string?word_list?join(" ")
+
+    if names?seq_contains(name)
+      stop ">>>> Duplicate configuration '" + name + "'"
+    endif
+    local names = names + [name]
+
+    if role != ""
+      if roles?seq_contains(role)
+        stop ">>>> Duplicate configuration role '" + role + "'"
+      endif
+      local roles = roles + [role]
+    endif
+
+    if type == "bool"
+      if default != "TRUE" && default != "FALSE"
+        stop ">>>> Invalid default value for boolean configuration '" + name + "'"
+      endif
+      if minval != "" || maxval != "" || values != ""
+        stop ">>>> Invalid constraints for boolean configuration '" + name + "'"
+      endif
+    elseif type == "value"
+      if values != ""
+        stop ">>>> Invalid value list for numeric configuration '" + name + "'"
+      endif
+    elseif type == "set"
+      if values == ""
+        stop ">>>> Missing value list for set configuration '" + name + "'"
+      endif
+      if minval != "" || maxval != ""
+        stop ">>>> Invalid range constraints for set configuration '" + name + "'"
+      endif
+    elseif type == "raw"
+      if minval != "" || maxval != "" || values != ""
+        stop ">>>> Invalid constraints for raw configuration '" + name + "'"
+      endif
+    else
+      stop ">>>> Unknown configuration type '" + type + "' for configuration '" + name + "'"
+    endif
+
+    local configs = configs + [{"name":name, "type":type, "default":default, "role":role, "min":minval, "max":maxval, "values":values, "description":description}]
+  endlist
+
+  return configs
+endfunction
+
 /* Initializes the parsed clock tree data model.*/
 function Initialize()
+  local configs = ParseConfigurations()
   local clocknames = []
   local clocks = []
   local points = []
@@ -198,7 +257,7 @@ function Initialize()
     endif
   endlist
 
-  return {"clocknames":clocknames, "clocks":clocks, "points":points, "muxes":muxes, "dividers":dividers, "multipliers":multipliers}
+  return {"configs":configs, "clocknames":clocknames, "clocks":clocks, "points":points, "muxes":muxes, "dividers":dividers, "multipliers":multipliers}
 endfunction
 
 /* Static data parsed at startup.*/
@@ -214,6 +273,17 @@ function GetDynamicPoints()
   endlist
 
   return points
+endfunction
+
+/* Returns the configuration assigned to a semantic role.*/
+function GetConfigByRole(role)
+  list model["configs"] as config
+    if config["role"] == role
+      return config
+    endif
+  endlist
+
+  stop ">>>> Missing configuration with role '" + role + "'"
 endfunction
 
 /* Emits dynamic clock point indexes and names.*/
@@ -252,6 +322,8 @@ macro EmitStaticClockPointGetter()
   local points = GetDynamicPoints()
 
   if points?size > 0
+    local dynamicmode = GetConfigByRole("dynamic_mode")
+    local modemacro = dynamicmode["name"]
     emit """
 /**
  * @brief   Returns the frequency of a clock point in Hz.
@@ -308,18 +380,24 @@ function GetConsumerConditions(point)
   return conditions
 endfunction
 
-/* Emits clock point configuration settings in XML order.*/
-macro EmitModeConfiguration()
-  emit """
+/* Emits generic configuration settings.*/
+macro EmitGenericConfigurations()
+  list model["configs"] as config
+    emit """
 /**
- * @brief   Enables dynamic clock handling.
+ * @brief   ${config["description"]}
  */
-#if !defined(${modemacro}) || defined(__DOXYGEN__)
-${("#define " + modemacro)?tab_to(44) + modedefault}
+#if !defined(${config["name"]}) || defined(__DOXYGEN__)
+${("#define " + config["name"])?tab_to(44) + config["default"]}
 #endif
 """
+    sep
+      emit "\e"
+    endsep
+  endlist
 endmacro
 
+/* Emits clock point configuration settings in XML order.*/
 macro EmitConfigurations()
   local configs = []
   list model["clocks"] as point
@@ -333,8 +411,8 @@ macro EmitConfigurations()
     endif
   endlist
 
-  EmitModeConfiguration()
-  if configs?size > 0
+  EmitGenericConfigurations()
+  if model["configs"]?size > 0 && configs?size > 0
     emit "\e"
   endif
 
@@ -382,6 +460,73 @@ ${("#define " + name)?tab_to(44) + default}
     sep
       emit "\e"
     endsep
+  endlist
+endmacro
+
+/* Returns true if a generic configuration has emitted checks.*/
+function HasGenericConfigChecks(config)
+  if config["type"] == "bool" || config["type"] == "set"
+    return true
+  endif
+
+  if config["type"] == "value"
+    if config["min"] != "" || config["max"] != ""
+      return true
+    endif
+  endif
+
+  return false
+endfunction
+
+/* Emits checks for one generic configuration setting.*/
+macro EmitOneGenericConfigChecks(config)
+  local name = config["name"]
+
+  if config["type"] == "bool"
+    emit """
+#if !defined(__DOXYGEN__) && (${name} != TRUE) && (${name} != FALSE)
+#error "invalid ${name} value specified"
+#endif
+"""
+  elseif config["type"] == "value"
+    local checks = []
+    if config["min"] != ""
+      local checks = checks + ["(" + name + " < " + config["min"] + ")"]
+    endif
+    if config["max"] != ""
+      local checks = checks + ["(" + name + " > " + config["max"] + ")"]
+    endif
+    if checks?size > 0
+      emit """
+#if !defined(__DOXYGEN__) && (${checks?join(" || ")})
+#error "invalid ${name} value specified"
+#endif
+"""
+    endif
+  elseif config["type"] == "set"
+    local checks = []
+    list config["values"]?replace(",", " ")?word_list as value
+      local checks = checks + ["(" + name + " != " + value + ")"]
+    endlist
+    emit """
+#if !defined(__DOXYGEN__) && (${checks?join(" && ")})
+#error "invalid ${name} value specified"
+#endif
+"""
+  endif
+endmacro
+
+/* Emits checks for generic configuration settings.*/
+macro EmitGenericConfigChecks()
+  local emitted = false
+  list model["configs"] as config
+    if HasGenericConfigChecks(config)
+      if emitted
+        emit "\e"
+      endif
+      EmitOneGenericConfigChecks(config=config)
+      local emitted = true
+    endif
   endlist
 endmacro
 
@@ -698,6 +843,10 @@ endmacro
 
 /* Emits checks, register bits and calculated frequencies in XML order.*/
 macro EmitDerivedConstants()
+  EmitGenericConfigChecks()
+  if model["configs"]?size > 0
+    emit "\e"
+  endif
   EmitEnableDefinitions()
   emit "\e"
   list model["clocks"] as point

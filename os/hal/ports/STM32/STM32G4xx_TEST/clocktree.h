@@ -70,7 +70,7 @@
 /*===========================================================================*/
 
 /**
- * @name    Clock point configurations
+ * @name    Clock tree configurations
  * @{
  */
 /**
@@ -454,6 +454,10 @@
  * @name    Clock point derived constants and checks
  * @{
  */
+#if !defined(__DOXYGEN__) && (STM32_CFG_CLOCK_DYNAMIC != TRUE) && (STM32_CFG_CLOCK_DYNAMIC != FALSE)
+#error "invalid STM32_CFG_CLOCK_DYNAMIC value specified"
+#endif
+
 /**
  * @brief   NONE clock derived enable state.
  */

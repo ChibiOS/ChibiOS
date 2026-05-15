@@ -28,7 +28,15 @@ jar.
 ## Current XML Model
 
 - `settings/prefixes` provides clock point, macro, and configuration prefixes.
-- `settings/suffixes` provides value, bits, selector, and enable suffixes.
+- `settings/suffixes` provides frequency, value, bits, selector, enable, and
+  derived enabled-state suffixes.
+- `settings/configs/config` provides arbitrary pre-compile settings emitted in
+  XML order.
+- Generic configurations currently support `bool`, `value`, `set`, and `raw`
+  types. `bool`, constrained `value`, and `set` configurations emit generated
+  compile-time checks.
+- Semantic generator settings are marked by `role`; `STM32_CFG_CLOCK_DYNAMIC`
+  is a generic boolean config with role `dynamic_mode`.
 - Clock `enable` is required and currently accepts `manual`, `auto`, `always`,
   and `never`.
 - Clock `dynamic` is required and marks membership in the dynamic clock point
@@ -46,12 +54,15 @@ jar.
 Each clock point should emit, in XML order:
 
 - configuration settings where applicable;
-- an `<POINT>_ENABLED` macro;
+- an `<POINT><enabled-suffix>` macro;
 - an `<POINT>_BITS` macro;
-- an `<POINT>_FREQ` macro, with disabled clocks producing zero frequency;
+- an `<POINT><frequency-suffix>` macro, with disabled clocks producing zero
+  frequency;
 - compile-time value checks for generated configuration settings.
 
-Manual clock points emit explicit configuration settings using the configured
+Generic configurations emit explicit settings using their full macro names, for
+example `STM32_CFG_CLOCK_DYNAMIC`. Manual clock points emit explicit
+configuration settings using the configured
 configuration prefix and enable suffix, for example
 `STM32_CFG_HSI16_ENABLE`. Auto clock points derive enablement from downstream
 use. Always and never clock points still emit their own enabled flags for

@@ -50,7 +50,7 @@
 /*===========================================================================*/
 
 /**
- * @name    Clock point configurations
+ * @name    Clock tree configurations
  * @{
  */
 [@clocktree.EmitConfigurations /]

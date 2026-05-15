@@ -313,11 +313,22 @@
           minOccurs="1">
         </xs:element>
         <xs:element name="suffixes" type="suffixesType" maxOccurs="1" minOccurs="1"></xs:element>
-        <xs:element name="mode" type="modeType" maxOccurs="1" minOccurs="1"></xs:element>
+        <xs:element name="configs" type="configsType" maxOccurs="1" minOccurs="1"></xs:element>
       </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="modeType">
+    <xs:complexType name="configsType">
+      <xs:sequence>
+        <xs:element name="config" type="configType" maxOccurs="unbounded" minOccurs="1"></xs:element>
+      </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="configType">
+      <xs:sequence>
+        <xs:element name="description" type="xs:string" maxOccurs="1"
+          minOccurs="1">
+        </xs:element>
+      </xs:sequence>
       <xs:attribute name="macro" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
@@ -327,11 +338,55 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="bool"></xs:enumeration>
+            <xs:enumeration value="value"></xs:enumeration>
+            <xs:enumeration value="set"></xs:enumeration>
+            <xs:enumeration value="raw"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="default" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:enumeration value="TRUE"></xs:enumeration>
-            <xs:enumeration value="FALSE"></xs:enumeration>
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="role" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="dynamic_mode"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="min" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="(0|[1-9][0-9]*|[A-Za-z_][A-Za-z0-9_]*)"></xs:pattern>
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="max" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="(0|[1-9][0-9]*|[A-Za-z_][A-Za-z0-9_]*)"></xs:pattern>
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="values" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="(0|[1-9][0-9]*|[A-Za-z_][A-Za-z0-9_]*)([ ,](0|[1-9][0-9]*|[A-Za-z_][A-Za-z0-9_]*))*"/>
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
@@ -371,6 +426,16 @@
     </xs:complexType>
 
     <xs:complexType name="suffixesType">
+      <xs:attribute name="frequency" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
+            <xs:maxLength value="8"></xs:maxLength>
+            <xs:minLength value="1"></xs:minLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="values" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
@@ -402,6 +467,16 @@
         </xs:simpleType>
       </xs:attribute>
       <xs:attribute name="enable" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:maxLength value="8"></xs:maxLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="enabled" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="1"></xs:minLength>
