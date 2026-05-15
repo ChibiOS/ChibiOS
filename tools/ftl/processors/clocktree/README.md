@@ -41,6 +41,9 @@ jar.
   and `never`.
 - Clock `dynamic` is required and marks membership in the dynamic clock point
   set, independently from enable mode.
+- Clock points can specify optional `<limits min="..." max="..."/>`
+  expressions for generated frequency range checks. Disabled clock points are
+  not range-checked.
 - Mux inputs and scaler choices use nested `<bits value="..."/>` elements, not
   bits attributes.
 - Divider and multiplier nodes must specify their input clock point.
@@ -58,7 +61,8 @@ Each clock point should emit, in XML order:
 - an `<POINT>_BITS` macro;
 - an `<POINT><frequency-suffix>` macro, with disabled clocks producing zero
   frequency;
-- compile-time value checks for generated configuration settings.
+- compile-time value checks for generated configuration settings;
+- compile-time frequency range checks where clock point limits are declared.
 
 Generic configurations emit explicit settings using their full macro names, for
 example `STM32_CFG_CLOCK_DYNAMIC`. Manual clock points emit explicit

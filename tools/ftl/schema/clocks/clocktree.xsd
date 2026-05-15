@@ -28,6 +28,9 @@
         <xs:element name="bits" type="boolBitsType" maxOccurs="1"
           minOccurs="0">
         </xs:element>
+        <xs:element name="limits" type="limitType" maxOccurs="1"
+          minOccurs="0">
+        </xs:element>
         <xs:choice maxOccurs="1" minOccurs="1">
           <xs:element name="source" type="sourceType" maxOccurs="1"
             minOccurs="1">
@@ -200,6 +203,27 @@
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="1"></xs:minLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="limitType">
+      <xs:attribute name="min" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="(0|[1-9][0-9]*|[A-Za-z_][A-Za-z0-9_]*)"></xs:pattern>
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="max" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="(0|[1-9][0-9]*|[A-Za-z_][A-Za-z0-9_]*)"></xs:pattern>
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>

@@ -30,11 +30,13 @@
     <clock point="HSE" enable="manual" dynamic="yes">
       <description>high frequency external oscillator</description>
       <bits enabled="RCC_CR_HSEON" disabled="0U" />
+      <limits min="STM32_HSECLK_MIN" max="STM32_HSECLK_MAX" />
       <source frequency="STM32_HSECLK" />
     </clock>
     <clock point="LSE" enable="manual" dynamic="no">
       <description>low frequency external oscillator</description>
       <bits enabled="RCC_BDCR_LSEON" disabled="0U" />
+      <limits min="STM32_LSECLK_MIN" max="STM32_LSECLK_MAX" />
       <source frequency="STM32_LSECLK" />
     </clock>
     <clock point="LSI" enable="manual" dynamic="no">
@@ -58,6 +60,7 @@
     </clock>
     <clock point="PLLREF" enable="auto" dynamic="no">
       <description>PLL reference</description>
+      <limits min="STM32_PLLIN_MIN" max="STM32_PLLIN_MAX" />
       <divider name="PLLM" input="PLLIN">
         <value min="1" max="16" default="4">
           <bits value="((%N% - 1U) &lt;&lt; RCC_PLLCFGR_PLLM_Pos)" />
@@ -66,6 +69,7 @@
     </clock>
      <clock point="PLLVCO" enable="auto" dynamic="no">
       <description>PLL VCO</description>
+      <limits min="STM32_PLLVCO_MIN" max="STM32_PLLVCO_MAX" />
       <multiplier name="PLLN" input="PLLREF">
         <value min="8" max="127" default="84">
           <bits value="(%N% &lt;&lt; RCC_PLLCFGR_PLLN_Pos)" />
@@ -75,6 +79,7 @@
      <clock point="PLLP" enable="auto" dynamic="yes">
       <description>PLL P output</description>
       <bits enabled="RCC_PLLCFGR_PLLPEN" disabled="0U" />
+      <limits min="STM32_PLLP_MIN" max="STM32_PLLP_MAX" />
       <divider name="PLLP" input="PLLVCO">
         <value min="2" max="31" default="7">
           <bits value="(%N% &lt;&lt; RCC_PLLCFGR_PLLPDIV_Pos)" />
@@ -84,6 +89,7 @@
     <clock point="PLLQ" enable="auto" dynamic="yes">
       <description>PLL Q output</description>
       <bits enabled="RCC_PLLCFGR_PLLQEN" disabled="0U" />
+      <limits min="STM32_PLLQ_MIN" max="STM32_PLLQ_MAX" />
       <divider name="PLLQ" input="PLLVCO">
         <set values="2 4 6 8" default="8">
           <bits value="(((%N% / 2U) - 1U) &lt;&lt; RCC_PLLCFGR_PLLQ_Pos)" />
@@ -93,6 +99,7 @@
     <clock point="PLLR" enable="auto" dynamic="yes">
      <description>PLL R output</description>
       <bits enabled="RCC_PLLCFGR_PLLREN" disabled="0U" />
+      <limits min="STM32_PLLR_MIN" max="STM32_PLLR_MAX" />
       <divider name="PLLR" input="PLLVCO">
         <set values="2 4 6 8" default="2">
           <bits value="(((%N% / 2U) - 1U) &lt;&lt; RCC_PLLCFGR_PLLR_Pos)" />
@@ -101,6 +108,7 @@
     </clock>
     <clock point="SYSCLK" enable="always" dynamic="yes">
       <description>system clock</description>
+      <limits max="STM32_SYSCLK_MAX" />
       <mux name="SW">
         <input point="HSI16">
           <bits value="STM32_SW_HSI16" />
@@ -131,6 +139,7 @@
     </clock>
     <clock point="PCLK1" enable="always" dynamic="yes">
      <description>APB1</description>
+      <limits max="STM32_PCLK1_MAX" />
       <divider name="PPRE1" input="HCLK">
         <choices default="2">
           <choice item="DIV1" value="1"><bits value="STM32_PPRE1_DIV1" /></choice>
@@ -143,6 +152,7 @@
     </clock>
     <clock point="PCLK2" enable="always" dynamic="yes">
      <description>APB2</description>
+      <limits max="STM32_PCLK2_MAX" />
       <divider name="PPRE2" input="HCLK">
         <choices>
           <choice item="DIV1" value="1"><bits value="STM32_PPRE2_DIV1" /></choice>
@@ -341,6 +351,7 @@
     </clock>
     <clock point="ADC12" enable="always" dynamic="no">
       <description>ADC12</description>
+      <limits max="STM32_ADCCLK_MAX" />
       <mux name="ADC12SEL">
         <input point="NONE"><bits value="STM32_ADC12SEL_NOCLK" /></input>
         <input point="PLLP" default="yes"><bits value="STM32_ADC12SEL_PLLPCLK" /></input>
@@ -349,6 +360,7 @@
     </clock>
     <clock point="ADC345" enable="always" dynamic="no">
       <description>ADC345</description>
+      <limits max="STM32_ADCCLK_MAX" />
       <mux name="ADC345SEL">
         <input point="NONE"><bits value="STM32_ADC345SEL_NOCLK" /></input>
         <input point="PLLP" default="yes"><bits value="STM32_ADC345SEL_PLLPCLK" /></input>

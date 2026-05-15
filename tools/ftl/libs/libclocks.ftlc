@@ -92,6 +92,22 @@ function GetEnableMacro(point)
   stop ">>>> Unknown enable mode '" + point["enable"] + "' for clock point '" + point["name"] + "'"
 endfunction
 
+/* Parses optional clock frequency limits.*/
+function ParseClockLimits(clock)
+  if clock.limits[0]??
+    local minval = (clock.limits[0].@min[0]!"")?string
+    local maxval = (clock.limits[0].@max[0]!"")?string
+
+    if minval == "" && maxval == ""
+      stop ">>>> Empty frequency limits for clock point '" + clock.@point[0]?string + "'"
+    endif
+
+    return {"min":minval, "max":maxval}
+  endif
+
+  return {}
+endfunction
+
 /* Parses the generic configuration settings.*/
 function ParseConfigurations()
   local names = []
@@ -180,6 +196,7 @@ function Initialize()
     else
       local clockbits = {}
     endif
+    local clocklimits = ParseClockLimits(clock)
     if clockenable == "manual" && clockbits?size == 0
       stop ">>>> Missing enable bits for manually enabled clock point '" + clockname + "'"
     endif
@@ -193,7 +210,7 @@ function Initialize()
       else
         local clockcomplex = ""
       endif
-      local clockpoint = {"type":"source", "description":clockdescr, "name":clockname, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits, "frequency":clockfreq, "complex":clockcomplex}
+      local clockpoint = {"type":"source", "description":clockdescr, "name":clockname, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits, "limits":clocklimits, "frequency":clockfreq, "complex":clockcomplex}
       local points = points + [clockpoint]
       local clocks = clocks + [clockpoint]
 
@@ -211,7 +228,7 @@ function Initialize()
         endif
         local muxinputs = muxinputs + [{"point":inputpoint, "bits":inputbits, "default":inputdefault}]
       endlist
-      local clockpoint = {"type":"mux", "name":clockname, "muxname":muxname, "inputs":muxinputs, "default":muxdefault, "description":clockdescr, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits}
+      local clockpoint = {"type":"mux", "name":clockname, "muxname":muxname, "inputs":muxinputs, "default":muxdefault, "description":clockdescr, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits, "limits":clocklimits}
       local muxes = muxes + [clockpoint]
       local clocks = clocks + [clockpoint]
 
@@ -220,7 +237,7 @@ function Initialize()
       local divname = clock.divider[0].@name[0]
       local divinput = clock.divider[0].@input[0]?string
       local divparsed = ParseScaler(clock.divider[0])
-      local clockpoint = {"type":"divider", "description":clockdescr, "name":clockname, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits, "divname":divname, "input":divinput, "kind":divparsed["kind"], "data":divparsed["data"]}
+      local clockpoint = {"type":"divider", "description":clockdescr, "name":clockname, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits, "limits":clocklimits, "divname":divname, "input":divinput, "kind":divparsed["kind"], "data":divparsed["data"]}
       local dividers = dividers + [clockpoint]
       local clocks = clocks + [clockpoint]
 
@@ -229,7 +246,7 @@ function Initialize()
       local mulname = clock.multiplier[0].@name[0]
       local mulinput = clock.multiplier[0].@input[0]?string
       local mulparsed = ParseScaler(clock.multiplier[0])
-      local clockpoint = {"type":"multiplier", "description":clockdescr, "name":clockname, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits, "mulname":mulname, "input":mulinput, "kind":mulparsed["kind"], "data":mulparsed["data"]}
+      local clockpoint = {"type":"multiplier", "description":clockdescr, "name":clockname, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits, "limits":clocklimits, "mulname":mulname, "input":mulinput, "kind":mulparsed["kind"], "data":mulparsed["data"]}
       local multipliers = multipliers + [clockpoint]
       local clocks = clocks + [clockpoint]
     endif
@@ -717,6 +734,41 @@ macro EmitClockChecks(point)
   endif
 endmacro
 
+/* Returns true if a clock point has frequency checks.*/
+function HasClockFrequencyChecks(point)
+  return point["limits"]?size > 0
+endfunction
+
+/* Emits frequency range checks for one clock point.*/
+macro EmitClockFrequencyChecks(point)
+  if HasClockFrequencyChecks(point)
+    local freqmacro = premacro + point["name"] + postclocks
+    local enmacro = GetEnableMacro(point)
+    local minval = point["limits"]["min"]!""
+    local maxval = point["limits"]["max"]!""
+
+    if minval != ""
+      emit """
+#if !defined(__DOXYGEN__) && (${enmacro} == TRUE) && (${freqmacro} < ${minval})
+#error "${freqmacro} below minimum frequency"
+#endif
+"""
+    endif
+
+    if minval != "" && maxval != ""
+      emit "\e"
+    endif
+
+    if maxval != ""
+      emit """
+#if !defined(__DOXYGEN__) && (${enmacro} == TRUE) && (${freqmacro} > ${maxval})
+#error "${freqmacro} above maximum frequency"
+#endif
+"""
+    endif
+  endif
+endmacro
+
 /* Emits derived register bits for one clock point.*/
 macro EmitClockBits(point)
   local bitsmacro = premacro + point["name"] + postbits
@@ -841,6 +893,12 @@ ${("#define " + freqmacro)?tab_to(44) + "0U"}
   endif
 endmacro
 
+/* Emits a visual separator for one clock point.*/
+macro EmitClockPointSeparator(point)
+  local line = "/*--- Macros and checks for the " + point["name"] + " clock point. "
+  emit line?right_pad(76, "-") + "*/\n"
+endmacro
+
 /* Emits checks, register bits and calculated frequencies in XML order.*/
 macro EmitDerivedConstants()
   EmitGenericConfigChecks()
@@ -853,6 +911,8 @@ macro EmitDerivedConstants()
     if !point?is_first
       emit "\e"
     endif
+    EmitClockPointSeparator(point=point)
+    emit "\e"
     EmitClockChecks(point=point)
     if HasClockChecks(point)
       emit "\e"
@@ -860,5 +920,9 @@ macro EmitDerivedConstants()
     EmitClockBits(point=point)
     emit "\e"
     EmitClockFrequency(point=point)
+    if HasClockFrequencyChecks(point)
+      emit "\e"
+      EmitClockFrequencyChecks(point=point)
+    endif
   endlist
 endmacro
