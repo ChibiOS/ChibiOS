@@ -392,8 +392,6 @@
 #error "STM32_PWR_BOOST requires STM32_VOS_RANGE1"
 #endif
 
-#include "stm32_limits.h"
-
 /*
  * Temporary compatibility with existing G4 mcuconf.h files.  User-facing
  * settings are moving to STM32_CFG_* names; generated derived names below own

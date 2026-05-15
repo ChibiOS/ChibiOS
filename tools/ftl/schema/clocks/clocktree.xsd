@@ -2,7 +2,32 @@
 <xs:schema elementFormDefault="qualified"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <xs:element name="clocktree" type="clocktreeType"></xs:element>
+    <xs:element name="clocktree" type="clocktreeType">
+      <xs:key name="stateNameKey">
+        <xs:selector xpath="settings/states/state"></xs:selector>
+        <xs:field xpath="@name"></xs:field>
+      </xs:key>
+      <xs:key name="limitNameKey">
+        <xs:selector xpath="settings/limit-set/limit"></xs:selector>
+        <xs:field xpath="@name"></xs:field>
+      </xs:key>
+      <xs:key name="stateValuesStateKey">
+        <xs:selector xpath="settings/limit-values/state-values"></xs:selector>
+        <xs:field xpath="@state"></xs:field>
+      </xs:key>
+      <xs:keyref name="stateValuesStateRef" refer="stateNameKey">
+        <xs:selector xpath="settings/limit-values/state-values"></xs:selector>
+        <xs:field xpath="@state"></xs:field>
+      </xs:keyref>
+      <xs:keyref name="clockLimitRef" refer="limitNameKey">
+        <xs:selector xpath="clocks/clock/limits"></xs:selector>
+        <xs:field xpath="@ref"></xs:field>
+      </xs:keyref>
+      <xs:keyref name="stateLimitRef" refer="limitNameKey">
+        <xs:selector xpath="settings/limit-values/state-values/limit"></xs:selector>
+        <xs:field xpath="@name"></xs:field>
+      </xs:keyref>
+    </xs:element>
     
     <xs:complexType name="clocktreeType">
       <xs:sequence>
@@ -28,7 +53,7 @@
         <xs:element name="bits" type="boolBitsType" maxOccurs="1"
           minOccurs="0">
         </xs:element>
-        <xs:element name="limits" type="limitType" maxOccurs="1"
+        <xs:element name="limits" type="clockLimitType" maxOccurs="1"
           minOccurs="0">
         </xs:element>
         <xs:choice maxOccurs="1" minOccurs="1">
@@ -208,11 +233,59 @@
       </xs:attribute>
     </xs:complexType>
 
+    <xs:complexType name="clockLimitType">
+      <xs:attribute name="ref" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
     <xs:complexType name="limitType">
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="min" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="yes"></xs:enumeration>
+            <xs:enumeration value="no"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="max" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="yes"></xs:enumeration>
+            <xs:enumeration value="no"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="stateLimitValueType">
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="min" use="optional">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:pattern value="(0|[1-9][0-9]*|[A-Za-z_][A-Za-z0-9_]*)"></xs:pattern>
             <xs:minLength value="1"></xs:minLength>
             <xs:whiteSpace value="collapse"></xs:whiteSpace>
           </xs:restriction>
@@ -221,7 +294,6 @@
       <xs:attribute name="max" use="optional">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:pattern value="(0|[1-9][0-9]*|[A-Za-z_][A-Za-z0-9_]*)"></xs:pattern>
             <xs:minLength value="1"></xs:minLength>
             <xs:whiteSpace value="collapse"></xs:whiteSpace>
           </xs:restriction>
@@ -338,6 +410,9 @@
         </xs:element>
         <xs:element name="suffixes" type="suffixesType" maxOccurs="1" minOccurs="1"></xs:element>
         <xs:element name="configs" type="configsType" maxOccurs="1" minOccurs="1"></xs:element>
+        <xs:element name="states" type="statesType" maxOccurs="1" minOccurs="0"></xs:element>
+        <xs:element name="limit-set" type="limitSetType" maxOccurs="1" minOccurs="0"></xs:element>
+        <xs:element name="limit-values" type="limitValuesType" maxOccurs="1" minOccurs="0"></xs:element>
       </xs:sequence>
     </xs:complexType>
 
@@ -353,7 +428,7 @@
           minOccurs="1">
         </xs:element>
       </xs:sequence>
-      <xs:attribute name="macro" use="required">
+      <xs:attribute name="name" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="1"></xs:minLength>
@@ -411,6 +486,64 @@
             <xs:pattern value="(0|[1-9][0-9]*|[A-Za-z_][A-Za-z0-9_]*)([ ,](0|[1-9][0-9]*|[A-Za-z_][A-Za-z0-9_]*))*"/>
             <xs:minLength value="1"></xs:minLength>
             <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="statesType">
+      <xs:sequence>
+        <xs:element name="state" type="stateType" maxOccurs="unbounded" minOccurs="1"></xs:element>
+      </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="stateType">
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="when" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="limitSetType">
+      <xs:sequence>
+        <xs:element name="limit" type="limitType" maxOccurs="unbounded" minOccurs="1"></xs:element>
+      </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="limitValuesType">
+      <xs:sequence>
+        <xs:element name="state-values" type="stateValuesType" maxOccurs="unbounded" minOccurs="1">
+          <xs:key name="stateValueLimitNameKey">
+            <xs:selector xpath="limit"></xs:selector>
+            <xs:field xpath="@name"></xs:field>
+          </xs:key>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="stateValuesType">
+      <xs:sequence>
+        <xs:element name="limit" type="stateLimitValueType" maxOccurs="unbounded" minOccurs="1"></xs:element>
+      </xs:sequence>
+      <xs:attribute name="state" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>

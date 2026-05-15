@@ -35,15 +35,21 @@ jar.
 - Generic configurations currently support `bool`, `value`, `set`, and `raw`
   types. `bool`, constrained `value`, and `set` configurations emit generated
   compile-time checks.
-- Semantic generator settings are marked by `role`; `STM32_CFG_CLOCK_DYNAMIC`
-  is a generic boolean config with role `dynamic_mode`.
+- Semantic generator settings are marked by `role`; `CLOCK_DYNAMIC` is a
+  generic boolean config name with role `dynamic_mode`, emitted using the
+  configured configuration prefix.
 - Clock `enable` is required and currently accepts `manual`, `auto`, `always`,
   and `never`.
 - Clock `dynamic` is required and marks membership in the dynamic clock point
   set, independently from enable mode.
-- Clock points can specify optional `<limits min="..." max="..."/>`
-  expressions for generated frequency range checks. Disabled clock points are
-  not range-checked.
+- `settings/states`, `settings/limit-set`, and `settings/limit-values` define
+  the selectable frequency limit states, the final limit macro set, and the
+  state-specific values. The generator validates that each state provides all
+  required final limits.
+- Clock points can specify optional `<limits ref="..."/>` references to final
+  limit names. The generator emits the selected `<limit>_MIN` and `<limit>_MAX`
+  definitions and uses them for frequency range checks. Disabled clock points
+  are not range-checked.
 - Mux inputs and scaler choices use nested `<bits value="..."/>` elements, not
   bits attributes.
 - Divider and multiplier nodes must specify their input clock point.
@@ -62,12 +68,14 @@ Each clock point should emit, in XML order:
 - an `<POINT><frequency-suffix>` macro, with disabled clocks producing zero
   frequency;
 - compile-time value checks for generated configuration settings;
+- grouped state-specific frequency limit definitions and one selected final
+  limit block where a limit model is declared;
 - compile-time frequency range checks where clock point limits are declared.
 
-Generic configurations emit explicit settings using their full macro names, for
-example `STM32_CFG_CLOCK_DYNAMIC`. Manual clock points emit explicit
-configuration settings using the configured
-configuration prefix and enable suffix, for example
+Generic configurations emit explicit settings using the configured
+configuration prefix and their local names, for example `CLOCK_DYNAMIC` becomes
+`STM32_CFG_CLOCK_DYNAMIC`. Manual clock points emit explicit configuration
+settings using the configured configuration prefix and enable suffix, for example
 `STM32_CFG_HSI16_ENABLE`. Auto clock points derive enablement from downstream
 use. Always and never clock points still emit their own enabled flags for
 uniformity.

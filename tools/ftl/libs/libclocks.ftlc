@@ -25,6 +25,8 @@ postbits = doc1.clocktree.settings.suffixes.@bits[0]?string
 postchoices = doc1.clocktree.settings.suffixes.@selector[0]?string
 postenable = doc1.clocktree.settings.suffixes.@enable[0]?string
 postenabled = doc1.clocktree.settings.suffixes.@enabled[0]?string
+postmin = "_MIN"
+postmax = "_MAX"
 contindent = "                                             "
 
 /* Returns the string value of a bits element.*/
@@ -95,17 +97,137 @@ endfunction
 /* Parses optional clock frequency limits.*/
 function ParseClockLimits(clock)
   if clock.limits[0]??
-    local minval = (clock.limits[0].@min[0]!"")?string
-    local maxval = (clock.limits[0].@max[0]!"")?string
-
-    if minval == "" && maxval == ""
-      stop ">>>> Empty frequency limits for clock point '" + clock.@point[0]?string + "'"
-    endif
-
-    return {"min":minval, "max":maxval}
+    return {"ref":clock.limits[0].@ref[0]?string}
   endif
 
   return {}
+endfunction
+
+/* Returns a limit declaration by name.*/
+function GetLimitDeclaration(limits, name)
+  list limits as limit
+    if limit["name"] == name
+      return limit
+    endif
+  endlist
+
+  return {}
+endfunction
+
+/* Returns a state value set by state name.*/
+function GetStateValues(values, state)
+  list values as value
+    if value["state"] == state
+      return value
+    endif
+  endlist
+
+  return {}
+endfunction
+
+/* Returns a limit value by limit name.*/
+function GetLimitValue(values, name)
+  list values as value
+    if value["name"] == name
+      return value
+    endif
+  endlist
+
+  return {}
+endfunction
+
+/* Parses selectable frequency limit definitions.*/
+function ParseLimitModel()
+  local hasstates = doc1.clocktree.settings.states[0]??
+  local haslimitset = doc1.clocktree.settings["limit-set"][0]??
+  local haslimitvalues = doc1.clocktree.settings["limit-values"][0]??
+
+  if !hasstates && !haslimitset && !haslimitvalues
+    return {"states":[], "limits":[], "values":[]}
+  endif
+
+  if !hasstates || !haslimitset || !haslimitvalues
+    stop ">>>> Incomplete clock limit model"
+  endif
+
+  local statenames = []
+  local states = []
+  list doc1.clocktree.settings.states.state as state
+    local name = state.@name[0]?string
+    if statenames?seq_contains(name)
+      stop ">>>> Duplicate clock limit state '" + name + "'"
+    endif
+    local statenames = statenames + [name]
+    local states = states + [{"name":name, "when":state.@when[0]?string}]
+  endlist
+
+  local limitnames = []
+  local limits = []
+  list doc1.clocktree.settings["limit-set"].limit as limit
+    local name = limit.@name[0]?string
+    if limitnames?seq_contains(name)
+      stop ">>>> Duplicate clock limit '" + name + "'"
+    endif
+    local limitnames = limitnames + [name]
+    local limits = limits + [{"name":name, "min":limit.@min[0]?string, "max":limit.@max[0]?string}]
+  endlist
+
+  local valueStates = []
+  local values = []
+  list doc1.clocktree.settings["limit-values"]["state-values"] as statevalues
+    local statename = statevalues.@state[0]?string
+    if !statenames?seq_contains(statename)
+      stop ">>>> Unknown clock limit state '" + statename + "'"
+    endif
+    if valueStates?seq_contains(statename)
+      stop ">>>> Duplicate values for clock limit state '" + statename + "'"
+    endif
+    local valueStates = valueStates + [statename]
+
+    local valuenames = []
+    local limitvalues = []
+    list statevalues.limit as limit
+      local name = limit.@name[0]?string
+      if !limitnames?seq_contains(name)
+        stop ">>>> Unknown clock limit '" + name + "' in state '" + statename + "'"
+      endif
+      if valuenames?seq_contains(name)
+        stop ">>>> Duplicate clock limit value '" + name + "' in state '" + statename + "'"
+      endif
+      local valuenames = valuenames + [name]
+      local limitvalues = limitvalues + [{"name":name, "min":(limit.@min[0]!"")?string, "max":(limit.@max[0]!"")?string}]
+    endlist
+
+    local values = values + [{"state":statename, "limits":limitvalues}]
+  endlist
+
+  list states as state
+    local statevalues = GetStateValues(values, state["name"])
+    if statevalues?size == 0
+      stop ">>>> Missing clock limit values for state '" + state["name"] + "'"
+    endif
+
+    list limits as limit
+      local limitvalue = GetLimitValue(statevalues["limits"], limit["name"])
+      if limitvalue?size == 0
+        stop ">>>> Missing clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
+      endif
+      if limit["min"] == "yes" && limitvalue["min"] == ""
+        stop ">>>> Missing minimum value for clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
+      endif
+      if limit["min"] == "no" && limitvalue["min"] != ""
+        stop ">>>> Unexpected minimum value for clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
+      endif
+      if limit["max"] == "yes" && limitvalue["max"] == ""
+        stop ">>>> Missing maximum value for clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
+      endif
+      if limit["max"] == "no" && limitvalue["max"] != ""
+        stop ">>>> Unexpected maximum value for clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
+      endif
+    endlist
+  endlist
+
+  return {"states":states, "limits":limits, "values":values}
 endfunction
 
 /* Parses the generic configuration settings.*/
@@ -115,7 +237,8 @@ function ParseConfigurations()
   local configs = []
 
   list doc1.clocktree.settings.configs.config as config
-    local name = config.@macro[0]?string
+    local basename = config.@name[0]?string
+    local name = precfg + basename
     local type = config.@type[0]?string
     local default = config.@default[0]?string
     local role = (config.@role[0]!"")?string
@@ -154,6 +277,9 @@ function ParseConfigurations()
       if minval != "" || maxval != ""
         stop ">>>> Invalid range constraints for set configuration '" + name + "'"
       endif
+      if !values?replace(",", " ")?word_list?seq_contains(default)
+        stop ">>>> Invalid default value for set configuration '" + name + "'"
+      endif
     elseif type == "raw"
       if minval != "" || maxval != "" || values != ""
         stop ">>>> Invalid constraints for raw configuration '" + name + "'"
@@ -171,6 +297,7 @@ endfunction
 /* Initializes the parsed clock tree data model.*/
 function Initialize()
   local configs = ParseConfigurations()
+  local limitmodel = ParseLimitModel()
   local clocknames = []
   local clocks = []
   local points = []
@@ -273,8 +400,16 @@ function Initialize()
       stop ">>>> Unknown clock point '" + inputpoint + "' referenced by multiplier '" + mul["name"] + "'"
     endif
   endlist
+  list clocks as clock
+    if clock["limits"]?size > 0
+      local limit = GetLimitDeclaration(limitmodel["limits"], clock["limits"]["ref"])
+      if limit?size == 0
+        stop ">>>> Unknown clock limit '" + clock["limits"]["ref"] + "' referenced by clock point '" + clock["name"] + "'"
+      endif
+    endif
+  endlist
 
-  return {"configs":configs, "clocknames":clocknames, "clocks":clocks, "points":points, "muxes":muxes, "dividers":dividers, "multipliers":multipliers}
+  return {"configs":configs, "limits":limitmodel, "clocknames":clocknames, "clocks":clocks, "points":points, "muxes":muxes, "dividers":dividers, "multipliers":multipliers}
 endfunction
 
 /* Static data parsed at startup.*/
@@ -308,13 +443,15 @@ macro EmitClockPointConstants()
   local points = GetDynamicPoints()
 
   if points?size > 0
+    local index = 0
     list points as point
       emit """
-${("#define " + prename + point["name"])?tab_to(32) + point?index + "U"}
+${("#define " + prename + point["name"])?right_pad(32) + index + "U"}
 """
+      local index = index + 1
     endlist
     emit """
-${("#define " + prename + "ARRAY_SIZE")?tab_to(32) + points?size + "U"}
+${("#define " + prename + "ARRAY_SIZE")?right_pad(32) + points?size + "U"}
 
 #define ${prename}POINT_NAMES                                                     \
   {                                                                         \
@@ -405,7 +542,7 @@ macro EmitGenericConfigurations()
  * @brief   ${config["description"]}
  */
 #if !defined(${config["name"]}) || defined(__DOXYGEN__)
-${("#define " + config["name"])?tab_to(44) + config["default"]}
+${("#define " + config["name"])?right_pad(44) + config["default"]}
 #endif
 """
     sep
@@ -471,7 +608,7 @@ macro EmitConfigurations()
     emit """
  */
 #if !defined(${name}) || defined(__DOXYGEN__)
-${("#define " + name)?tab_to(44) + default}
+${("#define " + name)?right_pad(44) + default}
 #endif
 """
     sep
@@ -481,7 +618,7 @@ ${("#define " + name)?tab_to(44) + default}
 endmacro
 
 /* Returns true if a generic configuration has emitted checks.*/
-function HasGenericConfigChecks(config)
+function HasGenericConfigCheck(config)
   if config["type"] == "bool" || config["type"] == "set"
     return true
   endif
@@ -495,13 +632,139 @@ function HasGenericConfigChecks(config)
   return false
 endfunction
 
+/* Returns true if generic configuration checks are emitted.*/
+function HasGenericConfigChecks()
+  list model["configs"] as config
+    if HasGenericConfigCheck(config)
+      return true
+    endif
+  endlist
+
+  return false
+endfunction
+
+/* Formats one preprocessor condition term.*/
+function FormatConditionTerm(term)
+  local text = term?trim
+  if text?starts_with("defined(") || text?starts_with("!defined(")
+    return text
+  endif
+  if text?starts_with("(") && text?ends_with(")")
+    return text
+  endif
+
+  return "(" + text + ")"
+endfunction
+
+/* Splits an expression containing top-level && operators.*/
+function SplitAndCondition(expression)
+  local terms = []
+  list expression?split("&&") as term
+    local terms = terms + [term?trim]
+  endlist
+
+  return terms
+endfunction
+
+/* Emits a preprocessor condition using && between all terms.*/
+macro EmitAndCondition(keyword, terms)
+  list terms as term
+    if term?is_first
+      local line = keyword + " " + FormatConditionTerm(term)
+    else
+      local line = "    " + FormatConditionTerm(term)
+    endif
+    if !term?is_last
+      local line = line + " && \\"
+    endif
+    emit """
+${line}
+"""
+  endlist
+endmacro
+
+/* Emits a preprocessor condition using || between checks, then a doxygen guard.*/
+macro EmitDoxygenGuardedOrCondition(checks)
+  if checks?size == 1
+    EmitAndCondition(keyword="#if", terms=[checks[0], "!defined(__DOXYGEN__)"])
+  else
+    list checks as check
+      if check?is_first
+        local line = "#if (" + FormatConditionTerm(check)
+      else
+        local line = "     " + FormatConditionTerm(check)
+      endif
+      if check?is_last
+        local line = line + ") && \\"
+      else
+        local line = line + " || \\"
+      endif
+      emit """
+${line}
+"""
+    endlist
+    emit """
+    !defined(__DOXYGEN__)
+"""
+  endif
+endmacro
+
+/* Emits a state selection condition, optionally with a doxygen alternative.*/
+macro EmitStateCondition(keyword, expression, doxygen)
+  local terms = SplitAndCondition(expression)
+  if doxygen && terms?size > 1
+    list terms as term
+      if term?is_first
+        local line = keyword + " (" + FormatConditionTerm(term)
+      else
+        local line = "     " + FormatConditionTerm(term)
+      endif
+      if term?is_last
+        local line = line + ") || \\"
+      else
+        local line = line + " && \\"
+      endif
+      emit """
+${line}
+"""
+    endlist
+    emit """
+    defined(__DOXYGEN__)
+"""
+  else
+    if doxygen
+      local terms = terms + ["defined(__DOXYGEN__)"]
+      local operator = " || "
+    else
+      local operator = " && "
+    endif
+    list terms as term
+      if term?is_first
+        local line = keyword + " " + FormatConditionTerm(term)
+      else
+        if keyword == "#elif"
+          local line = "      " + FormatConditionTerm(term)
+        else
+          local line = "    " + FormatConditionTerm(term)
+        endif
+      endif
+      if !term?is_last
+        local line = line + operator + "\\"
+      endif
+      emit """
+${line}
+"""
+    endlist
+  endif
+endmacro
+
 /* Emits checks for one generic configuration setting.*/
 macro EmitOneGenericConfigChecks(config)
   local name = config["name"]
 
   if config["type"] == "bool"
+    EmitAndCondition(keyword="#if", terms=[name + " != TRUE", name + " != FALSE", "!defined(__DOXYGEN__)"])
     emit """
-#if !defined(__DOXYGEN__) && (${name} != TRUE) && (${name} != FALSE)
 #error "invalid ${name} value specified"
 #endif
 """
@@ -514,8 +777,8 @@ macro EmitOneGenericConfigChecks(config)
       local checks = checks + ["(" + name + " > " + config["max"] + ")"]
     endif
     if checks?size > 0
+      EmitDoxygenGuardedOrCondition(checks=checks)
       emit """
-#if !defined(__DOXYGEN__) && (${checks?join(" || ")})
 #error "invalid ${name} value specified"
 #endif
 """
@@ -525,8 +788,9 @@ macro EmitOneGenericConfigChecks(config)
     list config["values"]?replace(",", " ")?word_list as value
       local checks = checks + ["(" + name + " != " + value + ")"]
     endlist
+    local checks = checks + ["!defined(__DOXYGEN__)"]
+    EmitAndCondition(keyword="#if", terms=checks)
     emit """
-#if !defined(__DOXYGEN__) && (${checks?join(" && ")})
 #error "invalid ${name} value specified"
 #endif
 """
@@ -535,16 +799,132 @@ endmacro
 
 /* Emits checks for generic configuration settings.*/
 macro EmitGenericConfigChecks()
-  local emitted = false
-  list model["configs"] as config
-    if HasGenericConfigChecks(config)
-      if emitted
-        emit "\e"
+  if HasGenericConfigChecks()
+    emit """
+/*
+ * Extra configuration checks.
+ */
+"""
+    local emitted = false
+    list model["configs"] as config
+      if HasGenericConfigCheck(config)
+        if emitted
+          emit "\e"
+        endif
+        EmitOneGenericConfigChecks(config=config)
+        local emitted = true
       endif
-      EmitOneGenericConfigChecks(config=config)
-      local emitted = true
+    endlist
+  endif
+endmacro
+
+/* Returns a generated limit macro name.*/
+function GetLimitMacro(limit, kind)
+  if kind == "min"
+    return premacro + limit["name"] + postmin
+  elseif kind == "max"
+    return premacro + limit["name"] + postmax
+  endif
+
+  stop ">>>> Unknown clock limit kind '" + kind + "'"
+endfunction
+
+/* Returns a generated state-specific limit macro name.*/
+function GetStateLimitMacro(state, limit, kind)
+  if kind == "min"
+    return premacro + state["name"]?upper_case + "_" + limit["name"] + postmin
+  elseif kind == "max"
+    return premacro + state["name"]?upper_case + "_" + limit["name"] + postmax
+  endif
+
+  stop ">>>> Unknown clock limit kind '" + kind + "'"
+endfunction
+
+/* Emits one state-specific clock limit value.*/
+macro EmitOneStateLimitValue(state, statevalues, limit, kind)
+  local macroname = GetStateLimitMacro(state, limit, kind)
+  local limitvalue = GetLimitValue(statevalues["limits"], limit["name"])
+
+  emit """
+${("#define " + macroname)?right_pad(44) + limitvalue[kind]}
+"""
+endmacro
+
+/* Emits grouped state-specific clock limit values.*/
+macro EmitStateLimitDefinitions()
+  list model["limits"]["states"] as state
+    local statevalues = GetStateValues(model["limits"]["values"], state["name"])
+    if !state?is_first
+      emit "\e"
     endif
+    emit """
+/**
+ * @name    Frequency limits for ${state["name"]} state
+ * @{
+ */
+"""
+    list model["limits"]["limits"] as limit
+      if limit["min"] == "yes"
+        EmitOneStateLimitValue(state=state, statevalues=statevalues, limit=limit, kind="min")
+      endif
+      if limit["max"] == "yes"
+        EmitOneStateLimitValue(state=state, statevalues=statevalues, limit=limit, kind="max")
+      endif
+    endlist
+    emit """
+/** @} */
+"""
   endlist
+endmacro
+
+/* Emits one final clock limit selection.*/
+macro EmitOneLimitSelection(state, limit, kind)
+  local macroname = GetLimitMacro(limit, kind)
+  local statemacro = GetStateLimitMacro(state, limit, kind)
+
+  emit """
+${("#define " + macroname)?right_pad(44) + statemacro}
+"""
+endmacro
+
+/* Emits final clock limit selections.*/
+macro EmitLimitSelections()
+  if model["limits"]["states"]?size > 0
+    emit """
+/*
+ * Selected frequency limits.
+ */
+"""
+    list model["limits"]["states"] as state
+      if state?is_first
+        EmitStateCondition(keyword="#if", expression=state["when"], doxygen=true)
+      else
+        EmitStateCondition(keyword="#elif", expression=state["when"], doxygen=false)
+      endif
+      list model["limits"]["limits"] as limit
+        if limit["min"] == "yes"
+          EmitOneLimitSelection(state=state, limit=limit, kind="min")
+        endif
+        if limit["max"] == "yes"
+          EmitOneLimitSelection(state=state, limit=limit, kind="max")
+        endif
+      endlist
+    endlist
+    emit """
+#else
+#error "unable to select clock frequency limits"
+#endif
+"""
+  endif
+endmacro
+
+/* Emits generated clock limit definitions.*/
+macro EmitLimitDefinitions()
+  if model["limits"]["limits"]?size > 0
+    EmitStateLimitDefinitions()
+    emit "\e"
+    EmitLimitSelections()
+  endif
 endmacro
 
 /* Emits enable-state definitions for all clock points.*/
@@ -555,7 +935,7 @@ macro EmitEnableExpression(name, expression, conditions)
       list terms as term
         if term?is_first
           if condition?is_first
-            local line = ("#define " + name)?tab_to(44) + "("
+            local line = ("#define " + name)?right_pad(44) + "("
           else
             local line = contindent
           endif
@@ -578,14 +958,14 @@ macro EmitEnableExpression(name, expression, conditions)
         else
           local line = line + " && \\"
         endif
-        emit """
+      emit """
 ${line}
 """
       endlist
     endlist
   else
     emit """
-${("#define " + name)?tab_to(44) + expression}
+${("#define " + name)?right_pad(44) + expression}
 """
   endif
 endmacro
@@ -646,14 +1026,14 @@ macro EmitBitsDefinition(point, bits)
     endif
     emit """
 #if (${enmacro} == TRUE) || defined(__DOXYGEN__)
-${("#define " + bitsmacro)?tab_to(44) + enabledbits}
+${("#define " + bitsmacro)?right_pad(44) + enabledbits}
 #else
-${("#define " + bitsmacro)?tab_to(44) + disabledbits}
+${("#define " + bitsmacro)?right_pad(44) + disabledbits}
 #endif
 """
   else
     emit """
-${("#define " + bitsmacro)?tab_to(44) + bits}
+${("#define " + bitsmacro)?right_pad(44) + bits}
 """
   endif
 endmacro
@@ -666,14 +1046,14 @@ macro EmitFrequencyDefinition(point, frequency)
   if point["enable"] == "manual" || point["enable"] == "auto" || point["enable"] == "never" || point["enable"] == "always"
     emit """
 #if (${enmacro} == TRUE) || defined(__DOXYGEN__)
-${("#define " + freqmacro)?tab_to(44) + frequency}
+${("#define " + freqmacro)?right_pad(44) + frequency}
 #else
-${("#define " + freqmacro)?tab_to(44) + "0U"}
+${("#define " + freqmacro)?right_pad(44) + "0U"}
 #endif
 """
   else
     emit """
-${("#define " + freqmacro)?tab_to(44) + frequency}
+${("#define " + freqmacro)?right_pad(44) + frequency}
 """
   endif
 endmacro
@@ -696,8 +1076,8 @@ endfunction
 macro EmitClockChecks(point)
   if point["enable"] == "manual"
     local enmacro = precfg + point["name"] + postenable
+    EmitAndCondition(keyword="#if", terms=[enmacro + " != TRUE", enmacro + " != FALSE", "!defined(__DOXYGEN__)"])
     emit """
-#if !defined(__DOXYGEN__) && (${enmacro} != TRUE) && (${enmacro} != FALSE)
 #error "invalid ${enmacro} value specified"
 #endif
 """
@@ -715,18 +1095,23 @@ macro EmitClockChecks(point)
       if maxval != ""
         local checks = checks + ["(" + valmacro + " > " + maxval + ")"]
       endif
-      local operator = " || "
+      local andchecks = false
     elseif point["kind"] == "set"
       list point["data"]["values"]?replace(",", " ")?word_list as value
         local checks = checks + ["(" + valmacro + " != " + value + ")"]
       endlist
-      local operator = " && "
+      local andchecks = true
     else
-      local operator = ""
+      local andchecks = false
     endif
     if checks?size > 0
+      if andchecks
+        local checks = checks + ["!defined(__DOXYGEN__)"]
+        EmitAndCondition(keyword="#if", terms=checks)
+      else
+        EmitDoxygenGuardedOrCondition(checks=checks)
+      endif
       emit """
-#if !defined(__DOXYGEN__) && (${checks?join(operator)})
 #error "invalid ${valmacro} value specified"
 #endif
 """
@@ -744,12 +1129,21 @@ macro EmitClockFrequencyChecks(point)
   if HasClockFrequencyChecks(point)
     local freqmacro = premacro + point["name"] + postclocks
     local enmacro = GetEnableMacro(point)
-    local minval = point["limits"]["min"]!""
-    local maxval = point["limits"]["max"]!""
+    local limit = GetLimitDeclaration(model["limits"]["limits"], point["limits"]["ref"])
+    if limit["min"] == "yes"
+      local minval = GetLimitMacro(limit, "min")
+    else
+      local minval = ""
+    endif
+    if limit["max"] == "yes"
+      local maxval = GetLimitMacro(limit, "max")
+    else
+      local maxval = ""
+    endif
 
     if minval != ""
+      EmitAndCondition(keyword="#if", terms=[enmacro + " == TRUE", freqmacro + " < " + minval, "!defined(__DOXYGEN__)"])
       emit """
-#if !defined(__DOXYGEN__) && (${enmacro} == TRUE) && (${freqmacro} < ${minval})
 #error "${freqmacro} below minimum frequency"
 #endif
 """
@@ -760,8 +1154,8 @@ macro EmitClockFrequencyChecks(point)
     endif
 
     if maxval != ""
+      EmitAndCondition(keyword="#if", terms=[enmacro + " == TRUE", freqmacro + " > " + maxval, "!defined(__DOXYGEN__)"])
       emit """
-#if !defined(__DOXYGEN__) && (${enmacro} == TRUE) && (${freqmacro} > ${maxval})
 #error "${freqmacro} above maximum frequency"
 #endif
 """
@@ -805,7 +1199,7 @@ macro EmitClockBits(point)
         EmitBitsDefinition(point=point, bits=input["bits"])
       else
         emit """
-${("#define " + bitsmacro)?tab_to(44) + input["bits"]}
+${("#define " + bitsmacro)?right_pad(44) + input["bits"]}
 """
       endif
     endlist
@@ -860,24 +1254,20 @@ macro EmitClockFrequency(point)
     local freqmacro = premacro + point["name"] + postclocks
     local enmacro = GetEnableMacro(point)
     list point["inputs"] as input
-      local condition = "((" + enmacro + " == TRUE) && (" + selmacro + " == " + input["bits"] + "))"
+      local condition = "(" + enmacro + " == TRUE) && (" + selmacro + " == " + input["bits"] + ")"
       if input?is_first
-        emit """
-#if ${condition} || defined(__DOXYGEN__)
-"""
+        EmitStateCondition(keyword="#if", expression=condition, doxygen=true)
       else
-        emit """
-#elif ${condition}
-"""
+        EmitStateCondition(keyword="#elif", expression=condition, doxygen=false)
       endif
       local inputfreq = premacro + input["point"] + postclocks
       emit """
-${("#define " + freqmacro)?tab_to(44) + inputfreq}
+${("#define " + freqmacro)?right_pad(44) + inputfreq}
 """
     endlist
     emit """
 #else
-${("#define " + freqmacro)?tab_to(44) + "0U"}
+${("#define " + freqmacro)?right_pad(44) + "0U"}
 #endif
 """
   elseif point["type"] == "divider"
@@ -902,7 +1292,11 @@ endmacro
 /* Emits checks, register bits and calculated frequencies in XML order.*/
 macro EmitDerivedConstants()
   EmitGenericConfigChecks()
-  if model["configs"]?size > 0
+  if model["configs"]?size > 0 && model["limits"]["limits"]?size > 0
+    emit "\e"
+  endif
+  EmitLimitDefinitions()
+  if model["configs"]?size > 0 || model["limits"]["limits"]?size > 0
     emit "\e"
   endif
   EmitEnableDefinitions()
