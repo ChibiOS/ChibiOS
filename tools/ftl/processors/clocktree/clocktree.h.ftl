@@ -17,7 +17,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   --]
 [@pp.dropOutputFile /]
-[#import "/@lib/libutils.ftlc" as utils /]
 [#import "/@lib/liblicense.ftlc" as license /]
 [#import "/@lib/libclocks.ftlc" as clocktree /]
 [@pp.changeOutputFile name="clocktree.h" /]
