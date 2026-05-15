@@ -281,11 +281,16 @@
     </xs:complexType>
 
     <xs:complexType name="stateLimitValueType">
-      <xs:sequence>
-        <xs:element name="value" type="conditionalLimitValueType" maxOccurs="unbounded"
-          minOccurs="0">
-        </xs:element>
-      </xs:sequence>
+      <xs:choice maxOccurs="1" minOccurs="0">
+        <xs:sequence>
+          <xs:element name="case" type="conditionalLimitCaseType"
+            maxOccurs="unbounded" minOccurs="0">
+          </xs:element>
+          <xs:element name="default" type="limitDefaultValueType" maxOccurs="1"
+            minOccurs="1">
+          </xs:element>
+        </xs:sequence>
+      </xs:choice>
       <xs:attribute name="name" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
@@ -313,8 +318,8 @@
       </xs:attribute>
     </xs:complexType>
 
-    <xs:complexType name="conditionalLimitValueType">
-      <xs:attribute name="when" use="optional">
+    <xs:complexType name="conditionalLimitCaseType">
+      <xs:attribute name="when" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="1"></xs:minLength>
@@ -322,6 +327,25 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
+      <xs:attribute name="min" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="max" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="limitDefaultValueType">
       <xs:attribute name="min" use="optional">
         <xs:simpleType>
           <xs:restriction base="xs:string">

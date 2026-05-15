@@ -196,10 +196,18 @@ function ParseLimitModel()
       endif
       local valuenames = valuenames + [name]
       local variants = []
-      if limit.value[0]??
-        list limit.value as value
-          local variants = variants + [{"when":(value.@when[0]!"")?string, "min":(value.@min[0]!"")?string, "max":(value.@max[0]!"")?string}]
+      if limit["case"][0]?? || limit["default"][0]??
+        if limit.@min[0]?? || limit.@max[0]??
+          stop ">>>> Direct and conditional values cannot be mixed for clock limit '" + name + "' in state '" + statename + "'"
+        endif
+        if !limit["default"][0]??
+          stop ">>>> Missing default value for clock limit '" + name + "' in state '" + statename + "'"
+        endif
+        list limit["case"] as casevalue
+          local variants = variants + [{"when":casevalue.@when[0]?string, "min":(casevalue.@min[0]!"")?string, "max":(casevalue.@max[0]!"")?string}]
         endlist
+        local defaultvalue = limit["default"][0]
+        local variants = variants + [{"when":"", "min":(defaultvalue.@min[0]!"")?string, "max":(defaultvalue.@max[0]!"")?string}]
       else
         local variants = variants + [{"when":"", "min":(limit.@min[0]!"")?string, "max":(limit.@max[0]!"")?string}]
       endif

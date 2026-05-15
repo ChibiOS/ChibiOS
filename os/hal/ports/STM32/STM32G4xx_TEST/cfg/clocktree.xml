@@ -42,12 +42,12 @@
     <limit-values>
       <state-values state="boost">
         <limit name="HSECLK">
-          <value when="defined(STM32_HSE_BYPASS)" min="8000000" max="48000000" />
-          <value min="8000000" max="48000000" />
+          <case when="defined(STM32_HSE_BYPASS)" min="8000000" max="48000000" />
+          <default min="8000000" max="48000000" />
         </limit>
         <limit name="LSECLK">
-          <value when="defined(STM32_LSE_BYPASS)" min="32768" max="1000000" />
-          <value min="32768" max="32768" />
+          <case when="defined(STM32_LSE_BYPASS)" min="32768" max="1000000" />
+          <default min="32768" max="32768" />
         </limit>
         <limit name="PLLIN" min="2660000" max="16000000" />
         <limit name="PLLVCO" min="96000000" max="344000000" />
@@ -61,12 +61,12 @@
       </state-values>
       <state-values state="vos1">
         <limit name="HSECLK">
-          <value when="defined(STM32_HSE_BYPASS)" min="8000000" max="48000000" />
-          <value min="8000000" max="48000000" />
+          <case when="defined(STM32_HSE_BYPASS)" min="8000000" max="48000000" />
+          <default min="8000000" max="48000000" />
         </limit>
         <limit name="LSECLK">
-          <value when="defined(STM32_LSE_BYPASS)" min="32768" max="1000000" />
-          <value min="32768" max="32768" />
+          <case when="defined(STM32_LSE_BYPASS)" min="32768" max="1000000" />
+          <default min="32768" max="32768" />
         </limit>
         <limit name="PLLIN" min="2660000" max="16000000" />
         <limit name="PLLVCO" min="96000000" max="344000000" />
@@ -80,12 +80,12 @@
       </state-values>
       <state-values state="vos2">
         <limit name="HSECLK">
-          <value when="defined(STM32_HSE_BYPASS)" min="8000000" max="26000000" />
-          <value min="8000000" max="26000000" />
+          <case when="defined(STM32_HSE_BYPASS)" min="8000000" max="26000000" />
+          <default min="8000000" max="26000000" />
         </limit>
         <limit name="LSECLK">
-          <value when="defined(STM32_LSE_BYPASS)" min="32768" max="1000000" />
-          <value min="32768" max="32768" />
+          <case when="defined(STM32_LSE_BYPASS)" min="32768" max="1000000" />
+          <default min="32768" max="32768" />
         </limit>
         <limit name="PLLIN" min="2660000" max="16000000" />
         <limit name="PLLVCO" min="96000000" max="128000000" />

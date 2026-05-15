@@ -46,6 +46,9 @@ jar.
   the selectable frequency limit states, the final limit macro set, and the
   state-specific values. The generator validates that each state provides all
   required final limits.
+- Conditional state-specific limits use ordered `<case when="..."/>` elements
+  followed by exactly one `<default/>` fallback. Simple unconditional limits can
+  still use direct `min` and `max` attributes on the `<limit>` element.
 - Clock points can specify optional `<limits ref="..."/>` references to final
   limit names. The generator emits the selected `<limit>_MIN` and `<limit>_MAX`
   definitions and uses them for frequency range checks. Disabled clock points
