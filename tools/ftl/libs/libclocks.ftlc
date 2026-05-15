@@ -195,7 +195,15 @@ function ParseLimitModel()
         stop ">>>> Duplicate clock limit value '" + name + "' in state '" + statename + "'"
       endif
       local valuenames = valuenames + [name]
-      local limitvalues = limitvalues + [{"name":name, "min":(limit.@min[0]!"")?string, "max":(limit.@max[0]!"")?string}]
+      local variants = []
+      if limit.value[0]??
+        list limit.value as value
+          local variants = variants + [{"when":(value.@when[0]!"")?string, "min":(value.@min[0]!"")?string, "max":(value.@max[0]!"")?string}]
+        endlist
+      else
+        local variants = variants + [{"when":"", "min":(limit.@min[0]!"")?string, "max":(limit.@max[0]!"")?string}]
+      endif
+      local limitvalues = limitvalues + [{"name":name, "variants":variants}]
     endlist
 
     local values = values + [{"state":statename, "limits":limitvalues}]
@@ -212,18 +220,29 @@ function ParseLimitModel()
       if limitvalue?size == 0
         stop ">>>> Missing clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
       endif
-      if limit["min"] == "yes" && limitvalue["min"] == ""
-        stop ">>>> Missing minimum value for clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
+      if limitvalue["variants"]?size == 0
+        stop ">>>> Missing value variants for clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
       endif
-      if limit["min"] == "no" && limitvalue["min"] != ""
-        stop ">>>> Unexpected minimum value for clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
+      if limitvalue["variants"]?last["when"] != ""
+        stop ">>>> Missing default value for clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
       endif
-      if limit["max"] == "yes" && limitvalue["max"] == ""
-        stop ">>>> Missing maximum value for clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
-      endif
-      if limit["max"] == "no" && limitvalue["max"] != ""
-        stop ">>>> Unexpected maximum value for clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
-      endif
+      list limitvalue["variants"] as variant
+        if variant["when"] == "" && !variant?is_last
+          stop ">>>> Default value must be last for clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
+        endif
+        if limit["min"] == "yes" && variant["min"] == ""
+          stop ">>>> Missing minimum value for clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
+        endif
+        if limit["min"] == "no" && variant["min"] != ""
+          stop ">>>> Unexpected minimum value for clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
+        endif
+        if limit["max"] == "yes" && variant["max"] == ""
+          stop ">>>> Missing maximum value for clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
+        endif
+        if limit["max"] == "no" && variant["max"] != ""
+          stop ">>>> Unexpected maximum value for clock limit '" + limit["name"] + "' in state '" + state["name"] + "'"
+        endif
+      endlist
     endlist
   endlist
 
@@ -854,14 +873,49 @@ function GetStateLimitMacro(state, limit, kind)
   stop ">>>> Unknown clock limit kind '" + kind + "'"
 endfunction
 
-/* Emits one state-specific clock limit value.*/
-macro EmitOneStateLimitValue(state, statevalues, limit, kind)
+/* Emits one state-specific clock limit value macro.*/
+macro EmitOneStateLimitValueMacro(state, limit, variant, kind)
   local macroname = GetStateLimitMacro(state, limit, kind)
-  local limitvalue = GetLimitValue(statevalues["limits"], limit["name"])
 
   emit """
-${("#define " + macroname)?right_pad(44) + limitvalue[kind]}
+${("#define " + macroname)?right_pad(44) + variant[kind]}
 """
+endmacro
+
+/* Emits state-specific clock limit value macros for one variant.*/
+macro EmitStateLimitValueMacros(state, limit, variant)
+  if limit["min"] == "yes"
+    EmitOneStateLimitValueMacro(state=state, limit=limit, variant=variant, kind="min")
+  endif
+  if limit["max"] == "yes"
+    EmitOneStateLimitValueMacro(state=state, limit=limit, variant=variant, kind="max")
+  endif
+endmacro
+
+/* Emits one state-specific clock limit value, optionally conditionally.*/
+macro EmitStateLimitValue(state, statevalues, limit)
+  local limitvalue = GetLimitValue(statevalues["limits"], limit["name"])
+  local variants = limitvalue["variants"]
+
+  if variants?size == 1 && variants[0]["when"] == ""
+    EmitStateLimitValueMacros(state=state, limit=limit, variant=variants[0])
+  else
+    list variants as variant
+      if variant?is_first
+        EmitStateCondition(keyword="#if", expression=variant["when"], doxygen=true)
+      elseif variant["when"] != ""
+        EmitStateCondition(keyword="#elif", expression=variant["when"], doxygen=false)
+      else
+        emit """
+#else
+"""
+      endif
+      EmitStateLimitValueMacros(state=state, limit=limit, variant=variant)
+    endlist
+    emit """
+#endif
+"""
+  endif
 endmacro
 
 /* Emits grouped state-specific clock limit values.*/
@@ -878,12 +932,7 @@ macro EmitStateLimitDefinitions()
  */
 """
     list model["limits"]["limits"] as limit
-      if limit["min"] == "yes"
-        EmitOneStateLimitValue(state=state, statevalues=statevalues, limit=limit, kind="min")
-      endif
-      if limit["max"] == "yes"
-        EmitOneStateLimitValue(state=state, statevalues=statevalues, limit=limit, kind="max")
-      endif
+      EmitStateLimitValue(state=state, statevalues=statevalues, limit=limit)
     endlist
     emit """
 /** @} */

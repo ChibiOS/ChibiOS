@@ -493,10 +493,22 @@
  * @name    Frequency limits for boost state
  * @{
  */
+#if defined(STM32_HSE_BYPASS) || \
+    defined(__DOXYGEN__)
 #define STM32_BOOST_HSECLK_MIN              8000000
 #define STM32_BOOST_HSECLK_MAX              48000000
+#else
+#define STM32_BOOST_HSECLK_MIN              8000000
+#define STM32_BOOST_HSECLK_MAX              48000000
+#endif
+#if defined(STM32_LSE_BYPASS) || \
+    defined(__DOXYGEN__)
+#define STM32_BOOST_LSECLK_MIN              32768
+#define STM32_BOOST_LSECLK_MAX              1000000
+#else
 #define STM32_BOOST_LSECLK_MIN              32768
 #define STM32_BOOST_LSECLK_MAX              32768
+#endif
 #define STM32_BOOST_PLLIN_MIN               2660000
 #define STM32_BOOST_PLLIN_MAX               16000000
 #define STM32_BOOST_PLLVCO_MIN              96000000
@@ -517,10 +529,22 @@
  * @name    Frequency limits for vos1 state
  * @{
  */
+#if defined(STM32_HSE_BYPASS) || \
+    defined(__DOXYGEN__)
 #define STM32_VOS1_HSECLK_MIN               8000000
 #define STM32_VOS1_HSECLK_MAX               48000000
+#else
+#define STM32_VOS1_HSECLK_MIN               8000000
+#define STM32_VOS1_HSECLK_MAX               48000000
+#endif
+#if defined(STM32_LSE_BYPASS) || \
+    defined(__DOXYGEN__)
+#define STM32_VOS1_LSECLK_MIN               32768
+#define STM32_VOS1_LSECLK_MAX               1000000
+#else
 #define STM32_VOS1_LSECLK_MIN               32768
 #define STM32_VOS1_LSECLK_MAX               32768
+#endif
 #define STM32_VOS1_PLLIN_MIN                2660000
 #define STM32_VOS1_PLLIN_MAX                16000000
 #define STM32_VOS1_PLLVCO_MIN               96000000
@@ -541,10 +565,22 @@
  * @name    Frequency limits for vos2 state
  * @{
  */
+#if defined(STM32_HSE_BYPASS) || \
+    defined(__DOXYGEN__)
 #define STM32_VOS2_HSECLK_MIN               8000000
 #define STM32_VOS2_HSECLK_MAX               26000000
+#else
+#define STM32_VOS2_HSECLK_MIN               8000000
+#define STM32_VOS2_HSECLK_MAX               26000000
+#endif
+#if defined(STM32_LSE_BYPASS) || \
+    defined(__DOXYGEN__)
+#define STM32_VOS2_LSECLK_MIN               32768
+#define STM32_VOS2_LSECLK_MAX               1000000
+#else
 #define STM32_VOS2_LSECLK_MIN               32768
 #define STM32_VOS2_LSECLK_MAX               32768
+#endif
 #define STM32_VOS2_PLLIN_MIN                2660000
 #define STM32_VOS2_PLLIN_MAX                16000000
 #define STM32_VOS2_PLLVCO_MIN               96000000

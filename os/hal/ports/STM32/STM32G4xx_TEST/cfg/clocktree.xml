@@ -41,8 +41,14 @@
     </limit-set>
     <limit-values>
       <state-values state="boost">
-        <limit name="HSECLK" min="8000000" max="48000000" />
-        <limit name="LSECLK" min="32768" max="32768" />
+        <limit name="HSECLK">
+          <value when="defined(STM32_HSE_BYPASS)" min="8000000" max="48000000" />
+          <value min="8000000" max="48000000" />
+        </limit>
+        <limit name="LSECLK">
+          <value when="defined(STM32_LSE_BYPASS)" min="32768" max="1000000" />
+          <value min="32768" max="32768" />
+        </limit>
         <limit name="PLLIN" min="2660000" max="16000000" />
         <limit name="PLLVCO" min="96000000" max="344000000" />
         <limit name="PLLP" min="2064500" max="170000000" />
@@ -54,8 +60,14 @@
         <limit name="ADCCLK" max="60000000" />
       </state-values>
       <state-values state="vos1">
-        <limit name="HSECLK" min="8000000" max="48000000" />
-        <limit name="LSECLK" min="32768" max="32768" />
+        <limit name="HSECLK">
+          <value when="defined(STM32_HSE_BYPASS)" min="8000000" max="48000000" />
+          <value min="8000000" max="48000000" />
+        </limit>
+        <limit name="LSECLK">
+          <value when="defined(STM32_LSE_BYPASS)" min="32768" max="1000000" />
+          <value min="32768" max="32768" />
+        </limit>
         <limit name="PLLIN" min="2660000" max="16000000" />
         <limit name="PLLVCO" min="96000000" max="344000000" />
         <limit name="PLLP" min="2064500" max="150000000" />
@@ -67,8 +79,14 @@
         <limit name="ADCCLK" max="60000000" />
       </state-values>
       <state-values state="vos2">
-        <limit name="HSECLK" min="8000000" max="26000000" />
-        <limit name="LSECLK" min="32768" max="32768" />
+        <limit name="HSECLK">
+          <value when="defined(STM32_HSE_BYPASS)" min="8000000" max="26000000" />
+          <value min="8000000" max="26000000" />
+        </limit>
+        <limit name="LSECLK">
+          <value when="defined(STM32_LSE_BYPASS)" min="32768" max="1000000" />
+          <value min="32768" max="32768" />
+        </limit>
         <limit name="PLLIN" min="2660000" max="16000000" />
         <limit name="PLLVCO" min="96000000" max="128000000" />
         <limit name="PLLP" min="2064500" max="26000000" />
