@@ -275,14 +275,6 @@
 #define STM32_NO_INIT                       FALSE
 #endif
 
-#if !defined(STM32_VOS) || defined(__DOXYGEN__)
-#define STM32_VOS                           STM32_VOS_RANGE1
-#endif
-
-#if !defined(STM32_PWR_BOOST) || defined(__DOXYGEN__)
-#define STM32_PWR_BOOST                     TRUE
-#endif
-
 #if !defined(STM32_PWR_CR2) || defined(__DOXYGEN__)
 #define STM32_PWR_CR2                       (PWR_CR2_PLS_LEV0)
 #endif
@@ -356,8 +348,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !defined(STM32G4xx_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G4xx_MCUCONF not defined"
+#if !defined(STM32G4xx_TEST_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G4xx_TEST_MCUCONF not defined"
 #endif
 
 #if defined(STM32G431xx) && !defined(STM32G431_MCUCONF)
@@ -388,70 +380,11 @@
 #error "Using a wrong mcuconf.h file, STM32G491_MCUCONF not defined"
 #endif
 
-#if STM32_PWR_BOOST && (STM32_VOS != STM32_VOS_RANGE1)
-#error "STM32_PWR_BOOST requires STM32_VOS_RANGE1"
-#endif
-
-/*
- * Temporary compatibility with existing G4 mcuconf.h files.  User-facing
- * settings are moving to STM32_CFG_* names; generated derived names below own
- * the historical STM32_*_ENABLED and STM32_CLOCK_DYNAMIC symbols.
- */
-#if defined(STM32_CLOCK_DYNAMIC) && !defined(STM32_CFG_CLOCK_DYNAMIC)
-#if STM32_CLOCK_DYNAMIC == TRUE
-#define STM32_CFG_CLOCK_DYNAMIC             TRUE
-#else
-#define STM32_CFG_CLOCK_DYNAMIC             FALSE
-#endif
-#undef STM32_CLOCK_DYNAMIC
-#endif
-
-#if defined(STM32_HSI16_ENABLED) && !defined(STM32_CFG_HSI16_ENABLE)
-#if STM32_HSI16_ENABLED == TRUE
-#define STM32_CFG_HSI16_ENABLE              TRUE
-#else
-#define STM32_CFG_HSI16_ENABLE              FALSE
-#endif
-#undef STM32_HSI16_ENABLED
-#endif
-
-#if defined(STM32_HSI48_ENABLED) && !defined(STM32_CFG_HSI48_ENABLE)
-#if STM32_HSI48_ENABLED == TRUE
-#define STM32_CFG_HSI48_ENABLE              TRUE
-#else
-#define STM32_CFG_HSI48_ENABLE              FALSE
-#endif
-#undef STM32_HSI48_ENABLED
-#endif
-
-#if defined(STM32_HSE_ENABLED) && !defined(STM32_CFG_HSE_ENABLE)
-#if STM32_HSE_ENABLED == TRUE
-#define STM32_CFG_HSE_ENABLE                TRUE
-#else
-#define STM32_CFG_HSE_ENABLE                FALSE
-#endif
-#undef STM32_HSE_ENABLED
-#endif
-
-#if defined(STM32_LSE_ENABLED) && !defined(STM32_CFG_LSE_ENABLE)
-#if STM32_LSE_ENABLED == TRUE
-#define STM32_CFG_LSE_ENABLE                TRUE
-#else
-#define STM32_CFG_LSE_ENABLE                FALSE
-#endif
-#undef STM32_LSE_ENABLED
-#endif
-
-#if defined(STM32_LSI_ENABLED) && !defined(STM32_CFG_LSI_ENABLE)
-#if STM32_LSI_ENABLED == TRUE
-#define STM32_CFG_LSI_ENABLE                TRUE
-#else
-#define STM32_CFG_LSI_ENABLE                FALSE
-#endif
-#undef STM32_LSI_ENABLED
-#endif
-
 #include "clocktree.h"
+
+#if STM32_CFG_PWR_BOOST && (STM32_CFG_PWR_VOS != STM32_VOS_RANGE1)
+#error "STM32_CFG_PWR_BOOST requires STM32_CFG_PWR_VOS to be STM32_VOS_RANGE1"
+#endif
 
 /**
  * @name    Activation times in microseconds
@@ -523,7 +456,9 @@
 #define STM32_TIMP2CLK                      STM32_PCLK2TIM_FREQ
 #define STM32_MCODIVCLK                     STM32_MCODIV_FREQ
 #define STM32_MCOCLK                        STM32_MCO_FREQ
+#define STM32_LSCOSEL                       STM32_LSCO_BITS
 #define STM32_RTCCLK                        STM32_RTC_FREQ
+#define STM32_RTCSEL                        STM32_RTC_BITS
 
 #define STM32_USART1CLK                     STM32_USART1_FREQ
 #define STM32_USART2CLK                     STM32_USART2_FREQ

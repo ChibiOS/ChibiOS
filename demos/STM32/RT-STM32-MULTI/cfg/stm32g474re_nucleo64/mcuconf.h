@@ -31,7 +31,7 @@
 #ifndef MCUCONF_H
 #define MCUCONF_H
 
-#define STM32G4xx_MCUCONF
+#define STM32G4xx_TEST_MCUCONF
 #define STM32G473_MCUCONF
 #define STM32G483_MCUCONF
 #define STM32G474_MCUCONF
@@ -41,9 +41,9 @@
  * HAL driver system settings.
  */
 #define STM32_NO_INIT                       FALSE
-#define STM32_CLOCK_DYNAMIC                 TRUE
-#define STM32_VOS                           STM32_VOS_RANGE1
-#define STM32_PWR_BOOST                     TRUE
+#define STM32_CFG_CLOCK_DYNAMIC             TRUE
+#define STM32_CFG_PWR_VOS                   STM32_VOS_RANGE1
+#define STM32_CFG_PWR_BOOST                 TRUE
 #define STM32_PWR_CR2                       (PWR_CR2_PLS_LEV0)
 #define STM32_PWR_CR3                       (PWR_CR3_EIWF)
 #define STM32_PWR_CR4                       (0U)
@@ -61,48 +61,47 @@
 #define STM32_PWR_PDCRF                     (0U)
 #define STM32_PWR_PUCRG                     (0U)
 #define STM32_PWR_PDCRG                     (0U)
-#define STM32_HSI16_ENABLED                 TRUE
-#define STM32_HSI48_ENABLED                 TRUE
-#define STM32_HSE_ENABLED                   TRUE
-#define STM32_LSI_ENABLED                   FALSE
-#define STM32_LSE_ENABLED                   TRUE
-#define STM32_SW                            STM32_SW_PLLRCLK
-#define STM32_PLLSRC                        STM32_PLLSRC_HSE
-#define STM32_PLLM_VALUE                    6
-#define STM32_PLLN_VALUE                    85
-#define STM32_PLLPDIV_VALUE                 0
-#define STM32_PLLP_VALUE                    7
-#define STM32_PLLQ_VALUE                    8
-#define STM32_PLLR_VALUE                    2
-#define STM32_HPRE                          STM32_HPRE_DIV1
-#define STM32_PPRE1                         STM32_PPRE1_DIV2
-#define STM32_PPRE2                         STM32_PPRE2_DIV1
-#define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
-#define STM32_MCOPRE                        STM32_MCOPRE_DIV1
-#define STM32_LSCOSEL                       STM32_LSCOSEL_NOCLOCK
+#define STM32_CFG_HSI16_ENABLE              TRUE
+#define STM32_CFG_HSI48_ENABLE              TRUE
+#define STM32_CFG_HSE_ENABLE                TRUE
+#define STM32_CFG_LSI_ENABLE                FALSE
+#define STM32_CFG_LSE_ENABLE                TRUE
+#define STM32_CFG_SYSCLK_SEL                STM32_SW_PLLRCLK
+#define STM32_CFG_PLLIN_SEL                 STM32_PLLSRC_HSE
+#define STM32_CFG_PLLREF_VALUE              6
+#define STM32_CFG_PLLVCO_VALUE              85
+#define STM32_CFG_PLLP_VALUE                7
+#define STM32_CFG_PLLQ_VALUE                8
+#define STM32_CFG_PLLR_VALUE                2
+#define STM32_CFG_HCLK_VALUE                1
+#define STM32_CFG_PCLK1_VALUE               2
+#define STM32_CFG_PCLK2_VALUE               1
+#define STM32_CFG_MCODIV_SEL                STM32_MCOSEL_NOCLOCK
+#define STM32_CFG_MCO_VALUE                 1
+#define STM32_CFG_LSCO_SEL                  STM32_LSCOSEL_NOCLOCK
 
 /*
  * Peripherals clock sources.
  */
-#define STM32_USART1SEL                     STM32_USART1SEL_SYSCLK
-#define STM32_USART2SEL                     STM32_USART2SEL_SYSCLK
-#define STM32_USART3SEL                     STM32_USART3SEL_SYSCLK
-#define STM32_UART4SEL                      STM32_UART4SEL_SYSCLK
-#define STM32_UART5SEL                      STM32_UART5SEL_SYSCLK
-#define STM32_LPUART1SEL                    STM32_LPUART1SEL_PCLK1
-#define STM32_I2C1SEL                       STM32_I2C1SEL_PCLK1
-#define STM32_I2C2SEL                       STM32_I2C2SEL_PCLK1
-#define STM32_I2C3SEL                       STM32_I2C3SEL_PCLK1
-#define STM32_I2C4SEL                       STM32_I2C4SEL_PCLK1
-#define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK1
-#define STM32_SAI1SEL                       STM32_SAI1SEL_SYSCLK
-#define STM32_I2S23SEL                      STM32_I2S23SEL_SYSCLK
-#define STM32_FDCANSEL                      STM32_FDCANSEL_HSE
-#define STM32_CLK48SEL                      STM32_CLK48SEL_HSI48
-#define STM32_ADC12SEL                      STM32_ADC12SEL_PLLPCLK
-#define STM32_ADC345SEL                     STM32_ADC345SEL_PLLPCLK
-#define STM32_QSPISEL                       STM32_QSPISEL_SYSCLK
-#define STM32_RTCSEL                        STM32_RTCSEL_LSE
+#define STM32_CFG_USART1_SEL                STM32_USART1SEL_SYSCLK
+#define STM32_CFG_USART2_SEL                STM32_USART2SEL_SYSCLK
+#define STM32_CFG_USART3_SEL                STM32_USART3SEL_SYSCLK
+#define STM32_CFG_UART4_SEL                 STM32_UART4SEL_SYSCLK
+#define STM32_CFG_UART5_SEL                 STM32_UART5SEL_SYSCLK
+#define STM32_CFG_LPUART1_SEL               STM32_LPUART1SEL_PCLK1
+#define STM32_CFG_I2C1_SEL                  STM32_I2C1SEL_PCLK1
+#define STM32_CFG_I2C2_SEL                  STM32_I2C2SEL_PCLK1
+#define STM32_CFG_I2C3_SEL                  STM32_I2C3SEL_PCLK1
+#define STM32_CFG_I2C4_SEL                  STM32_I2C4SEL_PCLK1
+#define STM32_CFG_LPTIM1_SEL                STM32_LPTIM1SEL_PCLK1
+#define STM32_CFG_SAI1_SEL                  STM32_SAI1SEL_SYSCLK
+#define STM32_CFG_I2S23_SEL                 STM32_I2S23SEL_SYSCLK
+#define STM32_CFG_FDCAN_SEL                 STM32_FDCANSEL_HSE
+#define STM32_CFG_CLK48_SEL                 STM32_CLK48SEL_HSI48
+#define STM32_CFG_ADC12_SEL                 STM32_ADC12SEL_PLLPCLK
+#define STM32_CFG_ADC345_SEL                STM32_ADC345SEL_PLLPCLK
+#define STM32_CFG_QSPI_SEL                  STM32_QSPISEL_SYSCLK
+#define STM32_CFG_RTC_SEL                   STM32_RTCSEL_LSE
 
 /*
  * IRQ system settings.

@@ -77,7 +77,7 @@ const halclkcfg_t hal_clkcfg_reset = {
  * @brief   Default clock configuration.
  */
 const halclkcfg_t hal_clkcfg_default = {
-  .pwr_cr1              = STM32_VOS | PWR_CR1_DBP,
+  .pwr_cr1              = STM32_CFG_PWR_VOS | PWR_CR1_DBP,
   .pwr_cr2              = STM32_PWR_CR2,
   .pwr_cr5              = STM32_CFG_PWR_BOOST == TRUE ? PWR_CR5_R1MODE : 0U,
   .rcc_cr               = 0U
@@ -290,13 +290,13 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
                 STM32_PCLK2_BITS | STM32_PCLK1_BITS | STM32_HCLK_BITS;
 
   /* CCIPR registers initialization, note.*/
-  RCC->CCIPR  = STM32_ADC345SEL  | STM32_ADC12SEL   | STM32_CLK48SEL   |
-                STM32_FDCANSEL   | STM32_I2S23SEL   | STM32_SAI1SEL    |
-                STM32_LPTIM1SEL  | STM32_I2C3SEL    | STM32_I2C2SEL    |
-                STM32_I2C1SEL    | STM32_LPUART1SEL | STM32_UART5SEL   |
-                STM32_UART4SEL   | STM32_USART3SEL  | STM32_USART2SEL  |
-                STM32_USART1SEL;
-  RCC->CCIPR2 = STM32_QSPISEL    | STM32_I2C4SEL;
+  RCC->CCIPR  = STM32_ADC345_BITS  | STM32_ADC12_BITS   | STM32_CLK48_BITS   |
+                STM32_FDCAN_BITS   | STM32_I2S23_BITS   | STM32_SAI1_BITS    |
+                STM32_LPTIM1_BITS  | STM32_I2C3_BITS    | STM32_I2C2_BITS    |
+                STM32_I2C1_BITS    | STM32_LPUART1_BITS | STM32_UART5_BITS   |
+                STM32_UART4_BITS   | STM32_USART3_BITS  | STM32_USART2_BITS  |
+                STM32_USART1_BITS;
+  RCC->CCIPR2 = STM32_QSPI_BITS    | STM32_I2C4_BITS;
 }
 
 /**
