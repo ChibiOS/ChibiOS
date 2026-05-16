@@ -19,6 +19,7 @@
 [@pp.dropOutputFile /]
 [#import "/@lib/liblicense.ftlc" as license /]
 [#import "/@lib/libclocks.ftlc" as clocktree /]
+[#assign ppindentfactor = 2 in clocktree /]
 [@pp.changeOutputFile name="clocktree.h" /]
 /*
 [@license.EmitLicenseAsText /]

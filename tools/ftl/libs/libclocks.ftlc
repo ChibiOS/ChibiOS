@@ -28,6 +28,7 @@ postenabled = doc1.clocktree.settings.suffixes.@enabled[0]?string
 postmin = "_MIN"
 postmax = "_MAX"
 contindent = "                                             "
+ppindentfactor = 0
 
 /* Validates uniqueness of bit targets in a parsed bits list.*/
 function ValidateBitTargets(bits, context)
@@ -111,6 +112,36 @@ function BuildAndExpression(terms)
   endlist
 
   return expression
+endfunction
+
+/* Splits an expression containing top-level && operators.*/
+function SplitAndCondition(expression)
+  local terms = []
+  list expression?split("&&") as term
+    local terms = terms + [term?trim]
+  endlist
+
+  return terms
+endfunction
+
+/* Splits an expression containing top-level || operators.*/
+function SplitOrCondition(expression)
+  local terms = []
+  list expression?split("||") as term
+    local terms = terms + [term?trim]
+  endlist
+
+  return terms
+endfunction
+
+/* Removes one external pair from XML-authored OR groups when present.*/
+function NormalizeOrCondition(expression)
+  local text = expression?trim
+  if text?starts_with("((") && text?ends_with("))")
+    return text?remove_beginning("(")?remove_ending(")")
+  endif
+
+  return text
 endfunction
 
 /* Parses a recursive conditional value select into flat conditional cases.*/
@@ -814,7 +845,7 @@ function GetConsumerConditions(point)
   local conditions = []
   list model["consumers"] as consumer
     if consumer["input"] == point["name"]
-      local conditions = conditions + [{"consumer":consumer["name"], "terms":[consumer["condition"]]}]
+      local conditions = conditions + [{"consumer":consumer["name"], "terms":SplitAndCondition(consumer["condition"])}]
     endif
   endlist
   list model["clocks"] as consumer
@@ -973,16 +1004,6 @@ function FormatConditionTerm(term)
   endif
 
   return "(" + text + ")"
-endfunction
-
-/* Splits an expression containing top-level && operators.*/
-function SplitAndCondition(expression)
-  local terms = []
-  list expression?split("&&") as term
-    local terms = terms + [term?trim]
-  endlist
-
-  return terms
 endfunction
 
 /* Emits a preprocessor condition using && between all terms.*/
@@ -1286,6 +1307,7 @@ macro EmitEnableExpression(name, expression, conditions)
     list conditions as condition
       local terms = condition["terms"]
       list terms as term
+        local orterms = SplitOrCondition(NormalizeOrCondition(term))
         if term?is_first
           if condition?is_first
             local line = ("#define " + name)?right_pad(44) + "("
@@ -1296,24 +1318,63 @@ macro EmitEnableExpression(name, expression, conditions)
             local line = line + "("
           endif
         else
-          local line = contindent
-        endif
-        local line = line + "(" + term + ")"
-        if term?is_last
           if terms?size > 1
-            local line = line + ")"
-          endif
-          if condition?is_last
-            local line = line + ")"
+            local line = contindent + " "
           else
-            local line = line + " || \\"
+            local line = contindent
           endif
-        else
-          local line = line + " && \\"
         endif
-      emit """
+        if orterms?size > 1
+          if terms?size > 1
+            local orcontindent = contindent + "  "
+          else
+            local orcontindent = contindent + " "
+          endif
+          list orterms as orterm
+            if orterm?is_first
+              local orline = line + "(" + FormatConditionTerm(orterm)
+            else
+              local orline = orcontindent + FormatConditionTerm(orterm)
+            endif
+            if !orterm?is_last
+              local orline = orline + " || \\"
+            else
+              local orline = orline + ")"
+              if term?is_last
+                if terms?size > 1
+                  local orline = orline + ")"
+                endif
+                if condition?is_last
+                  local orline = orline + ")"
+                else
+                  local orline = orline + " || \\"
+                endif
+              else
+                local orline = orline + " && \\"
+              endif
+            endif
+            emit """
+${orline}
+"""
+          endlist
+        else
+          local line = line + FormatConditionTerm(term)
+          if term?is_last
+            if terms?size > 1
+              local line = line + ")"
+            endif
+            if condition?is_last
+              local line = line + ")"
+            else
+              local line = line + " || \\"
+            endif
+          else
+            local line = line + " && \\"
+          endif
+          emit """
 ${line}
 """
+        endif
       endlist
     endlist
   else
@@ -1373,6 +1434,15 @@ function GetBitsMacro(point, target)
   return premacro + point["name"] + "_" + target + postbits
 endfunction
 
+/* Returns indentation for nested preprocessor directives.*/
+function GetPpIndent(level)
+  if ppindentfactor <= 0 || level <= 0
+    return ""
+  endif
+
+  return ""?left_pad(level * ppindentfactor)
+endfunction
+
 /* Returns unique bit targets from enable and value bits.*/
 function GetBitTargets(pointbits, valuebits)
   local targets = []
@@ -1428,11 +1498,13 @@ function GetBoolBitsExpression(pointbits, target, state)
 endfunction
 
 /* Emits one targeted bits definition, optionally combined with enable-state bits.*/
-macro EmitTargetBitsDefinition(point, bits, target)
+macro EmitTargetBitsDefinitionAt(point, bits, target, indent)
   local bitsmacro = GetBitsMacro(point, target)
   local enmacro = GetEnableMacro(point)
   local enabledbits = GetBoolBitsExpression(point["bits"], target, "enabled")
   local disabledbits = GetBoolBitsExpression(point["bits"], target, "disabled")
+  local ppindent = GetPpIndent(indent)
+  local bodyindent = GetPpIndent(indent + 1)
 
   if enabledbits != ""
     if bits == ""
@@ -1442,11 +1514,11 @@ macro EmitTargetBitsDefinition(point, bits, target)
       local enabledbits = "(" + enabledbits + " | " + bits + ")"
     endif
     emit """
-#if (${enmacro} == TRUE) || defined(__DOXYGEN__)
-${("#define " + bitsmacro)?right_pad(44) + enabledbits}
-#else
-${("#define " + bitsmacro)?right_pad(44) + disabledbits}
-#endif
+${ppindent}#if (${enmacro} == TRUE) || defined(__DOXYGEN__)
+${bodyindent + ("#define " + bitsmacro)?right_pad(44) + enabledbits}
+${ppindent}#else
+${bodyindent + ("#define " + bitsmacro)?right_pad(44) + disabledbits}
+${ppindent}#endif
 """
   else
     if bits == ""
@@ -1454,18 +1526,23 @@ ${("#define " + bitsmacro)?right_pad(44) + disabledbits}
     endif
     if point["enable"] == "manual" || point["enable"] == "auto" || point["enable"] == "never" || point["enable"] == "always"
       emit """
-#if (${enmacro} == TRUE) || defined(__DOXYGEN__)
-${("#define " + bitsmacro)?right_pad(44) + bits}
-#else
-${("#define " + bitsmacro)?right_pad(44) + "0U"}
-#endif
+${ppindent}#if (${enmacro} == TRUE) || defined(__DOXYGEN__)
+${bodyindent + ("#define " + bitsmacro)?right_pad(44) + bits}
+${ppindent}#else
+${bodyindent + ("#define " + bitsmacro)?right_pad(44) + "0U"}
+${ppindent}#endif
 """
     else
       emit """
-${("#define " + bitsmacro)?right_pad(44) + bits}
+${ppindent + ("#define " + bitsmacro)?right_pad(44) + bits}
 """
     endif
   endif
+endmacro
+
+/* Emits one targeted bits definition without extra indentation.*/
+macro EmitTargetBitsDefinition(point, bits, target)
+  EmitTargetBitsDefinitionAt(point=point, bits=bits, target=target, indent=0)
 endmacro
 
 /* Emits one untargeted bits definition, preserving legacy call sites.*/
@@ -1474,15 +1551,20 @@ macro EmitBitsDefinition(point, bits)
 endmacro
 
 /* Emits bits definitions for all targets used by a clock point/value pair.*/
-macro EmitBitsDefinitions(point, valuebits)
+macro EmitBitsDefinitionsAt(point, valuebits, indent)
   local targets = GetBitTargets(point["bits"], valuebits)
   list targets as target
     local bits = GetValueBitsExpression(valuebits, target)
-    EmitTargetBitsDefinition(point=point, bits=bits, target=target)
+    EmitTargetBitsDefinitionAt(point=point, bits=bits, target=target, indent=indent)
     sep
       emit "\e"
     endsep
   endlist
+endmacro
+
+/* Emits bits definitions without extra indentation.*/
+macro EmitBitsDefinitions(point, valuebits)
+  EmitBitsDefinitionsAt(point=point, valuebits=valuebits, indent=0)
 endmacro
 
 /* Emits one frequency definition, optionally conditional on enable state.*/
@@ -1710,7 +1792,7 @@ macro EmitClockBits(point)
 """
             endif
             local bits = GetValueBitsExpression(frequency["bits"], target)
-            EmitTargetBitsDefinition(point=point, bits=bits, target=target)
+            EmitTargetBitsDefinitionAt(point=point, bits=bits, target=target, indent=1)
           endlist
           emit """
 #endif
