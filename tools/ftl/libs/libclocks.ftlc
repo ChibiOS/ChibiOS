@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import "/@lib/libpp.ftlc" as ppcode
+
 prename = doc1.clocktree.settings.prefixes.@clock_points[0]?string
 premacro = doc1.clocktree.settings.prefixes.@macros[0]?string
 precfg = doc1.clocktree.settings.prefixes.@cfgs[0]?string
@@ -27,8 +29,21 @@ postenable = doc1.clocktree.settings.suffixes.@enable[0]?string
 postenabled = doc1.clocktree.settings.suffixes.@enabled[0]?string
 postmin = "_MIN"
 postmax = "_MAX"
-contindent = "                                             "
-ppindentfactor = 0
+
+/* Configures the preprocessor emitter used by this library.*/
+macro ConfigurePreprocessor(
+  indentFactor=2,
+  valueColumn=44,
+  backslashColumn=76,
+  splitColumn=80)
+
+  ppcode.ConfigurePP(
+    indentFactor=indentFactor,
+    valueColumn=valueColumn,
+    backslashColumn=backslashColumn,
+    splitColumn=splitColumn)
+  ppcode.ResetPP()
+endmacro
 
 /* Validates uniqueness of bit targets in a parsed bits list.*/
 function ValidateBitTargets(bits, context)
@@ -845,27 +860,27 @@ function GetConsumerConditions(point)
   local conditions = []
   list model["consumers"] as consumer
     if consumer["input"] == point["name"]
-      local conditions = conditions + [{"consumer":consumer["name"], "terms":SplitAndCondition(consumer["condition"])}]
+      local conditions = conditions + [{"consumer":consumer["name"], "terms":SplitAndCondition(consumer["condition"]), "requires":[]}]
     endif
   endlist
   list model["clocks"] as consumer
     if consumer["type"] == "source"
       if consumer["input"] == point["name"]
         local enmacro = GetEnableMacro(consumer)
-        local conditions = conditions + [{"consumer":consumer["name"], "terms":[enmacro + " == TRUE"]}]
+        local conditions = conditions + [{"consumer":consumer["name"], "terms":[enmacro + " == TRUE"], "requires":[enmacro, "TRUE"]}]
       endif
     elseif consumer["type"] == "mux"
       local enmacro = GetEnableMacro(consumer)
       local selmacro = precfg + consumer["name"] + postchoices
       list consumer["inputs"] as input
         if input["point"] == point["name"]
-          local conditions = conditions + [{"consumer":consumer["name"], "terms":[enmacro + " == TRUE", selmacro + " == " + input["bits"]]}]
+          local conditions = conditions + [{"consumer":consumer["name"], "terms":[enmacro + " == TRUE", selmacro + " == " + input["bits"]], "requires":AddExternalMacroRequirements(["TRUE"], [input["bits"]])}]
         endif
       endlist
     elseif consumer["type"] == "divider" || consumer["type"] == "multiplier"
       if consumer["input"] == point["name"]
         local enmacro = GetEnableMacro(consumer)
-        local conditions = conditions + [{"consumer":consumer["name"], "terms":[enmacro + " == TRUE"]}]
+        local conditions = conditions + [{"consumer":consumer["name"], "terms":[enmacro + " == TRUE"], "requires":[enmacro, "TRUE"]}]
       endif
     endif
   endlist
@@ -891,10 +906,8 @@ macro EmitGenericConfigurations()
 /**
  * @brief   ${config["description"]}
  */
-#if !defined(${config["name"]}) || defined(__DOXYGEN__)
-${("#define " + config["name"])?right_pad(44) + config["default"]}
-#endif
 """
+    ppcode.EmitPPSetting(name=config["name"], value=config["default"])
     sep
       emit "\e"
     endsep
@@ -957,10 +970,8 @@ macro EmitConfigurations()
     endif
     emit """
  */
-#if !defined(${name}) || defined(__DOXYGEN__)
-${("#define " + name)?right_pad(44) + default}
-#endif
 """
+    ppcode.EmitPPSetting(name=name, value=default)
     sep
       emit "\e"
     endsep
@@ -1004,6 +1015,40 @@ function FormatConditionTerm(term)
   endif
 
   return "(" + text + ")"
+endfunction
+
+/* Adds one explicitly referenced external macro to a requirements list.*/
+function AddExternalMacroRequirement(requires, ref)
+  local text = ref?trim
+  if text?matches("^[A-Za-z_][A-Za-z0-9_]*$") && text != "__DOXYGEN__" && !requires?seq_contains(text)
+    return requires + [text]
+  endif
+
+  return requires
+endfunction
+
+/* Adds explicitly referenced external macros to a requirements list.*/
+function AddExternalMacroRequirements(requires, refs)
+  list refs as ref
+    local requires = AddExternalMacroRequirement(requires, ref)
+  endlist
+
+  return requires
+endfunction
+
+/* Builds one OR expression from terms.*/
+function BuildOrExpression(terms)
+  local expression = ""
+  list terms as term
+    local formatted = FormatConditionTerm(term)
+    if term?is_first
+      local expression = formatted
+    else
+      local expression = expression + " || " + formatted
+    endif
+  endlist
+
+  return expression
 endfunction
 
 /* Emits a preprocessor condition using && between all terms.*/
@@ -1107,37 +1152,38 @@ macro EmitOneGenericConfigChecks(config)
   local name = config["name"]
 
   if config["type"] == "bool"
-    EmitAndCondition(keyword="#if", terms=[name + " != TRUE", name + " != FALSE", "!defined(__DOXYGEN__)"])
-    emit """
-#error "invalid ${name} value specified"
-#endif
-"""
+    ppcode.EmitPPAssert(
+      expression="(" + name + " == TRUE) || (" + name + " == FALSE)",
+      message="\"invalid " + name + " value specified\"",
+      requires=AddExternalMacroRequirements([], ["TRUE", "FALSE"]))
   elseif config["type"] == "value"
     local checks = []
+    local requires = []
     if config["min"] != ""
-      local checks = checks + ["(" + name + " < " + config["min"] + ")"]
+      local checks = checks + [name + " >= " + config["min"]]
+      local requires = AddExternalMacroRequirement(requires, config["min"])
     endif
     if config["max"] != ""
-      local checks = checks + ["(" + name + " > " + config["max"] + ")"]
+      local checks = checks + [name + " <= " + config["max"]]
+      local requires = AddExternalMacroRequirement(requires, config["max"])
     endif
     if checks?size > 0
-      EmitDoxygenGuardedOrCondition(checks=checks)
-      emit """
-#error "invalid ${name} value specified"
-#endif
-"""
+      ppcode.EmitPPAssert(
+        expression=BuildAndExpression(checks),
+        message="\"invalid " + name + " value specified\"",
+        requires=requires)
     endif
   elseif config["type"] == "set"
     local checks = []
+    local requires = []
     list config["values"]?replace(",", " ")?word_list as value
-      local checks = checks + ["(" + name + " != " + value + ")"]
+      local checks = checks + [name + " == " + value]
+      local requires = AddExternalMacroRequirement(requires, value)
     endlist
-    local checks = checks + ["!defined(__DOXYGEN__)"]
-    EmitAndCondition(keyword="#if", terms=checks)
-    emit """
-#error "invalid ${name} value specified"
-#endif
-"""
+    ppcode.EmitPPAssert(
+      expression=BuildOrExpression(checks),
+      message="\"invalid " + name + " value specified\"",
+      requires=requires)
   endif
 endmacro
 
@@ -1188,9 +1234,7 @@ endfunction
 macro EmitOneStateLimitValueMacro(state, limit, variant, kind)
   local macroname = GetStateLimitMacro(state, limit, kind)
 
-  emit """
-${("#define " + macroname)?right_pad(44) + variant[kind]}
-"""
+  ppcode.EmitPPDefine(name=macroname, value=variant[kind])
 endmacro
 
 /* Emits state-specific clock limit value macros for one variant.*/
@@ -1256,9 +1300,7 @@ macro EmitOneLimitSelection(state, limit, kind)
   local macroname = GetLimitMacro(limit, kind)
   local statemacro = GetStateLimitMacro(state, limit, kind)
 
-  emit """
-${("#define " + macroname)?right_pad(44) + statemacro}
-"""
+  ppcode.EmitPPDefine(name=macroname, value=statemacro)
 endmacro
 
 /* Emits final clock limit selections.*/
@@ -1284,11 +1326,9 @@ macro EmitLimitSelections()
         endif
       endlist
     endlist
-    emit """
-#else
-#error "unable to select clock frequency limits"
-#endif
-"""
+    ppcode.EmitPPElseAt(level=0)
+    ppcode.EmitPPErrorAt(message="\"unable to select clock frequency limits\"", level=1)
+    ppcode.EmitPPEndifAt(level=0)
   endif
 endmacro
 
@@ -1304,83 +1344,22 @@ endmacro
 /* Emits enable-state definitions for all clock points.*/
 macro EmitEnableExpression(name, expression, conditions)
   if conditions?size > 1 || (conditions?size == 1 && conditions[0]["terms"]?size > 1)
+    local conditionexpressions = []
     list conditions as condition
-      local terms = condition["terms"]
-      list terms as term
-        local orterms = SplitOrCondition(NormalizeOrCondition(term))
-        if term?is_first
-          if condition?is_first
-            local line = ("#define " + name)?right_pad(44) + "("
-          else
-            local line = contindent
-          endif
-          if terms?size > 1
-            local line = line + "("
-          endif
-        else
-          if terms?size > 1
-            local line = contindent + " "
-          else
-            local line = contindent
-          endif
-        endif
-        if orterms?size > 1
-          if terms?size > 1
-            local orcontindent = contindent + "  "
-          else
-            local orcontindent = contindent + " "
-          endif
-          list orterms as orterm
-            if orterm?is_first
-              local orline = line + "(" + FormatConditionTerm(orterm)
-            else
-              local orline = orcontindent + FormatConditionTerm(orterm)
-            endif
-            if !orterm?is_last
-              local orline = orline + " || \\"
-            else
-              local orline = orline + ")"
-              if term?is_last
-                if terms?size > 1
-                  local orline = orline + ")"
-                endif
-                if condition?is_last
-                  local orline = orline + ")"
-                else
-                  local orline = orline + " || \\"
-                endif
-              else
-                local orline = orline + " && \\"
-              endif
-            endif
-            emit """
-${orline}
-"""
-          endlist
-        else
-          local line = line + FormatConditionTerm(term)
-          if term?is_last
-            if terms?size > 1
-              local line = line + ")"
-            endif
-            if condition?is_last
-              local line = line + ")"
-            else
-              local line = line + " || \\"
-            endif
-          else
-            local line = line + " && \\"
-          endif
-          emit """
-${line}
-"""
-        endif
+      local terms = []
+      list condition["terms"] as term
+        local terms = terms + [FormatConditionTerm(term)]
       endlist
+      if terms?size > 1
+        local conditionexpressions = conditionexpressions + ["(" + terms?join(" && ") + ")"]
+      else
+        local conditionexpressions = conditionexpressions + [terms[0]]
+      endif
     endlist
+    local expression = "(" + conditionexpressions?join(" || ") + ")"
+    ppcode.EmitPPDefine(name=name, value=expression)
   else
-    emit """
-${("#define " + name)?right_pad(44) + expression}
-"""
+    ppcode.EmitPPDefine(name=name, value=expression)
   endif
 endmacro
 
@@ -1436,11 +1415,7 @@ endfunction
 
 /* Returns indentation for nested preprocessor directives.*/
 function GetPpIndent(level)
-  if ppindentfactor <= 0 || level <= 0
-    return ""
-  endif
-
-  return ""?left_pad(level * ppindentfactor)
+  return ppcode.GetPPIndentAt(level)
 endfunction
 
 /* Returns unique bit targets from enable and value bits.*/
@@ -1503,8 +1478,6 @@ macro EmitTargetBitsDefinitionAt(point, bits, target, indent)
   local enmacro = GetEnableMacro(point)
   local enabledbits = GetBoolBitsExpression(point["bits"], target, "enabled")
   local disabledbits = GetBoolBitsExpression(point["bits"], target, "disabled")
-  local ppindent = GetPpIndent(indent)
-  local bodyindent = GetPpIndent(indent + 1)
 
   if enabledbits != ""
     if bits == ""
@@ -1513,29 +1486,23 @@ macro EmitTargetBitsDefinitionAt(point, bits, target, indent)
     else
       local enabledbits = "(" + enabledbits + " | " + bits + ")"
     endif
-    emit """
-${ppindent}#if (${enmacro} == TRUE) || defined(__DOXYGEN__)
-${bodyindent + ("#define " + bitsmacro)?right_pad(44) + enabledbits}
-${ppindent}#else
-${bodyindent + ("#define " + bitsmacro)?right_pad(44) + disabledbits}
-${ppindent}#endif
-"""
+    ppcode.EmitPPIfAt(expression="(" + enmacro + " == TRUE) || defined(__DOXYGEN__)", level=indent)
+    ppcode.EmitPPDefineAt(name=bitsmacro, value=enabledbits, level=indent + 1)
+    ppcode.EmitPPElseAt(level=indent)
+    ppcode.EmitPPDefineAt(name=bitsmacro, value=disabledbits, level=indent + 1)
+    ppcode.EmitPPEndifAt(level=indent)
   else
     if bits == ""
       local bits = "0U"
     endif
     if point["enable"] == "manual" || point["enable"] == "auto" || point["enable"] == "never" || point["enable"] == "always"
-      emit """
-${ppindent}#if (${enmacro} == TRUE) || defined(__DOXYGEN__)
-${bodyindent + ("#define " + bitsmacro)?right_pad(44) + bits}
-${ppindent}#else
-${bodyindent + ("#define " + bitsmacro)?right_pad(44) + "0U"}
-${ppindent}#endif
-"""
+      ppcode.EmitPPIfAt(expression="(" + enmacro + " == TRUE) || defined(__DOXYGEN__)", level=indent)
+      ppcode.EmitPPDefineAt(name=bitsmacro, value=bits, level=indent + 1)
+      ppcode.EmitPPElseAt(level=indent)
+      ppcode.EmitPPDefineAt(name=bitsmacro, value="0U", level=indent + 1)
+      ppcode.EmitPPEndifAt(level=indent)
     else
-      emit """
-${ppindent + ("#define " + bitsmacro)?right_pad(44) + bits}
-"""
+      ppcode.EmitPPDefineAt(name=bitsmacro, value=bits, level=indent)
     endif
   endif
 endmacro
@@ -1573,17 +1540,13 @@ macro EmitFrequencyDefinition(point, frequency)
   local enmacro = GetEnableMacro(point)
 
   if point["enable"] == "manual" || point["enable"] == "auto" || point["enable"] == "never" || point["enable"] == "always"
-    emit """
-#if (${enmacro} == TRUE) || defined(__DOXYGEN__)
-${("#define " + freqmacro)?right_pad(44) + frequency}
-#else
-${("#define " + freqmacro)?right_pad(44) + "0U"}
-#endif
-"""
+    ppcode.EmitPPIf(expression="(" + enmacro + " == TRUE) || defined(__DOXYGEN__)")
+    ppcode.EmitPPDefine(name=freqmacro, value=frequency)
+    ppcode.EmitPPElse()
+    ppcode.EmitPPDefine(name=freqmacro, value="0U")
+    ppcode.EmitPPEndif()
   else
-    emit """
-${("#define " + freqmacro)?right_pad(44) + frequency}
-"""
+    ppcode.EmitPPDefine(name=freqmacro, value=frequency)
   endif
 endmacro
 
@@ -1605,45 +1568,43 @@ endfunction
 macro EmitClockChecks(point)
   if point["enable"] == "manual"
     local enmacro = precfg + point["name"] + postenable
-    EmitAndCondition(keyword="#if", terms=[enmacro + " != TRUE", enmacro + " != FALSE", "!defined(__DOXYGEN__)"])
-    emit """
-#error "invalid ${enmacro} value specified"
-#endif
-"""
+    ppcode.EmitPPAssert(
+      expression="(" + enmacro + " == TRUE) || (" + enmacro + " == FALSE)",
+      message="\"invalid " + enmacro + " value specified\"",
+      requires=AddExternalMacroRequirements([], ["TRUE", "FALSE"]))
   endif
 
   if point["type"] == "divider" || point["type"] == "multiplier"
     local valmacro = precfg + point["name"] + postvalues
     local checks = []
+    local requires = []
     if point["kind"] == "value"
       local minval = point["data"]["min"]
       local maxval = point["data"]["max"]
       if minval != ""
-        local checks = checks + ["(" + valmacro + " < " + minval + ")"]
+        local checks = checks + [valmacro + " >= " + minval]
+        local requires = AddExternalMacroRequirement(requires, minval)
       endif
       if maxval != ""
-        local checks = checks + ["(" + valmacro + " > " + maxval + ")"]
+        local checks = checks + [valmacro + " <= " + maxval]
+        local requires = AddExternalMacroRequirement(requires, maxval)
       endif
-      local andchecks = false
     elseif point["kind"] == "set"
       list point["data"]["values"]?replace(",", " ")?word_list as value
-        local checks = checks + ["(" + valmacro + " != " + value + ")"]
+        local checks = checks + [valmacro + " == " + value]
+        local requires = AddExternalMacroRequirement(requires, value)
       endlist
-      local andchecks = true
-    else
-      local andchecks = false
     endif
     if checks?size > 0
-      if andchecks
-        local checks = checks + ["!defined(__DOXYGEN__)"]
-        EmitAndCondition(keyword="#if", terms=checks)
+      if point["kind"] == "set"
+        local expression = BuildOrExpression(checks)
       else
-        EmitDoxygenGuardedOrCondition(checks=checks)
+        local expression = BuildAndExpression(checks)
       endif
-      emit """
-#error "invalid ${valmacro} value specified"
-#endif
-"""
+      ppcode.EmitPPAssert(
+        expression=expression,
+        message="\"invalid " + valmacro + " value specified\"",
+        requires=requires)
     endif
   endif
 endmacro
@@ -1680,11 +1641,12 @@ macro EmitClockFrequencyChecks(point)
             emit "\e"
           endif
           local inputfreq = GetDefaultFrequencyExpression(input["point"])
-          EmitAndCondition(keyword="#if", terms=[enmacro + " == TRUE", selmacro + " == " + input["bits"], inputfreq + " < " + minval, "!defined(__DOXYGEN__)"])
-          emit """
-#error "${freqmacro} below minimum frequency"
-#endif
-"""
+          local active = BuildAndExpression([enmacro + " == TRUE", selmacro + " == " + input["bits"]])
+          local requires = AddExternalMacroRequirements(["TRUE"], [input["bits"]])
+          ppcode.EmitPPAssert(
+            expression="!(" + active + ") || (" + inputfreq + " >= " + minval + ")",
+            message="\"" + freqmacro + " below minimum frequency\"",
+            requires=requires)
           local emitted = true
         endlist
       endif
@@ -1699,21 +1661,21 @@ macro EmitClockFrequencyChecks(point)
             emit "\e"
           endif
           local inputfreq = GetDefaultFrequencyExpression(input["point"])
-          EmitAndCondition(keyword="#if", terms=[enmacro + " == TRUE", selmacro + " == " + input["bits"], inputfreq + " > " + maxval, "!defined(__DOXYGEN__)"])
-          emit """
-#error "${freqmacro} above maximum frequency"
-#endif
-"""
+          local active = BuildAndExpression([enmacro + " == TRUE", selmacro + " == " + input["bits"]])
+          local requires = AddExternalMacroRequirements(["TRUE"], [input["bits"]])
+          ppcode.EmitPPAssert(
+            expression="!(" + active + ") || (" + inputfreq + " <= " + maxval + ")",
+            message="\"" + freqmacro + " above maximum frequency\"",
+            requires=requires)
           local emitted = true
         endlist
       endif
     else
       if minval != ""
-        EmitAndCondition(keyword="#if", terms=[enmacro + " == TRUE", freqmacro + " < " + minval, "!defined(__DOXYGEN__)"])
-        emit """
-#error "${freqmacro} below minimum frequency"
-#endif
-"""
+        ppcode.EmitPPAssert(
+          expression="(" + enmacro + " != TRUE) || (" + freqmacro + " >= " + minval + ")",
+          message="\"" + freqmacro + " below minimum frequency\"",
+          requires=["TRUE"])
       endif
 
       if minval != "" && maxval != ""
@@ -1721,11 +1683,10 @@ macro EmitClockFrequencyChecks(point)
       endif
 
       if maxval != ""
-        EmitAndCondition(keyword="#if", terms=[enmacro + " == TRUE", freqmacro + " > " + maxval, "!defined(__DOXYGEN__)"])
-        emit """
-#error "${freqmacro} above maximum frequency"
-#endif
-"""
+        ppcode.EmitPPAssert(
+          expression="(" + enmacro + " != TRUE) || (" + freqmacro + " <= " + maxval + ")",
+          message="\"" + freqmacro + " above maximum frequency\"",
+          requires=["TRUE"])
       endif
     endif
   endif
@@ -1746,11 +1707,11 @@ macro EmitSourceDependencyChecks(point)
     local enmacro = GetEnableMacro(point)
     local conditions = GetConsumerConditions(point)
     list conditions as condition
-      EmitAndCondition(keyword="#if", terms=[enmacro + " == FALSE"] + condition["terms"] + ["!defined(__DOXYGEN__)"])
-      emit """
-#error "${point["name"]} not enabled, required by ${condition["consumer"]}"
-#endif
-"""
+      local demanded = BuildAndExpression(condition["terms"])
+      ppcode.EmitPPAssert(
+        expression="(" + enmacro + " == TRUE) || !(" + demanded + ")",
+        message="\"" + point["name"] + " not enabled, required by " + condition["consumer"] + "\"",
+        requires=condition["requires"])
       if !condition?is_last
         emit "\e"
       endif
@@ -1819,34 +1780,24 @@ macro EmitClockBits(point)
     list point["inputs"] as input
       if input?is_first
         if disabledbits != ""
-          emit """
-#if (${enmacro} == FALSE)
-${("#define " + bitsmacro)?right_pad(44) + disabledbits}
-#elif (${selmacro} == ${input["bits"]}) || defined(__DOXYGEN__)
-"""
+          ppcode.EmitPPIfAt(expression="(" + enmacro + " == FALSE)", level=0)
+          ppcode.EmitPPDefineAt(name=bitsmacro, value=disabledbits, level=1)
+          ppcode.EmitPPElifAt(expression="(" + selmacro + " == " + input["bits"] + ") || defined(__DOXYGEN__)", level=0)
         else
-          emit """
-#if (${selmacro} == ${input["bits"]}) || defined(__DOXYGEN__)
-"""
+          ppcode.EmitPPIfAt(expression="(" + selmacro + " == " + input["bits"] + ") || defined(__DOXYGEN__)", level=0)
         endif
       else
-        emit """
-#elif (${selmacro} == ${input["bits"]})
-"""
+        ppcode.EmitPPElifAt(expression="(" + selmacro + " == " + input["bits"] + ")", level=0)
       endif
       if point["bits"]?size > 0
-        EmitBitsDefinition(point=point, bits=input["bits"])
+        EmitTargetBitsDefinitionAt(point=point, bits=input["bits"], target="", indent=1)
       else
-        emit """
-${("#define " + bitsmacro)?right_pad(44) + input["bits"]}
-"""
+        ppcode.EmitPPDefineAt(name=bitsmacro, value=input["bits"], level=1)
       endif
     endlist
-    emit """
-#else
-#error "invalid ${selmacro} value specified"
-#endif
-"""
+    ppcode.EmitPPElseAt(level=0)
+    ppcode.EmitPPErrorAt(message="\"invalid " + selmacro + " value specified\"", level=1)
+    ppcode.EmitPPEndifAt(level=0)
   elseif point["type"] == "divider" || point["type"] == "multiplier"
     local valmacro = precfg + point["name"] + postvalues
     emit """
@@ -1857,21 +1808,15 @@ ${("#define " + bitsmacro)?right_pad(44) + input["bits"]}
     if point["kind"] == "choices"
       list point["data"]["choices"] as choice
         if choice?is_first
-          emit """
-#if (${valmacro} == ${choice["value"]}) || defined(__DOXYGEN__)
-"""
+          ppcode.EmitPPIfAt(expression="(" + valmacro + " == " + choice["value"] + ") || defined(__DOXYGEN__)", level=0)
         else
-          emit """
-#elif (${valmacro} == ${choice["value"]})
-"""
+          ppcode.EmitPPElifAt(expression="(" + valmacro + " == " + choice["value"] + ")", level=0)
         endif
-        EmitBitsDefinition(point=point, bits=choice["bits"])
+        EmitTargetBitsDefinitionAt(point=point, bits=choice["bits"], target="", indent=1)
       endlist
-      emit """
-#else
-#error "invalid ${valmacro} value specified"
-#endif
-"""
+      ppcode.EmitPPElseAt(level=0)
+      ppcode.EmitPPErrorAt(message="\"invalid " + valmacro + " value specified\"", level=1)
+      ppcode.EmitPPEndifAt(level=0)
     else
       local bits = point["data"]["bits"]?replace("%N%", valmacro)
       EmitBitsDefinition(point=point, bits=bits)
@@ -1893,10 +1838,8 @@ macro EmitClockFrequency(point)
       if point["frequencies"]?size == 1 && point["frequencies"][0]["when"] == ""
         EmitFrequencyDefinition(point=point, frequency=point["frequencies"][0]["value"])
       else
-        emit """
-#if (${enmacro} == FALSE) && !defined(__DOXYGEN__)
-${("#define " + freqmacro)?right_pad(44) + "0U"}
-"""
+        ppcode.EmitPPIfAt(expression="(" + enmacro + " == FALSE) && !defined(__DOXYGEN__)", level=0)
+        ppcode.EmitPPDefineAt(name=freqmacro, value="0U", level=1)
         list point["frequencies"] as frequency
           if frequency?is_first
             EmitStateCondition(keyword="#elif", expression=frequency["when"], doxygen=true)
@@ -1907,13 +1850,9 @@ ${("#define " + freqmacro)?right_pad(44) + "0U"}
 #else
 """
           endif
-          emit """
-${("#define " + freqmacro)?right_pad(44) + frequency["value"]}
-"""
+          ppcode.EmitPPDefineAt(name=freqmacro, value=frequency["value"], level=1)
         endlist
-        emit """
-#endif
-"""
+        ppcode.EmitPPEndifAt(level=0)
       endif
     else
       local frequency = point["frequency"]
@@ -1943,15 +1882,11 @@ ${("#define " + freqmacro)?right_pad(44) + frequency["value"]}
       else
         local inputfreq = GetDefaultFrequencyExpression(input["point"])
       endif
-      emit """
-${("#define " + freqmacro)?right_pad(44) + inputfreq}
-"""
+      ppcode.EmitPPDefineAt(name=freqmacro, value=inputfreq, level=1)
     endlist
-    emit """
-#else
-${("#define " + freqmacro)?right_pad(44) + "0U"}
-#endif
-"""
+    ppcode.EmitPPElseAt(level=0)
+    ppcode.EmitPPDefineAt(name=freqmacro, value="0U", level=1)
+    ppcode.EmitPPEndifAt(level=0)
   elseif point["type"] == "divider"
     local valmacro = precfg + point["name"] + postvalues
     if UsesRuntimeInputExpressions(point)

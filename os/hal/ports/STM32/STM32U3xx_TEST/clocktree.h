@@ -75,84 +75,84 @@
  * @brief   Enables dynamic clock handling.
  */
 #if !defined(STM32_CFG_CLOCK_DYNAMIC) || defined(__DOXYGEN__)
-#define STM32_CFG_CLOCK_DYNAMIC             FALSE
+  #define STM32_CFG_CLOCK_DYNAMIC           FALSE
 #endif
 
 /**
  * @brief   Selects the core voltage scaling range.
  */
 #if !defined(STM32_CFG_PWR_VOSR) || defined(__DOXYGEN__)
-#define STM32_CFG_PWR_VOSR                  PWR_VOSR_RANGE1
+  #define STM32_CFG_PWR_VOSR                PWR_VOSR_RANGE1
 #endif
 
 /**
  * @brief   Selects the MSIRC0 operating mode.
  */
 #if !defined(STM32_CFG_MSIRC0_MODE) || defined(__DOXYGEN__)
-#define STM32_CFG_MSIRC0_MODE               RCC_MSIRC0_PLL_LSE
+  #define STM32_CFG_MSIRC0_MODE             RCC_MSIRC0_PLL_LSE
 #endif
 
 /**
  * @brief   Selects the MSIRC1 operating mode.
  */
 #if !defined(STM32_CFG_MSIRC1_MODE) || defined(__DOXYGEN__)
-#define STM32_CFG_MSIRC1_MODE               RCC_MSIRC1_FREE
+  #define STM32_CFG_MSIRC1_MODE             RCC_MSIRC1_FREE
 #endif
 
 /**
  * @brief   Selects the MSIRC1 PLL correction factor.
  */
 #if !defined(STM32_CFG_MSIPLL1N_VALUE) || defined(__DOXYGEN__)
-#define STM32_CFG_MSIPLL1N_VALUE            0
+  #define STM32_CFG_MSIPLL1N_VALUE          0
 #endif
 
 /**
  * @brief   Selects the source and divide factor for MSIS.
  */
 #if !defined(STM32_CFG_MSIS_SRCDIV) || defined(__DOXYGEN__)
-#define STM32_CFG_MSIS_SRCDIV               RCC_ICSCR1_MSIS_IRC0_DIV1
+  #define STM32_CFG_MSIS_SRCDIV             RCC_ICSCR1_MSIS_IRC0_DIV1
 #endif
 
 /**
  * @brief   Selects the source and divide factor for MSIK.
  */
 #if !defined(STM32_CFG_MSIK_SRCDIV) || defined(__DOXYGEN__)
-#define STM32_CFG_MSIK_SRCDIV               RCC_ICSCR1_MSIK_IRC0_DIV1
+  #define STM32_CFG_MSIK_SRCDIV             RCC_ICSCR1_MSIK_IRC0_DIV1
 #endif
 
 /**
  * @brief   Enables the HSI16 clock source.
  */
 #if !defined(STM32_CFG_HSI16_ENABLE) || defined(__DOXYGEN__)
-#define STM32_CFG_HSI16_ENABLE              FALSE
+  #define STM32_CFG_HSI16_ENABLE            FALSE
 #endif
 
 /**
  * @brief   Enables the HSI48 clock source.
  */
 #if !defined(STM32_CFG_HSI48_ENABLE) || defined(__DOXYGEN__)
-#define STM32_CFG_HSI48_ENABLE              FALSE
+  #define STM32_CFG_HSI48_ENABLE            FALSE
 #endif
 
 /**
  * @brief   Enables the HSE clock source.
  */
 #if !defined(STM32_CFG_HSE_ENABLE) || defined(__DOXYGEN__)
-#define STM32_CFG_HSE_ENABLE                FALSE
+  #define STM32_CFG_HSE_ENABLE              FALSE
 #endif
 
 /**
  * @brief   Enables the LSE clock source.
  */
 #if !defined(STM32_CFG_LSE_ENABLE) || defined(__DOXYGEN__)
-#define STM32_CFG_LSE_ENABLE                FALSE
+  #define STM32_CFG_LSE_ENABLE              FALSE
 #endif
 
 /**
  * @brief   Enables the LSI clock source.
  */
 #if !defined(STM32_CFG_LSI_ENABLE) || defined(__DOXYGEN__)
-#define STM32_CFG_LSI_ENABLE                FALSE
+  #define STM32_CFG_LSI_ENABLE              FALSE
 #endif
 
 /**
@@ -163,35 +163,35 @@
  *          - HSE.
  */
 #if !defined(STM32_CFG_SYSCLK_SEL) || defined(__DOXYGEN__)
-#define STM32_CFG_SYSCLK_SEL                RCC_CFGR1_SW_MSIS
+  #define STM32_CFG_SYSCLK_SEL              RCC_CFGR1_SW_MSIS
 #endif
 
 /**
  * @brief   Configures the HCLK clock divider value.
  */
 #if !defined(STM32_CFG_HCLK_VALUE) || defined(__DOXYGEN__)
-#define STM32_CFG_HCLK_VALUE                1
+  #define STM32_CFG_HCLK_VALUE              1
 #endif
 
 /**
  * @brief   Configures the PCLK1 clock divider value.
  */
 #if !defined(STM32_CFG_PCLK1_VALUE) || defined(__DOXYGEN__)
-#define STM32_CFG_PCLK1_VALUE               1
+  #define STM32_CFG_PCLK1_VALUE             1
 #endif
 
 /**
  * @brief   Configures the PCLK2 clock divider value.
  */
 #if !defined(STM32_CFG_PCLK2_VALUE) || defined(__DOXYGEN__)
-#define STM32_CFG_PCLK2_VALUE               1
+  #define STM32_CFG_PCLK2_VALUE             1
 #endif
 
 /**
  * @brief   Configures the PCLK3 clock divider value.
  */
 #if !defined(STM32_CFG_PCLK3_VALUE) || defined(__DOXYGEN__)
-#define STM32_CFG_PCLK3_VALUE               1
+  #define STM32_CFG_PCLK3_VALUE             1
 #endif
 
 /**
@@ -208,7 +208,7 @@
  *          - MSIK.
  */
 #if !defined(STM32_CFG_MCO1_SEL) || defined(__DOXYGEN__)
-#define STM32_CFG_MCO1_SEL                  RCC_CFGR1_MCO1SEL_OFF
+  #define STM32_CFG_MCO1_SEL                RCC_CFGR1_MCO1SEL_OFF
 #endif
 
 /**
@@ -225,7 +225,7 @@
  *          - MSIK.
  */
 #if !defined(STM32_CFG_MCO2_SEL) || defined(__DOXYGEN__)
-#define STM32_CFG_MCO2_SEL                  RCC_CFGR1_MCO2SEL_OFF
+  #define STM32_CFG_MCO2_SEL                RCC_CFGR1_MCO2SEL_OFF
 #endif
 /** @} */
 
@@ -240,66 +240,150 @@
 /*
  * Extra configuration checks.
  */
-#if (STM32_CFG_CLOCK_DYNAMIC != TRUE) && \
-    (STM32_CFG_CLOCK_DYNAMIC != FALSE) && \
+#if !defined(TRUE) && !defined(__DOXYGEN__)
+  #error "TRUE not defined"
+#endif
+#if !defined(FALSE) && !defined(__DOXYGEN__)
+  #error "FALSE not defined"
+#endif
+#if !((STM32_CFG_CLOCK_DYNAMIC == TRUE) || (STM32_CFG_CLOCK_DYNAMIC == FALSE)) && \
     !defined(__DOXYGEN__)
-#error "invalid STM32_CFG_CLOCK_DYNAMIC value specified"
+  #error "invalid STM32_CFG_CLOCK_DYNAMIC value specified"
 #endif
 
-#if (STM32_CFG_PWR_VOSR != PWR_VOSR_RANGE1) && \
-    (STM32_CFG_PWR_VOSR != PWR_VOSR_RANGE2) && \
-    !defined(__DOXYGEN__)
-#error "invalid STM32_CFG_PWR_VOSR value specified"
+#if !defined(PWR_VOSR_RANGE1) && !defined(__DOXYGEN__)
+  #error "PWR_VOSR_RANGE1 not defined"
+#endif
+#if !defined(PWR_VOSR_RANGE2) && !defined(__DOXYGEN__)
+  #error "PWR_VOSR_RANGE2 not defined"
+#endif
+#if !((STM32_CFG_PWR_VOSR == PWR_VOSR_RANGE1) ||                            \
+     (STM32_CFG_PWR_VOSR == PWR_VOSR_RANGE2)) && !defined(__DOXYGEN__)
+  #error "invalid STM32_CFG_PWR_VOSR value specified"
 #endif
 
-#if (STM32_CFG_MSIRC0_MODE != RCC_MSIRC0_FREE) && \
-    (STM32_CFG_MSIRC0_MODE != RCC_MSIRC0_PLL_LSE) && \
-    (STM32_CFG_MSIRC0_MODE != RCC_MSIRC0_PLL_HSE) && \
-    (STM32_CFG_MSIRC0_MODE != RCC_MSIRC0_PLL_LSE_FAST) && \
-    (STM32_CFG_MSIRC0_MODE != RCC_MSIRC0_PLL_HSE_FAST) && \
-    !defined(__DOXYGEN__)
-#error "invalid STM32_CFG_MSIRC0_MODE value specified"
+#if !defined(RCC_MSIRC0_FREE) && !defined(__DOXYGEN__)
+  #error "RCC_MSIRC0_FREE not defined"
+#endif
+#if !defined(RCC_MSIRC0_PLL_LSE) && !defined(__DOXYGEN__)
+  #error "RCC_MSIRC0_PLL_LSE not defined"
+#endif
+#if !defined(RCC_MSIRC0_PLL_HSE) && !defined(__DOXYGEN__)
+  #error "RCC_MSIRC0_PLL_HSE not defined"
+#endif
+#if !defined(RCC_MSIRC0_PLL_LSE_FAST) && !defined(__DOXYGEN__)
+  #error "RCC_MSIRC0_PLL_LSE_FAST not defined"
+#endif
+#if !defined(RCC_MSIRC0_PLL_HSE_FAST) && !defined(__DOXYGEN__)
+  #error "RCC_MSIRC0_PLL_HSE_FAST not defined"
+#endif
+#if !((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_FREE) ||                         \
+     (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) ||                       \
+     (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_HSE) ||                       \
+     (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST) ||                  \
+     (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_HSE_FAST)) && !defined(__DOXYGEN__)
+  #error "invalid STM32_CFG_MSIRC0_MODE value specified"
 #endif
 
-#if (STM32_CFG_MSIRC1_MODE != RCC_MSIRC1_FREE) && \
-    (STM32_CFG_MSIRC1_MODE != RCC_MSIRC1_PLL_LSE) && \
-    (STM32_CFG_MSIRC1_MODE != RCC_MSIRC1_PLL_HSE) && \
-    (STM32_CFG_MSIRC1_MODE != RCC_MSIRC1_PLL_LSE_FAST) && \
-    (STM32_CFG_MSIRC1_MODE != RCC_MSIRC1_PLL_HSE_FAST) && \
-    !defined(__DOXYGEN__)
-#error "invalid STM32_CFG_MSIRC1_MODE value specified"
+#if !defined(RCC_MSIRC1_FREE) && !defined(__DOXYGEN__)
+  #error "RCC_MSIRC1_FREE not defined"
+#endif
+#if !defined(RCC_MSIRC1_PLL_LSE) && !defined(__DOXYGEN__)
+  #error "RCC_MSIRC1_PLL_LSE not defined"
+#endif
+#if !defined(RCC_MSIRC1_PLL_HSE) && !defined(__DOXYGEN__)
+  #error "RCC_MSIRC1_PLL_HSE not defined"
+#endif
+#if !defined(RCC_MSIRC1_PLL_LSE_FAST) && !defined(__DOXYGEN__)
+  #error "RCC_MSIRC1_PLL_LSE_FAST not defined"
+#endif
+#if !defined(RCC_MSIRC1_PLL_HSE_FAST) && !defined(__DOXYGEN__)
+  #error "RCC_MSIRC1_PLL_HSE_FAST not defined"
+#endif
+#if !((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_FREE) ||                         \
+     (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) ||                       \
+     (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) ||                       \
+     (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST) ||                  \
+     (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST)) && !defined(__DOXYGEN__)
+  #error "invalid STM32_CFG_MSIRC1_MODE value specified"
 #endif
 
-#if (STM32_CFG_MSIPLL1N_VALUE != 0) && \
-    (STM32_CFG_MSIPLL1N_VALUE != 1) && \
-    (STM32_CFG_MSIPLL1N_VALUE != 2) && \
-    (STM32_CFG_MSIPLL1N_VALUE != 3) && \
+#if !((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1) || \
+     (STM32_CFG_MSIPLL1N_VALUE == 2) || (STM32_CFG_MSIPLL1N_VALUE == 3)) && \
     !defined(__DOXYGEN__)
-#error "invalid STM32_CFG_MSIPLL1N_VALUE value specified"
+  #error "invalid STM32_CFG_MSIPLL1N_VALUE value specified"
 #endif
 
-#if (STM32_CFG_MSIS_SRCDIV != RCC_ICSCR1_MSIS_IRC0_DIV1) && \
-    (STM32_CFG_MSIS_SRCDIV != RCC_ICSCR1_MSIS_IRC0_DIV2) && \
-    (STM32_CFG_MSIS_SRCDIV != RCC_ICSCR1_MSIS_IRC0_DIV4) && \
-    (STM32_CFG_MSIS_SRCDIV != RCC_ICSCR1_MSIS_IRC0_DIV8) && \
-    (STM32_CFG_MSIS_SRCDIV != RCC_ICSCR1_MSIS_IRC1_DIV1) && \
-    (STM32_CFG_MSIS_SRCDIV != RCC_ICSCR1_MSIS_IRC1_DIV2) && \
-    (STM32_CFG_MSIS_SRCDIV != RCC_ICSCR1_MSIS_IRC1_DIV4) && \
-    (STM32_CFG_MSIS_SRCDIV != RCC_ICSCR1_MSIS_IRC1_DIV8) && \
+#if !defined(RCC_ICSCR1_MSIS_IRC0_DIV1) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIS_IRC0_DIV1 not defined"
+#endif
+#if !defined(RCC_ICSCR1_MSIS_IRC0_DIV2) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIS_IRC0_DIV2 not defined"
+#endif
+#if !defined(RCC_ICSCR1_MSIS_IRC0_DIV4) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIS_IRC0_DIV4 not defined"
+#endif
+#if !defined(RCC_ICSCR1_MSIS_IRC0_DIV8) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIS_IRC0_DIV8 not defined"
+#endif
+#if !defined(RCC_ICSCR1_MSIS_IRC1_DIV1) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIS_IRC1_DIV1 not defined"
+#endif
+#if !defined(RCC_ICSCR1_MSIS_IRC1_DIV2) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIS_IRC1_DIV2 not defined"
+#endif
+#if !defined(RCC_ICSCR1_MSIS_IRC1_DIV4) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIS_IRC1_DIV4 not defined"
+#endif
+#if !defined(RCC_ICSCR1_MSIS_IRC1_DIV8) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIS_IRC1_DIV8 not defined"
+#endif
+#if !((STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV1) ||               \
+     (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV2) ||                \
+     (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV4) ||                \
+     (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV8) ||                \
+     (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV1) ||                \
+     (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV2) ||                \
+     (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV4) ||                \
+     (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV8)) &&               \
     !defined(__DOXYGEN__)
-#error "invalid STM32_CFG_MSIS_SRCDIV value specified"
+  #error "invalid STM32_CFG_MSIS_SRCDIV value specified"
 #endif
 
-#if (STM32_CFG_MSIK_SRCDIV != RCC_ICSCR1_MSIK_IRC0_DIV1) && \
-    (STM32_CFG_MSIK_SRCDIV != RCC_ICSCR1_MSIK_IRC0_DIV2) && \
-    (STM32_CFG_MSIK_SRCDIV != RCC_ICSCR1_MSIK_IRC0_DIV4) && \
-    (STM32_CFG_MSIK_SRCDIV != RCC_ICSCR1_MSIK_IRC0_DIV8) && \
-    (STM32_CFG_MSIK_SRCDIV != RCC_ICSCR1_MSIK_IRC1_DIV1) && \
-    (STM32_CFG_MSIK_SRCDIV != RCC_ICSCR1_MSIK_IRC1_DIV2) && \
-    (STM32_CFG_MSIK_SRCDIV != RCC_ICSCR1_MSIK_IRC1_DIV4) && \
-    (STM32_CFG_MSIK_SRCDIV != RCC_ICSCR1_MSIK_IRC1_DIV8) && \
+#if !defined(RCC_ICSCR1_MSIK_IRC0_DIV1) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIK_IRC0_DIV1 not defined"
+#endif
+#if !defined(RCC_ICSCR1_MSIK_IRC0_DIV2) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIK_IRC0_DIV2 not defined"
+#endif
+#if !defined(RCC_ICSCR1_MSIK_IRC0_DIV4) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIK_IRC0_DIV4 not defined"
+#endif
+#if !defined(RCC_ICSCR1_MSIK_IRC0_DIV8) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIK_IRC0_DIV8 not defined"
+#endif
+#if !defined(RCC_ICSCR1_MSIK_IRC1_DIV1) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIK_IRC1_DIV1 not defined"
+#endif
+#if !defined(RCC_ICSCR1_MSIK_IRC1_DIV2) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIK_IRC1_DIV2 not defined"
+#endif
+#if !defined(RCC_ICSCR1_MSIK_IRC1_DIV4) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIK_IRC1_DIV4 not defined"
+#endif
+#if !defined(RCC_ICSCR1_MSIK_IRC1_DIV8) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIK_IRC1_DIV8 not defined"
+#endif
+#if !((STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV1) ||               \
+     (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV2) ||                \
+     (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV4) ||                \
+     (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV8) ||                \
+     (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV1) ||                \
+     (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV2) ||                \
+     (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV4) ||                \
+     (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV8)) &&               \
     !defined(__DOXYGEN__)
-#error "invalid STM32_CFG_MSIK_SRCDIV value specified"
+  #error "invalid STM32_CFG_MSIK_SRCDIV value specified"
 #endif
 
 /**
@@ -429,232 +513,239 @@
  * @brief   NONE clock register bits.
  */
 #if (STM32_NONE_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_NONE_BITS                     0U
+  #define STM32_NONE_BITS                   0U
 #else
-  #define STM32_NONE_BITS                     0U
+  #define STM32_NONE_BITS                   0U
 #endif
 
 /**
  * @brief   Pseudo-clock for disabled sources clock point.
  */
 #if (STM32_NONE_ENABLED == TRUE) || defined(__DOXYGEN__)
-#define STM32_NONE_FREQ                     0U
+  #define STM32_NONE_FREQ                   0U
 #else
-#define STM32_NONE_FREQ                     0U
+  #define STM32_NONE_FREQ                   0U
 #endif
 
 /*--- Macros and checks for the HSI16 clock point. -------------------------*/
 
-#if (STM32_CFG_HSI16_ENABLE != TRUE) && \
-    (STM32_CFG_HSI16_ENABLE != FALSE) && \
+#if !((STM32_CFG_HSI16_ENABLE == TRUE) || (STM32_CFG_HSI16_ENABLE == FALSE)) && \
     !defined(__DOXYGEN__)
-#error "invalid STM32_CFG_HSI16_ENABLE value specified"
+  #error "invalid STM32_CFG_HSI16_ENABLE value specified"
 #endif
 
-#if (STM32_HSI16_ENABLED == FALSE) && \
-    (STM32_SYSCLK_ENABLED == TRUE) && \
-    (STM32_CFG_SYSCLK_SEL == RCC_CFGR1_SW_HSI16) && \
-    !defined(__DOXYGEN__)
-#error "HSI16 not enabled, required by SYSCLK"
+#if !defined(RCC_CFGR1_SW_HSI16) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_SW_HSI16 not defined"
+#endif
+#if !((STM32_HSI16_ENABLED == TRUE) || !((STM32_SYSCLK_ENABLED == TRUE) &&  \
+      (STM32_CFG_SYSCLK_SEL == RCC_CFGR1_SW_HSI16))) && !defined(__DOXYGEN__)
+  #error "HSI16 not enabled, required by SYSCLK"
 #endif
 
-#if (STM32_HSI16_ENABLED == FALSE) && \
-    (STM32_MCO1_ENABLED == TRUE) && \
-    (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSI16) && \
-    !defined(__DOXYGEN__)
-#error "HSI16 not enabled, required by MCO1"
+#if !defined(RCC_CFGR1_MCO1SEL_HSI16) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_MCO1SEL_HSI16 not defined"
+#endif
+#if !((STM32_HSI16_ENABLED == TRUE) || !((STM32_MCO1_ENABLED == TRUE) &&    \
+      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSI16))) && !defined(__DOXYGEN__)
+  #error "HSI16 not enabled, required by MCO1"
 #endif
 
-#if (STM32_HSI16_ENABLED == FALSE) && \
-    (STM32_MCO2_ENABLED == TRUE) && \
-    (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSI16) && \
-    !defined(__DOXYGEN__)
-#error "HSI16 not enabled, required by MCO2"
+#if !defined(RCC_CFGR1_MCO2SEL_HSI16) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_MCO2SEL_HSI16 not defined"
+#endif
+#if !((STM32_HSI16_ENABLED == TRUE) || !((STM32_MCO2_ENABLED == TRUE) &&    \
+      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSI16))) && !defined(__DOXYGEN__)
+  #error "HSI16 not enabled, required by MCO2"
 #endif
 
 /**
  * @brief   HSI16 clock register bits.
  */
 #if (STM32_HSI16_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_HSI16_BITS                    (RCC_CR_HSION | RCC_CR_HSIKERON)
+  #define STM32_HSI16_BITS                  (RCC_CR_HSION | RCC_CR_HSIKERON)
 #else
-  #define STM32_HSI16_BITS                    0U
+  #define STM32_HSI16_BITS                  0U
 #endif
 
 /**
  * @brief   16MHz high speed internal oscillator clock point.
  */
 #if (STM32_HSI16_ENABLED == TRUE) || defined(__DOXYGEN__)
-#define STM32_HSI16_FREQ                    16000000U
+  #define STM32_HSI16_FREQ                  16000000U
 #else
-#define STM32_HSI16_FREQ                    0U
+  #define STM32_HSI16_FREQ                  0U
 #endif
 
 /*--- Macros and checks for the HSI48 clock point. -------------------------*/
 
-#if (STM32_CFG_HSI48_ENABLE != TRUE) && \
-    (STM32_CFG_HSI48_ENABLE != FALSE) && \
+#if !((STM32_CFG_HSI48_ENABLE == TRUE) || (STM32_CFG_HSI48_ENABLE == FALSE)) && \
     !defined(__DOXYGEN__)
-#error "invalid STM32_CFG_HSI48_ENABLE value specified"
+  #error "invalid STM32_CFG_HSI48_ENABLE value specified"
 #endif
 
-#if (STM32_HSI48_ENABLED == FALSE) && \
-    (STM32_MCO1_ENABLED == TRUE) && \
-    (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSI48) && \
-    !defined(__DOXYGEN__)
-#error "HSI48 not enabled, required by MCO1"
+#if !defined(RCC_CFGR1_MCO1SEL_HSI48) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_MCO1SEL_HSI48 not defined"
+#endif
+#if !((STM32_HSI48_ENABLED == TRUE) || !((STM32_MCO1_ENABLED == TRUE) &&    \
+      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSI48))) && !defined(__DOXYGEN__)
+  #error "HSI48 not enabled, required by MCO1"
 #endif
 
-#if (STM32_HSI48_ENABLED == FALSE) && \
-    (STM32_MCO2_ENABLED == TRUE) && \
-    (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSI48) && \
-    !defined(__DOXYGEN__)
-#error "HSI48 not enabled, required by MCO2"
+#if !defined(RCC_CFGR1_MCO2SEL_HSI48) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_MCO2SEL_HSI48 not defined"
+#endif
+#if !((STM32_HSI48_ENABLED == TRUE) || !((STM32_MCO2_ENABLED == TRUE) &&    \
+      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSI48))) && !defined(__DOXYGEN__)
+  #error "HSI48 not enabled, required by MCO2"
 #endif
 
 /**
  * @brief   HSI48 clock register bits.
  */
 #if (STM32_HSI48_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_HSI48_BITS                    RCC_CR_HSI48ON
+  #define STM32_HSI48_BITS                  RCC_CR_HSI48ON
 #else
-  #define STM32_HSI48_BITS                    0U
+  #define STM32_HSI48_BITS                  0U
 #endif
 
 /**
  * @brief   48MHz high speed internal oscillator clock point.
  */
 #if (STM32_HSI48_ENABLED == TRUE) || defined(__DOXYGEN__)
-#define STM32_HSI48_FREQ                    48000000U
+  #define STM32_HSI48_FREQ                  48000000U
 #else
-#define STM32_HSI48_FREQ                    0U
+  #define STM32_HSI48_FREQ                  0U
 #endif
 
 /*--- Macros and checks for the HSE clock point. ---------------------------*/
 
-#if (STM32_CFG_HSE_ENABLE != TRUE) && \
-    (STM32_CFG_HSE_ENABLE != FALSE) && \
+#if !((STM32_CFG_HSE_ENABLE == TRUE) || (STM32_CFG_HSE_ENABLE == FALSE)) && \
     !defined(__DOXYGEN__)
-#error "invalid STM32_CFG_HSE_ENABLE value specified"
+  #error "invalid STM32_CFG_HSE_ENABLE value specified"
 #endif
 
-#if (STM32_HSE_ENABLED == FALSE) && \
-    (STM32_SYSCLK_ENABLED == TRUE) && \
-    (STM32_CFG_SYSCLK_SEL == RCC_CFGR1_SW_HSE) && \
-    !defined(__DOXYGEN__)
-#error "HSE not enabled, required by SYSCLK"
+#if !defined(RCC_CFGR1_SW_HSE) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_SW_HSE not defined"
+#endif
+#if !((STM32_HSE_ENABLED == TRUE) || !((STM32_SYSCLK_ENABLED == TRUE) &&    \
+      (STM32_CFG_SYSCLK_SEL == RCC_CFGR1_SW_HSE))) && !defined(__DOXYGEN__)
+  #error "HSE not enabled, required by SYSCLK"
 #endif
 
-#if (STM32_HSE_ENABLED == FALSE) && \
-    (STM32_MCO1_ENABLED == TRUE) && \
-    (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSE) && \
-    !defined(__DOXYGEN__)
-#error "HSE not enabled, required by MCO1"
+#if !defined(RCC_CFGR1_MCO1SEL_HSE) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_MCO1SEL_HSE not defined"
+#endif
+#if !((STM32_HSE_ENABLED == TRUE) || !((STM32_MCO1_ENABLED == TRUE) &&      \
+      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSE))) && !defined(__DOXYGEN__)
+  #error "HSE not enabled, required by MCO1"
 #endif
 
-#if (STM32_HSE_ENABLED == FALSE) && \
-    (STM32_MCO2_ENABLED == TRUE) && \
-    (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSE) && \
-    !defined(__DOXYGEN__)
-#error "HSE not enabled, required by MCO2"
+#if !defined(RCC_CFGR1_MCO2SEL_HSE) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_MCO2SEL_HSE not defined"
+#endif
+#if !((STM32_HSE_ENABLED == TRUE) || !((STM32_MCO2_ENABLED == TRUE) &&      \
+      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSE))) && !defined(__DOXYGEN__)
+  #error "HSE not enabled, required by MCO2"
 #endif
 
 /**
  * @brief   HSE clock register bits.
  */
 #if (STM32_HSE_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_HSE_BITS                      RCC_CR_HSEON
+  #define STM32_HSE_BITS                    RCC_CR_HSEON
 #else
-  #define STM32_HSE_BITS                      0U
+  #define STM32_HSE_BITS                    0U
 #endif
 
 /**
  * @brief   High frequency external oscillator clock point.
  */
 #if (STM32_HSE_ENABLED == TRUE) || defined(__DOXYGEN__)
-#define STM32_HSE_FREQ                      STM32_HSECLK
+  #define STM32_HSE_FREQ                    STM32_HSECLK
 #else
-#define STM32_HSE_FREQ                      0U
+  #define STM32_HSE_FREQ                    0U
 #endif
 
 /*--- Macros and checks for the LSE clock point. ---------------------------*/
 
-#if (STM32_CFG_LSE_ENABLE != TRUE) && \
-    (STM32_CFG_LSE_ENABLE != FALSE) && \
+#if !((STM32_CFG_LSE_ENABLE == TRUE) || (STM32_CFG_LSE_ENABLE == FALSE)) && \
     !defined(__DOXYGEN__)
-#error "invalid STM32_CFG_LSE_ENABLE value specified"
+  #error "invalid STM32_CFG_LSE_ENABLE value specified"
 #endif
 
-#if (STM32_LSE_ENABLED == FALSE) && \
-    (STM32_MCO1_ENABLED == TRUE) && \
-    (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_LSE) && \
-    !defined(__DOXYGEN__)
-#error "LSE not enabled, required by MCO1"
+#if !defined(RCC_CFGR1_MCO1SEL_LSE) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_MCO1SEL_LSE not defined"
+#endif
+#if !((STM32_LSE_ENABLED == TRUE) || !((STM32_MCO1_ENABLED == TRUE) &&      \
+      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_LSE))) && !defined(__DOXYGEN__)
+  #error "LSE not enabled, required by MCO1"
 #endif
 
-#if (STM32_LSE_ENABLED == FALSE) && \
-    (STM32_MCO2_ENABLED == TRUE) && \
-    (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_LSE) && \
-    !defined(__DOXYGEN__)
-#error "LSE not enabled, required by MCO2"
+#if !defined(RCC_CFGR1_MCO2SEL_LSE) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_MCO2SEL_LSE not defined"
+#endif
+#if !((STM32_LSE_ENABLED == TRUE) || !((STM32_MCO2_ENABLED == TRUE) &&      \
+      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_LSE))) && !defined(__DOXYGEN__)
+  #error "LSE not enabled, required by MCO2"
 #endif
 
 /**
  * @brief   LSE clock register bits.
  */
 #if (STM32_LSE_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_LSE_BITS                      RCC_BDCR_LSEON
+  #define STM32_LSE_BITS                    RCC_BDCR_LSEON
 #else
-  #define STM32_LSE_BITS                      0U
+  #define STM32_LSE_BITS                    0U
 #endif
 
 /**
  * @brief   Low frequency external oscillator clock point.
  */
 #if (STM32_LSE_ENABLED == TRUE) || defined(__DOXYGEN__)
-#define STM32_LSE_FREQ                      STM32_LSECLK
+  #define STM32_LSE_FREQ                    STM32_LSECLK
 #else
-#define STM32_LSE_FREQ                      0U
+  #define STM32_LSE_FREQ                    0U
 #endif
 
 /*--- Macros and checks for the LSI clock point. ---------------------------*/
 
-#if (STM32_CFG_LSI_ENABLE != TRUE) && \
-    (STM32_CFG_LSI_ENABLE != FALSE) && \
+#if !((STM32_CFG_LSI_ENABLE == TRUE) || (STM32_CFG_LSI_ENABLE == FALSE)) && \
     !defined(__DOXYGEN__)
-#error "invalid STM32_CFG_LSI_ENABLE value specified"
+  #error "invalid STM32_CFG_LSI_ENABLE value specified"
 #endif
 
-#if (STM32_LSI_ENABLED == FALSE) && \
-    (STM32_MCO1_ENABLED == TRUE) && \
-    (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_LSI) && \
-    !defined(__DOXYGEN__)
-#error "LSI not enabled, required by MCO1"
+#if !defined(RCC_CFGR1_MCO1SEL_LSI) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_MCO1SEL_LSI not defined"
+#endif
+#if !((STM32_LSI_ENABLED == TRUE) || !((STM32_MCO1_ENABLED == TRUE) &&      \
+      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_LSI))) && !defined(__DOXYGEN__)
+  #error "LSI not enabled, required by MCO1"
 #endif
 
-#if (STM32_LSI_ENABLED == FALSE) && \
-    (STM32_MCO2_ENABLED == TRUE) && \
-    (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_LSI) && \
-    !defined(__DOXYGEN__)
-#error "LSI not enabled, required by MCO2"
+#if !defined(RCC_CFGR1_MCO2SEL_LSI) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_MCO2SEL_LSI not defined"
+#endif
+#if !((STM32_LSI_ENABLED == TRUE) || !((STM32_MCO2_ENABLED == TRUE) &&      \
+      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_LSI))) && !defined(__DOXYGEN__)
+  #error "LSI not enabled, required by MCO2"
 #endif
 
 /**
  * @brief   LSI clock register bits.
  */
 #if (STM32_LSI_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_LSI_BITS                      RCC_CSR_LSION
+  #define STM32_LSI_BITS                    RCC_CSR_LSION
 #else
-  #define STM32_LSI_BITS                      0U
+  #define STM32_LSI_BITS                    0U
 #endif
 
 /**
  * @brief   Low frequency internal oscillator clock point.
  */
 #if (STM32_LSI_ENABLED == TRUE) || defined(__DOXYGEN__)
-#define STM32_LSI_FREQ                      STM32_LSICLK
+  #define STM32_LSI_FREQ                    STM32_LSICLK
 #else
-#define STM32_LSI_FREQ                      0U
+  #define STM32_LSI_FREQ                    0U
 #endif
 
 /*--- Macros and checks for the MSIRC0 clock point. ------------------------*/
@@ -665,66 +756,70 @@
 #if (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || \
     defined(__DOXYGEN__)
   #if (STM32_MSIRC0_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC0_CR_BITS                RCC_CR_MSIPLL0EN
+    #define STM32_MSIRC0_CR_BITS            RCC_CR_MSIPLL0EN
   #else
-    #define STM32_MSIRC0_CR_BITS                0U
+    #define STM32_MSIRC0_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_HSE)
   #if (STM32_MSIRC0_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC0_CR_BITS                RCC_CR_MSIPLL0EN
+    #define STM32_MSIRC0_CR_BITS            RCC_CR_MSIPLL0EN
   #else
-    #define STM32_MSIRC0_CR_BITS                0U
+    #define STM32_MSIRC0_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST)
   #if (STM32_MSIRC0_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC0_CR_BITS                (RCC_CR_MSIPLL0EN | RCC_CR_MSIPLL0FAST)
+    #define STM32_MSIRC0_CR_BITS            (RCC_CR_MSIPLL0EN |             \
+                                             RCC_CR_MSIPLL0FAST)
   #else
-    #define STM32_MSIRC0_CR_BITS                0U
+    #define STM32_MSIRC0_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_HSE_FAST)
   #if (STM32_MSIRC0_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC0_CR_BITS                (RCC_CR_MSIPLL0EN | RCC_CR_MSIPLL0FAST)
+    #define STM32_MSIRC0_CR_BITS            (RCC_CR_MSIPLL0EN |             \
+                                             RCC_CR_MSIPLL0FAST)
   #else
-    #define STM32_MSIRC0_CR_BITS                0U
+    #define STM32_MSIRC0_CR_BITS            0U
   #endif
 #else
   #if (STM32_MSIRC0_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC0_CR_BITS                0U
+    #define STM32_MSIRC0_CR_BITS            0U
   #else
-    #define STM32_MSIRC0_CR_BITS                0U
+    #define STM32_MSIRC0_CR_BITS            0U
   #endif
 #endif
 
 #if (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || \
     defined(__DOXYGEN__)
   #if (STM32_MSIRC0_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC0_ICSCR1_BITS            RCC_ICSCR1_MSIPLL0SEL_LSE
+    #define STM32_MSIRC0_ICSCR1_BITS        RCC_ICSCR1_MSIPLL0SEL_LSE
   #else
-    #define STM32_MSIRC0_ICSCR1_BITS            0U
+    #define STM32_MSIRC0_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_HSE)
   #if (STM32_MSIRC0_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC0_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL0SEL_HSE | STM32_MSIHSINDIV)
+    #define STM32_MSIRC0_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL0SEL_HSE |    \
+                                             STM32_MSIHSINDIV)
   #else
-    #define STM32_MSIRC0_ICSCR1_BITS            0U
+    #define STM32_MSIRC0_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST)
   #if (STM32_MSIRC0_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC0_ICSCR1_BITS            RCC_ICSCR1_MSIPLL0SEL_LSE
+    #define STM32_MSIRC0_ICSCR1_BITS        RCC_ICSCR1_MSIPLL0SEL_LSE
   #else
-    #define STM32_MSIRC0_ICSCR1_BITS            0U
+    #define STM32_MSIRC0_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_HSE_FAST)
   #if (STM32_MSIRC0_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC0_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL0SEL_HSE | STM32_MSIHSINDIV)
+    #define STM32_MSIRC0_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL0SEL_HSE |    \
+                                             STM32_MSIHSINDIV)
   #else
-    #define STM32_MSIRC0_ICSCR1_BITS            0U
+    #define STM32_MSIRC0_ICSCR1_BITS        0U
   #endif
 #else
   #if (STM32_MSIRC0_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC0_ICSCR1_BITS            0U
+    #define STM32_MSIRC0_ICSCR1_BITS        0U
   #else
-    #define STM32_MSIRC0_ICSCR1_BITS            0U
+    #define STM32_MSIRC0_ICSCR1_BITS        0U
   #endif
 #endif
 
@@ -732,18 +827,18 @@
  * @brief   MSI 96MHz internal oscillator clock point.
  */
 #if (STM32_MSIRC0_ENABLED == FALSE) && !defined(__DOXYGEN__)
-#define STM32_MSIRC0_FREQ                   0U
+  #define STM32_MSIRC0_FREQ                 0U
 #elif (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || \
     defined(__DOXYGEN__)
-#define STM32_MSIRC0_FREQ                   96010000U
+  #define STM32_MSIRC0_FREQ                 96010000U
 #elif (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_HSE)
-#define STM32_MSIRC0_FREQ                   96000000U
+  #define STM32_MSIRC0_FREQ                 96000000U
 #elif (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST)
-#define STM32_MSIRC0_FREQ                   96010000U
+  #define STM32_MSIRC0_FREQ                 96010000U
 #elif (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_HSE_FAST)
-#define STM32_MSIRC0_FREQ                   96000000U
+  #define STM32_MSIRC0_FREQ                 96000000U
 #else
-#define STM32_MSIRC0_FREQ                   96000000U
+  #define STM32_MSIRC0_FREQ                 96000000U
 #endif
 
 /*--- Macros and checks for the MSIRC1 clock point. ------------------------*/
@@ -755,116 +850,124 @@
      ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1))) || \
     defined(__DOXYGEN__)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                RCC_CR_MSIPLL1EN
+    #define STM32_MSIRC1_CR_BITS            RCC_CR_MSIPLL1EN
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                RCC_CR_MSIPLL1EN
+    #define STM32_MSIRC1_CR_BITS            RCC_CR_MSIPLL1EN
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                RCC_CR_MSIPLL1EN
+    #define STM32_MSIRC1_CR_BITS            RCC_CR_MSIPLL1EN
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                RCC_CR_MSIPLL1EN
+    #define STM32_MSIRC1_CR_BITS            RCC_CR_MSIPLL1EN
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1))
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                RCC_CR_MSIPLL1EN
+    #define STM32_MSIRC1_CR_BITS            RCC_CR_MSIPLL1EN
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                RCC_CR_MSIPLL1EN
+    #define STM32_MSIRC1_CR_BITS            RCC_CR_MSIPLL1EN
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                RCC_CR_MSIPLL1EN
+    #define STM32_MSIRC1_CR_BITS            RCC_CR_MSIPLL1EN
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                RCC_CR_MSIPLL1EN
+    #define STM32_MSIRC1_CR_BITS            RCC_CR_MSIPLL1EN
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1))
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                (RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)
+    #define STM32_MSIRC1_CR_BITS            (RCC_CR_MSIPLL1EN |             \
+                                             RCC_CR_MSIPLL1FAST)
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                (RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)
+    #define STM32_MSIRC1_CR_BITS            (RCC_CR_MSIPLL1EN |             \
+                                             RCC_CR_MSIPLL1FAST)
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                (RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)
+    #define STM32_MSIRC1_CR_BITS            (RCC_CR_MSIPLL1EN |             \
+                                             RCC_CR_MSIPLL1FAST)
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                (RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)
+    #define STM32_MSIRC1_CR_BITS            (RCC_CR_MSIPLL1EN |             \
+                                             RCC_CR_MSIPLL1FAST)
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1))
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                (RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)
+    #define STM32_MSIRC1_CR_BITS            (RCC_CR_MSIPLL1EN |             \
+                                             RCC_CR_MSIPLL1FAST)
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                (RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)
+    #define STM32_MSIRC1_CR_BITS            (RCC_CR_MSIPLL1EN |             \
+                                             RCC_CR_MSIPLL1FAST)
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                (RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)
+    #define STM32_MSIRC1_CR_BITS            (RCC_CR_MSIPLL1EN |             \
+                                             RCC_CR_MSIPLL1FAST)
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                (RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)
+    #define STM32_MSIRC1_CR_BITS            (RCC_CR_MSIPLL1EN |             \
+                                             RCC_CR_MSIPLL1FAST)
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #else
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #else
-    #define STM32_MSIRC1_CR_BITS                0U
+    #define STM32_MSIRC1_CR_BITS            0U
   #endif
 #endif
 
@@ -872,116 +975,140 @@
      ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1))) || \
     defined(__DOXYGEN__)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_LSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_LSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_LSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_LSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1))
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_HSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | \
+                                             STM32_MSIHSINDIV)
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_HSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | \
+                                             STM32_MSIHSINDIV)
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_HSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | \
+                                             STM32_MSIHSINDIV)
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_HSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | \
+                                             STM32_MSIHSINDIV)
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1))
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_LSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_LSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_LSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_LSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1))
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_HSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | \
+                                             STM32_MSIHSINDIV)
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_HSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | \
+                                             STM32_MSIHSINDIV)
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_HSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | \
+                                             STM32_MSIHSINDIV)
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST)
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            (RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)
+    #define STM32_MSIRC1_ICSCR1_BITS        (RCC_ICSCR1_MSIPLL1SEL_HSE |    \
+                                             RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | \
+                                             STM32_MSIHSINDIV)
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #else
   #if (STM32_MSIRC1_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #else
-    #define STM32_MSIRC1_ICSCR1_BITS            0U
+    #define STM32_MSIRC1_ICSCR1_BITS        0U
   #endif
 #endif
 
@@ -989,54 +1116,54 @@
  * @brief   MSI 24MHz internal oscillator clock point.
  */
 #if (STM32_MSIRC1_ENABLED == FALSE) && !defined(__DOXYGEN__)
-#define STM32_MSIRC1_FREQ                   0U
+  #define STM32_MSIRC1_FREQ                 0U
 #elif ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1))) || \
     defined(__DOXYGEN__)
-#define STM32_MSIRC1_FREQ                   23986000U
+  #define STM32_MSIRC1_FREQ                 23986000U
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2)
-#define STM32_MSIRC1_FREQ                   22577000U
+  #define STM32_MSIRC1_FREQ                 22577000U
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3)
-#define STM32_MSIRC1_FREQ                   24576000U
+  #define STM32_MSIRC1_FREQ                 24576000U
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE)
-#define STM32_MSIRC1_FREQ                   24000000U
+  #define STM32_MSIRC1_FREQ                 24000000U
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1))
-#define STM32_MSIRC1_FREQ                   24016000U
+  #define STM32_MSIRC1_FREQ                 24016000U
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2)
-#define STM32_MSIRC1_FREQ                   22581000U
+  #define STM32_MSIRC1_FREQ                 22581000U
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3)
-#define STM32_MSIRC1_FREQ                   24577000U
+  #define STM32_MSIRC1_FREQ                 24577000U
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE)
-#define STM32_MSIRC1_FREQ                   24000000U
+  #define STM32_MSIRC1_FREQ                 24000000U
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1))
-#define STM32_MSIRC1_FREQ                   23986000U
+  #define STM32_MSIRC1_FREQ                 23986000U
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2)
-#define STM32_MSIRC1_FREQ                   22577000U
+  #define STM32_MSIRC1_FREQ                 22577000U
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3)
-#define STM32_MSIRC1_FREQ                   24576000U
+  #define STM32_MSIRC1_FREQ                 24576000U
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST)
-#define STM32_MSIRC1_FREQ                   24000000U
+  #define STM32_MSIRC1_FREQ                 24000000U
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1))
-#define STM32_MSIRC1_FREQ                   24016000U
+  #define STM32_MSIRC1_FREQ                 24016000U
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2)
-#define STM32_MSIRC1_FREQ                   22581000U
+  #define STM32_MSIRC1_FREQ                 22581000U
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3)
-#define STM32_MSIRC1_FREQ                   24577000U
+  #define STM32_MSIRC1_FREQ                 24577000U
 #elif (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST)
-#define STM32_MSIRC1_FREQ                   24000000U
+  #define STM32_MSIRC1_FREQ                 24000000U
 #else
-#define STM32_MSIRC1_FREQ                   24000000U
+  #define STM32_MSIRC1_FREQ                 24000000U
 #endif
 
 /*--- Macros and checks for the MSIS clock point. --------------------------*/
@@ -1045,279 +1172,315 @@
  * @brief   MSIS clock register bits.
  */
 #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_MSIS_CR_BITS                  RCC_CR_MSISON
+  #define STM32_MSIS_CR_BITS                RCC_CR_MSISON
 #else
-  #define STM32_MSIS_CR_BITS                  0U
+  #define STM32_MSIS_CR_BITS                0U
 #endif
 
 #if ((STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV1) && \
      ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))) || \
     defined(__DOXYGEN__)
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC0 | RCC_ICSCR1_MSISDIV_FIELD(0U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(0U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV1)
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC0 | RCC_ICSCR1_MSISDIV_FIELD(0U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(0U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV2) && \
       ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC0 | RCC_ICSCR1_MSISDIV_FIELD(1U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(1U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV2)
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC0 | RCC_ICSCR1_MSISDIV_FIELD(1U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(1U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV4) && \
       ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC0 | RCC_ICSCR1_MSISDIV_FIELD(2U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(2U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV4)
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC0 | RCC_ICSCR1_MSISDIV_FIELD(2U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(2U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV8) && \
       ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC0 | RCC_ICSCR1_MSISDIV_FIELD(3U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(3U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV8)
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC0 | RCC_ICSCR1_MSISDIV_FIELD(3U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(3U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV1) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(0U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(0U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV1) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(0U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(0U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(0U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(0U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(0U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(0U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(0U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(0U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(0U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(0U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV1)
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(0U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(0U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV2) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(1U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(1U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV2) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(1U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(1U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(1U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(1U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(1U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(1U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(1U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(1U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(1U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(1U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV2)
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(1U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(1U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV4) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(2U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(2U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV4) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(2U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(2U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(2U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(2U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(2U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(2U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(2U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(2U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(2U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(2U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV4)
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(2U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(2U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV8) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(3U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(3U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV8) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(3U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(3U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(3U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(3U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(3U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(3U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(3U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(3U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(3U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(3U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #else
   #if (STM32_MSIS_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIS_ICSCR1_BITS              (RCC_ICSCR1_MSISSEL_MSIRC1 | RCC_ICSCR1_MSISDIV_FIELD(3U))
+    #define STM32_MSIS_ICSCR1_BITS          (RCC_ICSCR1_MSISSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSISDIV_FIELD(3U))
   #else
-    #define STM32_MSIS_ICSCR1_BITS              0U
+    #define STM32_MSIS_ICSCR1_BITS          0U
   #endif
 #endif
 
@@ -1325,132 +1488,132 @@
  * @brief   MSI system oscillator clock point.
  */
 #if (STM32_MSIS_ENABLED == FALSE) && !defined(__DOXYGEN__)
-#define STM32_MSIS_FREQ                     0U
+  #define STM32_MSIS_FREQ                   0U
 #elif ((STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV1) && \
       ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))) || \
     defined(__DOXYGEN__)
-#define STM32_MSIS_FREQ                     96010000U
+  #define STM32_MSIS_FREQ                   96010000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV1)
-#define STM32_MSIS_FREQ                     96000000U
+  #define STM32_MSIS_FREQ                   96000000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV2) && \
       ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))
-#define STM32_MSIS_FREQ                     48005000U
+  #define STM32_MSIS_FREQ                   48005000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV2)
-#define STM32_MSIS_FREQ                     48000000U
+  #define STM32_MSIS_FREQ                   48000000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV4) && \
       ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))
-#define STM32_MSIS_FREQ                     24002500U
+  #define STM32_MSIS_FREQ                   24002500U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV4)
-#define STM32_MSIS_FREQ                     24000000U
+  #define STM32_MSIS_FREQ                   24000000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV8) && \
       ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))
-#define STM32_MSIS_FREQ                     12001250U
+  #define STM32_MSIS_FREQ                   12001250U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV8)
-#define STM32_MSIS_FREQ                     12000000U
+  #define STM32_MSIS_FREQ                   12000000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV1) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIS_FREQ                     23986000U
+  #define STM32_MSIS_FREQ                   23986000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV1) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIS_FREQ                     24016000U
+  #define STM32_MSIS_FREQ                   24016000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIS_FREQ                     22577000U
+  #define STM32_MSIS_FREQ                   22577000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIS_FREQ                     22581000U
+  #define STM32_MSIS_FREQ                   22581000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIS_FREQ                     24576000U
+  #define STM32_MSIS_FREQ                   24576000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIS_FREQ                     24577000U
+  #define STM32_MSIS_FREQ                   24577000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV1)
-#define STM32_MSIS_FREQ                     24000000U
+  #define STM32_MSIS_FREQ                   24000000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV2) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIS_FREQ                     11993000U
+  #define STM32_MSIS_FREQ                   11993000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV2) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIS_FREQ                     12008000U
+  #define STM32_MSIS_FREQ                   12008000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIS_FREQ                     11288500U
+  #define STM32_MSIS_FREQ                   11288500U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIS_FREQ                     11290500U
+  #define STM32_MSIS_FREQ                   11290500U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIS_FREQ                     12288000U
+  #define STM32_MSIS_FREQ                   12288000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIS_FREQ                     12288500U
+  #define STM32_MSIS_FREQ                   12288500U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV2)
-#define STM32_MSIS_FREQ                     12000000U
+  #define STM32_MSIS_FREQ                   12000000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV4) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIS_FREQ                     5996500U
+  #define STM32_MSIS_FREQ                   5996500U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV4) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIS_FREQ                     6004000U
+  #define STM32_MSIS_FREQ                   6004000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIS_FREQ                     5644250U
+  #define STM32_MSIS_FREQ                   5644250U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIS_FREQ                     5645250U
+  #define STM32_MSIS_FREQ                   5645250U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIS_FREQ                     6144000U
+  #define STM32_MSIS_FREQ                   6144000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIS_FREQ                     6144250U
+  #define STM32_MSIS_FREQ                   6144250U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV4)
-#define STM32_MSIS_FREQ                     6000000U
+  #define STM32_MSIS_FREQ                   6000000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV8) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIS_FREQ                     2998250U
+  #define STM32_MSIS_FREQ                   2998250U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV8) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIS_FREQ                     3002000U
+  #define STM32_MSIS_FREQ                   3002000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIS_FREQ                     2822125U
+  #define STM32_MSIS_FREQ                   2822125U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIS_FREQ                     2822625U
+  #define STM32_MSIS_FREQ                   2822625U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIS_FREQ                     3072000U
+  #define STM32_MSIS_FREQ                   3072000U
 #elif (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIS_FREQ                     3072125U
+  #define STM32_MSIS_FREQ                   3072125U
 #else
-#define STM32_MSIS_FREQ                     3000000U
+  #define STM32_MSIS_FREQ                   3000000U
 #endif
 
 /*--- Macros and checks for the MSIK clock point. --------------------------*/
@@ -1459,279 +1622,315 @@
  * @brief   MSIK clock register bits.
  */
 #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_MSIK_CR_BITS                  (RCC_CR_MSIKON | RCC_CR_MSIKERON)
+  #define STM32_MSIK_CR_BITS                (RCC_CR_MSIKON | RCC_CR_MSIKERON)
 #else
-  #define STM32_MSIK_CR_BITS                  0U
+  #define STM32_MSIK_CR_BITS                0U
 #endif
 
 #if ((STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV1) && \
      ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))) || \
     defined(__DOXYGEN__)
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC0 | RCC_ICSCR1_MSIKDIV_FIELD(0U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(0U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV1)
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC0 | RCC_ICSCR1_MSIKDIV_FIELD(0U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(0U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV2) && \
       ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC0 | RCC_ICSCR1_MSIKDIV_FIELD(1U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(1U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV2)
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC0 | RCC_ICSCR1_MSIKDIV_FIELD(1U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(1U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV4) && \
       ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC0 | RCC_ICSCR1_MSIKDIV_FIELD(2U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(2U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV4)
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC0 | RCC_ICSCR1_MSIKDIV_FIELD(2U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(2U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV8) && \
       ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC0 | RCC_ICSCR1_MSIKDIV_FIELD(3U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(3U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV8)
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC0 | RCC_ICSCR1_MSIKDIV_FIELD(3U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC0 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(3U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV1) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(0U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(0U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV1) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(0U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(0U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(0U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(0U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(0U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(0U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(0U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(0U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(0U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(0U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV1)
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(0U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(0U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV2) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(1U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(1U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV2) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(1U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(1U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(1U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(1U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(1U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(1U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(1U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(1U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(1U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(1U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV2)
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(1U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(1U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV4) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(2U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(2U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV4) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(2U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(2U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(2U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(2U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(2U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(2U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(2U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(2U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(2U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(2U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV4)
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(2U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(2U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV8) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(3U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(3U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV8) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(3U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(3U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(3U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(3U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(3U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(3U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(3U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(3U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(3U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(3U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #else
   #if (STM32_MSIK_ENABLED == TRUE) || defined(__DOXYGEN__)
-    #define STM32_MSIK_ICSCR1_BITS              (RCC_ICSCR1_MSIKSEL_MSIRC1 | RCC_ICSCR1_MSIKDIV_FIELD(3U))
+    #define STM32_MSIK_ICSCR1_BITS          (RCC_ICSCR1_MSIKSEL_MSIRC1 |    \
+                                             RCC_ICSCR1_MSIKDIV_FIELD(3U))
   #else
-    #define STM32_MSIK_ICSCR1_BITS              0U
+    #define STM32_MSIK_ICSCR1_BITS          0U
   #endif
 #endif
 
@@ -1739,132 +1938,132 @@
  * @brief   MSI kernel oscillator clock point.
  */
 #if (STM32_MSIK_ENABLED == FALSE) && !defined(__DOXYGEN__)
-#define STM32_MSIK_FREQ                     0U
+  #define STM32_MSIK_FREQ                   0U
 #elif ((STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV1) && \
       ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))) || \
     defined(__DOXYGEN__)
-#define STM32_MSIK_FREQ                     96010000U
+  #define STM32_MSIK_FREQ                   96010000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV1)
-#define STM32_MSIK_FREQ                     96000000U
+  #define STM32_MSIK_FREQ                   96000000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV2) && \
       ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))
-#define STM32_MSIK_FREQ                     48005000U
+  #define STM32_MSIK_FREQ                   48005000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV2)
-#define STM32_MSIK_FREQ                     48000000U
+  #define STM32_MSIK_FREQ                   48000000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV4) && \
       ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))
-#define STM32_MSIK_FREQ                     24002500U
+  #define STM32_MSIK_FREQ                   24002500U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV4)
-#define STM32_MSIK_FREQ                     24000000U
+  #define STM32_MSIK_FREQ                   24000000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV8) && \
       ((STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE) || (STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST))
-#define STM32_MSIK_FREQ                     12001250U
+  #define STM32_MSIK_FREQ                   12001250U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC0_DIV8)
-#define STM32_MSIK_FREQ                     12000000U
+  #define STM32_MSIK_FREQ                   12000000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV1) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIK_FREQ                     23986000U
+  #define STM32_MSIK_FREQ                   23986000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV1) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIK_FREQ                     24016000U
+  #define STM32_MSIK_FREQ                   24016000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIK_FREQ                     22577000U
+  #define STM32_MSIK_FREQ                   22577000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIK_FREQ                     22581000U
+  #define STM32_MSIK_FREQ                   22581000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIK_FREQ                     24576000U
+  #define STM32_MSIK_FREQ                   24576000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV1) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIK_FREQ                     24577000U
+  #define STM32_MSIK_FREQ                   24577000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV1)
-#define STM32_MSIK_FREQ                     24000000U
+  #define STM32_MSIK_FREQ                   24000000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV2) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIK_FREQ                     11993000U
+  #define STM32_MSIK_FREQ                   11993000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV2) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIK_FREQ                     12008000U
+  #define STM32_MSIK_FREQ                   12008000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIK_FREQ                     11288500U
+  #define STM32_MSIK_FREQ                   11288500U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIK_FREQ                     11290500U
+  #define STM32_MSIK_FREQ                   11290500U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIK_FREQ                     12288000U
+  #define STM32_MSIK_FREQ                   12288000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV2) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIK_FREQ                     12288500U
+  #define STM32_MSIK_FREQ                   12288500U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV2)
-#define STM32_MSIK_FREQ                     12000000U
+  #define STM32_MSIK_FREQ                   12000000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV4) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIK_FREQ                     5996500U
+  #define STM32_MSIK_FREQ                   5996500U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV4) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIK_FREQ                     6004000U
+  #define STM32_MSIK_FREQ                   6004000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIK_FREQ                     5644250U
+  #define STM32_MSIK_FREQ                   5644250U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIK_FREQ                     5645250U
+  #define STM32_MSIK_FREQ                   5645250U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIK_FREQ                     6144000U
+  #define STM32_MSIK_FREQ                   6144000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV4) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIK_FREQ                     6144250U
+  #define STM32_MSIK_FREQ                   6144250U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV4)
-#define STM32_MSIK_FREQ                     6000000U
+  #define STM32_MSIK_FREQ                   6000000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV8) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIK_FREQ                     2998250U
+  #define STM32_MSIK_FREQ                   2998250U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV8) && \
       ((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIK_FREQ                     3002000U
+  #define STM32_MSIK_FREQ                   3002000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIK_FREQ                     2822125U
+  #define STM32_MSIK_FREQ                   2822125U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 2) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIK_FREQ                     2822625U
+  #define STM32_MSIK_FREQ                   2822625U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST))
-#define STM32_MSIK_FREQ                     3072000U
+  #define STM32_MSIK_FREQ                   3072000U
 #elif (STM32_CFG_MSIK_SRCDIV == RCC_ICSCR1_MSIK_IRC1_DIV8) && \
       (STM32_CFG_MSIPLL1N_VALUE == 3) && \
       ((STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE) || (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST))
-#define STM32_MSIK_FREQ                     3072125U
+  #define STM32_MSIK_FREQ                   3072125U
 #else
-#define STM32_MSIK_FREQ                     3000000U
+  #define STM32_MSIK_FREQ                   3000000U
 #endif
 
 /*--- Macros and checks for the SYSCLK clock point. ------------------------*/
@@ -1873,13 +2072,13 @@
  * @brief   SYSCLK clock register bits.
  */
 #if (STM32_CFG_SYSCLK_SEL == RCC_CFGR1_SW_MSIS) || defined(__DOXYGEN__)
-#define STM32_SYSCLK_BITS                   RCC_CFGR1_SW_MSIS
+  #define STM32_SYSCLK_BITS                 RCC_CFGR1_SW_MSIS
 #elif (STM32_CFG_SYSCLK_SEL == RCC_CFGR1_SW_HSI16)
-#define STM32_SYSCLK_BITS                   RCC_CFGR1_SW_HSI16
+  #define STM32_SYSCLK_BITS                 RCC_CFGR1_SW_HSI16
 #elif (STM32_CFG_SYSCLK_SEL == RCC_CFGR1_SW_HSE)
-#define STM32_SYSCLK_BITS                   RCC_CFGR1_SW_HSE
+  #define STM32_SYSCLK_BITS                 RCC_CFGR1_SW_HSE
 #else
-#error "invalid STM32_CFG_SYSCLK_SEL value specified"
+  #error "invalid STM32_CFG_SYSCLK_SEL value specified"
 #endif
 
 /**
@@ -1888,15 +2087,15 @@
 #if ((STM32_SYSCLK_ENABLED == TRUE) && \
      (STM32_CFG_SYSCLK_SEL == RCC_CFGR1_SW_MSIS)) || \
     defined(__DOXYGEN__)
-#define STM32_SYSCLK_FREQ                   STM32_MSIS_FREQ
+  #define STM32_SYSCLK_FREQ                 STM32_MSIS_FREQ
 #elif (STM32_SYSCLK_ENABLED == TRUE) && \
       (STM32_CFG_SYSCLK_SEL == RCC_CFGR1_SW_HSI16)
-#define STM32_SYSCLK_FREQ                   STM32_HSI16_FREQ
+  #define STM32_SYSCLK_FREQ                 STM32_HSI16_FREQ
 #elif (STM32_SYSCLK_ENABLED == TRUE) && \
       (STM32_CFG_SYSCLK_SEL == RCC_CFGR1_SW_HSE)
-#define STM32_SYSCLK_FREQ                   STM32_HSE_FREQ
+  #define STM32_SYSCLK_FREQ                 STM32_HSE_FREQ
 #else
-#define STM32_SYSCLK_FREQ                   0U
+  #define STM32_SYSCLK_FREQ                 0U
 #endif
 
 /*--- Macros and checks for the HCLK clock point. --------------------------*/
@@ -1905,70 +2104,71 @@
  * @brief   HCLK clock register bits.
  */
 #if (STM32_CFG_HCLK_VALUE == 1) || defined(__DOXYGEN__)
-#if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_HCLK_BITS                     RCC_CFGR2_HPRE_DIV1
-#else
-  #define STM32_HCLK_BITS                     0U
-#endif
+  #if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_HCLK_BITS                 RCC_CFGR2_HPRE_DIV1
+  #else
+    #define STM32_HCLK_BITS                 0U
+  #endif
 #elif (STM32_CFG_HCLK_VALUE == 2)
-#if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_HCLK_BITS                     RCC_CFGR2_HPRE_DIV2
-#else
-  #define STM32_HCLK_BITS                     0U
-#endif
+  #if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_HCLK_BITS                 RCC_CFGR2_HPRE_DIV2
+  #else
+    #define STM32_HCLK_BITS                 0U
+  #endif
 #elif (STM32_CFG_HCLK_VALUE == 4)
-#if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_HCLK_BITS                     RCC_CFGR2_HPRE_DIV4
-#else
-  #define STM32_HCLK_BITS                     0U
-#endif
+  #if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_HCLK_BITS                 RCC_CFGR2_HPRE_DIV4
+  #else
+    #define STM32_HCLK_BITS                 0U
+  #endif
 #elif (STM32_CFG_HCLK_VALUE == 8)
-#if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_HCLK_BITS                     RCC_CFGR2_HPRE_DIV8
-#else
-  #define STM32_HCLK_BITS                     0U
-#endif
+  #if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_HCLK_BITS                 RCC_CFGR2_HPRE_DIV8
+  #else
+    #define STM32_HCLK_BITS                 0U
+  #endif
 #elif (STM32_CFG_HCLK_VALUE == 16)
-#if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_HCLK_BITS                     RCC_CFGR2_HPRE_DIV16
-#else
-  #define STM32_HCLK_BITS                     0U
-#endif
+  #if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_HCLK_BITS                 RCC_CFGR2_HPRE_DIV16
+  #else
+    #define STM32_HCLK_BITS                 0U
+  #endif
 #elif (STM32_CFG_HCLK_VALUE == 64)
-#if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_HCLK_BITS                     RCC_CFGR2_HPRE_DIV64
-#else
-  #define STM32_HCLK_BITS                     0U
-#endif
+  #if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_HCLK_BITS                 RCC_CFGR2_HPRE_DIV64
+  #else
+    #define STM32_HCLK_BITS                 0U
+  #endif
 #elif (STM32_CFG_HCLK_VALUE == 128)
-#if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_HCLK_BITS                     RCC_CFGR2_HPRE_DIV128
-#else
-  #define STM32_HCLK_BITS                     0U
-#endif
+  #if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_HCLK_BITS                 RCC_CFGR2_HPRE_DIV128
+  #else
+    #define STM32_HCLK_BITS                 0U
+  #endif
 #elif (STM32_CFG_HCLK_VALUE == 256)
-#if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_HCLK_BITS                     RCC_CFGR2_HPRE_DIV256
-#else
-  #define STM32_HCLK_BITS                     0U
-#endif
+  #if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_HCLK_BITS                 RCC_CFGR2_HPRE_DIV256
+  #else
+    #define STM32_HCLK_BITS                 0U
+  #endif
 #elif (STM32_CFG_HCLK_VALUE == 512)
-#if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_HCLK_BITS                     RCC_CFGR2_HPRE_DIV512
+  #if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_HCLK_BITS                 RCC_CFGR2_HPRE_DIV512
+  #else
+    #define STM32_HCLK_BITS                 0U
+  #endif
 #else
-  #define STM32_HCLK_BITS                     0U
-#endif
-#else
-#error "invalid STM32_CFG_HCLK_VALUE value specified"
+  #error "invalid STM32_CFG_HCLK_VALUE value specified"
 #endif
 
 /**
  * @brief   AHB clock clock point.
  */
 #if (STM32_HCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
-#define STM32_HCLK_FREQ                     (STM32_SYSCLK_FREQ / STM32_CFG_HCLK_VALUE)
+  #define STM32_HCLK_FREQ                   (STM32_SYSCLK_FREQ /            \
+                                             STM32_CFG_HCLK_VALUE)
 #else
-#define STM32_HCLK_FREQ                     0U
+  #define STM32_HCLK_FREQ                   0U
 #endif
 
 /*--- Macros and checks for the PCLK1 clock point. -------------------------*/
@@ -1977,46 +2177,47 @@
  * @brief   PCLK1 clock register bits.
  */
 #if (STM32_CFG_PCLK1_VALUE == 1) || defined(__DOXYGEN__)
-#if (STM32_PCLK1_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK1_BITS                    RCC_CFGR2_PPRE1_DIV1
-#else
-  #define STM32_PCLK1_BITS                    0U
-#endif
+  #if (STM32_PCLK1_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_PCLK1_BITS                RCC_CFGR2_PPRE1_DIV1
+  #else
+    #define STM32_PCLK1_BITS                0U
+  #endif
 #elif (STM32_CFG_PCLK1_VALUE == 2)
-#if (STM32_PCLK1_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK1_BITS                    RCC_CFGR2_PPRE1_DIV2
-#else
-  #define STM32_PCLK1_BITS                    0U
-#endif
+  #if (STM32_PCLK1_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_PCLK1_BITS                RCC_CFGR2_PPRE1_DIV2
+  #else
+    #define STM32_PCLK1_BITS                0U
+  #endif
 #elif (STM32_CFG_PCLK1_VALUE == 4)
-#if (STM32_PCLK1_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK1_BITS                    RCC_CFGR2_PPRE1_DIV4
-#else
-  #define STM32_PCLK1_BITS                    0U
-#endif
+  #if (STM32_PCLK1_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_PCLK1_BITS                RCC_CFGR2_PPRE1_DIV4
+  #else
+    #define STM32_PCLK1_BITS                0U
+  #endif
 #elif (STM32_CFG_PCLK1_VALUE == 8)
-#if (STM32_PCLK1_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK1_BITS                    RCC_CFGR2_PPRE1_DIV8
-#else
-  #define STM32_PCLK1_BITS                    0U
-#endif
+  #if (STM32_PCLK1_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_PCLK1_BITS                RCC_CFGR2_PPRE1_DIV8
+  #else
+    #define STM32_PCLK1_BITS                0U
+  #endif
 #elif (STM32_CFG_PCLK1_VALUE == 16)
-#if (STM32_PCLK1_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK1_BITS                    RCC_CFGR2_PPRE1_DIV16
+  #if (STM32_PCLK1_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_PCLK1_BITS                RCC_CFGR2_PPRE1_DIV16
+  #else
+    #define STM32_PCLK1_BITS                0U
+  #endif
 #else
-  #define STM32_PCLK1_BITS                    0U
-#endif
-#else
-#error "invalid STM32_CFG_PCLK1_VALUE value specified"
+  #error "invalid STM32_CFG_PCLK1_VALUE value specified"
 #endif
 
 /**
  * @brief   APB1 clock clock point.
  */
 #if (STM32_PCLK1_ENABLED == TRUE) || defined(__DOXYGEN__)
-#define STM32_PCLK1_FREQ                    (STM32_HCLK_FREQ / STM32_CFG_PCLK1_VALUE)
+  #define STM32_PCLK1_FREQ                  (STM32_HCLK_FREQ /              \
+                                             STM32_CFG_PCLK1_VALUE)
 #else
-#define STM32_PCLK1_FREQ                    0U
+  #define STM32_PCLK1_FREQ                  0U
 #endif
 
 /*--- Macros and checks for the PCLK1TIM clock point. ----------------------*/
@@ -2025,18 +2226,19 @@
  * @brief   PCLK1TIM clock register bits.
  */
 #if (STM32_PCLK1TIM_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK1TIM_BITS                 0U
+  #define STM32_PCLK1TIM_BITS               0U
 #else
-  #define STM32_PCLK1TIM_BITS                 0U
+  #define STM32_PCLK1TIM_BITS               0U
 #endif
 
 /**
  * @brief   APB1 timer clock clock point.
  */
 #if (STM32_PCLK1TIM_ENABLED == TRUE) || defined(__DOXYGEN__)
-#define STM32_PCLK1TIM_FREQ                 ((STM32_CFG_PCLK1_VALUE == 1) ? STM32_PCLK1_FREQ : (STM32_PCLK1_FREQ * 2U))
+  #define STM32_PCLK1TIM_FREQ               ((STM32_CFG_PCLK1_VALUE == 1) ? STM32_PCLK1_FREQ : \
+                                             (STM32_PCLK1_FREQ * 2U))
 #else
-#define STM32_PCLK1TIM_FREQ                 0U
+  #define STM32_PCLK1TIM_FREQ               0U
 #endif
 
 /*--- Macros and checks for the PCLK2 clock point. -------------------------*/
@@ -2045,46 +2247,47 @@
  * @brief   PCLK2 clock register bits.
  */
 #if (STM32_CFG_PCLK2_VALUE == 1) || defined(__DOXYGEN__)
-#if (STM32_PCLK2_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK2_BITS                    RCC_CFGR2_PPRE2_DIV1
-#else
-  #define STM32_PCLK2_BITS                    0U
-#endif
+  #if (STM32_PCLK2_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_PCLK2_BITS                RCC_CFGR2_PPRE2_DIV1
+  #else
+    #define STM32_PCLK2_BITS                0U
+  #endif
 #elif (STM32_CFG_PCLK2_VALUE == 2)
-#if (STM32_PCLK2_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK2_BITS                    RCC_CFGR2_PPRE2_DIV2
-#else
-  #define STM32_PCLK2_BITS                    0U
-#endif
+  #if (STM32_PCLK2_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_PCLK2_BITS                RCC_CFGR2_PPRE2_DIV2
+  #else
+    #define STM32_PCLK2_BITS                0U
+  #endif
 #elif (STM32_CFG_PCLK2_VALUE == 4)
-#if (STM32_PCLK2_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK2_BITS                    RCC_CFGR2_PPRE2_DIV4
-#else
-  #define STM32_PCLK2_BITS                    0U
-#endif
+  #if (STM32_PCLK2_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_PCLK2_BITS                RCC_CFGR2_PPRE2_DIV4
+  #else
+    #define STM32_PCLK2_BITS                0U
+  #endif
 #elif (STM32_CFG_PCLK2_VALUE == 8)
-#if (STM32_PCLK2_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK2_BITS                    RCC_CFGR2_PPRE2_DIV8
-#else
-  #define STM32_PCLK2_BITS                    0U
-#endif
+  #if (STM32_PCLK2_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_PCLK2_BITS                RCC_CFGR2_PPRE2_DIV8
+  #else
+    #define STM32_PCLK2_BITS                0U
+  #endif
 #elif (STM32_CFG_PCLK2_VALUE == 16)
-#if (STM32_PCLK2_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK2_BITS                    RCC_CFGR2_PPRE2_DIV16
+  #if (STM32_PCLK2_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_PCLK2_BITS                RCC_CFGR2_PPRE2_DIV16
+  #else
+    #define STM32_PCLK2_BITS                0U
+  #endif
 #else
-  #define STM32_PCLK2_BITS                    0U
-#endif
-#else
-#error "invalid STM32_CFG_PCLK2_VALUE value specified"
+  #error "invalid STM32_CFG_PCLK2_VALUE value specified"
 #endif
 
 /**
  * @brief   APB2 clock clock point.
  */
 #if (STM32_PCLK2_ENABLED == TRUE) || defined(__DOXYGEN__)
-#define STM32_PCLK2_FREQ                    (STM32_HCLK_FREQ / STM32_CFG_PCLK2_VALUE)
+  #define STM32_PCLK2_FREQ                  (STM32_HCLK_FREQ /              \
+                                             STM32_CFG_PCLK2_VALUE)
 #else
-#define STM32_PCLK2_FREQ                    0U
+  #define STM32_PCLK2_FREQ                  0U
 #endif
 
 /*--- Macros and checks for the PCLK2TIM clock point. ----------------------*/
@@ -2093,18 +2296,19 @@
  * @brief   PCLK2TIM clock register bits.
  */
 #if (STM32_PCLK2TIM_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK2TIM_BITS                 0U
+  #define STM32_PCLK2TIM_BITS               0U
 #else
-  #define STM32_PCLK2TIM_BITS                 0U
+  #define STM32_PCLK2TIM_BITS               0U
 #endif
 
 /**
  * @brief   APB2 timer clock clock point.
  */
 #if (STM32_PCLK2TIM_ENABLED == TRUE) || defined(__DOXYGEN__)
-#define STM32_PCLK2TIM_FREQ                 ((STM32_CFG_PCLK2_VALUE == 1) ? STM32_PCLK2_FREQ : (STM32_PCLK2_FREQ * 2U))
+  #define STM32_PCLK2TIM_FREQ               ((STM32_CFG_PCLK2_VALUE == 1) ? STM32_PCLK2_FREQ : \
+                                             (STM32_PCLK2_FREQ * 2U))
 #else
-#define STM32_PCLK2TIM_FREQ                 0U
+  #define STM32_PCLK2TIM_FREQ               0U
 #endif
 
 /*--- Macros and checks for the PCLK3 clock point. -------------------------*/
@@ -2113,46 +2317,47 @@
  * @brief   PCLK3 clock register bits.
  */
 #if (STM32_CFG_PCLK3_VALUE == 1) || defined(__DOXYGEN__)
-#if (STM32_PCLK3_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK3_BITS                    RCC_CFGR3_PPRE3_DIV1
-#else
-  #define STM32_PCLK3_BITS                    0U
-#endif
+  #if (STM32_PCLK3_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_PCLK3_BITS                RCC_CFGR3_PPRE3_DIV1
+  #else
+    #define STM32_PCLK3_BITS                0U
+  #endif
 #elif (STM32_CFG_PCLK3_VALUE == 2)
-#if (STM32_PCLK3_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK3_BITS                    RCC_CFGR3_PPRE3_DIV2
-#else
-  #define STM32_PCLK3_BITS                    0U
-#endif
+  #if (STM32_PCLK3_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_PCLK3_BITS                RCC_CFGR3_PPRE3_DIV2
+  #else
+    #define STM32_PCLK3_BITS                0U
+  #endif
 #elif (STM32_CFG_PCLK3_VALUE == 4)
-#if (STM32_PCLK3_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK3_BITS                    RCC_CFGR3_PPRE3_DIV4
-#else
-  #define STM32_PCLK3_BITS                    0U
-#endif
+  #if (STM32_PCLK3_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_PCLK3_BITS                RCC_CFGR3_PPRE3_DIV4
+  #else
+    #define STM32_PCLK3_BITS                0U
+  #endif
 #elif (STM32_CFG_PCLK3_VALUE == 8)
-#if (STM32_PCLK3_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK3_BITS                    RCC_CFGR3_PPRE3_DIV8
-#else
-  #define STM32_PCLK3_BITS                    0U
-#endif
+  #if (STM32_PCLK3_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_PCLK3_BITS                RCC_CFGR3_PPRE3_DIV8
+  #else
+    #define STM32_PCLK3_BITS                0U
+  #endif
 #elif (STM32_CFG_PCLK3_VALUE == 16)
-#if (STM32_PCLK3_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_PCLK3_BITS                    RCC_CFGR3_PPRE3_DIV16
+  #if (STM32_PCLK3_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_PCLK3_BITS                RCC_CFGR3_PPRE3_DIV16
+  #else
+    #define STM32_PCLK3_BITS                0U
+  #endif
 #else
-  #define STM32_PCLK3_BITS                    0U
-#endif
-#else
-#error "invalid STM32_CFG_PCLK3_VALUE value specified"
+  #error "invalid STM32_CFG_PCLK3_VALUE value specified"
 #endif
 
 /**
  * @brief   APB3 clock clock point.
  */
 #if (STM32_PCLK3_ENABLED == TRUE) || defined(__DOXYGEN__)
-#define STM32_PCLK3_FREQ                    (STM32_HCLK_FREQ / STM32_CFG_PCLK3_VALUE)
+  #define STM32_PCLK3_FREQ                  (STM32_HCLK_FREQ /              \
+                                             STM32_CFG_PCLK3_VALUE)
 #else
-#define STM32_PCLK3_FREQ                    0U
+  #define STM32_PCLK3_FREQ                  0U
 #endif
 
 /*--- Macros and checks for the MCO1 clock point. --------------------------*/
@@ -2161,27 +2366,27 @@
  * @brief   MCO1 clock register bits.
  */
 #if (STM32_MCO1_ENABLED == FALSE)
-#define STM32_MCO1_BITS                     RCC_CFGR1_MCO1SEL_OFF
+  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_OFF
 #elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_OFF) || defined(__DOXYGEN__)
-#define STM32_MCO1_BITS                     RCC_CFGR1_MCO1SEL_OFF
+  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_OFF
 #elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_SYSCLK)
-#define STM32_MCO1_BITS                     RCC_CFGR1_MCO1SEL_SYSCLK
+  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_SYSCLK
 #elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_MSIS)
-#define STM32_MCO1_BITS                     RCC_CFGR1_MCO1SEL_MSIS
+  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_MSIS
 #elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSI16)
-#define STM32_MCO1_BITS                     RCC_CFGR1_MCO1SEL_HSI16
+  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_HSI16
 #elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSE)
-#define STM32_MCO1_BITS                     RCC_CFGR1_MCO1SEL_HSE
+  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_HSE
 #elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_LSI)
-#define STM32_MCO1_BITS                     RCC_CFGR1_MCO1SEL_LSI
+  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_LSI
 #elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_LSE)
-#define STM32_MCO1_BITS                     RCC_CFGR1_MCO1SEL_LSE
+  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_LSE
 #elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSI48)
-#define STM32_MCO1_BITS                     RCC_CFGR1_MCO1SEL_HSI48
+  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_HSI48
 #elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_MSIK)
-#define STM32_MCO1_BITS                     RCC_CFGR1_MCO1SEL_MSIK
+  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_MSIK
 #else
-#error "invalid STM32_CFG_MCO1_SEL value specified"
+  #error "invalid STM32_CFG_MCO1_SEL value specified"
 #endif
 
 /**
@@ -2190,33 +2395,33 @@
 #if ((STM32_MCO1_ENABLED == TRUE) && \
      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_OFF)) || \
     defined(__DOXYGEN__)
-#define STM32_MCO1_FREQ                     STM32_NONE_FREQ
+  #define STM32_MCO1_FREQ                   STM32_NONE_FREQ
 #elif (STM32_MCO1_ENABLED == TRUE) && \
       (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_SYSCLK)
-#define STM32_MCO1_FREQ                     hal_lld_get_clock_point(CLK_SYSCLK)
+  #define STM32_MCO1_FREQ                   hal_lld_get_clock_point(CLK_SYSCLK)
 #elif (STM32_MCO1_ENABLED == TRUE) && \
       (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_MSIS)
-#define STM32_MCO1_FREQ                     hal_lld_get_clock_point(CLK_MSIS)
+  #define STM32_MCO1_FREQ                   hal_lld_get_clock_point(CLK_MSIS)
 #elif (STM32_MCO1_ENABLED == TRUE) && \
       (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSI16)
-#define STM32_MCO1_FREQ                     hal_lld_get_clock_point(CLK_HSI16)
+  #define STM32_MCO1_FREQ                   hal_lld_get_clock_point(CLK_HSI16)
 #elif (STM32_MCO1_ENABLED == TRUE) && \
       (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSE)
-#define STM32_MCO1_FREQ                     hal_lld_get_clock_point(CLK_HSE)
+  #define STM32_MCO1_FREQ                   hal_lld_get_clock_point(CLK_HSE)
 #elif (STM32_MCO1_ENABLED == TRUE) && \
       (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_LSI)
-#define STM32_MCO1_FREQ                     STM32_LSI_FREQ
+  #define STM32_MCO1_FREQ                   STM32_LSI_FREQ
 #elif (STM32_MCO1_ENABLED == TRUE) && \
       (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_LSE)
-#define STM32_MCO1_FREQ                     STM32_LSE_FREQ
+  #define STM32_MCO1_FREQ                   STM32_LSE_FREQ
 #elif (STM32_MCO1_ENABLED == TRUE) && \
       (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSI48)
-#define STM32_MCO1_FREQ                     hal_lld_get_clock_point(CLK_HSI48)
+  #define STM32_MCO1_FREQ                   hal_lld_get_clock_point(CLK_HSI48)
 #elif (STM32_MCO1_ENABLED == TRUE) && \
       (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_MSIK)
-#define STM32_MCO1_FREQ                     hal_lld_get_clock_point(CLK_MSIK)
+  #define STM32_MCO1_FREQ                   hal_lld_get_clock_point(CLK_MSIK)
 #else
-#define STM32_MCO1_FREQ                     0U
+  #define STM32_MCO1_FREQ                   0U
 #endif
 
 /*--- Macros and checks for the MCO2 clock point. --------------------------*/
@@ -2225,27 +2430,27 @@
  * @brief   MCO2 clock register bits.
  */
 #if (STM32_MCO2_ENABLED == FALSE)
-#define STM32_MCO2_BITS                     RCC_CFGR1_MCO2SEL_OFF
+  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_OFF
 #elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_OFF) || defined(__DOXYGEN__)
-#define STM32_MCO2_BITS                     RCC_CFGR1_MCO2SEL_OFF
+  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_OFF
 #elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_SYSCLK)
-#define STM32_MCO2_BITS                     RCC_CFGR1_MCO2SEL_SYSCLK
+  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_SYSCLK
 #elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_MSIS)
-#define STM32_MCO2_BITS                     RCC_CFGR1_MCO2SEL_MSIS
+  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_MSIS
 #elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSI16)
-#define STM32_MCO2_BITS                     RCC_CFGR1_MCO2SEL_HSI16
+  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_HSI16
 #elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSE)
-#define STM32_MCO2_BITS                     RCC_CFGR1_MCO2SEL_HSE
+  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_HSE
 #elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_LSI)
-#define STM32_MCO2_BITS                     RCC_CFGR1_MCO2SEL_LSI
+  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_LSI
 #elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_LSE)
-#define STM32_MCO2_BITS                     RCC_CFGR1_MCO2SEL_LSE
+  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_LSE
 #elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSI48)
-#define STM32_MCO2_BITS                     RCC_CFGR1_MCO2SEL_HSI48
+  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_HSI48
 #elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_MSIK)
-#define STM32_MCO2_BITS                     RCC_CFGR1_MCO2SEL_MSIK
+  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_MSIK
 #else
-#error "invalid STM32_CFG_MCO2_SEL value specified"
+  #error "invalid STM32_CFG_MCO2_SEL value specified"
 #endif
 
 /**
@@ -2254,33 +2459,33 @@
 #if ((STM32_MCO2_ENABLED == TRUE) && \
      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_OFF)) || \
     defined(__DOXYGEN__)
-#define STM32_MCO2_FREQ                     STM32_NONE_FREQ
+  #define STM32_MCO2_FREQ                   STM32_NONE_FREQ
 #elif (STM32_MCO2_ENABLED == TRUE) && \
       (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_SYSCLK)
-#define STM32_MCO2_FREQ                     hal_lld_get_clock_point(CLK_SYSCLK)
+  #define STM32_MCO2_FREQ                   hal_lld_get_clock_point(CLK_SYSCLK)
 #elif (STM32_MCO2_ENABLED == TRUE) && \
       (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_MSIS)
-#define STM32_MCO2_FREQ                     hal_lld_get_clock_point(CLK_MSIS)
+  #define STM32_MCO2_FREQ                   hal_lld_get_clock_point(CLK_MSIS)
 #elif (STM32_MCO2_ENABLED == TRUE) && \
       (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSI16)
-#define STM32_MCO2_FREQ                     hal_lld_get_clock_point(CLK_HSI16)
+  #define STM32_MCO2_FREQ                   hal_lld_get_clock_point(CLK_HSI16)
 #elif (STM32_MCO2_ENABLED == TRUE) && \
       (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSE)
-#define STM32_MCO2_FREQ                     hal_lld_get_clock_point(CLK_HSE)
+  #define STM32_MCO2_FREQ                   hal_lld_get_clock_point(CLK_HSE)
 #elif (STM32_MCO2_ENABLED == TRUE) && \
       (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_LSI)
-#define STM32_MCO2_FREQ                     STM32_LSI_FREQ
+  #define STM32_MCO2_FREQ                   STM32_LSI_FREQ
 #elif (STM32_MCO2_ENABLED == TRUE) && \
       (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_LSE)
-#define STM32_MCO2_FREQ                     STM32_LSE_FREQ
+  #define STM32_MCO2_FREQ                   STM32_LSE_FREQ
 #elif (STM32_MCO2_ENABLED == TRUE) && \
       (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSI48)
-#define STM32_MCO2_FREQ                     hal_lld_get_clock_point(CLK_HSI48)
+  #define STM32_MCO2_FREQ                   hal_lld_get_clock_point(CLK_HSI48)
 #elif (STM32_MCO2_ENABLED == TRUE) && \
       (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_MSIK)
-#define STM32_MCO2_FREQ                     hal_lld_get_clock_point(CLK_MSIK)
+  #define STM32_MCO2_FREQ                   hal_lld_get_clock_point(CLK_MSIK)
 #else
-#define STM32_MCO2_FREQ                     0U
+  #define STM32_MCO2_FREQ                   0U
 #endif
 /** @} */
 

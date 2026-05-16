@@ -1,0 +1,386 @@
+/*
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
+
+    This file is part of ChibiOS.
+
+    ChibiOS is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation version 3 of the License.
+
+    ChibiOS is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+ppIndentFactor = 2
+ppValueColumn = 44
+ppBackslashColumn = 76
+ppSplitColumn = 80
+ppDepth = 0
+ppCheckedRequirements = []
+
+/* Resets the preprocessor nesting state.*/
+macro ResetPP()
+  assign ppDepth = 0
+  assign ppCheckedRequirements = []
+endmacro
+
+/* Configures preprocessor formatting parameters.*/
+macro ConfigurePP(
+  indentFactor=ppIndentFactor,
+  valueColumn=ppValueColumn,
+  backslashColumn=ppBackslashColumn,
+  splitColumn=ppSplitColumn)
+
+  assign ppIndentFactor = indentFactor
+  assign ppValueColumn = valueColumn
+  assign ppBackslashColumn = backslashColumn
+  assign ppSplitColumn = splitColumn
+endmacro
+
+/* Returns indentation for a preprocessor nesting level.*/
+function GetPPIndentAt(level)
+  if ppIndentFactor <= 0 || level <= 0
+    return ""
+  endif
+
+  return ""?left_pad(level * ppIndentFactor)
+endfunction
+
+/* Returns the current preprocessor indentation.*/
+function GetPPIndent()
+  return GetPPIndentAt(ppDepth)
+endfunction
+
+/* Returns a safe level for #elif, #else and #endif directives.*/
+function GetPPParentLevel()
+  if ppDepth <= 0
+    return 0
+  endif
+
+  return ppDepth - 1
+endfunction
+
+/* Returns true if a colon belongs to a ternary operator.*/
+function IsPPTernaryColon(text, index)
+  if index <= 0 || index >= text?length
+    return false
+  endif
+
+  if text[index] != ":"
+    return false
+  endif
+
+  local depth = 0
+  list 0..(index - 1) as i
+    local ch = text[i]
+    if ch == "?"
+      local depth = depth + 1
+    elseif ch == ":" && depth > 0
+      local depth = depth - 1
+    endif
+  endlist
+
+  return depth > 0
+endfunction
+
+/* Returns the preferred ternary colon split point around a threshold.*/
+function FindPPTernaryColonIndex(text, threshold)
+  local fallback = -1
+  if text?length == 0
+    return -1
+  endif
+
+  list 0..(text?length - 1) as i
+    if IsPPTernaryColon(text, i)
+      if i > threshold
+        if fallback >= 0
+          return fallback
+        endif
+        return i
+      endif
+      local fallback = i
+    endif
+  endlist
+
+  return fallback
+endfunction
+
+/* Returns true if an operator can be used as a line split point.*/
+function IsPPSplitOperator(text, index)
+  if index < 0 || index >= text?length
+    return false
+  endif
+
+  if index + 1 < text?length
+    local two = text?substring(index, index + 2)
+    if two == "&&" || two == "||"
+      return true
+    endif
+  endif
+
+  local ch = text[index]
+  if ch == "+" || ch == "-" || ch == "*" || ch == "/" || ch == "|" || ch == "&" || ch == "^"
+    if index > 0
+      local prev = text[index - 1]
+    else
+      local prev = ""
+    endif
+    if index + 1 < text?length
+      local next = text[index + 1]
+    else
+      local next = ""
+    endif
+
+    if (ch == "|" && next == "|") || (ch == "|" && prev == "|")
+      return false
+    endif
+    if (ch == "&" && next == "&") || (ch == "&" && prev == "&")
+      return false
+    endif
+
+    return true
+  endif
+
+  return false
+endfunction
+
+/* Returns the operator text at a split point.*/
+function GetPPSplitOperator(text, index)
+  if index + 1 < text?length
+    local two = text?substring(index, index + 2)
+    if two == "&&" || two == "||"
+      return two
+    endif
+  endif
+
+  return text[index]
+endfunction
+
+/* Returns the safe split point closest to the threshold without crossing it.*/
+function FindPPSplitIndex(text, threshold)
+  local fallback = -1
+  if text?length == 0
+    return -1
+  endif
+
+  local ternarycolon = FindPPTernaryColonIndex(text, threshold)
+  if ternarycolon >= 0
+    return ternarycolon
+  endif
+
+  list 0..(text?length - 1) as i
+    if IsPPSplitOperator(text, i)
+      if i > threshold
+        if fallback >= 0
+          return fallback
+        endif
+        return i
+      endif
+      local fallback = i
+    endif
+  endlist
+
+  return fallback
+endfunction
+
+/* Splits one preprocessor expression or value into continued line fragments.*/
+function SplitPPValue(value, baseColumn)
+  local text = value?trim
+  if text?length == 0
+    return [""]
+  endif
+
+  if baseColumn + text?length <= ppSplitColumn
+    return [text]
+  endif
+
+  local threshold = ppSplitColumn - baseColumn
+  if threshold < 0
+    local threshold = 0
+  endif
+
+  local index = FindPPSplitIndex(text, threshold)
+  if index < 0
+    return [text]
+  endif
+
+  local operator = GetPPSplitOperator(text, index)
+  local left = text?substring(0, index)?trim + " " + operator
+  local right = text?substring(index + operator?length)?trim
+
+  return [left] + SplitPPValue(right, baseColumn)
+endfunction
+
+/* Returns the parenthesis balance of one emitted fragment.*/
+function GetPPParenthesisBalance(text)
+  local balance = 0
+  if text?length == 0
+    return 0
+  endif
+
+  list 0..(text?length - 1) as i
+    local ch = text[i]
+    if ch == "("
+      local balance = balance + 1
+    elseif ch == ")"
+      local balance = balance - 1
+    endif
+  endlist
+
+  return balance
+endfunction
+
+/* Keeps continuation micro-indentation within readable limits.*/
+function ClampPPMicroIndent(value)
+  if value < 0
+    return 0
+  endif
+  if value > 8
+    return 8
+  endif
+
+  return value
+endfunction
+
+/* Emits one logical preprocessor line, optionally with a continuation slash.*/
+macro EmitPPLogicalLine(text, continued=false)
+  if continued
+    if text?length < ppBackslashColumn
+      emit text?right_pad(ppBackslashColumn) + "\\" + "\n"
+    else
+      emit text + " \\" + "\n"
+    endif
+  else
+    emit text + "\n"
+  endif
+endmacro
+
+/* Emits a wrapped preprocessor value after a prepared line prefix.*/
+macro EmitPPWrapped(prefix, value)
+  local fragments = SplitPPValue(value, prefix?length)
+  local microindent = 0
+
+  list fragments as fragment
+    if fragment?is_first
+      local line = prefix + fragment
+    else
+      local line = ""?left_pad(prefix?length + ClampPPMicroIndent(microindent)) + fragment
+    endif
+
+    EmitPPLogicalLine(text=line, continued=!fragment?is_last)
+    local microindent = ClampPPMicroIndent(microindent + GetPPParenthesisBalance(fragment))
+  endlist
+endmacro
+
+/* Emits one preprocessor directive with a wrapped expression.*/
+macro EmitPPDirective(keyword, expression, level)
+  local prefix = GetPPIndentAt(level) + keyword + " "
+  EmitPPWrapped(prefix=prefix, value=expression)
+endmacro
+
+/* Emits one preprocessor directive at an explicit nesting level.*/
+macro EmitPPDirectiveAt(keyword, expression, level)
+  EmitPPDirective(keyword=keyword, expression=expression, level=level)
+endmacro
+
+/* Emits a #if directive and updates the nesting level.*/
+macro EmitPPIf(expression)
+  EmitPPDirective(keyword="#if", expression=expression, level=ppDepth)
+  assign ppDepth = ppDepth + 1
+endmacro
+
+/* Emits a #if directive at an explicit nesting level without changing state.*/
+macro EmitPPIfAt(expression, level)
+  EmitPPDirectiveAt(keyword="#if", expression=expression, level=level)
+endmacro
+
+/* Emits a #elif directive at the current nesting level.*/
+macro EmitPPElif(expression)
+  EmitPPDirective(keyword="#elif", expression=expression, level=GetPPParentLevel())
+endmacro
+
+/* Emits a #elif directive at an explicit nesting level without changing state.*/
+macro EmitPPElifAt(expression, level)
+  EmitPPDirectiveAt(keyword="#elif", expression=expression, level=level)
+endmacro
+
+/* Emits a #else directive at the current nesting level.*/
+macro EmitPPElse()
+  emit GetPPIndentAt(GetPPParentLevel()) + "#else\n"
+endmacro
+
+/* Emits a #else directive at an explicit nesting level without changing state.*/
+macro EmitPPElseAt(level)
+  emit GetPPIndentAt(level) + "#else\n"
+endmacro
+
+/* Emits a #endif directive and updates the nesting level.*/
+macro EmitPPEndif()
+  if ppDepth > 0
+    assign ppDepth = ppDepth - 1
+  endif
+  emit GetPPIndentAt(ppDepth) + "#endif\n"
+endmacro
+
+/* Emits a #endif directive at an explicit nesting level without changing state.*/
+macro EmitPPEndifAt(level)
+  emit GetPPIndentAt(level) + "#endif\n"
+endmacro
+
+/* Emits a #define directive using the configured value column.*/
+macro EmitPPDefine(name, value)
+  local prefix = (GetPPIndent() + "#define " + name)?right_pad(ppValueColumn)
+  EmitPPWrapped(prefix=prefix, value=value)
+endmacro
+
+/* Emits a #define directive at an explicit nesting level without changing state.*/
+macro EmitPPDefineAt(name, value, level)
+  local prefix = (GetPPIndentAt(level) + "#define " + name)?right_pad(ppValueColumn)
+  EmitPPWrapped(prefix=prefix, value=value)
+endmacro
+
+/* Emits a #error directive.*/
+macro EmitPPError(message)
+  emit GetPPIndent() + "#error " + message + "\n"
+endmacro
+
+/* Emits a #error directive at an explicit nesting level without changing state.*/
+macro EmitPPErrorAt(message, level)
+  emit GetPPIndentAt(level) + "#error " + message + "\n"
+endmacro
+
+/* Emits a preprocessor assertion with explicit required macro checks.*/
+macro EmitPPAssert(expression, message, requires=[], doxygen=true)
+  list requires as required
+    if !ppCheckedRequirements?seq_contains(required)
+      if doxygen
+        EmitPPIf(expression="!defined(" + required + ") && !defined(__DOXYGEN__)")
+      else
+        EmitPPIf(expression="!defined(" + required + ")")
+      endif
+      EmitPPError(message="\"" + required + " not defined\"")
+      EmitPPEndif()
+      assign ppCheckedRequirements = ppCheckedRequirements + [required]
+    endif
+  endlist
+
+  if doxygen
+    EmitPPIf(expression="!(" + expression + ") && !defined(__DOXYGEN__)")
+  else
+    EmitPPIf(expression="!(" + expression + ")")
+  endif
+  EmitPPError(message=message)
+  EmitPPEndif()
+endmacro
+
+/* Emits a guarded default setting.*/
+macro EmitPPSetting(name, value)
+  EmitPPIf(expression="!defined(" + name + ") || defined(__DOXYGEN__)")
+  EmitPPDefine(name=name, value=value)
+  EmitPPEndif()
+endmacro

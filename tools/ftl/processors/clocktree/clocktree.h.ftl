@@ -19,7 +19,7 @@
 [@pp.dropOutputFile /]
 [#import "/@lib/liblicense.ftlc" as license /]
 [#import "/@lib/libclocks.ftlc" as clocktree /]
-[#assign ppindentfactor = 2 in clocktree /]
+[@clocktree.ConfigurePreprocessor indentFactor=2 valueColumn=44 backslashColumn=76 splitColumn=80 /]
 [@pp.changeOutputFile name="clocktree.h" /]
 /*
 [@license.EmitLicenseAsText /]
