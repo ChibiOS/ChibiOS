@@ -1,0 +1,19 @@
+<clocktree>
+  <settings>
+    <prefixes clock_points="TCLK_" macros="TST_" cfgs="TST_CFG_" />
+    <suffixes frequency="_FREQ" values="_VALUE" bits="_BITS"
+              selector="_SEL" enable="_ENABLE" enabled="_ENABLED" />
+    <configs>
+      <config name="CLOCK_DYNAMIC" type="bool" default="FALSE"
+              role="dynamic_mode">
+        <description>Enables dynamic clock handling.</description>
+      </config>
+    </configs>
+  </settings>
+  <clocks>
+    <clock point="DERIVED" enable="always" dynamic="no">
+      <description>derived source references missing input point</description>
+      <source input="MISSING" frequency="(%I% / 2U)" />
+    </clock>
+  </clocks>
+</clocktree>

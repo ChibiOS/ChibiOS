@@ -1,0 +1,18 @@
+<clocktree>
+  <settings>
+    <prefixes clock_points="TCLK_" macros="TST_" cfgs="TST_CFG_" />
+    <suffixes frequency="_FREQ" values="_VALUE" bits="_BITS"
+              selector="_SEL" enable="_ENABLE" enabled="_ENABLED" />
+    <configs>
+      <config name="UNRELATED" type="bool" default="FALSE">
+        <description>Missing the dynamic_mode role.</description>
+      </config>
+    </configs>
+  </settings>
+  <clocks>
+    <clock point="OSC" enable="always" dynamic="yes">
+      <description>dynamic point requires dynamic mode configuration</description>
+      <source frequency="16000000U" />
+    </clock>
+  </clocks>
+</clocktree>

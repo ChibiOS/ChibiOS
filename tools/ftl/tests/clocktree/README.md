@@ -8,3 +8,8 @@ The `valid` directory contains XMLs expected to validate against
 `tools/ftl/schema/clocks/clocktree.xsd` and generate a `clocktree.h`
 successfully.  Each file focuses on one generator feature so regressions can be
 isolated without using a full MCU clock tree.
+
+The `invalid/schema` directory contains XMLs expected to fail XSD validation.
+The `invalid/generator` directory contains schema-valid XMLs expected to fail
+during generation because they violate semantic rules enforced by the
+FreeMarker library.

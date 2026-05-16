@@ -1,0 +1,31 @@
+<clocktree>
+  <settings>
+    <prefixes clock_points="TCLK_" macros="TST_" cfgs="TST_CFG_" />
+    <suffixes frequency="_FREQ" values="_VALUE" bits="_BITS"
+              selector="_SEL" enable="_ENABLE" enabled="_ENABLED" />
+    <configs>
+      <config name="CLOCK_DYNAMIC" type="bool" default="FALSE"
+              role="dynamic_mode">
+        <description>Enables dynamic clock handling.</description>
+      </config>
+    </configs>
+    <states>
+      <state name="run" when="TRUE" />
+    </states>
+    <limit-set>
+      <limit name="CORE" min="no" max="yes" />
+    </limit-set>
+    <limit-values>
+      <state-values state="run">
+        <limit name="CORE" min="1U" max="16000000U" />
+      </state-values>
+    </limit-values>
+  </settings>
+  <clocks>
+    <clock point="CORE" enable="always" dynamic="no">
+      <description>clock with unexpected minimum limit value</description>
+      <limits ref="CORE" />
+      <source frequency="8000000U" />
+    </clock>
+  </clocks>
+</clocktree>

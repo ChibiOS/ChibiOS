@@ -1,0 +1,23 @@
+<clocktree>
+  <settings>
+    <prefixes clock_points="TCLK_" macros="TST_" cfgs="TST_CFG_" />
+    <suffixes frequency="_FREQ" values="_VALUE" bits="_BITS"
+              selector="_SEL" enable="_ENABLE" enabled="_ENABLED" />
+    <configs>
+      <config name="CLOCK_DYNAMIC_A" type="bool" default="FALSE"
+              role="dynamic_mode">
+        <description>First dynamic mode setting.</description>
+      </config>
+      <config name="CLOCK_DYNAMIC_B" type="bool" default="FALSE"
+              role="dynamic_mode">
+        <description>Second dynamic mode setting.</description>
+      </config>
+    </configs>
+  </settings>
+  <clocks>
+    <clock point="BASE" enable="always" dynamic="no">
+      <description>base clock</description>
+      <source frequency="1000000U" />
+    </clock>
+  </clocks>
+</clocktree>

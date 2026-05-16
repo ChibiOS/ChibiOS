@@ -1,0 +1,19 @@
+<clocktree>
+  <settings>
+    <prefixes clock_points="TCLK_" macros="TST_" cfgs="TST_CFG_" />
+    <suffixes frequency="_FREQ" values="_VALUE" bits="_BITS"
+              selector="_SEL" enable="_ENABLE" enabled="_ENABLED" />
+    <configs>
+      <config name="CLOCK_DYNAMIC" type="bool" default="MAYBE"
+              role="dynamic_mode">
+        <description>Boolean defaults must be TRUE or FALSE.</description>
+      </config>
+    </configs>
+  </settings>
+  <clocks>
+    <clock point="BASE" enable="always" dynamic="no">
+      <description>base clock</description>
+      <source frequency="1000000U" />
+    </clock>
+  </clocks>
+</clocktree>
