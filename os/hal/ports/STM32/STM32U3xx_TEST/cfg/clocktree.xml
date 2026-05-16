@@ -71,26 +71,32 @@
       <description>MSI 96MHz internal oscillator</description>
       <source>
         <frequencies>
-          <case when="(STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE)" value="96010000U">
-            <bits target="CR" value="RCC_CR_MSIPLL0EN" />
-            <bits target="ICSCR1" value="RCC_ICSCR1_MSIPLL0SEL_LSE" />
-          </case>
-          <case when="(STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_HSE)" value="96000000U">
-            <bits target="CR" value="RCC_CR_MSIPLL0EN" />
-            <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL0SEL_HSE | STM32_MSIHSINDIV)" />
-          </case>
-          <case when="(STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST)" value="96010000U">
-            <bits target="CR" value="(RCC_CR_MSIPLL0EN | RCC_CR_MSIPLL0FAST)" />
-            <bits target="ICSCR1" value="RCC_ICSCR1_MSIPLL0SEL_LSE" />
-          </case>
-          <case when="(STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_HSE_FAST)" value="96000000U">
-            <bits target="CR" value="(RCC_CR_MSIPLL0EN | RCC_CR_MSIPLL0FAST)" />
-            <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL0SEL_HSE | STM32_MSIHSINDIV)" />
-          </case>
-          <default value="96000000U">
-            <bits target="CR" value="0U" />
-            <bits target="ICSCR1" value="0U" />
-          </default>
+          <select>
+            <when condition="STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE"
+                  value="96010000U">
+              <bits target="CR" value="RCC_CR_MSIPLL0EN" />
+              <bits target="ICSCR1" value="RCC_ICSCR1_MSIPLL0SEL_LSE" />
+            </when>
+            <when condition="STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_HSE"
+                  value="96000000U">
+              <bits target="CR" value="RCC_CR_MSIPLL0EN" />
+              <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL0SEL_HSE | STM32_MSIHSINDIV)" />
+            </when>
+            <when condition="STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_LSE_FAST"
+                  value="96010000U">
+              <bits target="CR" value="(RCC_CR_MSIPLL0EN | RCC_CR_MSIPLL0FAST)" />
+              <bits target="ICSCR1" value="RCC_ICSCR1_MSIPLL0SEL_LSE" />
+            </when>
+            <when condition="STM32_CFG_MSIRC0_MODE == RCC_MSIRC0_PLL_HSE_FAST"
+                  value="96000000U">
+              <bits target="CR" value="(RCC_CR_MSIPLL0EN | RCC_CR_MSIPLL0FAST)" />
+              <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL0SEL_HSE | STM32_MSIHSINDIV)" />
+            </when>
+            <otherwise value="96000000U">
+              <bits target="CR" value="0U" />
+              <bits target="ICSCR1" value="0U" />
+            </otherwise>
+          </select>
         </frequencies>
       </source>
     </clock>
@@ -98,58 +104,56 @@
       <description>MSI 24MHz internal oscillator</description>
       <source>
         <frequencies>
-          <case when="((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) &amp;&amp; (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE)" value="23986000U">
-            <bits target="CR" value="RCC_CR_MSIPLL1EN" />
-            <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))" />
-          </case>
-          <case when="((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) &amp;&amp; (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE)" value="24016000U">
-            <bits target="CR" value="RCC_CR_MSIPLL1EN" />
-            <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)" />
-          </case>
-          <case when="(STM32_CFG_MSIPLL1N_VALUE == 2) &amp;&amp; (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE)" value="22577000U">
-            <bits target="CR" value="RCC_CR_MSIPLL1EN" />
-            <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))" />
-          </case>
-          <case when="(STM32_CFG_MSIPLL1N_VALUE == 2) &amp;&amp; (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE)" value="22581000U">
-            <bits target="CR" value="RCC_CR_MSIPLL1EN" />
-            <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)" />
-          </case>
-          <case when="(STM32_CFG_MSIPLL1N_VALUE == 3) &amp;&amp; (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE)" value="24576000U">
-            <bits target="CR" value="RCC_CR_MSIPLL1EN" />
-            <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))" />
-          </case>
-          <case when="(STM32_CFG_MSIPLL1N_VALUE == 3) &amp;&amp; (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE)" value="24577000U">
-            <bits target="CR" value="RCC_CR_MSIPLL1EN" />
-            <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)" />
-          </case>
-          <case when="((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) &amp;&amp; (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST)" value="23986000U">
-            <bits target="CR" value="(RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)" />
-            <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))" />
-          </case>
-          <case when="((STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)) &amp;&amp; (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST)" value="24016000U">
-            <bits target="CR" value="(RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)" />
-            <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)" />
-          </case>
-          <case when="(STM32_CFG_MSIPLL1N_VALUE == 2) &amp;&amp; (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST)" value="22577000U">
-            <bits target="CR" value="(RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)" />
-            <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))" />
-          </case>
-          <case when="(STM32_CFG_MSIPLL1N_VALUE == 2) &amp;&amp; (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST)" value="22581000U">
-            <bits target="CR" value="(RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)" />
-            <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)" />
-          </case>
-          <case when="(STM32_CFG_MSIPLL1N_VALUE == 3) &amp;&amp; (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST)" value="24576000U">
-            <bits target="CR" value="(RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)" />
-            <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))" />
-          </case>
-          <case when="(STM32_CFG_MSIPLL1N_VALUE == 3) &amp;&amp; (STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST)" value="24577000U">
-            <bits target="CR" value="(RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)" />
-            <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)" />
-          </case>
-          <default value="24000000U">
-            <bits target="CR" value="0U" />
-            <bits target="ICSCR1" value="0U" />
-          </default>
+          <select>
+            <when condition="STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE">
+              <bits target="CR" value="RCC_CR_MSIPLL1EN" />
+              <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))" />
+              <select>
+                <when condition="(STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)"
+                      value="23986000U" />
+                <when condition="STM32_CFG_MSIPLL1N_VALUE == 2" value="22577000U" />
+                <when condition="STM32_CFG_MSIPLL1N_VALUE == 3" value="24576000U" />
+                <otherwise value="24000000U" />
+              </select>
+            </when>
+            <when condition="STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE">
+              <bits target="CR" value="RCC_CR_MSIPLL1EN" />
+              <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)" />
+              <select>
+                <when condition="(STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)"
+                      value="24016000U" />
+                <when condition="STM32_CFG_MSIPLL1N_VALUE == 2" value="22581000U" />
+                <when condition="STM32_CFG_MSIPLL1N_VALUE == 3" value="24577000U" />
+                <otherwise value="24000000U" />
+              </select>
+            </when>
+            <when condition="STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_LSE_FAST">
+              <bits target="CR" value="(RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)" />
+              <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_LSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE))" />
+              <select>
+                <when condition="(STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)"
+                      value="23986000U" />
+                <when condition="STM32_CFG_MSIPLL1N_VALUE == 2" value="22577000U" />
+                <when condition="STM32_CFG_MSIPLL1N_VALUE == 3" value="24576000U" />
+                <otherwise value="24000000U" />
+              </select>
+            </when>
+            <when condition="STM32_CFG_MSIRC1_MODE == RCC_MSIRC1_PLL_HSE_FAST">
+              <bits target="CR" value="(RCC_CR_MSIPLL1EN | RCC_CR_MSIPLL1FAST)" />
+              <bits target="ICSCR1" value="(RCC_ICSCR1_MSIPLL1SEL_HSE | RCC_ICSCR1_MSIPLL1N_FIELD(STM32_CFG_MSIPLL1N_VALUE) | STM32_MSIHSINDIV)" />
+              <select>
+                <when condition="(STM32_CFG_MSIPLL1N_VALUE == 0) || (STM32_CFG_MSIPLL1N_VALUE == 1)"
+                      value="24016000U" />
+                <when condition="STM32_CFG_MSIPLL1N_VALUE == 2" value="22581000U" />
+                <when condition="STM32_CFG_MSIPLL1N_VALUE == 3" value="24577000U" />
+                <otherwise value="24000000U" />
+              </select>
+            </when>
+            <otherwise value="24000000U">
+              <bits target="CR" value="0U" />
+              <bits target="ICSCR1" value="0U" />
+            </otherwise>
+          </select>
         </frequencies>
       </source>
     </clock>

@@ -3,10 +3,14 @@
 #define TST_TABLEOSC_CFGR_BITS
 OSC_ON | OSC_FAST_CR_BITS
 #define TST_TABLEOSC_CR_BITS                0U
+OSC_FINE_BITS
 OSC_FAST_BITS
 OSC_SLOW_BITS
 
 # Conditional frequency table values are emitted.
 #define TST_TABLEOSC_FREQ
+#if ((TST_CFG_OSC_MODE == OSC_FAST) && \
+     (TST_CFG_OSC_FINE == TRUE)) || \
+50000000U
 48000000U
 12000000U

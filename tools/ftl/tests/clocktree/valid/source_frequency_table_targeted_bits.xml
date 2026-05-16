@@ -12,6 +12,9 @@
               values="OSC_FAST OSC_SLOW">
         <description>Selects the oscillator range.</description>
       </config>
+      <config name="OSC_FINE" type="bool" default="FALSE">
+        <description>Enables fine oscillator trimming.</description>
+      </config>
     </configs>
   </settings>
   <clocks>
@@ -24,13 +27,22 @@
       <bits target="CR" enabled="OSC_ON" disabled="0U" />
       <source>
         <frequencies>
-          <case when="TST_CFG_OSC_MODE == OSC_FAST" value="48000000U">
-            <bits target="CR" value="OSC_FAST_CR_BITS" />
-            <bits target="CFGR" value="OSC_FAST_BITS" />
-          </case>
-          <default value="12000000U">
+          <select>
+            <when condition="TST_CFG_OSC_MODE == OSC_FAST">
+              <bits target="CR" value="OSC_FAST_CR_BITS" />
+              <select>
+                <when condition="TST_CFG_OSC_FINE == TRUE" value="50000000U">
+                  <bits target="CFGR" value="OSC_FINE_BITS" />
+                </when>
+                <otherwise value="48000000U">
+                  <bits target="CFGR" value="OSC_FAST_BITS" />
+                </otherwise>
+              </select>
+            </when>
+            <otherwise value="12000000U">
             <bits target="CFGR" value="OSC_SLOW_BITS" />
-          </default>
+            </otherwise>
+          </select>
         </frequencies>
       </source>
     </clock>

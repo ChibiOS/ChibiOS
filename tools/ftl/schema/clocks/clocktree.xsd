@@ -185,14 +185,76 @@
     </xs:complexType>
 
     <xs:complexType name="frequenciesType">
-      <xs:sequence>
-        <xs:element name="case" type="frequencyCaseType"
-          maxOccurs="unbounded" minOccurs="0">
+      <xs:choice maxOccurs="1" minOccurs="1">
+        <xs:sequence>
+          <xs:element name="case" type="frequencyCaseType"
+            maxOccurs="unbounded" minOccurs="0">
+          </xs:element>
+          <xs:element name="default" type="frequencyDefaultType" maxOccurs="1"
+            minOccurs="1">
+          </xs:element>
+        </xs:sequence>
+        <xs:element name="select" type="conditionalValueSelectType"
+          maxOccurs="1" minOccurs="1">
         </xs:element>
-        <xs:element name="default" type="frequencyDefaultType" maxOccurs="1"
-          minOccurs="1">
+      </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="conditionalValueSelectType">
+      <xs:sequence>
+        <xs:element name="when" type="conditionalValueWhenType"
+          maxOccurs="unbounded" minOccurs="1">
+        </xs:element>
+        <xs:element name="otherwise" type="conditionalValueOtherwiseType"
+          maxOccurs="1" minOccurs="1">
         </xs:element>
       </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="conditionalValueWhenType">
+      <xs:sequence>
+        <xs:element name="bits" type="valueBitsType" maxOccurs="unbounded"
+          minOccurs="0">
+        </xs:element>
+        <xs:element name="select" type="conditionalValueSelectType"
+          maxOccurs="1" minOccurs="0">
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="condition" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="value" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="conditionalValueOtherwiseType">
+      <xs:sequence>
+        <xs:element name="bits" type="valueBitsType" maxOccurs="unbounded"
+          minOccurs="0">
+        </xs:element>
+        <xs:element name="select" type="conditionalValueSelectType"
+          maxOccurs="1" minOccurs="0">
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="value" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="frequencyCaseType">

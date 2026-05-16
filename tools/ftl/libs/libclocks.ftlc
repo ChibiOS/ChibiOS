@@ -53,6 +53,27 @@ function ParseValueBits(node, context)
   return ValidateBitTargets(bits, context)
 endfunction
 
+/* Combines inherited and local value bits expressions by target.*/
+function MergeValueBits(inherited, localbits)
+  local merged = []
+  list inherited as bit
+    local localvalue = GetValueBitsExpression(localbits, bit["target"])
+    if localvalue != ""
+      local merged = merged + [{"target":bit["target"], "value":"(" + bit["value"] + " | " + localvalue + ")"}]
+    else
+      local merged = merged + [bit]
+    endif
+  endlist
+
+  list localbits as bit
+    if !HasValueBitsTarget(inherited, bit["target"])
+      local merged = merged + [bit]
+    endif
+  endlist
+
+  return merged
+endfunction
+
 /* Parses enable-state bits elements.*/
 function ParseBoolBits(node, context)
   local bits = []
@@ -77,8 +98,75 @@ function GetBitsValue(node)
   stop ">>>> Selection bits must use one untargeted bits element"
 endfunction
 
+/* Builds one preprocessor expression from nested conditional terms.*/
+function BuildAndExpression(terms)
+  local expression = ""
+  list terms as term
+    local formatted = "(" + term?trim + ")"
+    if term?is_first
+      local expression = formatted
+    else
+      local expression = expression + " && " + formatted
+    endif
+  endlist
+
+  return expression
+endfunction
+
+/* Parses a recursive conditional value select into flat conditional cases.*/
+function ParseConditionalValueSelect(select, conditions, bits, context)
+  local cases = []
+  list select.when as when
+    local branchconditions = conditions + [when.@condition[0]?string]
+    local branchbits = MergeValueBits(bits, ParseValueBits(when, context + " conditional branch"))
+    local hasvalue = when.@value[0]??
+    local hasselect = when.select[0]??
+
+    if hasvalue && hasselect
+      stop ">>>> Conditional branch in " + context + " cannot specify both value and select"
+    endif
+    if !hasvalue && !hasselect
+      stop ">>>> Conditional branch in " + context + " must specify value or select"
+    endif
+
+    if hasselect
+      local cases = cases + ParseConditionalValueSelect(when.select[0], branchconditions, branchbits, context)
+    else
+      local cases = cases + [{"when":BuildAndExpression(branchconditions), "value":when.@value[0]?string, "bits":branchbits}]
+    endif
+  endlist
+
+  if !select.otherwise[0]??
+    stop ">>>> Conditional select in " + context + " requires otherwise"
+  endif
+
+  local otherwise = select.otherwise[0]
+  local branchbits = MergeValueBits(bits, ParseValueBits(otherwise, context + " conditional otherwise"))
+  local hasvalue = otherwise.@value[0]??
+  local hasselect = otherwise.select[0]??
+
+  if hasvalue && hasselect
+    stop ">>>> Conditional otherwise in " + context + " cannot specify both value and select"
+  endif
+  if !hasvalue && !hasselect
+    stop ">>>> Conditional otherwise in " + context + " must specify value or select"
+  endif
+
+  if hasselect
+    local cases = cases + ParseConditionalValueSelect(otherwise.select[0], conditions, branchbits, context)
+  else
+    local cases = cases + [{"when":BuildAndExpression(conditions), "value":otherwise.@value[0]?string, "bits":branchbits}]
+  endif
+
+  return cases
+endfunction
+
 /* Parses conditional source frequency cases.*/
 function ParseFrequencyCases(source, point)
+  if source.frequencies[0].select[0]??
+    return ParseConditionalValueSelect(source.frequencies[0].select[0], [], [], "frequency table for clock point '" + point + "'")
+  endif
+
   local cases = []
   list source.frequencies[0]["case"] as casefreq
     local cases = cases + [{"when":casefreq.@when[0]?string, "value":casefreq.@value[0]?string, "bits":ParseValueBits(casefreq, "frequency case for clock point '" + point + "'")}]
@@ -948,7 +1036,11 @@ macro EmitStateCondition(keyword, expression, doxygen)
       if term?is_first
         local line = keyword + " (" + FormatConditionTerm(term)
       else
-        local line = "     " + FormatConditionTerm(term)
+        if keyword == "#elif"
+          local line = "      " + FormatConditionTerm(term)
+        else
+          local line = "     " + FormatConditionTerm(term)
+        endif
       endif
       if term?is_last
         local line = line + ") || \\"
@@ -973,7 +1065,7 @@ ${line}
       if term?is_first
         local line = keyword + " " + FormatConditionTerm(term)
       else
-        if keyword == "#elif"
+        if keyword == "#elif" && !doxygen
           local line = "      " + FormatConditionTerm(term)
         else
           local line = "    " + FormatConditionTerm(term)
