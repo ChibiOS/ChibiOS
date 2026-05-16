@@ -34,6 +34,18 @@
               values="RCC_ICSCR1_MSIK_IRC0_DIV1 RCC_ICSCR1_MSIK_IRC0_DIV2 RCC_ICSCR1_MSIK_IRC0_DIV4 RCC_ICSCR1_MSIK_IRC0_DIV8 RCC_ICSCR1_MSIK_IRC1_DIV1 RCC_ICSCR1_MSIK_IRC1_DIV2 RCC_ICSCR1_MSIK_IRC1_DIV4 RCC_ICSCR1_MSIK_IRC1_DIV8">
         <description>Selects the source and divide factor for MSIK.</description>
       </config>
+      <config name="STOPWUCK" type="set" default="RCC_CFGR1_STOPWUCK_MSIS"
+              values="RCC_CFGR1_STOPWUCK_MSIS RCC_CFGR1_STOPWUCK_HSI16">
+        <description>Selects the system clock source after STOP mode.</description>
+      </config>
+      <config name="STOPKERWUCK" type="set" default="RCC_CFGR1_STOPKERWUCK_MSIK"
+              values="RCC_CFGR1_STOPKERWUCK_MSIK RCC_CFGR1_STOPKERWUCK_HSI16">
+        <description>Selects the kernel clock source after STOP mode.</description>
+      </config>
+      <config name="MSIBIAS" type="set" default="RCC_ICSCR1_MSIBIAS_CONTINUOUS"
+              values="RCC_ICSCR1_MSIBIAS_CONTINUOUS RCC_ICSCR1_MSIBIAS_SAMPLING">
+        <description>Selects the MSI bias mode.</description>
+      </config>
     </configs>
   </settings>
   <clocks>
@@ -469,8 +481,8 @@
         </choices>
       </divider>
     </clock>
-    <clock point="MCO1" enable="always" dynamic="no">
-      <description>MCO1 output</description>
+    <clock point="MCO1DIV" enable="always" dynamic="no">
+      <description>MCO1 selected source before prescaler</description>
       <mux name="MCO1">
         <input point="NONE" default="yes"><bits value="RCC_CFGR1_MCO1SEL_OFF" /></input>
         <input point="SYSCLK"><bits value="RCC_CFGR1_MCO1SEL_SYSCLK" /></input>
@@ -483,8 +495,23 @@
         <input point="MSIK"><bits value="RCC_CFGR1_MCO1SEL_MSIK" /></input>
       </mux>
     </clock>
-    <clock point="MCO2" enable="always" dynamic="no">
-      <description>MCO2 output</description>
+    <clock point="MCO1" enable="always" dynamic="yes">
+      <description>MCO1 output pin</description>
+      <divider name="MCO1PRE" input="MCO1DIV">
+        <choices>
+          <choice item="DIV1" value="1"><bits value="RCC_CFGR1_MCO1PRE_DIV1" /></choice>
+          <choice item="DIV2" value="2"><bits value="RCC_CFGR1_MCO1PRE_DIV2" /></choice>
+          <choice item="DIV4" value="4"><bits value="RCC_CFGR1_MCO1PRE_DIV4" /></choice>
+          <choice item="DIV8" value="8"><bits value="RCC_CFGR1_MCO1PRE_DIV8" /></choice>
+          <choice item="DIV16" value="16"><bits value="RCC_CFGR1_MCO1PRE_DIV16" /></choice>
+          <choice item="DIV32" value="32"><bits value="RCC_CFGR1_MCO1PRE_DIV32" /></choice>
+          <choice item="DIV64" value="64"><bits value="RCC_CFGR1_MCO1PRE_DIV64" /></choice>
+          <choice item="DIV128" value="128"><bits value="RCC_CFGR1_MCO1PRE_DIV128" /></choice>
+        </choices>
+      </divider>
+    </clock>
+    <clock point="MCO2DIV" enable="always" dynamic="no">
+      <description>MCO2 selected source before prescaler</description>
       <mux name="MCO2">
         <input point="NONE" default="yes"><bits value="RCC_CFGR1_MCO2SEL_OFF" /></input>
         <input point="SYSCLK"><bits value="RCC_CFGR1_MCO2SEL_SYSCLK" /></input>
@@ -496,6 +523,21 @@
         <input point="HSI48"><bits value="RCC_CFGR1_MCO2SEL_HSI48" /></input>
         <input point="MSIK"><bits value="RCC_CFGR1_MCO2SEL_MSIK" /></input>
       </mux>
+    </clock>
+    <clock point="MCO2" enable="always" dynamic="yes">
+      <description>MCO2 output pin</description>
+      <divider name="MCO2PRE" input="MCO2DIV">
+        <choices>
+          <choice item="DIV1" value="1"><bits value="RCC_CFGR1_MCO2PRE_DIV1" /></choice>
+          <choice item="DIV2" value="2"><bits value="RCC_CFGR1_MCO2PRE_DIV2" /></choice>
+          <choice item="DIV4" value="4"><bits value="RCC_CFGR1_MCO2PRE_DIV4" /></choice>
+          <choice item="DIV8" value="8"><bits value="RCC_CFGR1_MCO2PRE_DIV8" /></choice>
+          <choice item="DIV16" value="16"><bits value="RCC_CFGR1_MCO2PRE_DIV16" /></choice>
+          <choice item="DIV32" value="32"><bits value="RCC_CFGR1_MCO2PRE_DIV32" /></choice>
+          <choice item="DIV64" value="64"><bits value="RCC_CFGR1_MCO2PRE_DIV64" /></choice>
+          <choice item="DIV128" value="128"><bits value="RCC_CFGR1_MCO2PRE_DIV128" /></choice>
+        </choices>
+      </divider>
     </clock>
   </clocks>
   <consumers>

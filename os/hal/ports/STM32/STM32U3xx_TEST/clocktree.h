@@ -44,7 +44,9 @@
 #define CLK_PCLK2               9U
 #define CLK_PCLK2TIM            10U
 #define CLK_PCLK3               11U
-#define CLK_ARRAY_SIZE          12U
+#define CLK_MCO1                12U
+#define CLK_MCO2                13U
+#define CLK_ARRAY_SIZE          14U
 
 #define CLK_POINT_NAMES                                                     \
   {                                                                         \
@@ -59,7 +61,9 @@
     "PCLK1TIM",                                                             \
     "PCLK2",                                                                \
     "PCLK2TIM",                                                             \
-    "PCLK3"                                                                 \
+    "PCLK3",                                                                \
+    "MCO1",                                                                 \
+    "MCO2"                                                                  \
   }
 /** @} */
 
@@ -118,6 +122,27 @@
  */
 #if !defined(STM32_CFG_MSIK_SRCDIV) || defined(__DOXYGEN__)
   #define STM32_CFG_MSIK_SRCDIV             RCC_ICSCR1_MSIK_IRC0_DIV1
+#endif
+
+/**
+ * @brief   Selects the system clock source after STOP mode.
+ */
+#if !defined(STM32_CFG_STOPWUCK) || defined(__DOXYGEN__)
+  #define STM32_CFG_STOPWUCK                RCC_CFGR1_STOPWUCK_MSIS
+#endif
+
+/**
+ * @brief   Selects the kernel clock source after STOP mode.
+ */
+#if !defined(STM32_CFG_STOPKERWUCK) || defined(__DOXYGEN__)
+  #define STM32_CFG_STOPKERWUCK             RCC_CFGR1_STOPKERWUCK_MSIK
+#endif
+
+/**
+ * @brief   Selects the MSI bias mode.
+ */
+#if !defined(STM32_CFG_MSIBIAS) || defined(__DOXYGEN__)
+  #define STM32_CFG_MSIBIAS                 RCC_ICSCR1_MSIBIAS_CONTINUOUS
 #endif
 
 /**
@@ -195,7 +220,7 @@
 #endif
 
 /**
- * @brief   Selects the MCO1 clock source.
+ * @brief   Selects the MCO1DIV clock source.
  * @note    Allowed sources:
  *          - NONE.
  *          - SYSCLK.
@@ -207,12 +232,19 @@
  *          - HSI48.
  *          - MSIK.
  */
-#if !defined(STM32_CFG_MCO1_SEL) || defined(__DOXYGEN__)
-  #define STM32_CFG_MCO1_SEL                RCC_CFGR1_MCO1SEL_OFF
+#if !defined(STM32_CFG_MCO1DIV_SEL) || defined(__DOXYGEN__)
+  #define STM32_CFG_MCO1DIV_SEL             RCC_CFGR1_MCO1SEL_OFF
 #endif
 
 /**
- * @brief   Selects the MCO2 clock source.
+ * @brief   Configures the MCO1 clock divider value.
+ */
+#if !defined(STM32_CFG_MCO1_VALUE) || defined(__DOXYGEN__)
+  #define STM32_CFG_MCO1_VALUE              1
+#endif
+
+/**
+ * @brief   Selects the MCO2DIV clock source.
  * @note    Allowed sources:
  *          - NONE.
  *          - SYSCLK.
@@ -224,8 +256,15 @@
  *          - HSI48.
  *          - MSIK.
  */
-#if !defined(STM32_CFG_MCO2_SEL) || defined(__DOXYGEN__)
-  #define STM32_CFG_MCO2_SEL                RCC_CFGR1_MCO2SEL_OFF
+#if !defined(STM32_CFG_MCO2DIV_SEL) || defined(__DOXYGEN__)
+  #define STM32_CFG_MCO2DIV_SEL             RCC_CFGR1_MCO2SEL_OFF
+#endif
+
+/**
+ * @brief   Configures the MCO2 clock divider value.
+ */
+#if !defined(STM32_CFG_MCO2_VALUE) || defined(__DOXYGEN__)
+  #define STM32_CFG_MCO2_VALUE              1
 #endif
 /** @} */
 
@@ -386,6 +425,40 @@
   #error "invalid STM32_CFG_MSIK_SRCDIV value specified"
 #endif
 
+#if !defined(RCC_CFGR1_STOPWUCK_MSIS) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_STOPWUCK_MSIS not defined"
+#endif
+#if !defined(RCC_CFGR1_STOPWUCK_HSI16) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_STOPWUCK_HSI16 not defined"
+#endif
+#if !((STM32_CFG_STOPWUCK == RCC_CFGR1_STOPWUCK_MSIS) ||                    \
+     (STM32_CFG_STOPWUCK == RCC_CFGR1_STOPWUCK_HSI16)) && !defined(__DOXYGEN__)
+  #error "invalid STM32_CFG_STOPWUCK value specified"
+#endif
+
+#if !defined(RCC_CFGR1_STOPKERWUCK_MSIK) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_STOPKERWUCK_MSIK not defined"
+#endif
+#if !defined(RCC_CFGR1_STOPKERWUCK_HSI16) && !defined(__DOXYGEN__)
+  #error "RCC_CFGR1_STOPKERWUCK_HSI16 not defined"
+#endif
+#if !((STM32_CFG_STOPKERWUCK == RCC_CFGR1_STOPKERWUCK_MSIK) ||              \
+     (STM32_CFG_STOPKERWUCK == RCC_CFGR1_STOPKERWUCK_HSI16)) &&             \
+    !defined(__DOXYGEN__)
+  #error "invalid STM32_CFG_STOPKERWUCK value specified"
+#endif
+
+#if !defined(RCC_ICSCR1_MSIBIAS_CONTINUOUS) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIBIAS_CONTINUOUS not defined"
+#endif
+#if !defined(RCC_ICSCR1_MSIBIAS_SAMPLING) && !defined(__DOXYGEN__)
+  #error "RCC_ICSCR1_MSIBIAS_SAMPLING not defined"
+#endif
+#if !((STM32_CFG_MSIBIAS == RCC_ICSCR1_MSIBIAS_CONTINUOUS) ||               \
+     (STM32_CFG_MSIBIAS == RCC_ICSCR1_MSIBIAS_SAMPLING)) && !defined(__DOXYGEN__)
+  #error "invalid STM32_CFG_MSIBIAS value specified"
+#endif
+
 /**
  * @brief   NONE clock derived enable state.
  */
@@ -449,18 +522,18 @@
  */
 #define STM32_MSIS_ENABLED                  (((STM32_SYSCLK_ENABLED == TRUE) && \
                                               (STM32_CFG_SYSCLK_SEL == RCC_CFGR1_SW_MSIS)) || \
-                                             ((STM32_MCO1_ENABLED == TRUE) && \
-                                              (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_MSIS)) || \
-                                             ((STM32_MCO2_ENABLED == TRUE) && \
-                                              (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_MSIS)))
+                                             ((STM32_MCO1DIV_ENABLED == TRUE) && \
+                                              (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_MSIS)) || \
+                                             ((STM32_MCO2DIV_ENABLED == TRUE) && \
+                                              (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_MSIS)))
 
 /**
  * @brief   MSIK clock derived enable state.
  */
-#define STM32_MSIK_ENABLED                  (((STM32_MCO1_ENABLED == TRUE) && \
-                                              (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_MSIK)) || \
-                                             ((STM32_MCO2_ENABLED == TRUE) && \
-                                              (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_MSIK)))
+#define STM32_MSIK_ENABLED                  (((STM32_MCO1DIV_ENABLED == TRUE) && \
+                                              (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_MSIK)) || \
+                                             ((STM32_MCO2DIV_ENABLED == TRUE) && \
+                                              (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_MSIK)))
 
 /**
  * @brief   SYSCLK clock derived enable state.
@@ -498,9 +571,19 @@
 #define STM32_PCLK3_ENABLED                 TRUE
 
 /**
+ * @brief   MCO1DIV clock derived enable state.
+ */
+#define STM32_MCO1DIV_ENABLED               TRUE
+
+/**
  * @brief   MCO1 clock derived enable state.
  */
 #define STM32_MCO1_ENABLED                  TRUE
+
+/**
+ * @brief   MCO2DIV clock derived enable state.
+ */
+#define STM32_MCO2DIV_ENABLED               TRUE
 
 /**
  * @brief   MCO2 clock derived enable state.
@@ -545,17 +628,19 @@
 #if !defined(RCC_CFGR1_MCO1SEL_HSI16) && !defined(__DOXYGEN__)
   #error "RCC_CFGR1_MCO1SEL_HSI16 not defined"
 #endif
-#if !((STM32_HSI16_ENABLED == TRUE) || !((STM32_MCO1_ENABLED == TRUE) &&    \
-      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSI16))) && !defined(__DOXYGEN__)
-  #error "HSI16 not enabled, required by MCO1"
+#if !((STM32_HSI16_ENABLED == TRUE) || !((STM32_MCO1DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_HSI16))) &&               \
+    !defined(__DOXYGEN__)
+  #error "HSI16 not enabled, required by MCO1DIV"
 #endif
 
 #if !defined(RCC_CFGR1_MCO2SEL_HSI16) && !defined(__DOXYGEN__)
   #error "RCC_CFGR1_MCO2SEL_HSI16 not defined"
 #endif
-#if !((STM32_HSI16_ENABLED == TRUE) || !((STM32_MCO2_ENABLED == TRUE) &&    \
-      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSI16))) && !defined(__DOXYGEN__)
-  #error "HSI16 not enabled, required by MCO2"
+#if !((STM32_HSI16_ENABLED == TRUE) || !((STM32_MCO2DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_HSI16))) &&               \
+    !defined(__DOXYGEN__)
+  #error "HSI16 not enabled, required by MCO2DIV"
 #endif
 
 /**
@@ -586,17 +671,19 @@
 #if !defined(RCC_CFGR1_MCO1SEL_HSI48) && !defined(__DOXYGEN__)
   #error "RCC_CFGR1_MCO1SEL_HSI48 not defined"
 #endif
-#if !((STM32_HSI48_ENABLED == TRUE) || !((STM32_MCO1_ENABLED == TRUE) &&    \
-      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSI48))) && !defined(__DOXYGEN__)
-  #error "HSI48 not enabled, required by MCO1"
+#if !((STM32_HSI48_ENABLED == TRUE) || !((STM32_MCO1DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_HSI48))) &&               \
+    !defined(__DOXYGEN__)
+  #error "HSI48 not enabled, required by MCO1DIV"
 #endif
 
 #if !defined(RCC_CFGR1_MCO2SEL_HSI48) && !defined(__DOXYGEN__)
   #error "RCC_CFGR1_MCO2SEL_HSI48 not defined"
 #endif
-#if !((STM32_HSI48_ENABLED == TRUE) || !((STM32_MCO2_ENABLED == TRUE) &&    \
-      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSI48))) && !defined(__DOXYGEN__)
-  #error "HSI48 not enabled, required by MCO2"
+#if !((STM32_HSI48_ENABLED == TRUE) || !((STM32_MCO2DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_HSI48))) &&               \
+    !defined(__DOXYGEN__)
+  #error "HSI48 not enabled, required by MCO2DIV"
 #endif
 
 /**
@@ -635,17 +722,17 @@
 #if !defined(RCC_CFGR1_MCO1SEL_HSE) && !defined(__DOXYGEN__)
   #error "RCC_CFGR1_MCO1SEL_HSE not defined"
 #endif
-#if !((STM32_HSE_ENABLED == TRUE) || !((STM32_MCO1_ENABLED == TRUE) &&      \
-      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSE))) && !defined(__DOXYGEN__)
-  #error "HSE not enabled, required by MCO1"
+#if !((STM32_HSE_ENABLED == TRUE) || !((STM32_MCO1DIV_ENABLED == TRUE) &&   \
+      (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_HSE))) && !defined(__DOXYGEN__)
+  #error "HSE not enabled, required by MCO1DIV"
 #endif
 
 #if !defined(RCC_CFGR1_MCO2SEL_HSE) && !defined(__DOXYGEN__)
   #error "RCC_CFGR1_MCO2SEL_HSE not defined"
 #endif
-#if !((STM32_HSE_ENABLED == TRUE) || !((STM32_MCO2_ENABLED == TRUE) &&      \
-      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSE))) && !defined(__DOXYGEN__)
-  #error "HSE not enabled, required by MCO2"
+#if !((STM32_HSE_ENABLED == TRUE) || !((STM32_MCO2DIV_ENABLED == TRUE) &&   \
+      (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_HSE))) && !defined(__DOXYGEN__)
+  #error "HSE not enabled, required by MCO2DIV"
 #endif
 
 /**
@@ -676,17 +763,17 @@
 #if !defined(RCC_CFGR1_MCO1SEL_LSE) && !defined(__DOXYGEN__)
   #error "RCC_CFGR1_MCO1SEL_LSE not defined"
 #endif
-#if !((STM32_LSE_ENABLED == TRUE) || !((STM32_MCO1_ENABLED == TRUE) &&      \
-      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_LSE))) && !defined(__DOXYGEN__)
-  #error "LSE not enabled, required by MCO1"
+#if !((STM32_LSE_ENABLED == TRUE) || !((STM32_MCO1DIV_ENABLED == TRUE) &&   \
+      (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_LSE))) && !defined(__DOXYGEN__)
+  #error "LSE not enabled, required by MCO1DIV"
 #endif
 
 #if !defined(RCC_CFGR1_MCO2SEL_LSE) && !defined(__DOXYGEN__)
   #error "RCC_CFGR1_MCO2SEL_LSE not defined"
 #endif
-#if !((STM32_LSE_ENABLED == TRUE) || !((STM32_MCO2_ENABLED == TRUE) &&      \
-      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_LSE))) && !defined(__DOXYGEN__)
-  #error "LSE not enabled, required by MCO2"
+#if !((STM32_LSE_ENABLED == TRUE) || !((STM32_MCO2DIV_ENABLED == TRUE) &&   \
+      (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_LSE))) && !defined(__DOXYGEN__)
+  #error "LSE not enabled, required by MCO2DIV"
 #endif
 
 /**
@@ -717,17 +804,17 @@
 #if !defined(RCC_CFGR1_MCO1SEL_LSI) && !defined(__DOXYGEN__)
   #error "RCC_CFGR1_MCO1SEL_LSI not defined"
 #endif
-#if !((STM32_LSI_ENABLED == TRUE) || !((STM32_MCO1_ENABLED == TRUE) &&      \
-      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_LSI))) && !defined(__DOXYGEN__)
-  #error "LSI not enabled, required by MCO1"
+#if !((STM32_LSI_ENABLED == TRUE) || !((STM32_MCO1DIV_ENABLED == TRUE) &&   \
+      (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_LSI))) && !defined(__DOXYGEN__)
+  #error "LSI not enabled, required by MCO1DIV"
 #endif
 
 #if !defined(RCC_CFGR1_MCO2SEL_LSI) && !defined(__DOXYGEN__)
   #error "RCC_CFGR1_MCO2SEL_LSI not defined"
 #endif
-#if !((STM32_LSI_ENABLED == TRUE) || !((STM32_MCO2_ENABLED == TRUE) &&      \
-      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_LSI))) && !defined(__DOXYGEN__)
-  #error "LSI not enabled, required by MCO2"
+#if !((STM32_LSI_ENABLED == TRUE) || !((STM32_MCO2DIV_ENABLED == TRUE) &&   \
+      (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_LSI))) && !defined(__DOXYGEN__)
+  #error "LSI not enabled, required by MCO2DIV"
 #endif
 
 /**
@@ -2360,68 +2447,199 @@
   #define STM32_PCLK3_FREQ                  0U
 #endif
 
+/*--- Macros and checks for the MCO1DIV clock point. -----------------------*/
+
+/**
+ * @brief   MCO1DIV clock register bits.
+ */
+#if (STM32_MCO1DIV_ENABLED == FALSE)
+  #define STM32_MCO1DIV_BITS                RCC_CFGR1_MCO1SEL_OFF
+#elif (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_OFF) || defined(__DOXYGEN__)
+  #define STM32_MCO1DIV_BITS                RCC_CFGR1_MCO1SEL_OFF
+#elif (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_SYSCLK)
+  #define STM32_MCO1DIV_BITS                RCC_CFGR1_MCO1SEL_SYSCLK
+#elif (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_MSIS)
+  #define STM32_MCO1DIV_BITS                RCC_CFGR1_MCO1SEL_MSIS
+#elif (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_HSI16)
+  #define STM32_MCO1DIV_BITS                RCC_CFGR1_MCO1SEL_HSI16
+#elif (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_HSE)
+  #define STM32_MCO1DIV_BITS                RCC_CFGR1_MCO1SEL_HSE
+#elif (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_LSI)
+  #define STM32_MCO1DIV_BITS                RCC_CFGR1_MCO1SEL_LSI
+#elif (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_LSE)
+  #define STM32_MCO1DIV_BITS                RCC_CFGR1_MCO1SEL_LSE
+#elif (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_HSI48)
+  #define STM32_MCO1DIV_BITS                RCC_CFGR1_MCO1SEL_HSI48
+#elif (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_MSIK)
+  #define STM32_MCO1DIV_BITS                RCC_CFGR1_MCO1SEL_MSIK
+#else
+  #error "invalid STM32_CFG_MCO1DIV_SEL value specified"
+#endif
+
+/**
+ * @brief   MCO1 selected source before prescaler clock point.
+ */
+#if ((STM32_MCO1DIV_ENABLED == TRUE) && \
+     (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_OFF)) || \
+    defined(__DOXYGEN__)
+  #define STM32_MCO1DIV_FREQ                STM32_NONE_FREQ
+#elif (STM32_MCO1DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_SYSCLK)
+  #define STM32_MCO1DIV_FREQ                STM32_SYSCLK_FREQ
+#elif (STM32_MCO1DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_MSIS)
+  #define STM32_MCO1DIV_FREQ                STM32_MSIS_FREQ
+#elif (STM32_MCO1DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_HSI16)
+  #define STM32_MCO1DIV_FREQ                STM32_HSI16_FREQ
+#elif (STM32_MCO1DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_HSE)
+  #define STM32_MCO1DIV_FREQ                STM32_HSE_FREQ
+#elif (STM32_MCO1DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_LSI)
+  #define STM32_MCO1DIV_FREQ                STM32_LSI_FREQ
+#elif (STM32_MCO1DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_LSE)
+  #define STM32_MCO1DIV_FREQ                STM32_LSE_FREQ
+#elif (STM32_MCO1DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_HSI48)
+  #define STM32_MCO1DIV_FREQ                STM32_HSI48_FREQ
+#elif (STM32_MCO1DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO1DIV_SEL == RCC_CFGR1_MCO1SEL_MSIK)
+  #define STM32_MCO1DIV_FREQ                STM32_MSIK_FREQ
+#else
+  #define STM32_MCO1DIV_FREQ                0U
+#endif
+
 /*--- Macros and checks for the MCO1 clock point. --------------------------*/
 
 /**
  * @brief   MCO1 clock register bits.
  */
-#if (STM32_MCO1_ENABLED == FALSE)
-  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_OFF
-#elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_OFF) || defined(__DOXYGEN__)
-  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_OFF
-#elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_SYSCLK)
-  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_SYSCLK
-#elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_MSIS)
-  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_MSIS
-#elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSI16)
-  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_HSI16
-#elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSE)
-  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_HSE
-#elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_LSI)
-  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_LSI
-#elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_LSE)
-  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_LSE
-#elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSI48)
-  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_HSI48
-#elif (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_MSIK)
-  #define STM32_MCO1_BITS                   RCC_CFGR1_MCO1SEL_MSIK
+#if (STM32_CFG_MCO1_VALUE == 1) || defined(__DOXYGEN__)
+  #if (STM32_MCO1_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO1_BITS                 RCC_CFGR1_MCO1PRE_DIV1
+  #else
+    #define STM32_MCO1_BITS                 0U
+  #endif
+#elif (STM32_CFG_MCO1_VALUE == 2)
+  #if (STM32_MCO1_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO1_BITS                 RCC_CFGR1_MCO1PRE_DIV2
+  #else
+    #define STM32_MCO1_BITS                 0U
+  #endif
+#elif (STM32_CFG_MCO1_VALUE == 4)
+  #if (STM32_MCO1_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO1_BITS                 RCC_CFGR1_MCO1PRE_DIV4
+  #else
+    #define STM32_MCO1_BITS                 0U
+  #endif
+#elif (STM32_CFG_MCO1_VALUE == 8)
+  #if (STM32_MCO1_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO1_BITS                 RCC_CFGR1_MCO1PRE_DIV8
+  #else
+    #define STM32_MCO1_BITS                 0U
+  #endif
+#elif (STM32_CFG_MCO1_VALUE == 16)
+  #if (STM32_MCO1_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO1_BITS                 RCC_CFGR1_MCO1PRE_DIV16
+  #else
+    #define STM32_MCO1_BITS                 0U
+  #endif
+#elif (STM32_CFG_MCO1_VALUE == 32)
+  #if (STM32_MCO1_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO1_BITS                 RCC_CFGR1_MCO1PRE_DIV32
+  #else
+    #define STM32_MCO1_BITS                 0U
+  #endif
+#elif (STM32_CFG_MCO1_VALUE == 64)
+  #if (STM32_MCO1_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO1_BITS                 RCC_CFGR1_MCO1PRE_DIV64
+  #else
+    #define STM32_MCO1_BITS                 0U
+  #endif
+#elif (STM32_CFG_MCO1_VALUE == 128)
+  #if (STM32_MCO1_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO1_BITS                 RCC_CFGR1_MCO1PRE_DIV128
+  #else
+    #define STM32_MCO1_BITS                 0U
+  #endif
 #else
-  #error "invalid STM32_CFG_MCO1_SEL value specified"
+  #error "invalid STM32_CFG_MCO1_VALUE value specified"
 #endif
 
 /**
- * @brief   MCO1 output clock point.
+ * @brief   MCO1 output pin clock point.
  */
-#if ((STM32_MCO1_ENABLED == TRUE) && \
-     (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_OFF)) || \
-    defined(__DOXYGEN__)
-  #define STM32_MCO1_FREQ                   STM32_NONE_FREQ
-#elif (STM32_MCO1_ENABLED == TRUE) && \
-      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_SYSCLK)
-  #define STM32_MCO1_FREQ                   hal_lld_get_clock_point(CLK_SYSCLK)
-#elif (STM32_MCO1_ENABLED == TRUE) && \
-      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_MSIS)
-  #define STM32_MCO1_FREQ                   hal_lld_get_clock_point(CLK_MSIS)
-#elif (STM32_MCO1_ENABLED == TRUE) && \
-      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSI16)
-  #define STM32_MCO1_FREQ                   hal_lld_get_clock_point(CLK_HSI16)
-#elif (STM32_MCO1_ENABLED == TRUE) && \
-      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSE)
-  #define STM32_MCO1_FREQ                   hal_lld_get_clock_point(CLK_HSE)
-#elif (STM32_MCO1_ENABLED == TRUE) && \
-      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_LSI)
-  #define STM32_MCO1_FREQ                   STM32_LSI_FREQ
-#elif (STM32_MCO1_ENABLED == TRUE) && \
-      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_LSE)
-  #define STM32_MCO1_FREQ                   STM32_LSE_FREQ
-#elif (STM32_MCO1_ENABLED == TRUE) && \
-      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_HSI48)
-  #define STM32_MCO1_FREQ                   hal_lld_get_clock_point(CLK_HSI48)
-#elif (STM32_MCO1_ENABLED == TRUE) && \
-      (STM32_CFG_MCO1_SEL == RCC_CFGR1_MCO1SEL_MSIK)
-  #define STM32_MCO1_FREQ                   hal_lld_get_clock_point(CLK_MSIK)
+#if (STM32_MCO1_ENABLED == TRUE) || defined(__DOXYGEN__)
+  #define STM32_MCO1_FREQ                   (STM32_MCO1DIV_FREQ /           \
+                                             STM32_CFG_MCO1_VALUE)
 #else
   #define STM32_MCO1_FREQ                   0U
+#endif
+
+/*--- Macros and checks for the MCO2DIV clock point. -----------------------*/
+
+/**
+ * @brief   MCO2DIV clock register bits.
+ */
+#if (STM32_MCO2DIV_ENABLED == FALSE)
+  #define STM32_MCO2DIV_BITS                RCC_CFGR1_MCO2SEL_OFF
+#elif (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_OFF) || defined(__DOXYGEN__)
+  #define STM32_MCO2DIV_BITS                RCC_CFGR1_MCO2SEL_OFF
+#elif (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_SYSCLK)
+  #define STM32_MCO2DIV_BITS                RCC_CFGR1_MCO2SEL_SYSCLK
+#elif (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_MSIS)
+  #define STM32_MCO2DIV_BITS                RCC_CFGR1_MCO2SEL_MSIS
+#elif (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_HSI16)
+  #define STM32_MCO2DIV_BITS                RCC_CFGR1_MCO2SEL_HSI16
+#elif (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_HSE)
+  #define STM32_MCO2DIV_BITS                RCC_CFGR1_MCO2SEL_HSE
+#elif (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_LSI)
+  #define STM32_MCO2DIV_BITS                RCC_CFGR1_MCO2SEL_LSI
+#elif (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_LSE)
+  #define STM32_MCO2DIV_BITS                RCC_CFGR1_MCO2SEL_LSE
+#elif (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_HSI48)
+  #define STM32_MCO2DIV_BITS                RCC_CFGR1_MCO2SEL_HSI48
+#elif (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_MSIK)
+  #define STM32_MCO2DIV_BITS                RCC_CFGR1_MCO2SEL_MSIK
+#else
+  #error "invalid STM32_CFG_MCO2DIV_SEL value specified"
+#endif
+
+/**
+ * @brief   MCO2 selected source before prescaler clock point.
+ */
+#if ((STM32_MCO2DIV_ENABLED == TRUE) && \
+     (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_OFF)) || \
+    defined(__DOXYGEN__)
+  #define STM32_MCO2DIV_FREQ                STM32_NONE_FREQ
+#elif (STM32_MCO2DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_SYSCLK)
+  #define STM32_MCO2DIV_FREQ                STM32_SYSCLK_FREQ
+#elif (STM32_MCO2DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_MSIS)
+  #define STM32_MCO2DIV_FREQ                STM32_MSIS_FREQ
+#elif (STM32_MCO2DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_HSI16)
+  #define STM32_MCO2DIV_FREQ                STM32_HSI16_FREQ
+#elif (STM32_MCO2DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_HSE)
+  #define STM32_MCO2DIV_FREQ                STM32_HSE_FREQ
+#elif (STM32_MCO2DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_LSI)
+  #define STM32_MCO2DIV_FREQ                STM32_LSI_FREQ
+#elif (STM32_MCO2DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_LSE)
+  #define STM32_MCO2DIV_FREQ                STM32_LSE_FREQ
+#elif (STM32_MCO2DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_HSI48)
+  #define STM32_MCO2DIV_FREQ                STM32_HSI48_FREQ
+#elif (STM32_MCO2DIV_ENABLED == TRUE) && \
+      (STM32_CFG_MCO2DIV_SEL == RCC_CFGR1_MCO2SEL_MSIK)
+  #define STM32_MCO2DIV_FREQ                STM32_MSIK_FREQ
+#else
+  #define STM32_MCO2DIV_FREQ                0U
 #endif
 
 /*--- Macros and checks for the MCO2 clock point. --------------------------*/
@@ -2429,61 +2647,64 @@
 /**
  * @brief   MCO2 clock register bits.
  */
-#if (STM32_MCO2_ENABLED == FALSE)
-  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_OFF
-#elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_OFF) || defined(__DOXYGEN__)
-  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_OFF
-#elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_SYSCLK)
-  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_SYSCLK
-#elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_MSIS)
-  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_MSIS
-#elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSI16)
-  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_HSI16
-#elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSE)
-  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_HSE
-#elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_LSI)
-  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_LSI
-#elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_LSE)
-  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_LSE
-#elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSI48)
-  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_HSI48
-#elif (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_MSIK)
-  #define STM32_MCO2_BITS                   RCC_CFGR1_MCO2SEL_MSIK
+#if (STM32_CFG_MCO2_VALUE == 1) || defined(__DOXYGEN__)
+  #if (STM32_MCO2_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO2_BITS                 RCC_CFGR1_MCO2PRE_DIV1
+  #else
+    #define STM32_MCO2_BITS                 0U
+  #endif
+#elif (STM32_CFG_MCO2_VALUE == 2)
+  #if (STM32_MCO2_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO2_BITS                 RCC_CFGR1_MCO2PRE_DIV2
+  #else
+    #define STM32_MCO2_BITS                 0U
+  #endif
+#elif (STM32_CFG_MCO2_VALUE == 4)
+  #if (STM32_MCO2_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO2_BITS                 RCC_CFGR1_MCO2PRE_DIV4
+  #else
+    #define STM32_MCO2_BITS                 0U
+  #endif
+#elif (STM32_CFG_MCO2_VALUE == 8)
+  #if (STM32_MCO2_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO2_BITS                 RCC_CFGR1_MCO2PRE_DIV8
+  #else
+    #define STM32_MCO2_BITS                 0U
+  #endif
+#elif (STM32_CFG_MCO2_VALUE == 16)
+  #if (STM32_MCO2_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO2_BITS                 RCC_CFGR1_MCO2PRE_DIV16
+  #else
+    #define STM32_MCO2_BITS                 0U
+  #endif
+#elif (STM32_CFG_MCO2_VALUE == 32)
+  #if (STM32_MCO2_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO2_BITS                 RCC_CFGR1_MCO2PRE_DIV32
+  #else
+    #define STM32_MCO2_BITS                 0U
+  #endif
+#elif (STM32_CFG_MCO2_VALUE == 64)
+  #if (STM32_MCO2_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO2_BITS                 RCC_CFGR1_MCO2PRE_DIV64
+  #else
+    #define STM32_MCO2_BITS                 0U
+  #endif
+#elif (STM32_CFG_MCO2_VALUE == 128)
+  #if (STM32_MCO2_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_MCO2_BITS                 RCC_CFGR1_MCO2PRE_DIV128
+  #else
+    #define STM32_MCO2_BITS                 0U
+  #endif
 #else
-  #error "invalid STM32_CFG_MCO2_SEL value specified"
+  #error "invalid STM32_CFG_MCO2_VALUE value specified"
 #endif
 
 /**
- * @brief   MCO2 output clock point.
+ * @brief   MCO2 output pin clock point.
  */
-#if ((STM32_MCO2_ENABLED == TRUE) && \
-     (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_OFF)) || \
-    defined(__DOXYGEN__)
-  #define STM32_MCO2_FREQ                   STM32_NONE_FREQ
-#elif (STM32_MCO2_ENABLED == TRUE) && \
-      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_SYSCLK)
-  #define STM32_MCO2_FREQ                   hal_lld_get_clock_point(CLK_SYSCLK)
-#elif (STM32_MCO2_ENABLED == TRUE) && \
-      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_MSIS)
-  #define STM32_MCO2_FREQ                   hal_lld_get_clock_point(CLK_MSIS)
-#elif (STM32_MCO2_ENABLED == TRUE) && \
-      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSI16)
-  #define STM32_MCO2_FREQ                   hal_lld_get_clock_point(CLK_HSI16)
-#elif (STM32_MCO2_ENABLED == TRUE) && \
-      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSE)
-  #define STM32_MCO2_FREQ                   hal_lld_get_clock_point(CLK_HSE)
-#elif (STM32_MCO2_ENABLED == TRUE) && \
-      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_LSI)
-  #define STM32_MCO2_FREQ                   STM32_LSI_FREQ
-#elif (STM32_MCO2_ENABLED == TRUE) && \
-      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_LSE)
-  #define STM32_MCO2_FREQ                   STM32_LSE_FREQ
-#elif (STM32_MCO2_ENABLED == TRUE) && \
-      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_HSI48)
-  #define STM32_MCO2_FREQ                   hal_lld_get_clock_point(CLK_HSI48)
-#elif (STM32_MCO2_ENABLED == TRUE) && \
-      (STM32_CFG_MCO2_SEL == RCC_CFGR1_MCO2SEL_MSIK)
-  #define STM32_MCO2_FREQ                   hal_lld_get_clock_point(CLK_MSIK)
+#if (STM32_MCO2_ENABLED == TRUE) || defined(__DOXYGEN__)
+  #define STM32_MCO2_FREQ                   (STM32_MCO2DIV_FREQ /           \
+                                             STM32_CFG_MCO2_VALUE)
 #else
   #define STM32_MCO2_FREQ                   0U
 #endif
@@ -2521,6 +2742,8 @@
    (clkpt) == CLK_PCLK2        ? STM32_PCLK2_FREQ         :                       \
    (clkpt) == CLK_PCLK2TIM     ? STM32_PCLK2TIM_FREQ      :                       \
    (clkpt) == CLK_PCLK3        ? STM32_PCLK3_FREQ         :                       \
+   (clkpt) == CLK_MCO1         ? STM32_MCO1_FREQ          :                       \
+   (clkpt) == CLK_MCO2         ? STM32_MCO2_FREQ          :                       \
    0U)
 #endif
 
