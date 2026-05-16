@@ -1,0 +1,45 @@
+<clocktree>
+  <settings>
+    <prefixes clock_points="TCLK_" macros="TST_" cfgs="TST_CFG_" />
+    <suffixes frequency="_FREQ" values="_VALUE" bits="_BITS"
+              selector="_SEL" enable="_ENABLE" enabled="_ENABLED" />
+    <configs>
+      <config name="CLOCK_DYNAMIC" type="bool" default="FALSE"
+              role="dynamic_mode">
+        <description>Enables dynamic clock handling.</description>
+      </config>
+      <config name="POWER_MODE" type="set" default="POWER_FAST"
+              values="POWER_FAST POWER_SLOW">
+        <description>Selects a synthetic power mode.</description>
+      </config>
+      <config name="BOOST" type="bool" default="TRUE">
+        <description>Enables synthetic boost mode.</description>
+      </config>
+    </configs>
+    <states>
+      <state name="fast" when="TST_CFG_POWER_MODE == POWER_FAST" />
+      <state name="slow" when="TST_CFG_POWER_MODE == POWER_SLOW" />
+    </states>
+    <limit-set>
+      <limit name="CORE" min="yes" max="yes" />
+    </limit-set>
+    <limit-values>
+      <state-values state="fast">
+        <limit name="CORE">
+          <case when="TST_CFG_BOOST == TRUE" min="1000000U" max="64000000U" />
+          <default min="1000000U" max="32000000U" />
+        </limit>
+      </state-values>
+      <state-values state="slow">
+        <limit name="CORE" min="1000000U" max="16000000U" />
+      </state-values>
+    </limit-values>
+  </settings>
+  <clocks>
+    <clock point="CORE" enable="always" dynamic="no">
+      <description>clock with conditional limits</description>
+      <limits ref="CORE" />
+      <source frequency="32000000U" />
+    </clock>
+  </clocks>
+</clocktree>

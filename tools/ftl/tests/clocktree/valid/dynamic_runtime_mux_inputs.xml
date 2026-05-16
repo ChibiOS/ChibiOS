@@ -1,0 +1,51 @@
+<clocktree>
+  <settings>
+    <prefixes clock_points="TCLK_" macros="TST_" cfgs="TST_CFG_" />
+    <suffixes frequency="_FREQ" values="_VALUE" bits="_BITS"
+              selector="_SEL" enable="_ENABLE" enabled="_ENABLED" />
+    <configs>
+      <config name="CLOCK_DYNAMIC" type="bool" default="FALSE"
+              role="dynamic_mode">
+        <description>Enables dynamic clock handling.</description>
+      </config>
+    </configs>
+  </settings>
+  <clocks>
+    <clock point="NONE" enable="never" dynamic="no">
+      <description>pseudo-clock for disabled sources</description>
+      <source frequency="0U" />
+    </clock>
+    <clock point="INTOSC" enable="manual" dynamic="yes">
+      <description>runtime-switchable oscillator</description>
+      <bits enabled="RCC_INTOSC_ON" disabled="0U" />
+      <source frequency="16000000U" />
+    </clock>
+    <clock point="LOWOSC" enable="always" dynamic="no">
+      <description>fixed low speed oscillator</description>
+      <source frequency="32768U" />
+    </clock>
+    <clock point="SYSCLK" enable="always" dynamic="yes">
+      <description>dynamic system clock mux</description>
+      <mux name="SYSSEL">
+        <input point="INTOSC" default="yes"><bits value="SYSSEL_INTOSC" /></input>
+      </mux>
+    </clock>
+    <clock point="PCLK" enable="always" dynamic="yes">
+      <description>dynamic peripheral clock divider</description>
+      <divider name="PCLKDIV" input="SYSCLK">
+        <value min="1" max="8" default="2">
+          <bits value="PCLKDIV_BITS(%N%)" />
+        </value>
+      </divider>
+    </clock>
+    <clock point="SERIAL" enable="always" dynamic="no">
+      <description>static peripheral selector with dynamic inputs</description>
+      <mux name="SERIALSEL">
+        <input point="PCLK" default="yes"><bits value="SERIALSEL_PCLK" /></input>
+        <input point="SYSCLK"><bits value="SERIALSEL_SYSCLK" /></input>
+        <input point="INTOSC"><bits value="SERIALSEL_INTOSC" /></input>
+        <input point="LOWOSC"><bits value="SERIALSEL_LOWOSC" /></input>
+      </mux>
+    </clock>
+  </clocks>
+</clocktree>

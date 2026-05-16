@@ -1,0 +1,36 @@
+<clocktree>
+  <settings>
+    <prefixes clock_points="TCLK_" macros="TST_" cfgs="TST_CFG_" />
+    <suffixes frequency="_FREQ" values="_VALUE" bits="_BITS"
+              selector="_SEL" enable="_ENABLE" enabled="_ENABLED" />
+    <configs>
+      <config name="CLOCK_DYNAMIC" type="bool" default="FALSE"
+              role="dynamic_mode">
+        <description>Enables dynamic clock handling.</description>
+      </config>
+    </configs>
+  </settings>
+  <clocks>
+    <clock point="NONE" enable="never" dynamic="no">
+      <description>pseudo-clock for disabled sources</description>
+      <source frequency="0U" />
+    </clock>
+    <clock point="OSC_A" enable="always" dynamic="no">
+      <description>first fixed oscillator</description>
+      <source frequency="4000000U" />
+    </clock>
+    <clock point="OSC_B" enable="always" dynamic="no">
+      <description>second fixed oscillator</description>
+      <source frequency="8000000U" />
+    </clock>
+    <clock point="MUXED" enable="auto" dynamic="no">
+      <description>mux with default and disabled bits</description>
+      <bits enabled="RCC_MUX_ENABLE" disabled="0U" />
+      <mux name="MUXEDSEL">
+        <input point="NONE" default="yes"><bits value="MUXEDSEL_NONE" /></input>
+        <input point="OSC_A"><bits value="MUXEDSEL_OSC_A" /></input>
+        <input point="OSC_B"><bits value="MUXEDSEL_OSC_B" /></input>
+      </mux>
+    </clock>
+  </clocks>
+</clocktree>

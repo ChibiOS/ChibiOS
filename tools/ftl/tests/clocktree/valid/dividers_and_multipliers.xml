@@ -1,0 +1,44 @@
+<clocktree>
+  <settings>
+    <prefixes clock_points="TCLK_" macros="TST_" cfgs="TST_CFG_" />
+    <suffixes frequency="_FREQ" values="_VALUE" bits="_BITS"
+              selector="_SEL" enable="_ENABLE" enabled="_ENABLED" />
+    <configs>
+      <config name="CLOCK_DYNAMIC" type="bool" default="FALSE"
+              role="dynamic_mode">
+        <description>Enables dynamic clock handling.</description>
+      </config>
+    </configs>
+  </settings>
+  <clocks>
+    <clock point="BASE" enable="always" dynamic="no">
+      <description>base clock source</description>
+      <source frequency="12000000U" />
+    </clock>
+    <clock point="DIV_VALUE" enable="always" dynamic="no">
+      <description>divider using a numeric value range</description>
+      <divider name="DIV_VALUE" input="BASE">
+        <value min="1" max="16" default="3">
+          <bits value="DIV_VALUE_BITS(%N%)" />
+        </value>
+      </divider>
+    </clock>
+    <clock point="MUL_SET" enable="always" dynamic="no">
+      <description>multiplier using a numeric set</description>
+      <multiplier name="MUL_SET" input="DIV_VALUE">
+        <set values="2 4 8" default="4">
+          <bits value="MUL_SET_BITS(%N%)" />
+        </set>
+      </multiplier>
+    </clock>
+    <clock point="DIV_CHOICES" enable="always" dynamic="no">
+      <description>divider using named choices</description>
+      <divider name="DIV_CHOICES" input="MUL_SET">
+        <choices default="BYPASS">
+          <choice item="BYPASS" value="1"><bits value="DIV_CHOICES_BYPASS" /></choice>
+          <choice item="HALF" value="2"><bits value="DIV_CHOICES_HALF" /></choice>
+        </choices>
+      </divider>
+    </clock>
+  </clocks>
+</clocktree>
