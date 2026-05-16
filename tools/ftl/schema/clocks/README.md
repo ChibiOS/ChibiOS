@@ -93,6 +93,127 @@ Clock definitions with enable-state bits use a clock-level `<bits enabled="..."
 disabled="..."/>` element. Those bits are combined with selection bits when the
 clock has a mux/divider/multiplier selection.
 
+## Clock Demand Modeling Procedure
+
+Use `enable="always"` only for clock points that are intrinsically required by
+the platform or that intentionally represent an unconditional configuration
+selection. Core clocks such as `SYSCLK`, `HCLK`, `PCLKx`, and mandatory helper
+points normally stay always-enabled.
+
+Use `enable="auto"` for optional peripheral clocks and intermediate helper
+clocks. Auto clocks are enabled when a downstream clock point or explicit
+consumer demands them. This avoids optional peripherals accidentally enabling or
+requiring upstream oscillators.
+
+Use one consumer per independent reason to demand a clock. This keeps generated
+`<POINT>_ENABLED` expressions readable and diagnostics meaningful. Prefer two
+consumers over one large condition when two drivers or features can require the
+same clock.
+
+Driver-owned peripheral clocks should use existing HAL and STM32 instance
+switches in their consumer conditions. Examples:
+
+```xml
+<consumer name="SPI1_DRIVER" input="SPI1"
+          condition="(HAL_USE_SPI == TRUE) &amp;&amp; (STM32_SPI_USE_SPI1 == TRUE)">
+  <description>SPI driver demands the SPI1 clock when enabled.</description>
+</consumer>
+
+<consumer name="USB1_DRIVER" input="USB"
+          condition="(HAL_USE_USB == TRUE) &amp;&amp; (STM32_USB_USE_USB1 == TRUE)">
+  <description>USB driver demands the USB clock when enabled.</description>
+</consumer>
+```
+
+If several instances of one driver share a clock point, keep the driver part as
+one AND term and OR only the instance switches inside the second term:
+
+```xml
+<consumer name="ADCDAC_ADC_DRIVER" input="ADCDAC"
+          condition="(HAL_USE_ADC == TRUE) &amp;&amp; ((STM32_ADC_USE_ADC1 == TRUE) || (STM32_ADC_USE_ADC2 == TRUE))">
+  <description>ADC driver demands the ADCDAC clock when enabled.</description>
+</consumer>
+```
+
+If separate drivers can demand the same clock point, use separate consumers
+instead of one top-level OR expression:
+
+```xml
+<consumer name="ADCDAC_ADC_DRIVER" input="ADCDAC"
+          condition="(HAL_USE_ADC == TRUE) &amp;&amp; ((STM32_ADC_USE_ADC1 == TRUE) || (STM32_ADC_USE_ADC2 == TRUE))">
+  <description>ADC driver demands the ADCDAC clock when enabled.</description>
+</consumer>
+<consumer name="ADCDAC_DAC_DRIVER" input="ADCDAC"
+          condition="(HAL_USE_DAC == TRUE) &amp;&amp; ((STM32_DAC_USE_DAC1_CH1 == TRUE) || (STM32_DAC_USE_DAC1_CH2 == TRUE))">
+  <description>DAC driver demands the ADCDAC clock when enabled.</description>
+</consumer>
+```
+
+For clocks not owned by an existing driver setting, add a local boolean
+configuration named `<POINT>_REQUIRED` using the configured configuration
+prefix in generated code. The XML config name does not include the prefix:
+
+```xml
+<config name="OCTOSPI_REQUIRED" type="bool" default="FALSE">
+  <description>Enables demand for the OCTOSPI clock.</description>
+</config>
+
+<consumer name="OCTOSPI_REQUIRED" input="OCTOSPI"
+          condition="STM32_CFG_OCTOSPI_REQUIRED == TRUE">
+  <description>Local option demands the OCTOSPI clock when enabled.</description>
+</consumer>
+```
+
+Derived helper clocks such as intermediate muxes and dividers should usually be
+`auto` and have no direct consumer. They become enabled through downstream
+dependencies. For example, an intermediate divided clock used only by USB should
+be demanded by the USB clock point, not by its own local option.
+
+Clock points with no defined consumers are treated as unconditionally demanded.
+This is useful for always-present generated outputs but means optional
+peripheral clocks must have consumers if their demand is conditional.
+
+Use `NONE` inputs only for real selectable no-clock mux values, such as output
+pin clocks or backup-domain selectors that explicitly support a no-clock
+selection. Do not use `NONE` to model a disabled peripheral selector encoding.
+
+If a disabled peripheral clock requires register selector bits, put those bits
+in clock-level disabled bits:
+
+```xml
+<clock point="RNG" enable="auto" dynamic="no">
+  <description>RNG clock</description>
+  <bits enabled="0U" disabled="RCC_CCIPR2_RNGSEL_IGNORE" />
+  <mux name="RNG">
+    <input point="HSI48"><bits value="RCC_CCIPR2_RNGSEL_HSI48" /></input>
+    <input point="MSIK" default="yes"><bits value="RCC_CCIPR2_RNGSEL_MSIK" /></input>
+  </mux>
+</clock>
+```
+
+Expression style matters. Consumer conditions are parsed by generator helpers
+for formatting and diagnostics, so keep them simple:
+
+- Good: `(HAL_USE_SPI == TRUE) && (STM32_SPI_USE_SPI1 == TRUE)`
+- Good: `(HAL_USE_ADC == TRUE) && ((STM32_ADC_USE_ADC1 == TRUE) || (STM32_ADC_USE_ADC2 == TRUE))`
+- Avoid: one large top-level OR expression combining unrelated drivers.
+
+When converting an existing clock point to conditional demand:
+
+- Change the clock point from `enable="always"` to `enable="auto"`.
+- Add a driver consumer or a local `<POINT>_REQUIRED` config plus consumer.
+- Keep intermediate helper clocks `auto` and let downstream dependencies demand
+  them.
+- Move disabled-state selector values from fake `NONE` inputs to clock-level
+  disabled bits unless no-clock is a real mux selection.
+- Regenerate and inspect the affected `<POINT>_ENABLED` macros.
+- Inspect upstream dependency checks to ensure they are conditional on the new
+  enabled macro.
+- Inspect affected `<POINT>_BITS` macros if disabled register bits are involved.
+- Inspect affected `<POINT>_FREQ` macros and confirm disabled clocks produce
+  `0U`.
+- Run XML validation, FMPP generation, and the clocktree test suite.
+
 ## Validation Commands
 
 Regenerate the test header:
