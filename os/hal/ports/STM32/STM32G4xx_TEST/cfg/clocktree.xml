@@ -38,6 +38,11 @@
       <limit name="PCLK1" min="no" max="yes" />
       <limit name="PCLK2" min="no" max="yes" />
       <limit name="ADCCLK" min="no" max="yes" />
+      <limit name="FLASH_0WS" min="no" max="yes" />
+      <limit name="FLASH_1WS" min="no" max="yes" />
+      <limit name="FLASH_2WS" min="no" max="yes" />
+      <limit name="FLASH_3WS" min="no" max="yes" />
+      <limit name="FLASH_4WS" min="no" max="yes" />
     </limit-set>
     <limit-values>
       <state-values state="boost">
@@ -58,6 +63,11 @@
         <limit name="PCLK1" max="170000000" />
         <limit name="PCLK2" max="170000000" />
         <limit name="ADCCLK" max="60000000" />
+        <limit name="FLASH_0WS" max="34000000" />
+        <limit name="FLASH_1WS" max="68000000" />
+        <limit name="FLASH_2WS" max="102000000" />
+        <limit name="FLASH_3WS" max="136000000" />
+        <limit name="FLASH_4WS" max="170000000" />
       </state-values>
       <state-values state="vos1">
         <limit name="HSECLK">
@@ -77,6 +87,11 @@
         <limit name="PCLK1" max="150000000" />
         <limit name="PCLK2" max="150000000" />
         <limit name="ADCCLK" max="60000000" />
+        <limit name="FLASH_0WS" max="30000000" />
+        <limit name="FLASH_1WS" max="60000000" />
+        <limit name="FLASH_2WS" max="90000000" />
+        <limit name="FLASH_3WS" max="120000000" />
+        <limit name="FLASH_4WS" max="150000000" />
       </state-values>
       <state-values state="vos2">
         <limit name="HSECLK">
@@ -96,6 +111,11 @@
         <limit name="PCLK1" max="26000000" />
         <limit name="PCLK2" max="26000000" />
         <limit name="ADCCLK" max="26000000" />
+        <limit name="FLASH_0WS" max="12000000" />
+        <limit name="FLASH_1WS" max="24000000" />
+        <limit name="FLASH_2WS" max="26000000" />
+        <limit name="FLASH_3WS" max="0" />
+        <limit name="FLASH_4WS" max="0" />
       </state-values>
     </limit-values>
   </settings>
@@ -129,7 +149,7 @@
     <clock point="LSI" enable="manual" dynamic="no">
       <description>low frequency internal oscillator</description>
       <bits enabled="RCC_CSR_LSION" disabled="0U" />
-      <source frequency="32768U" />
+      <source frequency="STM32_LSICLK" />
     </clock>
     <clock point="PLLIN" enable="auto" dynamic="no">
       <description>PLL input</description>

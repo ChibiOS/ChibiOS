@@ -523,6 +523,11 @@
 #define STM32_BOOST_PCLK1_MAX               170000000
 #define STM32_BOOST_PCLK2_MAX               170000000
 #define STM32_BOOST_ADCCLK_MAX              60000000
+#define STM32_BOOST_FLASH_0WS_MAX           34000000
+#define STM32_BOOST_FLASH_1WS_MAX           68000000
+#define STM32_BOOST_FLASH_2WS_MAX           102000000
+#define STM32_BOOST_FLASH_3WS_MAX           136000000
+#define STM32_BOOST_FLASH_4WS_MAX           170000000
 /** @} */
 
 /**
@@ -559,6 +564,11 @@
 #define STM32_VOS1_PCLK1_MAX                150000000
 #define STM32_VOS1_PCLK2_MAX                150000000
 #define STM32_VOS1_ADCCLK_MAX               60000000
+#define STM32_VOS1_FLASH_0WS_MAX            30000000
+#define STM32_VOS1_FLASH_1WS_MAX            60000000
+#define STM32_VOS1_FLASH_2WS_MAX            90000000
+#define STM32_VOS1_FLASH_3WS_MAX            120000000
+#define STM32_VOS1_FLASH_4WS_MAX            150000000
 /** @} */
 
 /**
@@ -595,6 +605,11 @@
 #define STM32_VOS2_PCLK1_MAX                26000000
 #define STM32_VOS2_PCLK2_MAX                26000000
 #define STM32_VOS2_ADCCLK_MAX               26000000
+#define STM32_VOS2_FLASH_0WS_MAX            12000000
+#define STM32_VOS2_FLASH_1WS_MAX            24000000
+#define STM32_VOS2_FLASH_2WS_MAX            26000000
+#define STM32_VOS2_FLASH_3WS_MAX            0
+#define STM32_VOS2_FLASH_4WS_MAX            0
 /** @} */
 
 /*
@@ -621,6 +636,11 @@
 #define STM32_PCLK1_MAX                     STM32_BOOST_PCLK1_MAX
 #define STM32_PCLK2_MAX                     STM32_BOOST_PCLK2_MAX
 #define STM32_ADCCLK_MAX                    STM32_BOOST_ADCCLK_MAX
+#define STM32_FLASH_0WS_MAX                 STM32_BOOST_FLASH_0WS_MAX
+#define STM32_FLASH_1WS_MAX                 STM32_BOOST_FLASH_1WS_MAX
+#define STM32_FLASH_2WS_MAX                 STM32_BOOST_FLASH_2WS_MAX
+#define STM32_FLASH_3WS_MAX                 STM32_BOOST_FLASH_3WS_MAX
+#define STM32_FLASH_4WS_MAX                 STM32_BOOST_FLASH_4WS_MAX
 #elif (STM32_CFG_PWR_VOS == STM32_VOS_RANGE1)
 #define STM32_HSECLK_MIN                    STM32_VOS1_HSECLK_MIN
 #define STM32_HSECLK_MAX                    STM32_VOS1_HSECLK_MAX
@@ -640,6 +660,11 @@
 #define STM32_PCLK1_MAX                     STM32_VOS1_PCLK1_MAX
 #define STM32_PCLK2_MAX                     STM32_VOS1_PCLK2_MAX
 #define STM32_ADCCLK_MAX                    STM32_VOS1_ADCCLK_MAX
+#define STM32_FLASH_0WS_MAX                 STM32_VOS1_FLASH_0WS_MAX
+#define STM32_FLASH_1WS_MAX                 STM32_VOS1_FLASH_1WS_MAX
+#define STM32_FLASH_2WS_MAX                 STM32_VOS1_FLASH_2WS_MAX
+#define STM32_FLASH_3WS_MAX                 STM32_VOS1_FLASH_3WS_MAX
+#define STM32_FLASH_4WS_MAX                 STM32_VOS1_FLASH_4WS_MAX
 #elif (STM32_CFG_PWR_VOS == STM32_VOS_RANGE2)
 #define STM32_HSECLK_MIN                    STM32_VOS2_HSECLK_MIN
 #define STM32_HSECLK_MAX                    STM32_VOS2_HSECLK_MAX
@@ -659,6 +684,11 @@
 #define STM32_PCLK1_MAX                     STM32_VOS2_PCLK1_MAX
 #define STM32_PCLK2_MAX                     STM32_VOS2_PCLK2_MAX
 #define STM32_ADCCLK_MAX                    STM32_VOS2_ADCCLK_MAX
+#define STM32_FLASH_0WS_MAX                 STM32_VOS2_FLASH_0WS_MAX
+#define STM32_FLASH_1WS_MAX                 STM32_VOS2_FLASH_1WS_MAX
+#define STM32_FLASH_2WS_MAX                 STM32_VOS2_FLASH_2WS_MAX
+#define STM32_FLASH_3WS_MAX                 STM32_VOS2_FLASH_3WS_MAX
+#define STM32_FLASH_4WS_MAX                 STM32_VOS2_FLASH_4WS_MAX
 #else
 #error "unable to select clock frequency limits"
 #endif
@@ -1331,7 +1361,7 @@
  * @brief   Low frequency internal oscillator clock point.
  */
 #if (STM32_LSI_ENABLED == TRUE) || defined(__DOXYGEN__)
-#define STM32_LSI_FREQ                      32768U
+#define STM32_LSI_FREQ                      STM32_LSICLK
 #else
 #define STM32_LSI_FREQ                      0U
 #endif
@@ -1589,7 +1619,22 @@
 #endif
 
 #if (STM32_SYSCLK_ENABLED == TRUE) && \
-    (STM32_SYSCLK_FREQ > STM32_SYSCLK_MAX) && \
+    (STM32_CFG_SYSCLK_SEL == STM32_SW_HSI16) && \
+    (STM32_HSI16_FREQ > STM32_SYSCLK_MAX) && \
+    !defined(__DOXYGEN__)
+#error "STM32_SYSCLK_FREQ above maximum frequency"
+#endif
+
+#if (STM32_SYSCLK_ENABLED == TRUE) && \
+    (STM32_CFG_SYSCLK_SEL == STM32_SW_HSE) && \
+    (STM32_HSE_FREQ > STM32_SYSCLK_MAX) && \
+    !defined(__DOXYGEN__)
+#error "STM32_SYSCLK_FREQ above maximum frequency"
+#endif
+
+#if (STM32_SYSCLK_ENABLED == TRUE) && \
+    (STM32_CFG_SYSCLK_SEL == STM32_SW_PLLRCLK) && \
+    (STM32_PLLR_FREQ > STM32_SYSCLK_MAX) && \
     !defined(__DOXYGEN__)
 #error "STM32_SYSCLK_FREQ above maximum frequency"
 #endif
@@ -1945,13 +1990,13 @@
 #if ((STM32_USART1_ENABLED == TRUE) && \
      (STM32_CFG_USART1_SEL == STM32_USART1SEL_PCLK2)) || \
     defined(__DOXYGEN__)
-#define STM32_USART1_FREQ                   STM32_PCLK2_FREQ
+#define STM32_USART1_FREQ                   hal_lld_get_clock_point(CLK_PCLK2)
 #elif (STM32_USART1_ENABLED == TRUE) && \
       (STM32_CFG_USART1_SEL == STM32_USART1SEL_SYSCLK)
-#define STM32_USART1_FREQ                   STM32_SYSCLK_FREQ
+#define STM32_USART1_FREQ                   hal_lld_get_clock_point(CLK_SYSCLK)
 #elif (STM32_USART1_ENABLED == TRUE) && \
       (STM32_CFG_USART1_SEL == STM32_USART1SEL_HSI16)
-#define STM32_USART1_FREQ                   STM32_HSI16_FREQ
+#define STM32_USART1_FREQ                   hal_lld_get_clock_point(CLK_HSI16)
 #elif (STM32_USART1_ENABLED == TRUE) && \
       (STM32_CFG_USART1_SEL == STM32_USART1SEL_LSE)
 #define STM32_USART1_FREQ                   STM32_LSE_FREQ
@@ -1982,13 +2027,13 @@
 #if ((STM32_USART2_ENABLED == TRUE) && \
      (STM32_CFG_USART2_SEL == STM32_USART2SEL_PCLK1)) || \
     defined(__DOXYGEN__)
-#define STM32_USART2_FREQ                   STM32_PCLK1_FREQ
+#define STM32_USART2_FREQ                   hal_lld_get_clock_point(CLK_PCLK1)
 #elif (STM32_USART2_ENABLED == TRUE) && \
       (STM32_CFG_USART2_SEL == STM32_USART2SEL_SYSCLK)
-#define STM32_USART2_FREQ                   STM32_SYSCLK_FREQ
+#define STM32_USART2_FREQ                   hal_lld_get_clock_point(CLK_SYSCLK)
 #elif (STM32_USART2_ENABLED == TRUE) && \
       (STM32_CFG_USART2_SEL == STM32_USART2SEL_HSI16)
-#define STM32_USART2_FREQ                   STM32_HSI16_FREQ
+#define STM32_USART2_FREQ                   hal_lld_get_clock_point(CLK_HSI16)
 #elif (STM32_USART2_ENABLED == TRUE) && \
       (STM32_CFG_USART2_SEL == STM32_USART2SEL_LSE)
 #define STM32_USART2_FREQ                   STM32_LSE_FREQ
@@ -2019,13 +2064,13 @@
 #if ((STM32_USART3_ENABLED == TRUE) && \
      (STM32_CFG_USART3_SEL == STM32_USART3SEL_PCLK1)) || \
     defined(__DOXYGEN__)
-#define STM32_USART3_FREQ                   STM32_PCLK1_FREQ
+#define STM32_USART3_FREQ                   hal_lld_get_clock_point(CLK_PCLK1)
 #elif (STM32_USART3_ENABLED == TRUE) && \
       (STM32_CFG_USART3_SEL == STM32_USART3SEL_SYSCLK)
-#define STM32_USART3_FREQ                   STM32_SYSCLK_FREQ
+#define STM32_USART3_FREQ                   hal_lld_get_clock_point(CLK_SYSCLK)
 #elif (STM32_USART3_ENABLED == TRUE) && \
       (STM32_CFG_USART3_SEL == STM32_USART3SEL_HSI16)
-#define STM32_USART3_FREQ                   STM32_HSI16_FREQ
+#define STM32_USART3_FREQ                   hal_lld_get_clock_point(CLK_HSI16)
 #elif (STM32_USART3_ENABLED == TRUE) && \
       (STM32_CFG_USART3_SEL == STM32_USART3SEL_LSE)
 #define STM32_USART3_FREQ                   STM32_LSE_FREQ
@@ -2056,13 +2101,13 @@
 #if ((STM32_UART4_ENABLED == TRUE) && \
      (STM32_CFG_UART4_SEL == STM32_UART4SEL_PCLK1)) || \
     defined(__DOXYGEN__)
-#define STM32_UART4_FREQ                    STM32_PCLK1_FREQ
+#define STM32_UART4_FREQ                    hal_lld_get_clock_point(CLK_PCLK1)
 #elif (STM32_UART4_ENABLED == TRUE) && \
       (STM32_CFG_UART4_SEL == STM32_UART4SEL_SYSCLK)
-#define STM32_UART4_FREQ                    STM32_SYSCLK_FREQ
+#define STM32_UART4_FREQ                    hal_lld_get_clock_point(CLK_SYSCLK)
 #elif (STM32_UART4_ENABLED == TRUE) && \
       (STM32_CFG_UART4_SEL == STM32_UART4SEL_HSI16)
-#define STM32_UART4_FREQ                    STM32_HSI16_FREQ
+#define STM32_UART4_FREQ                    hal_lld_get_clock_point(CLK_HSI16)
 #elif (STM32_UART4_ENABLED == TRUE) && \
       (STM32_CFG_UART4_SEL == STM32_UART4SEL_LSE)
 #define STM32_UART4_FREQ                    STM32_LSE_FREQ
@@ -2093,13 +2138,13 @@
 #if ((STM32_UART5_ENABLED == TRUE) && \
      (STM32_CFG_UART5_SEL == STM32_UART5SEL_PCLK1)) || \
     defined(__DOXYGEN__)
-#define STM32_UART5_FREQ                    STM32_PCLK1_FREQ
+#define STM32_UART5_FREQ                    hal_lld_get_clock_point(CLK_PCLK1)
 #elif (STM32_UART5_ENABLED == TRUE) && \
       (STM32_CFG_UART5_SEL == STM32_UART5SEL_SYSCLK)
-#define STM32_UART5_FREQ                    STM32_SYSCLK_FREQ
+#define STM32_UART5_FREQ                    hal_lld_get_clock_point(CLK_SYSCLK)
 #elif (STM32_UART5_ENABLED == TRUE) && \
       (STM32_CFG_UART5_SEL == STM32_UART5SEL_HSI16)
-#define STM32_UART5_FREQ                    STM32_HSI16_FREQ
+#define STM32_UART5_FREQ                    hal_lld_get_clock_point(CLK_HSI16)
 #elif (STM32_UART5_ENABLED == TRUE) && \
       (STM32_CFG_UART5_SEL == STM32_UART5SEL_LSE)
 #define STM32_UART5_FREQ                    STM32_LSE_FREQ
@@ -2130,13 +2175,13 @@
 #if ((STM32_LPUART1_ENABLED == TRUE) && \
      (STM32_CFG_LPUART1_SEL == STM32_LPUART1SEL_PCLK1)) || \
     defined(__DOXYGEN__)
-#define STM32_LPUART1_FREQ                  STM32_PCLK1_FREQ
+#define STM32_LPUART1_FREQ                  hal_lld_get_clock_point(CLK_PCLK1)
 #elif (STM32_LPUART1_ENABLED == TRUE) && \
       (STM32_CFG_LPUART1_SEL == STM32_LPUART1SEL_SYSCLK)
-#define STM32_LPUART1_FREQ                  STM32_SYSCLK_FREQ
+#define STM32_LPUART1_FREQ                  hal_lld_get_clock_point(CLK_SYSCLK)
 #elif (STM32_LPUART1_ENABLED == TRUE) && \
       (STM32_CFG_LPUART1_SEL == STM32_LPUART1SEL_HSI16)
-#define STM32_LPUART1_FREQ                  STM32_HSI16_FREQ
+#define STM32_LPUART1_FREQ                  hal_lld_get_clock_point(CLK_HSI16)
 #elif (STM32_LPUART1_ENABLED == TRUE) && \
       (STM32_CFG_LPUART1_SEL == STM32_LPUART1SEL_LSE)
 #define STM32_LPUART1_FREQ                  STM32_LSE_FREQ
@@ -2165,13 +2210,13 @@
 #if ((STM32_I2C1_ENABLED == TRUE) && \
      (STM32_CFG_I2C1_SEL == STM32_I2C1SEL_PCLK1)) || \
     defined(__DOXYGEN__)
-#define STM32_I2C1_FREQ                     STM32_PCLK1_FREQ
+#define STM32_I2C1_FREQ                     hal_lld_get_clock_point(CLK_PCLK1)
 #elif (STM32_I2C1_ENABLED == TRUE) && \
       (STM32_CFG_I2C1_SEL == STM32_I2C1SEL_SYSCLK)
-#define STM32_I2C1_FREQ                     STM32_SYSCLK_FREQ
+#define STM32_I2C1_FREQ                     hal_lld_get_clock_point(CLK_SYSCLK)
 #elif (STM32_I2C1_ENABLED == TRUE) && \
       (STM32_CFG_I2C1_SEL == STM32_I2C1SEL_HSI16)
-#define STM32_I2C1_FREQ                     STM32_HSI16_FREQ
+#define STM32_I2C1_FREQ                     hal_lld_get_clock_point(CLK_HSI16)
 #else
 #define STM32_I2C1_FREQ                     0U
 #endif
@@ -2197,13 +2242,13 @@
 #if ((STM32_I2C2_ENABLED == TRUE) && \
      (STM32_CFG_I2C2_SEL == STM32_I2C2SEL_PCLK1)) || \
     defined(__DOXYGEN__)
-#define STM32_I2C2_FREQ                     STM32_PCLK1_FREQ
+#define STM32_I2C2_FREQ                     hal_lld_get_clock_point(CLK_PCLK1)
 #elif (STM32_I2C2_ENABLED == TRUE) && \
       (STM32_CFG_I2C2_SEL == STM32_I2C2SEL_SYSCLK)
-#define STM32_I2C2_FREQ                     STM32_SYSCLK_FREQ
+#define STM32_I2C2_FREQ                     hal_lld_get_clock_point(CLK_SYSCLK)
 #elif (STM32_I2C2_ENABLED == TRUE) && \
       (STM32_CFG_I2C2_SEL == STM32_I2C2SEL_HSI16)
-#define STM32_I2C2_FREQ                     STM32_HSI16_FREQ
+#define STM32_I2C2_FREQ                     hal_lld_get_clock_point(CLK_HSI16)
 #else
 #define STM32_I2C2_FREQ                     0U
 #endif
@@ -2229,13 +2274,13 @@
 #if ((STM32_I2C3_ENABLED == TRUE) && \
      (STM32_CFG_I2C3_SEL == STM32_I2C3SEL_PCLK1)) || \
     defined(__DOXYGEN__)
-#define STM32_I2C3_FREQ                     STM32_PCLK1_FREQ
+#define STM32_I2C3_FREQ                     hal_lld_get_clock_point(CLK_PCLK1)
 #elif (STM32_I2C3_ENABLED == TRUE) && \
       (STM32_CFG_I2C3_SEL == STM32_I2C3SEL_SYSCLK)
-#define STM32_I2C3_FREQ                     STM32_SYSCLK_FREQ
+#define STM32_I2C3_FREQ                     hal_lld_get_clock_point(CLK_SYSCLK)
 #elif (STM32_I2C3_ENABLED == TRUE) && \
       (STM32_CFG_I2C3_SEL == STM32_I2C3SEL_HSI16)
-#define STM32_I2C3_FREQ                     STM32_HSI16_FREQ
+#define STM32_I2C3_FREQ                     hal_lld_get_clock_point(CLK_HSI16)
 #else
 #define STM32_I2C3_FREQ                     0U
 #endif
@@ -2261,13 +2306,13 @@
 #if ((STM32_I2C4_ENABLED == TRUE) && \
      (STM32_CFG_I2C4_SEL == STM32_I2C4SEL_PCLK1)) || \
     defined(__DOXYGEN__)
-#define STM32_I2C4_FREQ                     STM32_PCLK1_FREQ
+#define STM32_I2C4_FREQ                     hal_lld_get_clock_point(CLK_PCLK1)
 #elif (STM32_I2C4_ENABLED == TRUE) && \
       (STM32_CFG_I2C4_SEL == STM32_I2C4SEL_SYSCLK)
-#define STM32_I2C4_FREQ                     STM32_SYSCLK_FREQ
+#define STM32_I2C4_FREQ                     hal_lld_get_clock_point(CLK_SYSCLK)
 #elif (STM32_I2C4_ENABLED == TRUE) && \
       (STM32_CFG_I2C4_SEL == STM32_I2C4SEL_HSI16)
-#define STM32_I2C4_FREQ                     STM32_HSI16_FREQ
+#define STM32_I2C4_FREQ                     hal_lld_get_clock_point(CLK_HSI16)
 #else
 #define STM32_I2C4_FREQ                     0U
 #endif
@@ -2295,13 +2340,13 @@
 #if ((STM32_LPTIM1_ENABLED == TRUE) && \
      (STM32_CFG_LPTIM1_SEL == STM32_LPTIM1SEL_PCLK1)) || \
     defined(__DOXYGEN__)
-#define STM32_LPTIM1_FREQ                   STM32_PCLK1_FREQ
+#define STM32_LPTIM1_FREQ                   hal_lld_get_clock_point(CLK_PCLK1)
 #elif (STM32_LPTIM1_ENABLED == TRUE) && \
       (STM32_CFG_LPTIM1_SEL == STM32_LPTIM1SEL_LSI)
 #define STM32_LPTIM1_FREQ                   STM32_LSI_FREQ
 #elif (STM32_LPTIM1_ENABLED == TRUE) && \
       (STM32_CFG_LPTIM1_SEL == STM32_LPTIM1SEL_HSI16)
-#define STM32_LPTIM1_FREQ                   STM32_HSI16_FREQ
+#define STM32_LPTIM1_FREQ                   hal_lld_get_clock_point(CLK_HSI16)
 #elif (STM32_LPTIM1_ENABLED == TRUE) && \
       (STM32_CFG_LPTIM1_SEL == STM32_LPTIM1SEL_LSE)
 #define STM32_LPTIM1_FREQ                   STM32_LSE_FREQ
@@ -2332,16 +2377,16 @@
 #if ((STM32_SAI1_ENABLED == TRUE) && \
      (STM32_CFG_SAI1_SEL == STM32_SAI1SEL_SYSCLK)) || \
     defined(__DOXYGEN__)
-#define STM32_SAI1_FREQ                     STM32_SYSCLK_FREQ
+#define STM32_SAI1_FREQ                     hal_lld_get_clock_point(CLK_SYSCLK)
 #elif (STM32_SAI1_ENABLED == TRUE) && \
       (STM32_CFG_SAI1_SEL == STM32_SAI1SEL_PLLQCLK)
-#define STM32_SAI1_FREQ                     STM32_PLLQ_FREQ
+#define STM32_SAI1_FREQ                     hal_lld_get_clock_point(CLK_PLLQ)
 #elif (STM32_SAI1_ENABLED == TRUE) && \
       (STM32_CFG_SAI1_SEL == STM32_SAI1SEL_CKIN)
 #define STM32_SAI1_FREQ                     STM32_CKIN_FREQ
 #elif (STM32_SAI1_ENABLED == TRUE) && \
       (STM32_CFG_SAI1_SEL == STM32_SAI1SEL_HSI16)
-#define STM32_SAI1_FREQ                     STM32_HSI16_FREQ
+#define STM32_SAI1_FREQ                     hal_lld_get_clock_point(CLK_HSI16)
 #else
 #define STM32_SAI1_FREQ                     0U
 #endif
@@ -2369,16 +2414,16 @@
 #if ((STM32_I2S23_ENABLED == TRUE) && \
      (STM32_CFG_I2S23_SEL == STM32_I2S23SEL_SYSCLK)) || \
     defined(__DOXYGEN__)
-#define STM32_I2S23_FREQ                    STM32_SYSCLK_FREQ
+#define STM32_I2S23_FREQ                    hal_lld_get_clock_point(CLK_SYSCLK)
 #elif (STM32_I2S23_ENABLED == TRUE) && \
       (STM32_CFG_I2S23_SEL == STM32_I2S23SEL_PLLQCLK)
-#define STM32_I2S23_FREQ                    STM32_PLLQ_FREQ
+#define STM32_I2S23_FREQ                    hal_lld_get_clock_point(CLK_PLLQ)
 #elif (STM32_I2S23_ENABLED == TRUE) && \
       (STM32_CFG_I2S23_SEL == STM32_I2S23SEL_CKIN)
 #define STM32_I2S23_FREQ                    STM32_CKIN_FREQ
 #elif (STM32_I2S23_ENABLED == TRUE) && \
       (STM32_CFG_I2S23_SEL == STM32_I2S23SEL_HSI16)
-#define STM32_I2S23_FREQ                    STM32_HSI16_FREQ
+#define STM32_I2S23_FREQ                    hal_lld_get_clock_point(CLK_HSI16)
 #else
 #define STM32_I2S23_FREQ                    0U
 #endif
@@ -2404,13 +2449,13 @@
 #if ((STM32_FDCAN_ENABLED == TRUE) && \
      (STM32_CFG_FDCAN_SEL == STM32_FDCANSEL_HSE)) || \
     defined(__DOXYGEN__)
-#define STM32_FDCAN_FREQ                    STM32_HSE_FREQ
+#define STM32_FDCAN_FREQ                    hal_lld_get_clock_point(CLK_HSE)
 #elif (STM32_FDCAN_ENABLED == TRUE) && \
       (STM32_CFG_FDCAN_SEL == STM32_FDCANSEL_PLLQCLK)
-#define STM32_FDCAN_FREQ                    STM32_PLLQ_FREQ
+#define STM32_FDCAN_FREQ                    hal_lld_get_clock_point(CLK_PLLQ)
 #elif (STM32_FDCAN_ENABLED == TRUE) && \
       (STM32_CFG_FDCAN_SEL == STM32_FDCANSEL_PCLK1)
-#define STM32_FDCAN_FREQ                    STM32_PCLK1_FREQ
+#define STM32_FDCAN_FREQ                    hal_lld_get_clock_point(CLK_PCLK1)
 #else
 #define STM32_FDCAN_FREQ                    0U
 #endif
@@ -2434,10 +2479,10 @@
 #if ((STM32_CLK48_ENABLED == TRUE) && \
      (STM32_CFG_CLK48_SEL == STM32_CLK48SEL_HSI48)) || \
     defined(__DOXYGEN__)
-#define STM32_CLK48_FREQ                    STM32_HSI48_FREQ
+#define STM32_CLK48_FREQ                    hal_lld_get_clock_point(CLK_HSI48)
 #elif (STM32_CLK48_ENABLED == TRUE) && \
       (STM32_CFG_CLK48_SEL == STM32_CLK48SEL_PLLQCLK)
-#define STM32_CLK48_FREQ                    STM32_PLLQ_FREQ
+#define STM32_CLK48_FREQ                    hal_lld_get_clock_point(CLK_PLLQ)
 #else
 #define STM32_CLK48_FREQ                    0U
 #endif
@@ -2468,16 +2513,31 @@
 #define STM32_ADC12_FREQ                    STM32_NONE_FREQ
 #elif (STM32_ADC12_ENABLED == TRUE) && \
       (STM32_CFG_ADC12_SEL == STM32_ADC12SEL_PLLPCLK)
-#define STM32_ADC12_FREQ                    STM32_PLLP_FREQ
+#define STM32_ADC12_FREQ                    hal_lld_get_clock_point(CLK_PLLP)
 #elif (STM32_ADC12_ENABLED == TRUE) && \
       (STM32_CFG_ADC12_SEL == STM32_ADC12SEL_SYSCLK)
-#define STM32_ADC12_FREQ                    STM32_SYSCLK_FREQ
+#define STM32_ADC12_FREQ                    hal_lld_get_clock_point(CLK_SYSCLK)
 #else
 #define STM32_ADC12_FREQ                    0U
 #endif
 
 #if (STM32_ADC12_ENABLED == TRUE) && \
-    (STM32_ADC12_FREQ > STM32_ADCCLK_MAX) && \
+    (STM32_CFG_ADC12_SEL == STM32_ADC12SEL_NOCLK) && \
+    (STM32_NONE_FREQ > STM32_ADCCLK_MAX) && \
+    !defined(__DOXYGEN__)
+#error "STM32_ADC12_FREQ above maximum frequency"
+#endif
+
+#if (STM32_ADC12_ENABLED == TRUE) && \
+    (STM32_CFG_ADC12_SEL == STM32_ADC12SEL_PLLPCLK) && \
+    (STM32_PLLP_FREQ > STM32_ADCCLK_MAX) && \
+    !defined(__DOXYGEN__)
+#error "STM32_ADC12_FREQ above maximum frequency"
+#endif
+
+#if (STM32_ADC12_ENABLED == TRUE) && \
+    (STM32_CFG_ADC12_SEL == STM32_ADC12SEL_SYSCLK) && \
+    (STM32_SYSCLK_FREQ > STM32_ADCCLK_MAX) && \
     !defined(__DOXYGEN__)
 #error "STM32_ADC12_FREQ above maximum frequency"
 #endif
@@ -2508,16 +2568,31 @@
 #define STM32_ADC345_FREQ                   STM32_NONE_FREQ
 #elif (STM32_ADC345_ENABLED == TRUE) && \
       (STM32_CFG_ADC345_SEL == STM32_ADC345SEL_PLLPCLK)
-#define STM32_ADC345_FREQ                   STM32_PLLP_FREQ
+#define STM32_ADC345_FREQ                   hal_lld_get_clock_point(CLK_PLLP)
 #elif (STM32_ADC345_ENABLED == TRUE) && \
       (STM32_CFG_ADC345_SEL == STM32_ADC345SEL_SYSCLK)
-#define STM32_ADC345_FREQ                   STM32_SYSCLK_FREQ
+#define STM32_ADC345_FREQ                   hal_lld_get_clock_point(CLK_SYSCLK)
 #else
 #define STM32_ADC345_FREQ                   0U
 #endif
 
 #if (STM32_ADC345_ENABLED == TRUE) && \
-    (STM32_ADC345_FREQ > STM32_ADCCLK_MAX) && \
+    (STM32_CFG_ADC345_SEL == STM32_ADC345SEL_NOCLK) && \
+    (STM32_NONE_FREQ > STM32_ADCCLK_MAX) && \
+    !defined(__DOXYGEN__)
+#error "STM32_ADC345_FREQ above maximum frequency"
+#endif
+
+#if (STM32_ADC345_ENABLED == TRUE) && \
+    (STM32_CFG_ADC345_SEL == STM32_ADC345SEL_PLLPCLK) && \
+    (STM32_PLLP_FREQ > STM32_ADCCLK_MAX) && \
+    !defined(__DOXYGEN__)
+#error "STM32_ADC345_FREQ above maximum frequency"
+#endif
+
+#if (STM32_ADC345_ENABLED == TRUE) && \
+    (STM32_CFG_ADC345_SEL == STM32_ADC345SEL_SYSCLK) && \
+    (STM32_SYSCLK_FREQ > STM32_ADCCLK_MAX) && \
     !defined(__DOXYGEN__)
 #error "STM32_ADC345_FREQ above maximum frequency"
 #endif
@@ -2543,13 +2618,13 @@
 #if ((STM32_QSPI_ENABLED == TRUE) && \
      (STM32_CFG_QSPI_SEL == STM32_QSPISEL_SYSCLK)) || \
     defined(__DOXYGEN__)
-#define STM32_QSPI_FREQ                     STM32_SYSCLK_FREQ
+#define STM32_QSPI_FREQ                     hal_lld_get_clock_point(CLK_SYSCLK)
 #elif (STM32_QSPI_ENABLED == TRUE) && \
       (STM32_CFG_QSPI_SEL == STM32_QSPISEL_HSI16)
-#define STM32_QSPI_FREQ                     STM32_HSI16_FREQ
+#define STM32_QSPI_FREQ                     hal_lld_get_clock_point(CLK_HSI16)
 #elif (STM32_QSPI_ENABLED == TRUE) && \
       (STM32_CFG_QSPI_SEL == STM32_QSPISEL_PLLQCLK)
-#define STM32_QSPI_FREQ                     STM32_PLLQ_FREQ
+#define STM32_QSPI_FREQ                     hal_lld_get_clock_point(CLK_PLLQ)
 #else
 #define STM32_QSPI_FREQ                     0U
 #endif

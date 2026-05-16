@@ -453,9 +453,43 @@
 
 #include "clocktree.h"
 
+/**
+ * @name    Activation times in microseconds
+ * @{
+ */
+#define STM32_RELAXED_TIMEOUT_FACTOR        5U
+#define STM32_HSI_STARTUP_TIME              (4U * STM32_RELAXED_TIMEOUT_FACTOR)
+#define STM32_OSCILLATORS_STARTUP_TIME      (2000U * STM32_RELAXED_TIMEOUT_FACTOR)
+#define STM32_HSI48_STARTUP_TIME            (6U * STM32_RELAXED_TIMEOUT_FACTOR)
+#define STM32_PLL_STARTUP_TIME              (40U * STM32_RELAXED_TIMEOUT_FACTOR)
+#define STM32_SYSCLK_SWITCH_TIME            (50U * STM32_RELAXED_TIMEOUT_FACTOR)
+#define STM32_REGULATORS_TRANSITION_TIME    (40U * STM32_RELAXED_TIMEOUT_FACTOR)
+/** @} */
+
+/**
+ * @brief   Flash wait-state settings.
+ */
+#if (STM32_HCLK_FREQ <= STM32_FLASH_0WS_MAX) || defined(__DOXYGEN__)
+#define STM32_FLASHBITS                     FLASH_ACR_LATENCY_0WS
+#elif (STM32_HCLK_FREQ <= STM32_FLASH_1WS_MAX)
+#define STM32_FLASHBITS                     FLASH_ACR_LATENCY_1WS
+#elif (STM32_HCLK_FREQ <= STM32_FLASH_2WS_MAX)
+#define STM32_FLASHBITS                     FLASH_ACR_LATENCY_2WS
+#elif (STM32_HCLK_FREQ <= STM32_FLASH_3WS_MAX)
+#define STM32_FLASHBITS                     FLASH_ACR_LATENCY_3WS
+#elif (STM32_HCLK_FREQ <= STM32_FLASH_4WS_MAX)
+#define STM32_FLASHBITS                     FLASH_ACR_LATENCY_4WS
+#else
+#define STM32_FLASHBITS                     FLASH_ACR_LATENCY_5WS
+#endif
+
 #if STM32_CFG_CLOCK_DYNAMIC == TRUE
 #define HAL_LLD_USE_CLOCK_MANAGEMENT
 #endif
+
+/* Clock handlers.*/
+#include "stm32_lse.inc"
+#include "stm32_lsi.inc"
 
 /*===========================================================================*/
 /* Compatibility clock aliases.                                              */
@@ -474,7 +508,6 @@
 
 #define STM32_HSI16CLK                      STM32_HSI16_FREQ
 #define STM32_HSI48CLK                      STM32_HSI48_FREQ
-#define STM32_LSICLK                        STM32_LSI_FREQ
 
 #define STM32_PLLCLKIN                      STM32_PLLIN_FREQ
 #define STM32_PLLVCO                        STM32_PLLVCO_FREQ

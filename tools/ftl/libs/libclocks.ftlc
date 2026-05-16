@@ -581,6 +581,83 @@ ${(prefix + "(clkpt) == " + clkmacro)?right_pad(30) + " ? " + freqmacro?right_pa
   endif
 endmacro
 
+/* Returns a clock point by name.*/
+function GetClockPoint(name)
+  list model["clocks"] as point
+    if point["name"] == name
+      return point
+    endif
+  endlist
+
+  stop ">>>> Unknown clock point '" + name + "'"
+endfunction
+
+/* Returns a generated clock point frequency macro name.*/
+function GetClockFrequencyMacro(name)
+  return premacro + name + postclocks
+endfunction
+
+/* Returns a generated dynamic clock point index macro name.*/
+function GetClockIndexMacro(name)
+  return prename + name
+endfunction
+
+/* Returns the default/static frequency expression for a clock point.*/
+function GetDefaultFrequencyExpression(name)
+  return GetClockFrequencyMacro(name)
+endfunction
+
+/* Returns the runtime frequency expression for a clock point reference.*/
+function GetRuntimeFrequencyExpression(name)
+  local point = GetClockPoint(name)
+
+  if point["dynamic"] == "yes"
+    return "hal_lld_get_clock_point(" + GetClockIndexMacro(name) + ")"
+  endif
+
+  return GetClockFrequencyMacro(name)
+endfunction
+
+/* Returns true if a clock point is directly consumed by a dynamic point.*/
+function IsConsumedByDynamicPoint(name)
+  list model["clocks"] as point
+    if point["dynamic"] == "yes"
+      if point["type"] == "source"
+        if point["input"] == name
+          return true
+        endif
+      elseif point["type"] == "mux"
+        list point["inputs"] as input
+          if input["point"] == name
+            return true
+          endif
+        endlist
+      elseif point["type"] == "divider" || point["type"] == "multiplier"
+        if point["input"] == name
+          return true
+        endif
+      endif
+    endif
+  endlist
+
+  return false
+endfunction
+
+/* Returns true if frequency macros should reference runtime input clocks.*/
+function UsesRuntimeInputExpressions(point)
+  if point["dynamic"] == "yes"
+    return false
+  endif
+  if point["enable"] != "always"
+    return false
+  endif
+  if IsConsumedByDynamicPoint(point["name"])
+    return false
+  endif
+
+  return true
+endfunction
+
 /* Returns the downstream use conditions for a clock point.*/
 function GetConsumerConditions(point)
   local conditions = []
@@ -1262,24 +1339,63 @@ macro EmitClockFrequencyChecks(point)
       local maxval = ""
     endif
 
-    if minval != ""
-      EmitAndCondition(keyword="#if", terms=[enmacro + " == TRUE", freqmacro + " < " + minval, "!defined(__DOXYGEN__)"])
-      emit """
+    if point["type"] == "mux"
+      local selmacro = precfg + point["name"] + postchoices
+      local emitted = false
+
+      if minval != ""
+        list point["inputs"] as input
+          if emitted
+            emit "\e"
+          endif
+          local inputfreq = GetDefaultFrequencyExpression(input["point"])
+          EmitAndCondition(keyword="#if", terms=[enmacro + " == TRUE", selmacro + " == " + input["bits"], inputfreq + " < " + minval, "!defined(__DOXYGEN__)"])
+          emit """
 #error "${freqmacro} below minimum frequency"
 #endif
 """
-    endif
+          local emitted = true
+        endlist
+      endif
 
-    if minval != "" && maxval != ""
-      emit "\e"
-    endif
+      if minval != "" && maxval != "" && emitted
+        emit "\e"
+      endif
 
-    if maxval != ""
-      EmitAndCondition(keyword="#if", terms=[enmacro + " == TRUE", freqmacro + " > " + maxval, "!defined(__DOXYGEN__)"])
-      emit """
+      if maxval != ""
+        list point["inputs"] as input
+          if emitted
+            emit "\e"
+          endif
+          local inputfreq = GetDefaultFrequencyExpression(input["point"])
+          EmitAndCondition(keyword="#if", terms=[enmacro + " == TRUE", selmacro + " == " + input["bits"], inputfreq + " > " + maxval, "!defined(__DOXYGEN__)"])
+          emit """
 #error "${freqmacro} above maximum frequency"
 #endif
 """
+          local emitted = true
+        endlist
+      endif
+    else
+      if minval != ""
+        EmitAndCondition(keyword="#if", terms=[enmacro + " == TRUE", freqmacro + " < " + minval, "!defined(__DOXYGEN__)"])
+        emit """
+#error "${freqmacro} below minimum frequency"
+#endif
+"""
+      endif
+
+      if minval != "" && maxval != ""
+        emit "\e"
+      endif
+
+      if maxval != ""
+        EmitAndCondition(keyword="#if", terms=[enmacro + " == TRUE", freqmacro + " > " + maxval, "!defined(__DOXYGEN__)"])
+        emit """
+#error "${freqmacro} above maximum frequency"
+#endif
+"""
+      endif
     endif
   endif
 endmacro
@@ -1408,7 +1524,11 @@ macro EmitClockFrequency(point)
   if point["type"] == "source"
     local frequency = point["frequency"]
     if point["input"] != ""
-      local inputfreq = premacro + point["input"] + postclocks
+      if UsesRuntimeInputExpressions(point)
+        local inputfreq = GetRuntimeFrequencyExpression(point["input"])
+      else
+        local inputfreq = GetDefaultFrequencyExpression(point["input"])
+      endif
       local frequency = frequency?replace("%I%", inputfreq)
     endif
     EmitFrequencyDefinition(point=point, frequency=frequency)
@@ -1423,7 +1543,11 @@ macro EmitClockFrequency(point)
       else
         EmitStateCondition(keyword="#elif", expression=condition, doxygen=false)
       endif
-      local inputfreq = premacro + input["point"] + postclocks
+      if UsesRuntimeInputExpressions(point)
+        local inputfreq = GetRuntimeFrequencyExpression(input["point"])
+      else
+        local inputfreq = GetDefaultFrequencyExpression(input["point"])
+      endif
       emit """
 ${("#define " + freqmacro)?right_pad(44) + inputfreq}
 """
@@ -1435,12 +1559,20 @@ ${("#define " + freqmacro)?right_pad(44) + "0U"}
 """
   elseif point["type"] == "divider"
     local valmacro = precfg + point["name"] + postvalues
-    local inputfreq = premacro + point["input"] + postclocks
+    if UsesRuntimeInputExpressions(point)
+      local inputfreq = GetRuntimeFrequencyExpression(point["input"])
+    else
+      local inputfreq = GetDefaultFrequencyExpression(point["input"])
+    endif
     local frequency = "(" + inputfreq + " / " + valmacro + ")"
     EmitFrequencyDefinition(point=point, frequency=frequency)
   elseif point["type"] == "multiplier"
     local valmacro = precfg + point["name"] + postvalues
-    local inputfreq = premacro + point["input"] + postclocks
+    if UsesRuntimeInputExpressions(point)
+      local inputfreq = GetRuntimeFrequencyExpression(point["input"])
+    else
+      local inputfreq = GetDefaultFrequencyExpression(point["input"])
+    endif
     local frequency = "(" + inputfreq + " * " + valmacro + ")"
     EmitFrequencyDefinition(point=point, frequency=frequency)
   endif
