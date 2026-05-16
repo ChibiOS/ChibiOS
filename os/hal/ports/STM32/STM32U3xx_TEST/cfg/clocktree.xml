@@ -46,6 +46,9 @@
               values="RCC_ICSCR1_MSIBIAS_CONTINUOUS RCC_ICSCR1_MSIBIAS_SAMPLING">
         <description>Selects the MSI bias mode.</description>
       </config>
+      <config name="DAC1SH_REQUIRED" type="bool" default="FALSE">
+        <description>Enables demand for the DAC1 sample-and-hold clock.</description>
+      </config>
     </configs>
     <states>
       <state name="vos1"
@@ -133,9 +136,9 @@
       <description>pseudo-clock for disabled sources</description>
       <source frequency="0U" />
     </clock>
-    <clock point="AUDIOCLK" enable="never" dynamic="no">
+    <clock point="AUDIOCLK" enable="always" dynamic="no">
       <description>external audio clock input</description>
-      <source frequency="0U" />
+      <source frequency="STM32_AUDIOCLK" />
     </clock>
     <clock point="HSI16" enable="manual" dynamic="yes">
       <description>16MHz high speed internal oscillator</description>
@@ -823,28 +826,28 @@
         <input point="MSIK"><bits value="RCC_CCIPR2_ADCDACSEL_MSIK" /></input>
       </mux>
     </clock>
-    <clock point="DAC1SH" enable="always" dynamic="no">
+    <clock point="DAC1SH" enable="auto" dynamic="no">
       <description>DAC1 sample and hold clock</description>
+      <bits enabled="0U" disabled="RCC_CCIPR2_DAC1SHSEL_IGNORE" />
       <mux name="DAC1SH">
-        <input point="NONE" default="yes"><bits value="RCC_CCIPR2_DAC1SHSEL_IGNORE" /></input>
-        <input point="LSE"><bits value="RCC_CCIPR2_DAC1SHSEL_LSE" /></input>
+        <input point="LSE" default="yes"><bits value="RCC_CCIPR2_DAC1SHSEL_LSE" /></input>
         <input point="LSI"><bits value="RCC_CCIPR2_DAC1SHSEL_LSI" /></input>
       </mux>
     </clock>
-    <clock point="RNG" enable="always" dynamic="no">
+    <clock point="RNG" enable="auto" dynamic="no">
       <description>RNG clock</description>
+      <bits enabled="0U" disabled="RCC_CCIPR2_RNGSEL_IGNORE" />
       <mux name="RNG">
-        <input point="NONE" default="yes"><bits value="RCC_CCIPR2_RNGSEL_IGNORE" /></input>
         <input point="HSI48"><bits value="RCC_CCIPR2_RNGSEL_HSI48" /></input>
-        <input point="MSIK"><bits value="RCC_CCIPR2_RNGSEL_MSIK" /></input>
+        <input point="MSIK" default="yes"><bits value="RCC_CCIPR2_RNGSEL_MSIK" /></input>
       </mux>
     </clock>
-    <clock point="FDCAN1" enable="always" dynamic="no">
+    <clock point="FDCAN1" enable="auto" dynamic="no">
       <description>FDCAN1 clock</description>
+      <bits enabled="0U" disabled="RCC_CCIPR1_FDCAN1SEL_IGNORE" />
       <mux name="FDCAN1">
         <input point="SYSCLK" default="yes"><bits value="RCC_CCIPR1_FDCAN1SEL_SYSCLK" /></input>
         <input point="MSIK"><bits value="RCC_CCIPR1_FDCAN1SEL_MSIK" /></input>
-        <input point="NONE"><bits value="RCC_CCIPR1_FDCAN1SEL_IGNORE" /></input>
       </mux>
     </clock>
     <clock point="SAI1" enable="always" dynamic="no">
@@ -866,6 +869,18 @@
     </clock>
   </clocks>
   <consumers>
+    <consumer name="DAC1SH_REQUIRED" input="DAC1SH"
+              condition="STM32_CFG_DAC1SH_REQUIRED == TRUE">
+      <description>DAC sample-and-hold logic demands the DAC1SH clock when enabled.</description>
+    </consumer>
+    <consumer name="RNG_DRIVER" input="RNG"
+              condition="(HAL_USE_TRNG == TRUE) &amp;&amp; (STM32_TRNG_USE_RNG1 == TRUE)">
+      <description>TRNG driver demands the RNG clock when enabled.</description>
+    </consumer>
+    <consumer name="FDCAN1_DRIVER" input="FDCAN1"
+              condition="(HAL_USE_CAN == TRUE) &amp;&amp; (STM32_CAN_USE_FDCAN1 == TRUE)">
+      <description>CAN driver demands the FDCAN1 clock when enabled.</description>
+    </consumer>
     <consumer name="MSIS_IRC0_SOURCE" input="MSIRC0"
               condition="(STM32_MSIS_ENABLED == TRUE) &amp;&amp; ((STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV1) || (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV2) || (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV4) || (STM32_CFG_MSIS_SRCDIV == RCC_ICSCR1_MSIS_IRC0_DIV8))">
       <description>MSIS demands MSIRC0 when selected as its source.</description>

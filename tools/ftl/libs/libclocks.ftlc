@@ -890,13 +890,23 @@ endfunction
 
 /* Returns the mux bits corresponding to a disabled source, if declared.*/
 function GetMuxDisabledBits(point)
+  local disabledbits = GetBoolBitsExpression(point["bits"], "", "disabled")
+  local disabledinputbits = ""
+
   list point["inputs"] as input
     if input["point"] == "NONE"
-      return input["bits"]
+      local disabledinputbits = input["bits"]
     endif
   endlist
 
-  return ""
+  if disabledbits != "" && disabledinputbits != ""
+    return "(" + disabledbits + " | " + disabledinputbits + ")"
+  endif
+  if disabledbits != ""
+    return disabledbits
+  endif
+
+  return disabledinputbits
 endfunction
 
 /* Emits generic configuration settings.*/

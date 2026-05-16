@@ -146,6 +146,13 @@
 #endif
 
 /**
+ * @brief   Enables demand for the DAC1 sample-and-hold clock.
+ */
+#if !defined(STM32_CFG_DAC1SH_REQUIRED) || defined(__DOXYGEN__)
+  #define STM32_CFG_DAC1SH_REQUIRED         FALSE
+#endif
+
+/**
  * @brief   Enables the HSI16 clock source.
  */
 #if !defined(STM32_CFG_HSI16_ENABLE) || defined(__DOXYGEN__)
@@ -515,23 +522,21 @@
 /**
  * @brief   Selects the DAC1SH clock source.
  * @note    Allowed sources:
- *          - NONE.
  *          - LSE.
  *          - LSI.
  */
 #if !defined(STM32_CFG_DAC1SH_SEL) || defined(__DOXYGEN__)
-  #define STM32_CFG_DAC1SH_SEL              RCC_CCIPR2_DAC1SHSEL_IGNORE
+  #define STM32_CFG_DAC1SH_SEL              RCC_CCIPR2_DAC1SHSEL_LSE
 #endif
 
 /**
  * @brief   Selects the RNG clock source.
  * @note    Allowed sources:
- *          - NONE.
  *          - HSI48.
  *          - MSIK.
  */
 #if !defined(STM32_CFG_RNG_SEL) || defined(__DOXYGEN__)
-  #define STM32_CFG_RNG_SEL                 RCC_CCIPR2_RNGSEL_IGNORE
+  #define STM32_CFG_RNG_SEL                 RCC_CCIPR2_RNGSEL_MSIK
 #endif
 
 /**
@@ -539,7 +544,6 @@
  * @note    Allowed sources:
  *          - SYSCLK.
  *          - MSIK.
- *          - NONE.
  */
 #if !defined(STM32_CFG_FDCAN1_SEL) || defined(__DOXYGEN__)
   #define STM32_CFG_FDCAN1_SEL              RCC_CCIPR1_FDCAN1SEL_SYSCLK
@@ -760,6 +764,11 @@
   #error "invalid STM32_CFG_MSIBIAS value specified"
 #endif
 
+#if !((STM32_CFG_DAC1SH_REQUIRED == TRUE) ||                                \
+     (STM32_CFG_DAC1SH_REQUIRED == FALSE)) && !defined(__DOXYGEN__)
+  #error "invalid STM32_CFG_DAC1SH_REQUIRED value specified"
+#endif
+
 /**
  * @name    Frequency limits for vos1 state
  * @{
@@ -899,7 +908,7 @@
 /**
  * @brief   AUDIOCLK clock derived enable state.
  */
-#define STM32_AUDIOCLK_ENABLED              FALSE
+#define STM32_AUDIOCLK_ENABLED              TRUE
 
 /**
  * @brief   HSI16 clock derived enable state.
@@ -1200,17 +1209,19 @@
 /**
  * @brief   DAC1SH clock derived enable state.
  */
-#define STM32_DAC1SH_ENABLED                TRUE
+#define STM32_DAC1SH_ENABLED                ((STM32_CFG_DAC1SH_REQUIRED == TRUE))
 
 /**
  * @brief   RNG clock derived enable state.
  */
-#define STM32_RNG_ENABLED                   TRUE
+#define STM32_RNG_ENABLED                   (((HAL_USE_TRNG == TRUE) &&     \
+                                              (STM32_TRNG_USE_RNG1 == TRUE)))
 
 /**
  * @brief   FDCAN1 clock derived enable state.
  */
-#define STM32_FDCAN1_ENABLED                TRUE
+#define STM32_FDCAN1_ENABLED                (((HAL_USE_CAN == TRUE) &&      \
+                                              (STM32_CAN_USE_FDCAN1 == TRUE)))
 
 /**
  * @brief   SAI1 clock derived enable state.
@@ -1257,7 +1268,7 @@
  * @brief   External audio clock input clock point.
  */
 #if (STM32_AUDIOCLK_ENABLED == TRUE) || defined(__DOXYGEN__)
-  #define STM32_AUDIOCLK_FREQ               0U
+  #define STM32_AUDIOCLK_FREQ               STM32_AUDIOCLK
 #else
   #define STM32_AUDIOCLK_FREQ               0U
 #endif
@@ -4498,13 +4509,18 @@
  */
 #if (STM32_DAC1SH_ENABLED == FALSE)
   #define STM32_DAC1SH_BITS                 RCC_CCIPR2_DAC1SHSEL_IGNORE
-#elif (STM32_CFG_DAC1SH_SEL == RCC_CCIPR2_DAC1SHSEL_IGNORE) ||              \
-      defined(__DOXYGEN__)
-  #define STM32_DAC1SH_BITS                 RCC_CCIPR2_DAC1SHSEL_IGNORE
-#elif (STM32_CFG_DAC1SH_SEL == RCC_CCIPR2_DAC1SHSEL_LSE)
-  #define STM32_DAC1SH_BITS                 RCC_CCIPR2_DAC1SHSEL_LSE
+#elif (STM32_CFG_DAC1SH_SEL == RCC_CCIPR2_DAC1SHSEL_LSE) || defined(__DOXYGEN__)
+  #if (STM32_DAC1SH_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_DAC1SH_BITS               (0U | RCC_CCIPR2_DAC1SHSEL_LSE)
+  #else
+    #define STM32_DAC1SH_BITS               RCC_CCIPR2_DAC1SHSEL_IGNORE
+  #endif
 #elif (STM32_CFG_DAC1SH_SEL == RCC_CCIPR2_DAC1SHSEL_LSI)
-  #define STM32_DAC1SH_BITS                 RCC_CCIPR2_DAC1SHSEL_LSI
+  #if (STM32_DAC1SH_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_DAC1SH_BITS               (0U | RCC_CCIPR2_DAC1SHSEL_LSI)
+  #else
+    #define STM32_DAC1SH_BITS               RCC_CCIPR2_DAC1SHSEL_IGNORE
+  #endif
 #else
   #error "invalid STM32_CFG_DAC1SH_SEL value specified"
 #endif
@@ -4513,11 +4529,8 @@
  * @brief   DAC1 sample and hold clock clock point.
  */
 #if ((STM32_DAC1SH_ENABLED == TRUE) && \
-     (STM32_CFG_DAC1SH_SEL == RCC_CCIPR2_DAC1SHSEL_IGNORE)) || \
+     (STM32_CFG_DAC1SH_SEL == RCC_CCIPR2_DAC1SHSEL_LSE)) || \
     defined(__DOXYGEN__)
-  #define STM32_DAC1SH_FREQ                 STM32_NONE_FREQ
-#elif (STM32_DAC1SH_ENABLED == TRUE) && \
-      (STM32_CFG_DAC1SH_SEL == RCC_CCIPR2_DAC1SHSEL_LSE)
   #define STM32_DAC1SH_FREQ                 STM32_LSE_FREQ
 #elif (STM32_DAC1SH_ENABLED == TRUE) && \
       (STM32_CFG_DAC1SH_SEL == RCC_CCIPR2_DAC1SHSEL_LSI)
@@ -4533,12 +4546,18 @@
  */
 #if (STM32_RNG_ENABLED == FALSE)
   #define STM32_RNG_BITS                    RCC_CCIPR2_RNGSEL_IGNORE
-#elif (STM32_CFG_RNG_SEL == RCC_CCIPR2_RNGSEL_IGNORE) || defined(__DOXYGEN__)
-  #define STM32_RNG_BITS                    RCC_CCIPR2_RNGSEL_IGNORE
-#elif (STM32_CFG_RNG_SEL == RCC_CCIPR2_RNGSEL_HSI48)
-  #define STM32_RNG_BITS                    RCC_CCIPR2_RNGSEL_HSI48
+#elif (STM32_CFG_RNG_SEL == RCC_CCIPR2_RNGSEL_HSI48) || defined(__DOXYGEN__)
+  #if (STM32_RNG_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_RNG_BITS                  (0U | RCC_CCIPR2_RNGSEL_HSI48)
+  #else
+    #define STM32_RNG_BITS                  RCC_CCIPR2_RNGSEL_IGNORE
+  #endif
 #elif (STM32_CFG_RNG_SEL == RCC_CCIPR2_RNGSEL_MSIK)
-  #define STM32_RNG_BITS                    RCC_CCIPR2_RNGSEL_MSIK
+  #if (STM32_RNG_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_RNG_BITS                  (0U | RCC_CCIPR2_RNGSEL_MSIK)
+  #else
+    #define STM32_RNG_BITS                  RCC_CCIPR2_RNGSEL_IGNORE
+  #endif
 #else
   #error "invalid STM32_CFG_RNG_SEL value specified"
 #endif
@@ -4547,15 +4566,12 @@
  * @brief   RNG clock clock point.
  */
 #if ((STM32_RNG_ENABLED == TRUE) && \
-     (STM32_CFG_RNG_SEL == RCC_CCIPR2_RNGSEL_IGNORE)) || \
+     (STM32_CFG_RNG_SEL == RCC_CCIPR2_RNGSEL_HSI48)) || \
     defined(__DOXYGEN__)
-  #define STM32_RNG_FREQ                    STM32_NONE_FREQ
-#elif (STM32_RNG_ENABLED == TRUE) && \
-      (STM32_CFG_RNG_SEL == RCC_CCIPR2_RNGSEL_HSI48)
-  #define STM32_RNG_FREQ                    hal_lld_get_clock_point(CLK_HSI48)
+  #define STM32_RNG_FREQ                    STM32_HSI48_FREQ
 #elif (STM32_RNG_ENABLED == TRUE) && \
       (STM32_CFG_RNG_SEL == RCC_CCIPR2_RNGSEL_MSIK)
-  #define STM32_RNG_FREQ                    hal_lld_get_clock_point(CLK_MSIK)
+  #define STM32_RNG_FREQ                    STM32_MSIK_FREQ
 #else
   #define STM32_RNG_FREQ                    0U
 #endif
@@ -4569,11 +4585,17 @@
   #define STM32_FDCAN1_BITS                 RCC_CCIPR1_FDCAN1SEL_IGNORE
 #elif (STM32_CFG_FDCAN1_SEL == RCC_CCIPR1_FDCAN1SEL_SYSCLK) ||              \
       defined(__DOXYGEN__)
-  #define STM32_FDCAN1_BITS                 RCC_CCIPR1_FDCAN1SEL_SYSCLK
+  #if (STM32_FDCAN1_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_FDCAN1_BITS               (0U | RCC_CCIPR1_FDCAN1SEL_SYSCLK)
+  #else
+    #define STM32_FDCAN1_BITS               RCC_CCIPR1_FDCAN1SEL_IGNORE
+  #endif
 #elif (STM32_CFG_FDCAN1_SEL == RCC_CCIPR1_FDCAN1SEL_MSIK)
-  #define STM32_FDCAN1_BITS                 RCC_CCIPR1_FDCAN1SEL_MSIK
-#elif (STM32_CFG_FDCAN1_SEL == RCC_CCIPR1_FDCAN1SEL_IGNORE)
-  #define STM32_FDCAN1_BITS                 RCC_CCIPR1_FDCAN1SEL_IGNORE
+  #if (STM32_FDCAN1_ENABLED == TRUE) || defined(__DOXYGEN__)
+    #define STM32_FDCAN1_BITS               (0U | RCC_CCIPR1_FDCAN1SEL_MSIK)
+  #else
+    #define STM32_FDCAN1_BITS               RCC_CCIPR1_FDCAN1SEL_IGNORE
+  #endif
 #else
   #error "invalid STM32_CFG_FDCAN1_SEL value specified"
 #endif
@@ -4584,13 +4606,10 @@
 #if ((STM32_FDCAN1_ENABLED == TRUE) && \
      (STM32_CFG_FDCAN1_SEL == RCC_CCIPR1_FDCAN1SEL_SYSCLK)) || \
     defined(__DOXYGEN__)
-  #define STM32_FDCAN1_FREQ                 hal_lld_get_clock_point(CLK_SYSCLK)
+  #define STM32_FDCAN1_FREQ                 STM32_SYSCLK_FREQ
 #elif (STM32_FDCAN1_ENABLED == TRUE) && \
       (STM32_CFG_FDCAN1_SEL == RCC_CCIPR1_FDCAN1SEL_MSIK)
-  #define STM32_FDCAN1_FREQ                 hal_lld_get_clock_point(CLK_MSIK)
-#elif (STM32_FDCAN1_ENABLED == TRUE) && \
-      (STM32_CFG_FDCAN1_SEL == RCC_CCIPR1_FDCAN1SEL_IGNORE)
-  #define STM32_FDCAN1_FREQ                 STM32_NONE_FREQ
+  #define STM32_FDCAN1_FREQ                 STM32_MSIK_FREQ
 #else
   #define STM32_FDCAN1_FREQ                 0U
 #endif

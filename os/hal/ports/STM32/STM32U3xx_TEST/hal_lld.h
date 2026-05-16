@@ -491,6 +491,13 @@
 #endif
 
 /**
+ * @brief   External audio clock frequency.
+ */
+#if !defined(STM32_AUDIOCLK) || defined(__DOXYGEN__)
+#define STM32_AUDIOCLK                      0U
+#endif
+
+/**
  * @brief   PWR VOSR register initialization value.
  * @note    BOOSTEN is calculated internally, do not specify it here.
  */
