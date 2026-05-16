@@ -29,13 +29,65 @@ postmin = "_MIN"
 postmax = "_MAX"
 contindent = "                                             "
 
-/* Returns the string value of a bits element.*/
+/* Validates uniqueness of bit targets in a parsed bits list.*/
+function ValidateBitTargets(bits, context)
+  local targets = []
+  list bits as bit
+    local target = bit["target"]
+    if targets?seq_contains(target)
+      stop ">>>> Duplicate bits target '" + target + "' in " + context
+    endif
+    local targets = targets + [target]
+  endlist
+
+  return bits
+endfunction
+
+/* Parses value bits elements.*/
+function ParseValueBits(node, context)
+  local bits = []
+  list node.bits as bit
+    local bits = bits + [{"target":(bit.@target[0]!"")?string, "value":bit.@value[0]?string}]
+  endlist
+
+  return ValidateBitTargets(bits, context)
+endfunction
+
+/* Parses enable-state bits elements.*/
+function ParseBoolBits(node, context)
+  local bits = []
+  list node.bits as bit
+    local bits = bits + [{"target":(bit.@target[0]!"")?string, "enabled":bit.@enabled[0]?string, "disabled":bit.@disabled[0]?string}]
+  endlist
+
+  return ValidateBitTargets(bits, context)
+endfunction
+
+/* Returns the string value of a single untargeted bits element.*/
 function GetBitsValue(node)
-  if node.bits[0]??
-    return node.bits[0].@value[0]?string
+  local bits = ParseValueBits(node, "selection")
+  if bits?size == 1 && bits[0]["target"] == ""
+    return bits[0]["value"]
   endif
 
-  stop ">>>> Missing bits element"
+  if bits?size == 0
+    stop ">>>> Missing bits element"
+  endif
+
+  stop ">>>> Selection bits must use one untargeted bits element"
+endfunction
+
+/* Parses conditional source frequency cases.*/
+function ParseFrequencyCases(source, point)
+  local cases = []
+  list source.frequencies[0]["case"] as casefreq
+    local cases = cases + [{"when":casefreq.@when[0]?string, "value":casefreq.@value[0]?string, "bits":ParseValueBits(casefreq, "frequency case for clock point '" + point + "'")}]
+  endlist
+
+  local default = source.frequencies[0]["default"][0]
+  local cases = cases + [{"when":"", "value":default.@value[0]?string, "bits":ParseValueBits(default, "default frequency for clock point '" + point + "'")}]
+
+  return cases
 endfunction
 
 /* Parses divider/multiplier value selection subtrees.*/
@@ -377,11 +429,7 @@ function Initialize()
     else
       local clockdescr = "no description"
     endif
-    if clock.bits[0]??
-      local clockbits = {"enabled":clock.bits[0].@enabled[0]?string, "disabled":clock.bits[0].@disabled[0]?string}
-    else
-      local clockbits = {}
-    endif
+    local clockbits = ParseBoolBits(clock, "clock point '" + clockname + "'")
     local clocklimits = ParseClockLimits(clock)
     if clockenable == "manual" && clockbits?size == 0
       stop ">>>> Missing enable bits for manually enabled clock point '" + clockname + "'"
@@ -390,14 +438,29 @@ function Initialize()
     /* Determining the type of the clock point by looking at the child element.*/
     if clock.source[0]??
       /* It is a fixed clock.*/
-      local clockfreq = clock.source[0].@frequency[0]?string
+      local hasfrequency = clock.source[0].@frequency[0]??
+      local hasfrequencies = clock.source[0].frequencies[0]??
+      if hasfrequency && hasfrequencies
+        stop ">>>> Source clock point '" + clockname + "' mixes fixed and conditional frequencies"
+      endif
+      if !hasfrequency && !hasfrequencies
+        stop ">>>> Source clock point '" + clockname + "' has no frequency definition"
+      endif
       local clockinput = (clock.source[0].@input[0]!"")?string
       if clock.source[0].complex[0]??
         local clockcomplex = clock.source[0].complex[0]?string?trim
       else
         local clockcomplex = ""
       endif
-      local clockpoint = {"type":"source", "description":clockdescr, "name":clockname, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits, "limits":clocklimits, "frequency":clockfreq, "input":clockinput, "complex":clockcomplex}
+      if hasfrequencies
+        if clockinput != ""
+          stop ">>>> Conditional frequency source clock point '" + clockname + "' cannot use an input clock"
+        endif
+        local clockpoint = {"type":"source", "subtype":"frequencies", "description":clockdescr, "name":clockname, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits, "limits":clocklimits, "frequencies":ParseFrequencyCases(clock.source[0], clockname), "input":"", "complex":clockcomplex}
+      else
+        local clockfreq = clock.source[0].@frequency[0]?string
+        local clockpoint = {"type":"source", "subtype":"fixed", "description":clockdescr, "name":clockname, "enable":clockenable, "dynamic":clockdynamic, "bits":clockbits, "limits":clocklimits, "frequency":clockfreq, "input":clockinput, "complex":clockcomplex}
+      endif
       local points = points + [clockpoint]
       local clocks = clocks + [clockpoint]
 
@@ -1209,18 +1272,82 @@ macro EmitEnableDefinitions()
   endlist
 endmacro
 
-/* Emits one bits definition, optionally combined with enable-state bits.*/
-macro EmitBitsDefinition(point, bits)
-  local bitsmacro = premacro + point["name"] + postbits
-  local enmacro = GetEnableMacro(point)
+/* Returns the register bits macro for a clock point and target.*/
+function GetBitsMacro(point, target)
+  if target == ""
+    return premacro + point["name"] + postbits
+  endif
 
-  if point["bits"]?size > 0
+  return premacro + point["name"] + "_" + target + postbits
+endfunction
+
+/* Returns unique bit targets from enable and value bits.*/
+function GetBitTargets(pointbits, valuebits)
+  local targets = []
+  list pointbits as bit
+    if !targets?seq_contains(bit["target"])
+      local targets = targets + [bit["target"]]
+    endif
+  endlist
+  list valuebits as bit
+    if !targets?seq_contains(bit["target"])
+      local targets = targets + [bit["target"]]
+    endif
+  endlist
+
+  if targets?size == 0
+    local targets = [""]
+  endif
+
+  return targets
+endfunction
+
+/* Returns the value bits expression for one target.*/
+function GetValueBitsExpression(valuebits, target)
+  list valuebits as bit
+    if bit["target"] == target
+      return bit["value"]
+    endif
+  endlist
+
+  return ""
+endfunction
+
+/* Returns true if value bits contain one target.*/
+function HasValueBitsTarget(valuebits, target)
+  list valuebits as bit
+    if bit["target"] == target
+      return true
+    endif
+  endlist
+
+  return false
+endfunction
+
+/* Returns the enable-state bits expression for one target and state.*/
+function GetBoolBitsExpression(pointbits, target, state)
+  list pointbits as bit
+    if bit["target"] == target
+      return bit[state]
+    endif
+  endlist
+
+  return ""
+endfunction
+
+/* Emits one targeted bits definition, optionally combined with enable-state bits.*/
+macro EmitTargetBitsDefinition(point, bits, target)
+  local bitsmacro = GetBitsMacro(point, target)
+  local enmacro = GetEnableMacro(point)
+  local enabledbits = GetBoolBitsExpression(point["bits"], target, "enabled")
+  local disabledbits = GetBoolBitsExpression(point["bits"], target, "disabled")
+
+  if enabledbits != ""
     if bits == ""
-      local enabledbits = point["bits"]["enabled"]
-      local disabledbits = point["bits"]["disabled"]
+      local enabledbits = enabledbits
+      local disabledbits = disabledbits
     else
-      local enabledbits = "(" + point["bits"]["enabled"] + " | " + bits + ")"
-      local disabledbits = "(" + point["bits"]["disabled"] + " | " + bits + ")"
+      local enabledbits = "(" + enabledbits + " | " + bits + ")"
     endif
     emit """
 #if (${enmacro} == TRUE) || defined(__DOXYGEN__)
@@ -1230,10 +1357,40 @@ ${("#define " + bitsmacro)?right_pad(44) + disabledbits}
 #endif
 """
   else
-    emit """
+    if bits == ""
+      local bits = "0U"
+    endif
+    if point["enable"] == "manual" || point["enable"] == "auto" || point["enable"] == "never" || point["enable"] == "always"
+      emit """
+#if (${enmacro} == TRUE) || defined(__DOXYGEN__)
+${("#define " + bitsmacro)?right_pad(44) + bits}
+#else
+${("#define " + bitsmacro)?right_pad(44) + "0U"}
+#endif
+"""
+    else
+      emit """
 ${("#define " + bitsmacro)?right_pad(44) + bits}
 """
+    endif
   endif
+endmacro
+
+/* Emits one untargeted bits definition, preserving legacy call sites.*/
+macro EmitBitsDefinition(point, bits)
+  EmitTargetBitsDefinition(point=point, bits=bits, target="")
+endmacro
+
+/* Emits bits definitions for all targets used by a clock point/value pair.*/
+macro EmitBitsDefinitions(point, valuebits)
+  local targets = GetBitTargets(point["bits"], valuebits)
+  list targets as target
+    local bits = GetValueBitsExpression(valuebits, target)
+    EmitTargetBitsDefinition(point=point, bits=bits, target=target)
+    sep
+      emit "\e"
+    endsep
+  endlist
 endmacro
 
 /* Emits one frequency definition, optionally conditional on enable state.*/
@@ -1437,10 +1594,44 @@ macro EmitClockBits(point)
  * @brief   ${point["name"]} clock register bits.
  */
 """
-    if point["bits"]?size > 0
-      EmitBitsDefinition(point=point, bits="")
+    if point["subtype"] == "frequencies"
+      local allbits = []
+      list point["frequencies"] as frequency
+        local allbits = allbits + frequency["bits"]
+      endlist
+      local targets = GetBitTargets(point["bits"], allbits)
+      list targets as target
+        if !HasValueBitsTarget(allbits, target)
+          EmitTargetBitsDefinition(point=point, bits="", target=target)
+        elseif point["frequencies"]?size == 1 && point["frequencies"][0]["when"] == ""
+          local bits = GetValueBitsExpression(point["frequencies"][0]["bits"], target)
+          EmitTargetBitsDefinition(point=point, bits=bits, target=target)
+        else
+          list point["frequencies"] as frequency
+            if frequency?is_first
+              EmitStateCondition(keyword="#if", expression=frequency["when"], doxygen=true)
+            elseif frequency["when"] != ""
+              EmitStateCondition(keyword="#elif", expression=frequency["when"], doxygen=false)
+            else
+              emit """
+#else
+"""
+            endif
+            local bits = GetValueBitsExpression(frequency["bits"], target)
+            EmitTargetBitsDefinition(point=point, bits=bits, target=target)
+          endlist
+          emit """
+#endif
+"""
+        endif
+        sep
+          emit "\e"
+        endsep
+      endlist
+    elseif point["bits"]?size > 0
+      EmitBitsDefinitions(point=point, valuebits=[])
     else
-      EmitBitsDefinition(point=point, bits="0U")
+      EmitBitsDefinitions(point=point, valuebits=[{"target":"", "value":"0U"}])
     endif
   elseif point["type"] == "mux"
     local selmacro = precfg + point["name"] + postchoices
@@ -1522,16 +1713,46 @@ macro EmitClockFrequency(point)
  */
 """
   if point["type"] == "source"
-    local frequency = point["frequency"]
-    if point["input"] != ""
-      if UsesRuntimeInputExpressions(point)
-        local inputfreq = GetRuntimeFrequencyExpression(point["input"])
+    if point["subtype"] == "frequencies"
+      local freqmacro = premacro + point["name"] + postclocks
+      local enmacro = GetEnableMacro(point)
+      if point["frequencies"]?size == 1 && point["frequencies"][0]["when"] == ""
+        EmitFrequencyDefinition(point=point, frequency=point["frequencies"][0]["value"])
       else
-        local inputfreq = GetDefaultFrequencyExpression(point["input"])
+        emit """
+#if (${enmacro} == FALSE) && !defined(__DOXYGEN__)
+${("#define " + freqmacro)?right_pad(44) + "0U"}
+"""
+        list point["frequencies"] as frequency
+          if frequency?is_first
+            EmitStateCondition(keyword="#elif", expression=frequency["when"], doxygen=true)
+          elseif frequency["when"] != ""
+            EmitStateCondition(keyword="#elif", expression=frequency["when"], doxygen=false)
+          else
+            emit """
+#else
+"""
+          endif
+          emit """
+${("#define " + freqmacro)?right_pad(44) + frequency["value"]}
+"""
+        endlist
+        emit """
+#endif
+"""
       endif
-      local frequency = frequency?replace("%I%", inputfreq)
+    else
+      local frequency = point["frequency"]
+      if point["input"] != ""
+        if UsesRuntimeInputExpressions(point)
+          local inputfreq = GetRuntimeFrequencyExpression(point["input"])
+        else
+          local inputfreq = GetDefaultFrequencyExpression(point["input"])
+        endif
+        local frequency = frequency?replace("%I%", inputfreq)
+      endif
+      EmitFrequencyDefinition(point=point, frequency=frequency)
     endif
-    EmitFrequencyDefinition(point=point, frequency=frequency)
   elseif point["type"] == "mux"
     local selmacro = precfg + point["name"] + postchoices
     local freqmacro = premacro + point["name"] + postclocks

@@ -1,0 +1,5 @@
+# Existing untargeted bits behavior is preserved.
+#define TST_INTOSC_BITS
+#define TST_EXTOSC_BITS
+RCC_INTOSC_ON
+RCC_EXTOSC_ON

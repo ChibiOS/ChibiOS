@@ -103,7 +103,7 @@
         <xs:element name="description" type="xs:string" maxOccurs="1"
           minOccurs="1">
         </xs:element>
-        <xs:element name="bits" type="boolBitsType" maxOccurs="1"
+        <xs:element name="bits" type="boolBitsType" maxOccurs="unbounded"
           minOccurs="0">
         </xs:element>
         <xs:element name="limits" type="clockLimitType" maxOccurs="1"
@@ -164,8 +164,11 @@
         <xs:element name="complex" type="xs:string" maxOccurs="1"
           minOccurs="0">
         </xs:element>
+        <xs:element name="frequencies" type="frequenciesType" maxOccurs="1"
+          minOccurs="0">
+        </xs:element>
       </xs:sequence>
-      <xs:attribute name="frequency" use="required">
+      <xs:attribute name="frequency" use="optional">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="1"></xs:minLength>
@@ -176,6 +179,57 @@
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="1"></xs:minLength>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="frequenciesType">
+      <xs:sequence>
+        <xs:element name="case" type="frequencyCaseType"
+          maxOccurs="unbounded" minOccurs="0">
+        </xs:element>
+        <xs:element name="default" type="frequencyDefaultType" maxOccurs="1"
+          minOccurs="1">
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="frequencyCaseType">
+      <xs:sequence>
+        <xs:element name="bits" type="valueBitsType" maxOccurs="unbounded"
+          minOccurs="0">
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="when" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="value" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="frequencyDefaultType">
+      <xs:sequence>
+        <xs:element name="bits" type="valueBitsType" maxOccurs="unbounded"
+          minOccurs="0">
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="value" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
@@ -266,6 +320,15 @@
     <xs:complexType name="namesType"></xs:complexType>
 
     <xs:complexType name="valueBitsType">
+      <xs:attribute name="target" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="value" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
@@ -277,6 +340,15 @@
     </xs:complexType>
 
     <xs:complexType name="boolBitsType">
+      <xs:attribute name="target" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"></xs:minLength>
+            <xs:whiteSpace value="collapse"></xs:whiteSpace>
+            <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"></xs:pattern>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="enabled" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">

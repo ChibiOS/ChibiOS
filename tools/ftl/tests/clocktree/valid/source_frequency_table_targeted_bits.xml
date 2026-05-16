@@ -1,0 +1,38 @@
+<clocktree>
+  <settings>
+    <prefixes clock_points="TCLK_" macros="TST_" cfgs="TST_CFG_" />
+    <suffixes frequency="_FREQ" values="_VALUE" bits="_BITS"
+              selector="_SEL" enable="_ENABLE" enabled="_ENABLED" />
+    <configs>
+      <config name="CLOCK_DYNAMIC" type="bool" default="FALSE"
+              role="dynamic_mode">
+        <description>Enables dynamic clock handling.</description>
+      </config>
+      <config name="OSC_MODE" type="set" default="OSC_FAST"
+              values="OSC_FAST OSC_SLOW">
+        <description>Selects the oscillator range.</description>
+      </config>
+    </configs>
+  </settings>
+  <clocks>
+    <clock point="NONE" enable="never" dynamic="no">
+      <description>pseudo-clock for disabled sources</description>
+      <source frequency="0U" />
+    </clock>
+    <clock point="TABLEOSC" enable="manual" dynamic="yes">
+      <description>table-driven oscillator with targeted register bits</description>
+      <bits target="CR" enabled="OSC_ON" disabled="0U" />
+      <source>
+        <frequencies>
+          <case when="TST_CFG_OSC_MODE == OSC_FAST" value="48000000U">
+            <bits target="CR" value="OSC_FAST_CR_BITS" />
+            <bits target="CFGR" value="OSC_FAST_BITS" />
+          </case>
+          <default value="12000000U">
+            <bits target="CFGR" value="OSC_SLOW_BITS" />
+          </default>
+        </frequencies>
+      </source>
+    </clock>
+  </clocks>
+</clocktree>

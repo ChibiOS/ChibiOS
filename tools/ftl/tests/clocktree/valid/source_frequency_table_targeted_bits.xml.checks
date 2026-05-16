@@ -1,0 +1,12 @@
+# Targeted bits macros are emitted separately.
+#define TST_TABLEOSC_CR_BITS
+#define TST_TABLEOSC_CFGR_BITS
+OSC_ON | OSC_FAST_CR_BITS
+#define TST_TABLEOSC_CR_BITS                0U
+OSC_FAST_BITS
+OSC_SLOW_BITS
+
+# Conditional frequency table values are emitted.
+#define TST_TABLEOSC_FREQ
+48000000U
+12000000U

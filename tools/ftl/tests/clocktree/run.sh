@@ -45,6 +45,19 @@ EOF
 
   (cd "$work" && fmpp -C config.fmpp >/dev/null)
   test -s "$work/out/clocktree.h"
+
+  checks="$fixture.checks"
+  if [ -f "$checks" ]; then
+    while IFS= read -r pattern || [ -n "$pattern" ]; do
+      case "$pattern" in
+        ''|\#*) continue ;;
+      esac
+      if ! grep -F -- "$pattern" "$work/out/clocktree.h" >/dev/null; then
+        printf '%s\n' "generated output for $fixture is missing: $pattern" >&2
+        return 1
+      fi
+    done < "$checks"
+  fi
 }
 
 run_schema_invalid_fixture() {

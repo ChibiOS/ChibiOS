@@ -1,0 +1,21 @@
+<clocktree>
+  <settings>
+    <prefixes clock_points="TCLK_" macros="TST_" cfgs="TST_CFG_" />
+    <suffixes frequency="_FREQ" values="_VALUE" bits="_BITS"
+              selector="_SEL" enable="_ENABLE" enabled="_ENABLED" />
+    <configs>
+      <config name="CLOCK_DYNAMIC" type="bool" default="FALSE"
+              role="dynamic_mode">
+        <description>Enables dynamic clock handling.</description>
+      </config>
+    </configs>
+  </settings>
+  <clocks>
+    <clock point="OSC" enable="always" dynamic="no">
+      <description>clock with duplicated targeted bits</description>
+      <bits target="CR" enabled="OSC_ON" disabled="0U" />
+      <bits target="CR" enabled="OSC_READY" disabled="0U" />
+      <source frequency="16000000U" />
+    </clock>
+  </clocks>
+</clocktree>
