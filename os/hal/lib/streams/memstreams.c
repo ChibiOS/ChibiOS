@@ -47,6 +47,8 @@
 static size_t _writes(void *ip, const uint8_t *bp, size_t n) {
   MemoryStream *msp = ip;
 
+  if (msp->eos >= msp->size)
+    return 0;
   if (msp->size - msp->eos < n)
     n = msp->size - msp->eos;
   memcpy(msp->buffer + msp->eos, bp, n);
