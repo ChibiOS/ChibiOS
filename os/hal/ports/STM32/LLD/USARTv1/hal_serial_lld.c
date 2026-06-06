@@ -112,6 +112,7 @@ static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
   uint32_t brr;
   USART_TypeDef *u = sdp->usart;
 
+  osalDbgAssert(config->speed != 0U, "invalid baud rate (zero)");
   brr = (uint32_t)((sdp->clock + config->speed/2) / config->speed);
 
 #if defined(USART_CR1_OVER8)

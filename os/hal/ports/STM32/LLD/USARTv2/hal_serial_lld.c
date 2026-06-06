@@ -235,6 +235,7 @@ static void usart_init(SerialDriver *sdp,
   USART_TypeDef *u = sdp->usart;
 
   /* Baud rate setting.*/
+  osalDbgAssert(config->speed != 0U, "invalid baud rate (zero)");
   clock = sdp->clock;
 #if STM32_SERIAL_USE_LPUART1
   if (sdp == &LPSD1) {
