@@ -492,7 +492,7 @@ msg_t oqPutI(output_queue_t *oqp, uint8_t b) {
   osalDbgCheckClassI();
 
   /* Queue space check.*/
-  while (!oqIsFullI(oqp)) {
+  if (!oqIsFullI(oqp)) {
     /* Putting the character into the queue.*/
     oqp->q_counter--;
     *oqp->q_wrptr++ = b;
