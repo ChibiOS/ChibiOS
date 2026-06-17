@@ -434,7 +434,7 @@ void dac_lld_init(void) {
 #endif
 
 #if STM32_DAC_USE_DAC2_CH1 || STM32_DAC_USE_DAC2_CH2
-  rccEnableDAC1(false);
+  rccEnableDAC2(false);
   rccResetDAC2();
   rccDisableDAC2();
 #endif
