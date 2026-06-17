@@ -69,7 +69,7 @@ void rp_clock_init(void) {
   rp_peripheral_unreset(RESETS_ALLREG_TIMER0);
 
   /* Configure tick generator for ~1 us ticks. */
-  TICKS->TICK[TICKS_TIMER0].CYCLES = RP_ROSC_ASSUMED_HZ / 1000000U;;
+  TICKS->TICK[TICKS_TIMER0].CYCLES = RP_ROSC_ASSUMED_HZ / 1000000U;
   TICKS->TICK[TICKS_TIMER0].CTRL = TICKS_CTRL_ENABLE;
 
   /* Clear clock resus that may be in an unkown state */

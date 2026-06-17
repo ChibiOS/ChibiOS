@@ -92,7 +92,7 @@ thread_t *nil_find_thread(tstate_t state, void *p) {
  * @notapi
  */
 cnt_t nil_ready_all(void *p, cnt_t cnt, msg_t msg) {
-  thread_t *tp = nil.threads;;
+  thread_t *tp = nil.threads;
 
   while (cnt < (cnt_t)0) {
 
