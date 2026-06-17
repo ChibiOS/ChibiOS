@@ -923,7 +923,7 @@ void uart_lld_start(UARTDriver *uartp) {
                                      (void *)uartp);
       osalDbgAssert(uartp->dmatx != NULL, "unable to allocate stream");
 
-      rccEnableUART9(true);
+      rccEnableUART10(true);
       nvicEnableVector(STM32_UART10_NUMBER, STM32_UART_UART10_IRQ_PRIORITY);
       uartp->dmarxmode |= STM32_DMA_CR_CHSEL(UART10_RX_DMA_CHANNEL) |
                           STM32_DMA_CR_PL(STM32_UART_UART10_DMA_PRIORITY);
