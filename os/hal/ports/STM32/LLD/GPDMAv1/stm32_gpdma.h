@@ -344,7 +344,7 @@
 /**
  * @brief   Any FIFO4_2D channel on any GPDMA.
  */
-#define STM32_GPDMAX_MASK_FIFO4_2D                                          \
+#define STM32_GPDMA_MASK_FIFO4_2D                                          \
   (STM32_GPDMA1_MASK_FIFO4_2D | STM32_GPDMA2_MASK_FIFO4_2D)
 
 /**
