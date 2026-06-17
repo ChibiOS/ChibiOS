@@ -752,7 +752,7 @@ void dac_lld_start_conversion(DACDriver *dacp) {
 #if STM32_DMA_ADVANCED == FALSE
               STM32_DMA_CR_PSIZE_WORD  | STM32_DMA_CR_MSIZE_BYTE;
 #else
-              STM32_DMA_CR_MSIZE_BYTE  | STM32_DMA_CR_MSIZE_BYTE;
+              STM32_DMA_CR_PSIZE_BYTE  | STM32_DMA_CR_MSIZE_BYTE;
 #endif
 
     /* In this mode the size of the buffer is halved because two samples
