@@ -152,6 +152,11 @@ void chCondSignalI(condition_variable_t *cp) {
 
 /**
  * @brief   Signals all threads that are waiting on the condition variable.
+ * @note    A broadcast wakes only threads that are currently waiting on
+ *          the condition variable; it is not remembered for future waiters.
+ *          Callers should protect the associated predicate with the mutex,
+ *          check the predicate before waiting, and typically wait in a loop
+ *          until the predicate is satisfied.
  *
  * @param[in] cp        pointer to a @p condition_variable_t object
  *
