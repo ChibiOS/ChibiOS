@@ -199,7 +199,7 @@
 /**
  * @brief   Disables the clock of one or more peripheral on the APB3 bus.
  *
- * @param[in] mask      APB2 peripherals mask
+ * @param[in] mask      APB3 peripherals mask
  *
  * @api
  */
