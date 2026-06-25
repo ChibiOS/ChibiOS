@@ -321,17 +321,22 @@ void dmaChannelFreeI(const rp_dma_channel_t *dmachp) {
   dmaChannelDisableX(dmachp);
   dmaChannelSetModeX(dmachp, 0U);
 
-  if (SIO->CPUID == 0U) {
-    /* Channel released by core 0.*/
+  /* Remove from whichever core mask owns this channel.
+     Handles cross-core freeing (e.g. sdcard_init on core0 stopping SPI1
+     whose DMA was allocated by the SPI1 bus thread on core1).
+     NVIC disable: only possible on the current core's own NVIC.
+     For the other core, dmaChannelDisableInterruptX() above already cleared
+     INTE0/INTE1 for this channel, so no stray IRQs will fire even if that
+     core's NVIC vector remains enabled. */
+  if (dma.c0_allocated_mask & dmachp->chnmask) {
     dma.c0_allocated_mask &= ~dmachp->chnmask;
-    if (dma.c0_allocated_mask == 0U) {
+    if (dma.c0_allocated_mask == 0U && SIO->CPUID == 0U) {
       nvicDisableVector(RP_DMA_IRQ_0_NUMBER);
     }
   }
-  else {
-    /* Channel released by core 1.*/
+  if (dma.c1_allocated_mask & dmachp->chnmask) {
     dma.c1_allocated_mask &= ~dmachp->chnmask;
-    if (dma.c1_allocated_mask == 0U) {
+    if (dma.c1_allocated_mask == 0U && SIO->CPUID == 1U) {
       nvicDisableVector(RP_DMA_IRQ_1_NUMBER);
     }
   }
