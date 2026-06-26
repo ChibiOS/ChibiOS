@@ -84,7 +84,6 @@
 #endif
 
                 .thumb
-                .text
 
 /*--------------------------------------------------------------------------*
  * Context switch macros depending on various options.
@@ -232,6 +231,7 @@
 /*--------------------------------------------------------------------------*
  * Performs a context switch between two threads using SVC.
  *--------------------------------------------------------------------------*/
+                .section .text.SVC_Handler, "ax", %progbits
                 .thumb_func
                 .globl  SVC_Handler
 SVC_Handler:
@@ -313,6 +313,7 @@ SVC_Handler:
 /*--------------------------------------------------------------------------*
  * Tail preemption check using PENDSV.
  *--------------------------------------------------------------------------*/
+                .section .text.PendSV_Handler, "ax", %progbits
                 .thumb_func
                 .globl  PendSV_Handler
 PendSV_Handler:
@@ -375,6 +376,7 @@ PendSV_Handler:
  * register R5 contains the thread parameter. The function chThdExit() is
  * called on thread function return.
  *--------------------------------------------------------------------------*/
+                .section .text.__port_thread_start, "ax", %progbits
                 .thumb_func
                 .globl  __port_thread_start
 __port_thread_start:
