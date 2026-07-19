@@ -265,32 +265,8 @@ void spi_lld_stop(SPIDriver *spip) {
   }
 }
 
-#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined(__DOXYGEN__)
-/**
- * @brief   Asserts the slave select signal and prepares for transfers.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- *
- * @notapi
- */
-void spi_lld_select(SPIDriver *spip) {
-
-  /* No implementation on RP.*/
-}
-
-/**
- * @brief   Deasserts the slave select signal.
- * @details The previously selected peripheral is unselected.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- *
- * @notapi
- */
-void spi_lld_unselect(SPIDriver *spip) {
-
-  /* No implementation on RP.*/
-}
-#endif
+/* SPI_SELECT_MODE_LLD is rejected at compile time in hal_spi_lld.h, so
+   no spi_lld_select()/spi_lld_unselect() implementations exist here.*/
 
 /**
  * @brief   Ignores data on the SPI bus.

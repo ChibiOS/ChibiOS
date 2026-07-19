@@ -94,6 +94,13 @@
 #error "RP_SPI_SPI1_DMA_PRIORITY not defined in mcuconf.h"
 #endif
 
+/* The driver does not implement a low-level slave-select method; without
+   this check the mode would compile into silent no-ops and a caller could
+   believe chip select was asserted while no pin changed.*/
+#if SPI_SELECT_MODE == SPI_SELECT_MODE_LLD
+#error "SPI_SELECT_MODE_LLD is not implemented by the RP SPI driver, use SPI_SELECT_MODE_LINE, _PORT, _PAD or _NONE"
+#endif
+
 /* Device selection checks.*/
 #if RP_SPI_USE_SPI0 && !RP_HAS_SPI0
 #error "SPI0 not present in the selected device"
@@ -183,10 +190,6 @@ extern "C" {
   void spi_lld_init(void);
   void spi_lld_start(SPIDriver *spip);
   void spi_lld_stop(SPIDriver *spip);
-#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined(__DOXYGEN__)
-  void spi_lld_select(SPIDriver *spip);
-  void spi_lld_unselect(SPIDriver *spip);
-#endif
   void spi_lld_ignore(SPIDriver *spip, size_t n);
   void spi_lld_exchange(SPIDriver *spip, size_t n,
                         const void *txbuf, void *rxbuf);
