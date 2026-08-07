@@ -199,6 +199,23 @@ void spi_lld_start(SPIDriver *spip) {
       osalDbgAssert(false, "invalid SPI instance");
     }
 
+    /* The allocations above are only guarded by osalDbgAssert, so with debug
+       assertions disabled a failure would fall through here, dereference a
+       NULL channel and leave the peripheral in reset while the caller believes
+       it started. Bail out cleanly instead, releasing any partial allocation,
+       so the caller can see that the driver did not come up.*/
+    if ((spip->dmarx == NULL) || (spip->dmatx == NULL)) {
+      if (spip->dmarx != NULL) {
+        dmaChannelFreeI(spip->dmarx);
+        spip->dmarx = NULL;
+      }
+      if (spip->dmatx != NULL) {
+        dmaChannelFreeI(spip->dmatx);
+        spip->dmatx = NULL;
+      }
+      return;
+    }
+
     /* DMA setup for SPI DR.*/
     dmaChannelSetSourceX(spip->dmarx, (uint32_t)&spip->spi->SSPDR);
     dmaChannelSetDestinationX(spip->dmatx, (uint32_t)&spip->spi->SSPDR);
