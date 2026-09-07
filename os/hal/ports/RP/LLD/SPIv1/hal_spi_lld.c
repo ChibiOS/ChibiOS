@@ -67,6 +67,17 @@ static uint16_t dummyrx;
  */
 static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t ct) {
 
+  /* Receive overrun. The SSP keeps clocking for as long as the TX FIFO has
+     data, so a receive FIFO that fills faster than the DMA drains it makes
+     the SSP discard the arriving byte and set RORRIS. Nothing else reports
+     it: the transfer completes, the DMA moves its full count, and the caller
+     sees a buffer whose contents past the discarded byte are shifted down by
+     one. Count it so that corruption is attributable rather than silent.*/
+  if ((spip->spi->SSPRIS & SPI_SSPRIS_RORRIS) != 0U) {
+    spip->rxoverruns++;
+    spip->spi->SSPICR = SPI_SSPICR_RORIC;
+  }
+
   /* DMA errors handling.*/
   if ((ct & DMA_CTRL_TRIG_AHB_ERROR) != 0U) {
 
@@ -418,9 +429,16 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   dmaChannelEnableX(spip->dmatx);
 }
 
-#if (SPI_SUPPORTS_CIRCULAR == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Aborts the ongoing SPI operation, if any.
+ * @details Stops both DMA channels and leaves the SSP with empty FIFOs, so
+ *          that the next transfer starts from a known state.
+ * @note    Upstream leaves this empty and gates it on SPI_SUPPORTS_CIRCULAR,
+ *          which this port declares FALSE. A transfer abandoned on timeout
+ *          therefore had nothing tear it down: the DMA stayed armed and
+ *          whatever the peripheral had already clocked in stayed in the
+ *          receive FIFO, where the next transfer's DMA would consume it ahead
+ *          of its own data and shift everything it read.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  *
@@ -428,9 +446,37 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
  */
 void spi_lld_abort(SPIDriver *spip) {
 
-  (void)spip;
+  spip->aborts++;
+
+  /* DMA first: nothing should be moving while the FIFOs are drained.*/
+  if (spip->dmatx != NULL) {
+    dmaChannelDisableX(spip->dmatx);
+  }
+  if (spip->dmarx != NULL) {
+    dmaChannelDisableX(spip->dmarx);
+  }
+
+  /* Drain the receive FIFO explicitly rather than relying on the SSE cycle
+     below to do it. The loop is bounded by the FIFO depth so that a stuck
+     RNE cannot hang the caller.*/
+  {
+    unsigned i;
+
+    for (i = 0U; i < 8U; i++) {
+      if ((spip->spi->SSPSR & SPI_SSPSR_RNE) == 0U) {
+        break;
+      }
+      (void) spip->spi->SSPDR;
+    }
+  }
+
+  /* Cycle SSE to clear anything left in the transmit FIFO, then drop the
+     stale error flags. RORRIS in particular is sticky and would otherwise be
+     attributed to the next transfer.*/
+  spip->spi->SSPCR1 &= ~SPI_SSPCR1_SSE;
+  spip->spi->SSPICR = SPI_SSPICR_RORIC | SPI_SSPICR_RTIC;
+  spip->spi->SSPCR1 |= SPI_SSPCR1_SSE;
 }
-#endif /* SPI_SUPPORTS_CIRCULAR == TRUE */
 
 /**
  * @brief   Exchanges one frame using a polled wait.

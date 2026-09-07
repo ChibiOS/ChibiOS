@@ -1927,6 +1927,17 @@ typedef struct {
 #define SPI_SSPIMSC_RORIM_Msk             (1U << SPI_SSPIMSC_RORIM_Pos)
 #define SPI_SSPIMSC_RORIM                 SPI_SSPIMSC_RORIM_Msk
 
+#define SPI_SSPRIS_RORRIS_Pos             0U
+#define SPI_SSPRIS_RORRIS_Msk             (1U << SPI_SSPRIS_RORRIS_Pos)
+#define SPI_SSPRIS_RORRIS                 SPI_SSPRIS_RORRIS_Msk
+
+#define SPI_SSPICR_RORIC_Pos              0U
+#define SPI_SSPICR_RORIC_Msk              (1U << SPI_SSPICR_RORIC_Pos)
+#define SPI_SSPICR_RORIC                  SPI_SSPICR_RORIC_Msk
+#define SPI_SSPICR_RTIC_Pos               1U
+#define SPI_SSPICR_RTIC_Msk               (1U << SPI_SSPICR_RTIC_Pos)
+#define SPI_SSPICR_RTIC                   SPI_SSPICR_RTIC_Msk
+
 #define SPI_SSPDMACR_TXDMAE_Pos           1U
 #define SPI_SSPDMACR_TXDMAE_Msk           (1U << SPI_SSPDMACR_TXDMAE_Pos)
 #define SPI_SSPDMACR_TXDMAE               SPI_SSPDMACR_TXDMAE_Msk
