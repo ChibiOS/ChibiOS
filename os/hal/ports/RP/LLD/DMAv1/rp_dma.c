@@ -82,6 +82,13 @@ static struct {
    */
   uint32_t          c1_allocated_mask;
   /**
+   * @brief   Most urgent priority requested by a channel of each core.
+   * @note    All channels of a core share one vector, so it has to run at
+   *          the most urgent priority any of them asked for.
+   */
+  uint32_t          c0_priority;
+  uint32_t          c1_priority;
+  /**
    * @brief   DMA IRQ redirectors.
    */
   struct {
@@ -247,16 +254,25 @@ const rp_dma_channel_t *dmaChannelAllocI(uint32_t id,
         rp_peripheral_unreset(RESETS_ALLREG_DMA);
       }
 
+      /* A core's channels all share one vector, so the priority argument
+         cannot be per channel: the vector runs at the most urgent priority
+         any of its channels asked for. Enabling it only for the first
+         allocation silently discarded every later request, which made the
+         result depend on driver init order - on an RP2350 with SPI0 on core1
+         the IMU's transfers ran at whatever the first unrelated driver to
+         take a channel happened to want.*/
       if (SIO->CPUID == 0U) {
         /* Channel taken by core 0.*/
-        if (dma.c0_allocated_mask == 0U) {
+        if ((dma.c0_allocated_mask == 0U) || (priority < dma.c0_priority)) {
+          dma.c0_priority = priority;
           nvicEnableVector(RP_DMA_IRQ_0_NUMBER, priority);
         }
         dma.c0_allocated_mask |= dmachp->chnmask;
       }
       else {
         /* Channel taken by core 1.*/
-        if (dma.c1_allocated_mask == 0U) {
+        if ((dma.c1_allocated_mask == 0U) || (priority < dma.c1_priority)) {
+          dma.c1_priority = priority;
           nvicEnableVector(RP_DMA_IRQ_1_NUMBER, priority);
         }
         dma.c1_allocated_mask |= dmachp->chnmask;
