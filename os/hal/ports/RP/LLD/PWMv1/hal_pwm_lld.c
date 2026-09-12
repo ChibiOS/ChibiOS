@@ -371,7 +371,11 @@ void pwm_lld_start(PWMDriver *pwmp) {
     p->CH[pwmp->timer_id].CC  = 0;
   }
 
-  /* Counter clock divider. */
+  /* Counter clock divider.
+   * CH_DIV register: bits[11:4]=INT(8-bit), bits[3:0]=FRAC(4-bit).
+   * Minimum achievable frequency = sys_clk / 256 (max INT value).
+   * The fractional calculation uses <<4 so must be done in 64-bit to avoid
+   * overflow when sys_clk > 268 MHz (e.g. 375 MHz << 4 = 6 GHz > 4.29 GB). */
   halfreq_t sys_clk = halClockGetPointX(RP_CLK_SYS);
   halfreq_t pwm_freq_min = sys_clk / 256;
 
@@ -382,7 +386,8 @@ void pwm_lld_start(PWMDriver *pwmp) {
   halfreq_t integer = sys_clk / pwmp->config->frequency;
   integer = integer == 0 ? 1 : integer;
 
-  halfreq_t fraction = (sys_clk << 4) / pwmp->config->frequency;
+  /* Fractional part: use 64-bit to prevent overflow at high sys_clk values. */
+  uint32_t fraction = (uint32_t)(((uint64_t)sys_clk << 4) / pwmp->config->frequency);
   p->CH[pwmp->timer_id].DIV = (integer << 4 | (fraction & 0xF));
   p->CH[pwmp->timer_id].TOP = pwmp->period;
 
