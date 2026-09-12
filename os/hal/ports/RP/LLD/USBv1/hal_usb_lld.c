@@ -290,7 +290,6 @@ static uint32_t usb_prepare_in_ep_buffer(USBDriver *usbp, usbep_t ep, uint8_t bu
 static void usb_prepare_in_ep(USBDriver *usbp, usbep_t ep) {
   uint32_t buf_ctrl;
   uint32_t ep_ctrl;
-  USBInEndpointState *iesp = usbp->epc[ep]->in_state;
 
   if (ep == 0) {
     ep_ctrl = USB->SIECTRL;
@@ -298,24 +297,17 @@ static void usb_prepare_in_ep(USBDriver *usbp, usbep_t ep) {
     ep_ctrl = EP_CTRL(ep).IN;
   }
 
-  /* Fill first buffer */
+  /* Fill first buffer only.
+   * Double-buffered IN mode is not used: on buffer-0 completion the ISR would
+   * call usb_prepare_in_ep again while buffer-1 is still in-flight, overwriting
+   * its DPRAM data with the next chunk.  The host then receives corrupted bytes
+   * and MAVLink CRC checks fail.  Single-buffered mode (one 64-byte packet per
+   * interrupt) is correct and sufficient for MAVLink throughput. */
   buf_ctrl = usb_prepare_in_ep_buffer(usbp, ep, 0);
 
-  /* Second buffer if required */
-  /* iesp->txsize - iesp->txlast gives size even not in buffer */
-  if (iesp->txsize - iesp->txlast > 0) {
-    buf_ctrl |= usb_prepare_in_ep_buffer(usbp, ep, 1);
-  }
-
-  if (buf_ctrl & USB_BUFFER_BUFFER1_AVAILABLE) {
-    /* Double buffered */
-    ep_ctrl &= ~USB_EP_BUFFER_IRQ_EN;
-    ep_ctrl |= USB_EP_BUFFER_DOUBLE | USB_EP_BUFFER_IRQ_DOUBLE_EN;
-  } else {
-    /* Single buffered */
-    ep_ctrl &= ~(USB_EP_BUFFER_DOUBLE | USB_EP_BUFFER_IRQ_DOUBLE_EN);
-    ep_ctrl |= USB_EP_BUFFER_IRQ_EN;
-  }
+  /* Single buffered */
+  ep_ctrl &= ~(USB_EP_BUFFER_DOUBLE | USB_EP_BUFFER_IRQ_DOUBLE_EN);
+  ep_ctrl |= USB_EP_BUFFER_IRQ_EN;
 
   if (ep == 0) {
     USB->SIECTRL = ep_ctrl;
@@ -746,7 +738,15 @@ usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep) {
   if (ep == 0U) {
     return EP_STATUS_ACTIVE;
   }
-  if (EP_CTRL(ep).OUT & USB_EP_EN) {
+  if (!(EP_CTRL(ep).OUT & USB_EP_EN)) {
+    return EP_STATUS_DISABLED;
+  }
+  /* USB_EP_EN stays set permanently after usbInitEndpointI. Use
+   * BUFFER0_AVAILABLE to detect whether a receive transaction is actually
+   * armed — it is set by usb_prepare_out_ep and cleared by hardware on
+   * completion. Without this check sdu_start_receive never calls
+   * usbStartReceiveI and the OUT endpoint never receives any data. */
+  if (BUF_CTRL(ep).OUT & USB_BUFFER_BUFFER0_AVAILABLE) {
     return EP_STATUS_ACTIVE;
   }
   return EP_STATUS_DISABLED;

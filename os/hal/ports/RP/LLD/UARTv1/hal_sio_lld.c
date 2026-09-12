@@ -133,6 +133,8 @@ __STATIC_INLINE void uart_init(SIODriver *siop) {
 
   /* Setting up the operation.*/
   siop->uart->UARTICR   = siop->uart->UARTRIS;
+  siop->uart->UARTIFLS  = siop->config->UARTIFLS;
+  siop->uart->UARTDMACR = siop->config->UARTDMACR;
   siop->uart->UARTCR    = cr | UART_UARTCR_RXE | UART_UARTCR_TXE | UART_UARTCR_UARTEN;
 }
 
