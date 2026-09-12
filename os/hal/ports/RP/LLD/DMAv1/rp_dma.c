@@ -43,7 +43,7 @@
 /**
  * @brief   DMA channel descriptors.
  */
-const rp_dma_channel_t __rp_dma_channels[RP_DMA_NUM_CHANNELS] = {
+rp_dma_channel_t __rp_dma_channels[RP_DMA_NUM_CHANNELS] = {
   {DMA, &DMA->CH[0],  0U,  1U << 0},
   {DMA, &DMA->CH[1],  1U,  1U << 1},
   {DMA, &DMA->CH[2],  2U,  1U << 2},

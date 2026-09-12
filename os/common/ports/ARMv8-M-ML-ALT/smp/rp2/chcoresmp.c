@@ -25,7 +25,16 @@
  */
 
 #include "ch.h"
+#include "chcoresmp_timer.h"
 
+#if CH_CFG_SMP_MODE == FALSE
+#define PORT_FIFO_PANIC_MESSAGE      0xFFFFFFFEU
+#define PORT_FIFO_RESCHEDULE_MESSAGE 0xFFFFFFFFU
+typedef unsigned core_id_t;
+__STATIC_INLINE core_id_t port_get_core_id(void) { return 0U; }
+__STATIC_INLINE void port_spinlock_take(void) {}
+__STATIC_INLINE void port_spinlock_release(void) {}
+#endif
 /*===========================================================================*/
 /* Module local definitions.                                                 */
 /*===========================================================================*/

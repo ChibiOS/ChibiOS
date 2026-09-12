@@ -58,6 +58,32 @@
  *
  * @param[in] p         the thread parameter, unused in this scenario
  */
+#if defined(RP2350) && (CH_CFG_SMP_MODE == TRUE)
+/*
+ * RP2350 SMP: route each core to a distinct striped-SRAM bank so their idle
+ * instruction fetches can proceed in parallel without arbitration stalls.
+ *
+ * rp2350_idle_c0/c1 are in rp2350_idle_loops.S (.ramtext), separated by
+ * .balign 4 so they land in consecutive (different) 4-byte striped-SRAM
+ * banks. optimize("O0") prevents GCC from analysing the call targets as
+ * infinite loops and collapsing this function to a single b.n instruction.
+ */
+extern void rp2350_idle_c0(void);
+extern void rp2350_idle_c1(void);
+
+__attribute__((noinline, optimize("O0"), section(".ramtext")))
+static void __idle_thread(void *p) {
+
+  (void)p;
+
+  if (port_get_core_id() == 0U) {
+    rp2350_idle_c0();
+  }
+  else {
+    rp2350_idle_c1();
+  }
+}
+#else
 static void __idle_thread(void *p) {
 
   (void)p;
@@ -70,6 +96,7 @@ static void __idle_thread(void *p) {
     CH_CFG_IDLE_LOOP_HOOK();
   }
 }
+#endif /* RP2350 && CH_CFG_SMP_MODE */
 #endif /* CH_CFG_NO_IDLE_THREAD == FALSE */
 
 /*===========================================================================*/

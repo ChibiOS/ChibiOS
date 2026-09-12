@@ -103,7 +103,7 @@ typedef struct {
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
-extern const rp_dma_channel_t __rp_dma_channels[RP_DMA_NUM_CHANNELS];
+extern rp_dma_channel_t __rp_dma_channels[RP_DMA_NUM_CHANNELS];
 #endif
 
 #ifdef __cplusplus
@@ -157,6 +157,9 @@ __STATIC_INLINE bool dmaChannelIsBusyX(const rp_dma_channel_t *dmachp) {
 __STATIC_INLINE uint32_t dmaChannelGetAndClearInterrupts(const rp_dma_channel_t *dmachp) {
   uint32_t ctrl_trig;
 
+  if (dmachp == NULL || dmachp->dma != DMA) {
+    return 0U;
+  }
   ctrl_trig = dmachp->channel->CTRL_TRIG;
   dmachp->channel->CTRL_TRIG = ctrl_trig |
                                DMA_CTRL_TRIG_READ_ERROR |
@@ -177,6 +180,9 @@ __STATIC_INLINE uint32_t dmaChannelGetAndClearInterrupts(const rp_dma_channel_t 
  */
 __STATIC_INLINE void dmaChannelEnableInterruptX(const rp_dma_channel_t *dmachp) {
 
+  if (dmachp == NULL || dmachp->dma != DMA) {
+    return;
+  }
   if (SIO->CPUID == 0U) {
     dmachp->dma->SET.INTE0 = dmachp->chnmask;
   }
@@ -195,6 +201,9 @@ __STATIC_INLINE void dmaChannelEnableInterruptX(const rp_dma_channel_t *dmachp) 
  */
 __STATIC_INLINE void dmaChannelDisableInterruptX(const rp_dma_channel_t *dmachp) {
 
+  if (dmachp == NULL || dmachp->dma != DMA) {
+    return;
+  }
   dmachp->dma->CLR.INTE0 = dmachp->chnmask;
   dmachp->dma->CLR.INTE1 = dmachp->chnmask;
 }
@@ -277,6 +286,9 @@ __STATIC_INLINE void dmaChannelSetModeX(const rp_dma_channel_t *dmachp,
  */
 __STATIC_INLINE void dmaChannelAbortX(const rp_dma_channel_t *dmachp) {
 
+  if (dmachp == NULL || dmachp->dma != DMA) {
+    return;
+  }
   /* Clear EN and set CHAIN_TO to self (no chaining) per RP2350-E5.
      W1C error flags are masked to zero to preserve them. */
   dmachp->channel->CTRL_TRIG = (dmachp->channel->CTRL_TRIG &
