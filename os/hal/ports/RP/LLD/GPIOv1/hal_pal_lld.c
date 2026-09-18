@@ -82,14 +82,18 @@ static void rp_pal_pad_set_mode(ioportid_t port,
     return;
   }
 
-  /* Release the output driver while reprogramming mux and pad control. */
-  RP_PAL_SIO_REG(GPIO_OE_CLR, port) = bit;
-
-  IO_BANK0->GPIO[abspad].CTRL = ctrlbits;
-  PADS_BANK0->GPIO[abspad] = padbits;
-
   if (oebits != 0U) {
+    /* An output keeps its driver: re-applying the mode of a pin that is
+       already driving must not hand it to the board's pull meanwhile. */
+    IO_BANK0->GPIO[abspad].CTRL = ctrlbits;
+    PADS_BANK0->GPIO[abspad] = padbits;
     RP_PAL_SIO_REG(GPIO_OE_SET, port) = bit;
+  }
+  else {
+    /* Release the output driver while reprogramming mux and pad control. */
+    RP_PAL_SIO_REG(GPIO_OE_CLR, port) = bit;
+    IO_BANK0->GPIO[abspad].CTRL = ctrlbits;
+    PADS_BANK0->GPIO[abspad] = padbits;
   }
 }
 
