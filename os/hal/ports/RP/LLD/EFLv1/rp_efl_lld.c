@@ -184,7 +184,10 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
   devp->state = FLASH_PGM;
 
   /* Allow the application to prepare for XIP becoming unavailable. */
-  rpEflBeforeXipOff();
+  if (!rpEflBeforeXipOff()) {
+    devp->state = FLASH_READY;
+    return FLASH_ERROR_HW_FAILURE;
+  }
 
   /* Program in page-sized chunks.  The source data copy is intentionally
    * done outside the system lock while XIP is still enabled; only the
@@ -277,7 +280,10 @@ flash_error_t efl_lld_start_erase_sector(void *instance,
   offset = sector * RP_FLASH_SECTOR_SIZE;
 
   /* Allow the application to prepare for XIP becoming unavailable. */
-  rpEflBeforeXipOff();
+  if (!rpEflBeforeXipOff()) {
+    devp->state = FLASH_READY;
+    return FLASH_ERROR_HW_FAILURE;
+  }
 
   /* Lock the system around the single RAM-resident erase sequence. */
   sts = osalSysGetStatusAndLockX();
@@ -332,7 +338,10 @@ flash_error_t efl_lld_start_erase_block(void *instance,
   offset = block * erase_size;
 
   /* Allow the application to prepare for XIP becoming unavailable. */
-  rpEflBeforeXipOff();
+  if (!rpEflBeforeXipOff()) {
+    devp->state = FLASH_READY;
+    return FLASH_ERROR_HW_FAILURE;
+  }
 
   /* Erase is one uninterrupted RAM-resident XIP-off transaction, so the
    * whole helper runs under syslock. */
@@ -436,7 +445,8 @@ flash_error_t efl_lld_verify_erase(void *instance, flash_sector_t sector) {
 /**
  * @brief   Reads the flash chip's unique ID.
  * @note    The JEDEC 0x4B command is issued at runtime, which requires
- *          exiting and re-entering XIP mode.
+ *          exiting and re-entering XIP mode. The ID reads as all zeros if
+ *          @p rpEflBeforeXipOff() refuses.
  *
  * @param[in] eflp      pointer to a @p EFlashDriver structure
  * @param[out] uid      pointer to an 8-byte buffer for the unique ID
@@ -450,7 +460,10 @@ void efl_lld_read_unique_id(EFlashDriver *eflp, uint8_t *uid) {
   osalDbgCheck((eflp != NULL) && (uid != NULL));
 
   /* Allow the application to prepare for XIP becoming unavailable. */
-  rpEflBeforeXipOff();
+  if (!rpEflBeforeXipOff()) {
+    memset(uid, 0, RP_FLASH_UNIQUE_ID_SIZE);
+    return;
+  }
 
   sts = osalSysGetStatusAndLockX();
   rp_efl_lld_read_uid_full(eflp, rx, sizeof(rx));
@@ -466,7 +479,8 @@ void efl_lld_read_unique_id(EFlashDriver *eflp, uint8_t *uid) {
  * @brief   Default RP EFL pre-XIP-off hook.
  * @details Weak no-op implementation applications may override.
  */
-CC_WEAK void rpEflBeforeXipOff(void) {
+CC_WEAK bool rpEflBeforeXipOff(void) {
+  return true;
 }
 
 /**

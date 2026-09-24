@@ -4,8 +4,10 @@
  *          other cores, park threads, or perform any other preparation
  *          required before flash becomes temporarily unavailable through XIP.
  * @note    This hook is called in thread context while XIP is still enabled.
+ * @return  false if flash must not be taken out of XIP, in which case the
+ *          operation fails and @p rpEflAfterXipOn() is not called.
  */
-void rpEflBeforeXipOff(void);
+bool rpEflBeforeXipOff(void);
 
 /**
  * @brief   Hook invoked immediately after the RP EFL driver restores XIP.
